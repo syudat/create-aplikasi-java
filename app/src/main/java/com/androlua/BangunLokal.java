@@ -344,9 +344,12 @@ public class BangunLokal {
         File androidJar = new File(work, "android-min.jar");
         tulis(androidJar, bacaAset("alat/android-min.jar"));
 
-        // 2) aapt2 compile + link (--java membuat R.java untuk paket proyek,
-        // supaya MainActivity yang memakai R.layout / R.string bisa dikompilasi
-        // ECJ di langkah 2b; lihat BangunJava.kompilasiUntukRakit).
+        // 2) aapt2 compile + link (--java membuat R.java di paket com.androlua,
+        // supaya sama dengan namespace build.gradle di build online — R dibuat
+        // Gradle di com.androlua, bukan di paket proyek. Template MainActivity
+        // mengimpor com.androlua.R (lihat TemplateDasar.java); tanpa
+        // --custom-package ini, R.java lahir di paket proyek dan import itu
+        // gagal di perangkat. --stable-ids tidak terpengaruh (hanya ID resource).
         File javaDir = new File(work, "java");
         File flat = new File(work, "compiled.zip");
         File base = new File(work, "base.apk");
@@ -355,6 +358,7 @@ public class BangunLokal {
         jalankanAapt2(lib, aapt2, "link", "-I", androidJar.getPath(),
                 "--manifest", new File(work, "AndroidManifest.xml").getPath(),
                 "--stable-ids", new File(work, "ids.txt").getPath(),
+                "--custom-package", "com.androlua",
                 "-R", flat.getPath(), "--auto-add-overlay", "--java", javaDir.getPath(), "-o", base.getPath());
         byte[] manifest = bacaDariZip(base, "AndroidManifest.xml");
         if (manifest == null) throw new IOException("aapt2 tidak menghasilkan AndroidManifest.xml");

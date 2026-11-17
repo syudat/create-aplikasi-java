@@ -3,6 +3,7 @@ package com.uji.python;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
+import com.androlua.R;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 

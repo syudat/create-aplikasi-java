@@ -1,0 +1,717 @@
+package com.androlua;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.InputType;
+import android.text.method.ScrollingMovementMethod;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import novan.terminal.Env;
+
+/**
+ * Terminal di dalam Create Aplikasi (Tahap 1-4).
+ *
+ * Tahap 2: keluaran dirender lewat parser VT (novan.terminal.Screen,
+ * grid 24x80) sehingga program interaktif (nano/vim/top/htop) tampil
+ * benar — bukan lagi teks mentah yang dibersihkan dari escape.
+ * Tahap 3: biner di folder aplikasi bisa dieksekusi lewat LD_PRELOAD
+ * libnovanexec.so (diatur Env.vars di dalam Pty.open); tombol
+ * "Uji Exec" menjalankan Env.selfTest untuk membuktikannya.
+ * Tahap 4: shell hidup di TerminalService (foreground) sehingga tetap
+ * berjalan saat layar ini ditutup; ada riwayat perintah (tombol
+ * Riwayat + panah atas/bawah), perintah favorit bernama (tombol
+ * Favorit: simpan dengan nama, ketuk untuk langsung menjalankan,
+ * hapus dengan konfirmasi, tersimpan permanen di SharedPreferences
+ * "terminal_favorit"), dan tombol khusus (Tab, panah, Esc) untuk
+ * program interaktif. "Bangun di Terminal" membuka layar ini dengan
+ * perintah bangun proyek yang sudah diisi.
+ *
+ * Aksesibilitas: keluaran adalah teks di TextView yang bisa dibaca
+ * Jieshuo; tombol "Bacakan layar" membacakan baris kursor + baris
+ * terakhir; semua tombol punya contentDescription.
+ */
+public class TerminalActivity extends Activity implements TerminalService.PendengarLayar {
+    /** Folder kerja shell (bila tidak diisi: /sdcard/Download/project). */
+    public static final String EXTRA_FOLDER = "folder";
+    /** Perintah yang diisi ke kolom input saat dibuka. */
+    public static final String EXTRA_PERINTAH = "perintah";
+    /** true = jalankan EXTRA_PERINTAH otomatis setelah shell siap. */
+    public static final String EXTRA_JALANKAN = "jalankan";
+
+    private TextView outputView;
+    private ScrollView outputScroll;
+    private EditText inputView;
+    private final Handler uiHandler = new Handler(Looper.getMainLooper());
+    private TerminalService.Sesi sesi;
+    private String cwd;
+    private List<String> riwayat = new ArrayList<>();
+    private int posRiwayat = -1;
+    private String teksDiketik = "";
+    private List<PerintahFavorit.Favorit> favorit = new ArrayList<>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setTitle("Terminal");
+
+        Intent it = getIntent();
+        String folderExtra = it != null ? it.getStringExtra(EXTRA_FOLDER) : null;
+        final String perintahExtra = it != null ? it.getStringExtra(EXTRA_PERINTAH) : null;
+        final boolean jalankanExtra = it != null && it.getBooleanExtra(EXTRA_JALANKAN, false);
+
+        cwd = folderExtra;
+        if (cwd == null || cwd.isEmpty()) {
+            cwd = "/sdcard/Download/project";
+            if (!new File(cwd).isDirectory()) {
+                try {
+                    cwd = Env.home.getPath();
+                } catch (Throwable t) {
+                    cwd = getFilesDir().getAbsolutePath();
+                }
+            }
+        }
+
+        LinearLayout root = new LinearLayout(this);
+        GayaStudio.latar(root);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        outputView = new TextView(this);
+        outputView.setTypeface(android.graphics.Typeface.MONOSPACE);
+        GayaStudio.terminal(outputView);
+        outputView.setTextSize(14);
+        outputView.setTextIsSelectable(true);
+        outputView.setMovementMethod(new ScrollingMovementMethod());
+        outputView.setContentDescription("Keluaran terminal");
+        outputScroll = new ScrollView(this);
+        outputScroll.addView(outputView);
+        LinearLayout.LayoutParams outputParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1.0f);
+        root.addView(outputScroll, outputParams);
+
+        LinearLayout inputRow = new LinearLayout(this);
+        inputRow.setOrientation(LinearLayout.HORIZONTAL);
+        inputRow.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        inputView = new EditText(this);
+
+        GayaStudio.terminalEdit(inputView);
+        inputView.setHint("Ketik perintah, mis. ls");
+        inputView.setInputType(InputType.TYPE_CLASS_TEXT);
+        inputView.setSingleLine(true);
+        inputView.setContentDescription("Kolom perintah terminal");
+        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+        inputRow.addView(inputView, inputParams);
+
+        Button runButton = new Button(this);
+        GayaStudio.tombol(runButton);
+        runButton.setText("Jalankan");
+        runButton.setContentDescription("Jalankan perintah");
+        runButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitCommand();
+            }
+        });
+        inputRow.addView(runButton);
+        root.addView(inputRow);
+
+        root.addView(buatBarisTombol(new String[][]{
+                {"Berhenti", "Berhenti, kirim Ctrl+C"},
+                {"Bersihkan", "Bersihkan layar terminal"},
+                {"Bacakan layar", "Bacakan layar terminal"},
+        }, new View.OnClickListener[]{
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendCtrlC();
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (sesi != null) sesi.bersihkanLayar();
+                        announce("Layar dibersihkan.");
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        readAloud();
+                    }
+                },
+        }));
+
+        root.addView(buatBarisTombol(new String[][]{
+                {"Riwayat", "Lihat riwayat perintah"},
+                {"Favorit", "Lihat perintah favorit"},
+                {"Uji Exec", "Uji exec biner folder aplikasi"},
+                {"Tutup shell", "Matikan shell dan tutup terminal"},
+        }, new View.OnClickListener[]{
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tampilkanRiwayat();
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tampilkanFavorit();
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ujiExec();
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tutupShell();
+                    }
+                },
+        }));
+
+        root.addView(buatBarisTombol(new String[][]{
+                {"Tab", "Kirim tombol Tab"},
+                {"Atas", "Kirim panah atas"},
+                {"Bawah", "Kirim panah bawah"},
+                {"Esc", "Kirim tombol Escape"},
+        }, new View.OnClickListener[]{
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        kirimTombol("\t");
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        kirimTombol("\u001B[A");
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        kirimTombol("\u001B[B");
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        kirimTombol("\u001B");
+                    }
+                },
+        }));
+
+        setContentView(root);
+
+        inputView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                submitCommand();
+                return true;
+            }
+        });
+        inputView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    riwayatNaik();
+                    return true;
+                }
+                if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    riwayatTurun();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        riwayat = RiwayatTerminal.muat(berkasRiwayat());
+        posRiwayat = riwayat.size();
+        muatFavorit();
+
+        sesi = TerminalService.ambilAtauBuat(this, cwd);
+        if (sesi.isiLayar().isEmpty()) {
+            StringBuilder sambutan = new StringBuilder();
+            sambutan.append("Terminal siap. Folder kerja: ").append(cwd).append("\r\n");
+            sambutan.append("Exec biner: ");
+            try {
+                sambutan.append(sesi.adaNovanExec(this)
+                        ? "aktif (libnovanexec.so ditemukan)."
+                        : "belum aktif (libnovanexec.so tidak ditemukan).");
+            } catch (Throwable t) {
+                sambutan.append("tidak diketahui.");
+            }
+            sambutan.append("\r\nKetik perintah lalu tekan Jalankan. Contoh: ls\r\n");
+            sambutan.append("Shell tetap berjalan walau layar ini ditutup. Tekan Tutup shell untuk mematikannya.\r\n");
+            sesi.layar.write(sambutan.toString());
+        }
+        segarkanLayar();
+
+        if (perintahExtra != null && !perintahExtra.isEmpty()) {
+            inputView.setText(perintahExtra);
+            if (jalankanExtra) {
+                cobaJalankan(perintahExtra, 0);
+            }
+        }
+        announce("Terminal dibuka. Ketik perintah lalu tekan Jalankan.");
+    }
+
+    private LinearLayout buatBarisTombol(String[][] label, View.OnClickListener[] aksi) {
+        LinearLayout baris = new LinearLayout(this);
+        baris.setOrientation(LinearLayout.HORIZONTAL);
+        baris.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        for (int i = 0; i < label.length; i++) {
+            Button b = new Button(this);
+            GayaStudio.tombol(b);
+            b.setText(label[i][0]);
+            b.setContentDescription(label[i][1]);
+            b.setOnClickListener(aksi[i]);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            baris.addView(b, p);
+        }
+        return baris;
+    }
+
+    private File berkasRiwayat() {
+        return new File(getFilesDir(), RiwayatTerminal.NAMA_RIWAYAT);
+    }
+
+    private File berkasFavorit() {
+        return new File(getFilesDir(), RiwayatTerminal.NAMA_FAVORIT);
+    }
+
+    /**
+     * Muat favorit dari SharedPreferences "terminal_favorit".
+     * Bila belum pernah disimpan: isi 3 favorit bawaan, lalu impor
+     * sekali favorit lama dari berkas terminal-favorit.txt (nama =
+     * perintahnya) supaya favorit lama tidak hilang.
+     */
+    private void muatFavorit() {
+        SharedPreferences pref = getSharedPreferences(
+                PerintahFavorit.PREFS, MODE_PRIVATE);
+        String tersimpan = pref.getString(PerintahFavorit.KUNCI_DAFTAR, null);
+        if (tersimpan == null) {
+            favorit = PerintahFavorit.bawaan();
+            if (!pref.getBoolean(PerintahFavorit.KUNCI_MIGRASI, false)) {
+                List<String> lama = RiwayatTerminal.muat(berkasFavorit());
+                for (String cmd : lama) {
+                    if (PerintahFavorit.cari(favorit, cmd) == null) {
+                        PerintahFavorit.tambah(favorit, cmd, cmd);
+                    }
+                }
+            }
+            simpanFavorit();
+        } else {
+            favorit = PerintahFavorit.decode(tersimpan);
+        }
+    }
+
+    private void simpanFavorit() {
+        getSharedPreferences(PerintahFavorit.PREFS, MODE_PRIVATE).edit()
+                .putString(PerintahFavorit.KUNCI_DAFTAR, PerintahFavorit.encode(favorit))
+                .putBoolean(PerintahFavorit.KUNCI_MIGRASI, true)
+                .apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sesi != null) {
+            sesi.setPendengar(this);
+            segarkanLayar();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (sesi != null) sesi.setPendengar(null);
+        super.onPause();
+    }
+
+    @Override
+    public void layarBerubah() {
+        segarkanLayar();
+    }
+
+    /** Tampilkan isi layar grid VT di TextView. */
+    private void segarkanLayar() {
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (sesi == null) return;
+                ArrayList<String> baris = sesi.isiLayar();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < baris.size(); i++) {
+                    if (i > 0) sb.append("\n");
+                    sb.append(baris.get(i));
+                }
+                outputView.setText(sb.toString());
+                outputScroll.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        outputScroll.fullScroll(View.FOCUS_DOWN);
+                    }
+                });
+            }
+        });
+    }
+
+    private void submitCommand() {
+        String cmd = inputView.getText().toString().trim();
+        if (cmd.isEmpty()) {
+            announce("Ketik perintah dulu.");
+            return;
+        }
+        TerminalService.Sesi s = sesi;
+        if (s == null || !s.masihJalan()) {
+            announce("Shell belum siap atau sudah selesai. Tutup lalu buka lagi Terminal.");
+            return;
+        }
+        s.kirim(cmd + "\n");
+        riwayat = RiwayatTerminal.tambah(berkasRiwayat(), cmd);
+        posRiwayat = riwayat.size();
+        teksDiketik = "";
+        inputView.setText("");
+    }
+
+    /** Jalankan perintah otomatis (dari "Bangun di Terminal"), tunggu shell siap. */
+    private void cobaJalankan(final String perintah, final int percobaan) {
+        uiHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TerminalService.Sesi s = sesi;
+                if (s != null && s.masihJalan()) {
+                    inputView.setText(perintah);
+                    submitCommand();
+                } else if (percobaan < 5) {
+                    cobaJalankan(perintah, percobaan + 1);
+                } else {
+                    announce("Shell belum siap. Perintah sudah diisi, tekan Jalankan.");
+                }
+            }
+        }, 600);
+    }
+
+    private void sendCtrlC() {
+        TerminalService.Sesi s = sesi;
+        if (s == null || !s.masihJalan()) {
+            announce("Tidak ada perintah yang berjalan.");
+            return;
+        }
+        s.kirim("\u0003");
+        announce("Ctrl+C dikirim, perintah dihentikan.");
+    }
+
+    private void kirimTombol(String urutan) {
+        TerminalService.Sesi s = sesi;
+        if (s == null || !s.masihJalan()) {
+            announce("Shell belum siap.");
+            return;
+        }
+        s.kirim(urutan);
+    }
+
+    private void readAloud() {
+        TerminalService.Sesi s = sesi;
+        if (s == null) {
+            announce("Belum ada hasil untuk dibacakan.");
+            return;
+        }
+        ArrayList<String> baris = s.isiLayar();
+        if (baris.isEmpty()) {
+            announce("Layar masih kosong.");
+            return;
+        }
+        int mulai = Math.max(0, baris.size() - 10);
+        StringBuilder sb = new StringBuilder();
+        for (int i = mulai; i < baris.size(); i++) {
+            if (sb.length() > 0) sb.append(". ");
+            sb.append(baris.get(i));
+        }
+        String teks = sb.toString().trim();
+        if (teks.isEmpty()) {
+            announce("Layar masih kosong.");
+            return;
+        }
+        if (teks.length() > 1500) teks = teks.substring(teks.length() - 1500);
+        announce(teks);
+    }
+
+    private void riwayatNaik() {
+        if (riwayat.isEmpty()) {
+            announce("Riwayat masih kosong.");
+            return;
+        }
+        if (posRiwayat == riwayat.size()) teksDiketik = inputView.getText().toString();
+        if (posRiwayat > 0) posRiwayat--;
+        inputView.setText(riwayat.get(posRiwayat));
+        inputView.setSelection(inputView.getText().length());
+    }
+
+    private void riwayatTurun() {
+        if (riwayat.isEmpty()) return;
+        if (posRiwayat < riwayat.size()) posRiwayat++;
+        if (posRiwayat >= riwayat.size()) {
+            posRiwayat = riwayat.size();
+            inputView.setText(teksDiketik);
+        } else {
+            inputView.setText(riwayat.get(posRiwayat));
+        }
+        inputView.setSelection(inputView.getText().length());
+    }
+
+    private void tampilkanRiwayat() {
+        if (riwayat.isEmpty()) {
+            announce("Riwayat masih kosong. Jalankan perintah dulu.");
+            Toast.makeText(this, "Riwayat masih kosong.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final String[] item = new String[riwayat.size()];
+        for (int i = 0; i < riwayat.size(); i++) {
+            item[i] = riwayat.get(riwayat.size() - 1 - i);
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Riwayat perintah")
+                .setItems(item, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        inputView.setText(item[which]);
+                        inputView.setSelection(inputView.getText().length());
+                        announce("Perintah dipilih: " + item[which]);
+                    }
+                })
+                .setNegativeButton("Tutup", null)
+                .show();
+    }
+
+    /**
+     * Dialog perintah favorit: ketuk satu favorit untuk LANGSUNG
+     * menjalankannya; "Tambah favorit baru…" untuk menyimpan;
+     * "Hapus favorit…" untuk menghapus (dengan konfirmasi).
+     */
+    private void tampilkanFavorit() {
+        final List<PerintahFavorit.Favorit> daftar = favorit;
+        final String[] item = new String[daftar.size() + 2];
+        for (int i = 0; i < daftar.size(); i++) {
+            item[i] = daftar.get(i).nama + " — " + daftar.get(i).perintah;
+        }
+        item[daftar.size()] = "Tambah favorit baru…";
+        item[daftar.size() + 1] = "Hapus favorit…";
+        new AlertDialog.Builder(this)
+                .setTitle("Perintah favorit")
+                .setItems(item, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        if (which == daftar.size()) {
+                            dialogTambahFavorit();
+                        } else if (which == daftar.size() + 1) {
+                            dialogHapusFavorit();
+                        } else {
+                            jalankanFavorit(daftar.get(which));
+                        }
+                    }
+                })
+                .setNegativeButton("Tutup", null)
+                .show();
+    }
+
+    /** Dialog tambah favorit: nama + perintah (perintah diisi dari kolom input). */
+    private void dialogTambahFavorit() {
+        LinearLayout lay = new LinearLayout(this);
+        lay.setOrientation(LinearLayout.VERTICAL);
+        final EditText namaView = new EditText(this);
+        namaView.setHint("Nama favorit, mis. Lihat berkas");
+        lay.addView(namaView);
+        final EditText cmdView = new EditText(this);
+        cmdView.setHint("Perintah, mis. ls -la");
+        cmdView.setText(inputView.getText().toString().trim());
+        lay.addView(cmdView);
+        new AlertDialog.Builder(this)
+                .setTitle("Tambah favorit baru")
+                .setView(lay)
+                .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        String nama = namaView.getText().toString();
+                        String cmd = cmdView.getText().toString();
+                        if (PerintahFavorit.bersihkan(nama).isEmpty()) {
+                            Toast.makeText(TerminalActivity.this,
+                                    "Nama favorit masih kosong.", Toast.LENGTH_SHORT).show();
+                            announce("Nama favorit masih kosong. Isi nama dulu.");
+                            return;
+                        }
+                        if (PerintahFavorit.bersihkan(cmd).isEmpty()) {
+                            Toast.makeText(TerminalActivity.this,
+                                    "Perintah masih kosong.", Toast.LENGTH_SHORT).show();
+                            announce("Perintah masih kosong. Isi perintah dulu.");
+                            return;
+                        }
+                        if (!PerintahFavorit.tambah(favorit, nama, cmd)) {
+                            Toast.makeText(TerminalActivity.this,
+                                    "Favorit sudah 50, hapus dulu yang tidak dipakai.",
+                                    Toast.LENGTH_SHORT).show();
+                            announce("Favorit sudah 50, hapus dulu yang tidak dipakai.");
+                            return;
+                        }
+                        simpanFavorit();
+                        announce("Favorit disimpan: " + PerintahFavorit.bersihkan(nama));
+                    }
+                })
+                .setNegativeButton("Batal", null)
+                .show();
+    }
+
+    /** Dialog hapus favorit: ketuk satu favorit, lalu konfirmasi. */
+    private void dialogHapusFavorit() {
+        if (favorit.isEmpty()) {
+            Toast.makeText(this, "Belum ada favorit untuk dihapus.", Toast.LENGTH_SHORT).show();
+            announce("Belum ada favorit untuk dihapus.");
+            return;
+        }
+        final String[] item = new String[favorit.size()];
+        for (int i = 0; i < favorit.size(); i++) {
+            item[i] = favorit.get(i).nama + " — " + favorit.get(i).perintah;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Hapus favorit")
+                .setItems(item, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        final PerintahFavorit.Favorit f = favorit.get(which);
+                        new AlertDialog.Builder(TerminalActivity.this)
+                                .setTitle("Hapus favorit?")
+                                .setMessage("Hapus favorit \"" + f.nama
+                                        + "\" (" + f.perintah + ")?")
+                                .setPositiveButton("Ya, hapus",
+                                        new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface d2, int which2) {
+                                        PerintahFavorit.hapus(favorit, f.nama);
+                                        simpanFavorit();
+                                        announce("Favorit dihapus: " + f.nama);
+                                    }
+                                })
+                                .setNegativeButton("Batal", null)
+                                .show();
+                    }
+                })
+                .setNegativeButton("Tutup", null)
+                .show();
+    }
+
+    /** Jalankan perintah favorit langsung di shell (tanpa mengisi kolom dulu). */
+    private void jalankanFavorit(PerintahFavorit.Favorit f) {
+        String cmd = f == null ? "" : PerintahFavorit.bersihkan(f.perintah);
+        if (cmd.isEmpty()) {
+            Toast.makeText(this, "Perintah favorit kosong, tidak bisa dijalankan.",
+                    Toast.LENGTH_SHORT).show();
+            announce("Perintah favorit kosong, tidak bisa dijalankan.");
+            return;
+        }
+        TerminalService.Sesi s = sesi;
+        if (s == null || !s.masihJalan()) {
+            Toast.makeText(this, "Shell belum siap atau sudah selesai.",
+                    Toast.LENGTH_SHORT).show();
+            announce("Shell belum siap atau sudah selesai. Tutup lalu buka lagi Terminal.");
+            return;
+        }
+        s.kirim(cmd + "\n");
+        riwayat = RiwayatTerminal.tambah(berkasRiwayat(), cmd);
+        posRiwayat = riwayat.size();
+        announce("Menjalankan favorit: " + f.nama);
+    }
+
+    /** Uji jalan tidaknya exec biner (Env.selfTest) di utas latar. */
+    private void ujiExec() {
+        announce("Menguji exec biner, tunggu sebentar.");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil;
+                try {
+                    hasil = sesi == null ? "Sesi belum siap." : sesi.ujiExec(TerminalActivity.this);
+                } catch (Throwable t) {
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(TerminalActivity.this,
+                                    "Uji exec gagal: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    return;
+                }
+                final String teksHasil = hasil;
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(TerminalActivity.this)
+                                .setTitle("Uji Exec")
+                                .setMessage(teksHasil)
+                                .setPositiveButton("Tutup", null)
+                                .show();
+                        announce(teksHasil);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void tutupShell() {
+        new AlertDialog.Builder(this)
+                .setTitle("Tutup shell?")
+                .setMessage("Shell akan dimatikan dan Terminal ditutup. "
+                        + "Proses yang sedang berjalan ikut berhenti.")
+                .setPositiveButton("Ya, tutup", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        TerminalService.tutupSesi(TerminalActivity.this);
+                        sesi = null;
+                        finish();
+                    }
+                })
+                .setNegativeButton("Batal", null)
+                .show();
+    }
+
+    private void announce(String text) {
+        try {
+            getWindow().getDecorView().announceForAccessibility(text);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Sengaja TIDAK mematikan shell di sini (KeepAlive, Tahap 4):
+        // sesi hidup di TerminalService sampai tombol "Tutup shell".
+        if (sesi != null) sesi.setPendengar(null);
+        super.onDestroy();
+    }
+}

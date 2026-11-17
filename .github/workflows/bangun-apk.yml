@@ -1,0 +1,50 @@
+name: Kompilasi APK Pembuat Aplikasi
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Kompilasi APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle 8.7
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Pasang platform, build-tools dan NDK
+        run: |
+          # SDK sudah terpasang di runner ubuntu-latest (ANDROID_HOME)
+          SDKM=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | head -n1)
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;25.0.8775105"
+
+      - name: Cari folder proyek
+        run: |
+          # Abaikan proyek buatan pengguna di proyek/ (bisa punya settings.gradle
+          # sendiri) supaya PROJECT_DIR selalu menunjuk ke IDE, bukan ke salah
+          # satu proyek pengguna; sort supaya hasilnya deterministik.
+          DIR=$(dirname "$(find . -name settings.gradle -not -path '*/node_modules/*' -not -path './proyek/*' | sort | head -n1)")
+          echo "Folder proyek: $DIR"
+          echo "PROJECT_DIR=$DIR" >> "$GITHUB_ENV"
+
+      - name: Kompilasi APK Android
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: gradle :app:assembleDebug --stacktrace --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: garuda-decode-apk
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error

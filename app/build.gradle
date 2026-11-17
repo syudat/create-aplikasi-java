@@ -1,0 +1,84 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdk 34
+    namespace 'com.androlua'
+    defaultConfig {
+        applicationId "com.pembuataplikasi"
+        minSdk 21
+        targetSdk 34
+        multiDexEnabled true
+        ndk {
+            ldLibs "log"
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+        }
+    }
+    packaging {
+        // .so dikompres & diekstrak saat pasang: aman untuk perangkat Android 15/16 (halaman memori 16 KB)
+        jniLibs { useLegacyPackaging true }
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            debuggable false
+            jniDebuggable false
+        }
+        debug {
+            minifyEnabled false
+            debuggable true
+            jniDebuggable false
+        }
+
+    }
+    productFlavors {
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_11
+    }
+    ndkVersion '25.0.8775105'
+}
+
+// Membungkus sumber proyek ini menjadi engine.zip (+ workflow) di assets,
+// supaya aplikasi bisa mengunggahnya ke repo GitHub pengguna untuk membangun APK.
+// Dilewati bila SKIP_ENGINE_ZIP diset (saat membangun APK proyek pengguna).
+def engineOut = "$buildDir/generated/engine"
+tasks.register('zipEngine', Zip) {
+    onlyIf { System.getenv('SKIP_ENGINE_ZIP') == null }
+    from(rootDir) {
+        exclude '**/build/**', '.gradle/**', '.git/**', '**/.cxx/**', '.idea/**',
+                'proyek/**', 'mesin/**', '*.apk', 'local.properties',
+                // Alat kompilasi khusus build DI PERANGKAT (ECJ/D8/android.jar) tidak dibutuhkan
+                // oleh GitHub Actions (Gradle di sana punya javac + compileSdk sendiri), dan
+                // ukurannya besar (puluhan MB) sehingga memperlambat/menggagalkan unggahan
+                // engine.zip dari HP. pack.py juga sudah membuang folder assets/alat/ sebelum
+                // build di CI, jadi mengecualikannya di sini tidak mengubah hasil build sama sekali.
+                'app/src/main/assets/alat/**'
+    }
+    archiveFileName = 'engine.zip'
+    destinationDirectory = file(engineOut)
+}
+tasks.register('copyWorkflow', Copy) {
+    onlyIf { System.getenv('SKIP_ENGINE_ZIP') == null }
+    from("$rootDir/.github/workflows/bangun-proyek.yml")
+    into(engineOut)
+}
+android.sourceSets.main.assets.srcDir(engineOut)
+tasks.matching { it.name.startsWith('merge') && it.name.endsWith('Assets') }.configureEach {
+    dependsOn 'zipEngine', 'copyWorkflow'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'androidx.annotation:annotation:1.4.0'
+    implementation 'androidx.core:core:1.6.0'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'cn.wanghaomiao:JsoupXpath:2.5.1'
+    implementation 'org.apache.commons:commons-compress:1.21'
+    implementation 'commons-io:commons-io:2.5'
+    // Catatan: minSdk 21+ sehingga multidex native (tanpa androidx.multidex) sudah cukup.
+}

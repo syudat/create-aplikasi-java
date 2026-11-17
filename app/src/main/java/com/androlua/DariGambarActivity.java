@@ -1,0 +1,272 @@
+package com.androlua;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
+/**
+ * Aplikasi dari Gambar (Tahap 3G).
+ *
+ * Pilih gambar dari galeri/berkas, IDE menganalisisnya (ukuran dan
+ * warna dominan) lalu membuat proyek aplikasi galeri sungguhan dari
+ * gambar itu: gambar disalin ke assets proyek, warna tema diambil dari
+ * warna dominan gambar, dan nama aplikasi diambil dari nama berkas
+ * gambar. Semua berjalan di dalam HP (tanpa internet).
+ */
+public class DariGambarActivity extends Activity {
+    private static final int MINTA_GAMBAR = 1;
+
+    private EditText namaEdit;
+    private ImageView pratinjauView;
+    private TextView hasilView;
+    private Button buatButton;
+    private File gambarPilihan;
+    private int warnaDominan = 0xFF2196F3;
+    private int lebarGambar;
+    private int tinggiGambar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setTitle("Aplikasi dari Gambar");
+
+        ScrollView sv = new ScrollView(this);
+        LinearLayout r = newRoot();
+        sv.addView(r);
+        setContentView(sv);
+
+        heading(r, "Aplikasi dari Gambar", 20);
+        label(r, "Pilih gambar dari galerimu. IDE akan menganalisis warna "
+                + "dominannya lalu membuat aplikasi galeri dari gambar itu: "
+                + "gambar ditampilkan memenuhi layar, warna tema diambil "
+                + "dari warna dominan gambar, dan nama aplikasi diambil dari "
+                + "nama berkas gambar.", false);
+
+        button(r, "Pilih Gambar dari Galeri", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pilihGambar();
+            }
+        });
+
+        pratinjauView = new ImageView(this);
+        pratinjauView.setContentDescription("Pratinjau gambar yang dipilih.");
+        r.addView(pratinjauView, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(240)));
+
+        label(r, "Nama aplikasi (bawaan dari nama berkas gambar):", false);
+        namaEdit = new EditText(this);
+        GayaStudio.edit(namaEdit);
+        namaEdit.setHint("Contoh: Pantai Sore");
+        r.addView(namaEdit, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        buatButton = button(r, "Buat Aplikasi Galeri", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buatAplikasi();
+            }
+        });
+        buatButton.setEnabled(false);
+
+        label(r, "Hasil analisis:", false);
+        hasilView = new TextView(this);
+        hasilView.setText("Belum ada gambar yang dipilih.");
+        hasilView.setTextSize(14);
+        hasilView.setTextIsSelectable(true);
+        hasilView.setPadding(dp(4), dp(4), dp(4), dp(4));
+        r.addView(hasilView);
+
+        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        announce("Aplikasi dari Gambar. Tekan Pilih Gambar dari Galeri dulu.");
+    }
+
+    private void pilihGambar() {
+        try {
+            Intent ambil = new Intent(Intent.ACTION_GET_CONTENT);
+            ambil.setType("image/*");
+            startActivityForResult(Intent.createChooser(ambil, "Pilih Gambar"),
+                    MINTA_GAMBAR);
+        } catch (Throwable t) {
+            Toast.makeText(this, "Tidak bisa membuka pemilih gambar: " + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != MINTA_GAMBAR || resultCode != RESULT_OK
+                || data == null || data.getData() == null) {
+            return;
+        }
+        Uri uri = data.getData();
+        try {
+            File salinan = new File(getCacheDir(), "gambar-pilihan.jpg");
+            InputStream masuk = getContentResolver().openInputStream(uri);
+            if (masuk == null) {
+                Toast.makeText(this, "Tidak bisa membaca gambar itu.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            FileOutputStream keluar = new FileOutputStream(salinan);
+            try {
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = masuk.read(buf)) > 0) keluar.write(buf, 0, n);
+            } finally {
+                keluar.close();
+                masuk.close();
+            }
+            gambarPilihan = salinan;
+            analisisGambar();
+        } catch (Throwable t) {
+            Toast.makeText(this, "Gagal memproses gambar: " + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void analisisGambar() {
+        Bitmap bmp = BitmapFactory.decodeFile(gambarPilihan.getPath());
+        if (bmp == null) {
+            Toast.makeText(this, "Berkas itu bukan gambar yang bisa dibaca.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        lebarGambar = bmp.getWidth();
+        tinggiGambar = bmp.getHeight();
+        int[] piksel = new int[lebarGambar * tinggiGambar];
+        bmp.getPixels(piksel, 0, lebarGambar, 0, 0, lebarGambar, tinggiGambar);
+        warnaDominan = AnalisisGambar.warnaDominan(piksel, 4);
+        String heksa = AnalisisGambar.heksa(warnaDominan);
+        String namaSaran = AplikasiDariGambar.namaDariBerkas(gambarPilihan.getName());
+        if (namaEdit.getText().toString().trim().length() == 0) {
+            namaEdit.setText(namaSaran);
+        }
+        pratinjauView.setImageBitmap(bmp);
+        pratinjauView.setContentDescription("Gambar yang dipilih, ukuran "
+                + lebarGambar + " kali " + tinggiGambar + " piksel, warna dominan "
+                + heksa + ".");
+        String lap = "Gambar dianalisis:\n- Ukuran: " + lebarGambar + " x " + tinggiGambar
+                + " piksel.\n- Warna dominan: " + heksa + ".\n- Nama aplikasi yang "
+                + "disarankan: " + namaSaran + ".\nTekan Buat Aplikasi Galeri.";
+        hasilView.setText(lap);
+        buatButton.setEnabled(true);
+        announce("Gambar dianalisis. Ukuran " + lebarGambar + " kali " + tinggiGambar
+                + " piksel, warna dominan " + heksa + ". Tekan Buat Aplikasi Galeri.");
+    }
+
+    private void buatAplikasi() {
+        if (gambarPilihan == null || !gambarPilihan.isFile()) {
+            Toast.makeText(this, "Pilih gambar dulu.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String nama = namaEdit.getText().toString().trim();
+        if (nama.length() == 0) nama = "Galeri Saya";
+        // Ronde 3: Lua dihapus — aplikasi dari gambar kini membuat proyek Java
+        // (keputusan pengguna 2026-11-17 00:22). AplikasiDariGambar menulis
+        // MainActivity.java, bukan main.lua lagi.
+        String dir = BuatProyekHelper.buat(this, nama, "java", "kosong");
+        if (dir == null) {
+            Toast.makeText(this, "Gagal membuat proyek galeri.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String galat = AplikasiDariGambar.buatGaleri(new File(dir), gambarPilihan,
+                nama, warnaDominan);
+        if (galat != null) {
+            Toast.makeText(this, galat, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String lap = "Aplikasi galeri \"" + nama + "\" berhasil dibuat dari gambar.\n"
+                + "- Ukuran gambar: " + lebarGambar + " x " + tinggiGambar + " piksel.\n"
+                + "- Warna tema: " + AnalisisGambar.heksa(warnaDominan) + ".\n"
+                + "Buka Kelola Project untuk menjalankan atau membangunnya.";
+        hasilView.setText(lap);
+        Toast.makeText(this, "Aplikasi galeri berhasil dibuat.", Toast.LENGTH_SHORT).show();
+        announce("Aplikasi galeri " + nama + " berhasil dibuat dari gambar.");
+    }
+
+    // ------------------------------------------------------------------ UI
+
+    private LinearLayout newRoot() {
+        LinearLayout r = new LinearLayout(this);
+        r.setOrientation(LinearLayout.VERTICAL);
+        GayaStudio.latar(r);
+        r.setPadding(dp(16), dp(12), dp(16), dp(12));
+        return r;
+    }
+
+    private TextView heading(LinearLayout parent, String text, float size) {
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        GayaStudio.judul(tv, size);
+        tv.setPadding(0, dp(8), 0, dp(4));
+        if (android.os.Build.VERSION.SDK_INT >= 28) {
+            try {
+                tv.setAccessibilityHeading(true);
+            } catch (Throwable ignored) {
+            }
+        }
+        parent.addView(tv);
+        return tv;
+    }
+
+    private TextView label(LinearLayout parent, String text, boolean small) {
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        if (small) {
+            GayaStudio.labelKecil(tv, 12);
+        } else {
+            GayaStudio.label(tv, 14);
+        }
+        tv.setPadding(0, dp(small ? 2 : 10), 0, dp(2));
+        parent.addView(tv);
+        return tv;
+    }
+
+    private Button button(LinearLayout parent, String text, View.OnClickListener onClick) {
+        Button b = new Button(this);
+        b.setText(text);
+        b.setOnClickListener(onClick);
+        GayaStudio.tombol(b);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.topMargin = dp(8);
+        parent.addView(b, lp);
+        return b;
+    }
+
+    private int dp(float v) {
+        return GayaStudio.dp(this, v);
+    }
+
+    private void announce(String text) {
+        try {
+            getWindow().getDecorView().announceForAccessibility(text);
+        } catch (Throwable ignored) {
+        }
+    }
+}

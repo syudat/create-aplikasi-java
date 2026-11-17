@@ -350,7 +350,7 @@ public class AboutActivity extends Activity {
     + "\n" +
     "Terminal Exec (Biner Aplikasi)"
     + "\n" +
-    "Untuk menjalankan biner di folder aplikasi (mis. aapt2, ECJ, D8) dari Terminal: ketik perintahnya seperti biasa. IDE memakai libnovanexec.so sehingga biner di folder aplikasi dapat dieksekusi di Android 10 ke atas. Tekan Uji Exec di Terminal untuk memeriksa apakah jalur exec biner berjalan di HP ini — hasilnya ditampilkan apa adanya. Apabila exec diblokir sistem, perintah sistem dan skrip shell tetap berjalan; jalankan biner melalui menu Bangun proyek sebagai gantinya."
+    "Untuk menjalankan biner di folder aplikasi (mis. aapt2, ECJ, D8) dari Terminal: ketik perintahnya seperti biasa. IDE memakai libkautsarexec.so sehingga biner di folder aplikasi dapat dieksekusi di Android 10 ke atas. Tekan Uji Exec di Terminal untuk memeriksa apakah jalur exec biner berjalan di HP ini — hasilnya ditampilkan apa adanya. Apabila exec diblokir sistem, perintah sistem dan skrip shell tetap berjalan; jalankan biner melalui menu Bangun proyek sebagai gantinya."
     + "\n" +
     ""
     + "\n" +

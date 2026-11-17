@@ -56,8 +56,8 @@ public class Env {
         }
         String preload;
         if (target >= 29 && nativeDir != null) {
-            java.io.File novanexec = new java.io.File(nativeDir, "libnovanexec.so");
-            preload = novanexec.exists() ? novanexec.getPath() : "";
+            java.io.File kautsarexec = new java.io.File(nativeDir, "libkautsarexec.so");
+            preload = kautsarexec.exists() ? kautsarexec.getPath() : "";
         } else {
             preload = "";
         }
@@ -70,6 +70,24 @@ public class Env {
         }
         if (!preload.isEmpty()) {
             r4.put("LD_PRELOAD", preload);
+        }
+        // Lingkungan Termux (aktif bila bootstrap sudah dipasang):
+        // TERMUX_PREFIX dipakai skrip tahap kedua bootstrap; APT_CONFIG
+        // mengarahkan apt ke konfigurasi di prefix sendiri (bukan jalur
+        // Termux asli yang dikodekan keras); DPKG_ADMINDIR/DPKG_DATADIR
+        // mengarahkan dpkg ke data di prefix sendiri.
+        r4.put("TERMUX_PREFIX", prefix.getPath());
+        java.io.File aptConf = new java.io.File(prefix, "etc/apt/apt.conf");
+        if (aptConf.isFile()) {
+            r4.put("APT_CONFIG", aptConf.getPath());
+        }
+        java.io.File dpkgAdmin = new java.io.File(prefix, "var/lib/dpkg");
+        if (dpkgAdmin.isDirectory()) {
+            r4.put("DPKG_ADMINDIR", dpkgAdmin.getPath());
+        }
+        java.io.File dpkgData = new java.io.File(prefix, "share/dpkg");
+        if (dpkgData.isDirectory()) {
+            r4.put("DPKG_DATADIR", dpkgData.getPath());
         }
     }
 
@@ -201,20 +219,38 @@ public class Env {
     // Metode-metode di atas package-private; TerminalActivity (paket
     // com.androlua) memakai tiga pembungkus ini.
 
-    /** true bila libnovanexec.so ada di folder pustaka aplikasi ini. */
-    public static boolean adaNovanExec(Context context) {
+    /** true bila libkautsarexec.so ada di folder pustaka aplikasi ini. */
+    public static boolean adaKautsarExec(Context context) {
         try {
             String dir = context.getApplicationInfo().nativeLibraryDir;
-            return new File(dir, "libnovanexec.so").exists();
+            return new File(dir, "libkautsarexec.so").exists();
         } catch (Throwable unused) {
             return false;
         }
     }
 
     /**
+     * Variabel lingkungan shell sebagai Map (untuk ProcessBuilder,
+     * mis. saat menjalankan tahap kedua bootstrap). Memanggil
+     * init() dulu supaya field statis terisi.
+     */
+    public static Map<String, String> petaVars(Context context) {
+        try {
+            init(context);
+        } catch (Throwable ignored) {
+        }
+        HashMap<String, String> map = new HashMap<>();
+        try {
+            apply(map);
+        } catch (Throwable ignored) {
+        }
+        return map;
+    }
+
+    /**
      * Bungkus perintah dengan LD_PRELOAD + linker agar biner di folder
      * aplikasi bisa dieksekusi di Android 10+ (Env.wrap, paket
-     * novan.terminal tidak terlihat dari com.androlua). wrap() memakai
+     * terminal tidak terlihat dari com.androlua). wrap() memakai
      * field statis dari Env.init(), jadi init dipanggil dulu di sini
      * supaya pembungkus ini aman dipakai sendiri.
      */

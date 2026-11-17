@@ -298,11 +298,13 @@ public class BangunJava {
 
     /**
      * Menggabungkan dex lama (dex kerangka mesin IDE, satu atau beberapa classes*.dex) dengan
-     * dex baru (hasil kompilasi proyek Java) memakai D8 (mode merge), supaya kelas Activity
-     * buatan pengguna bisa dimuat berdampingan dengan kelas mesin yang sudah ada di kerangka.
+     * dex baru (hasil kompilasi proyek Java/Kotlin/Python/Compose) memakai D8 (mode merge),
+     * supaya kelas Activity buatan pengguna bisa dimuat berdampingan dengan kelas mesin yang
+     * sudah ada di kerangka. dexBaru boleh berisi lebih dari satu berkas (proyek Compose:
+     * runtime Compose besar sehingga D8 memecahnya ke beberapa classes.dex).
      * Hasil: peta nama berkas -> isi (classes.dex, classes2.dex, dst. bila D8 memecahnya).
      */
-    static java.util.Map<String, byte[]> gabungDex(Context ctx, List<byte[]> dexLama, byte[] dexBaru) throws Exception {
+    static java.util.Map<String, byte[]> gabungDex(Context ctx, List<byte[]> dexLama, List<byte[]> dexBaru) throws Exception {
         File cache = new File(ctx.getCacheDir(), "bangun-java-gabung");
         hapus(cache);
         cache.mkdirs();
@@ -333,11 +335,18 @@ public class BangunJava {
             fo.close();
             dexPaths.add(f.toPath());
         }
-        File baruFile = new File(cache, "baru.dex");
-        FileOutputStream fo = new FileOutputStream(baruFile);
-        fo.write(dexBaru);
-        fo.close();
-        dexPaths.add(baruFile.toPath());
+        // dexBaru bisa lebih dari satu berkas (proyek Compose: runtime Compose
+        // besar sehingga D8 memecahnya ke classes.dex, classes2.dex, ...).
+        // Tulis semuanya sebagai program file D8; D8 menggabung lalu memecah
+        // lagi sesuai batas 64K metode.
+        int idxBaru = 0;
+        for (byte[] d : dexBaru) {
+            File baruFile = new File(cache, "baru" + (idxBaru++) + ".dex");
+            FileOutputStream fo = new FileOutputStream(baruFile);
+            fo.write(d);
+            fo.close();
+            dexPaths.add(baruFile.toPath());
+        }
 
         ClassLoader induk = BangunJava.class.getClassLoader();
         Object r8Cl = buatDexClassLoader(r8Jar, odex, induk);

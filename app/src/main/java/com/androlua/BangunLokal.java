@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -355,24 +356,38 @@ public class BangunLokal {
         File base = new File(work, "base.apk");
         jalankanAapt2(lib, aapt2, "compile", "--dir", res.getPath(), "-o", flat.getPath());
         kirim(PROGRESS, "Mengompilasi manifest (aapt2)...");
-        jalankanAapt2(lib, aapt2, "link", "-I", androidJar.getPath(),
-                "--manifest", new File(work, "AndroidManifest.xml").getPath(),
-                "--stable-ids", new File(work, "ids.txt").getPath(),
-                "--custom-package", "com.androlua",
-                "-R", flat.getPath(), "--auto-add-overlay", "--java", javaDir.getPath(), "-o", base.getPath());
+        // Argumen link dibangun dinamis: proyek Compose menambah -R + --extra-packages
+        // untuk tiap pustaka Compose (lihat siapkanResCompose), supaya aapt2
+        // membuat R.java pustaka (androidx.compose.ui.R, dst.) dengan ID yang
+        // cocok dengan resources.arsc.
+        List<String> linkArgs = new ArrayList<String>();
+        linkArgs.add("link");
+        linkArgs.add("-I"); linkArgs.add(androidJar.getPath());
+        linkArgs.add("--manifest"); linkArgs.add(new File(work, "AndroidManifest.xml").getPath());
+        linkArgs.add("--stable-ids"); linkArgs.add(new File(work, "ids.txt").getPath());
+        linkArgs.add("--custom-package"); linkArgs.add("com.androlua");
+        linkArgs.add("-R"); linkArgs.add(flat.getPath());
+        if ("compose".equals(info.tipe)) {
+            linkArgs.addAll(siapkanResCompose(lib, aapt2, work));
+        }
+        linkArgs.add("--auto-add-overlay");
+        linkArgs.add("--java"); linkArgs.add(javaDir.getPath());
+        linkArgs.add("-o"); linkArgs.add(base.getPath());
+        jalankanAapt2(lib, aapt2, linkArgs.toArray(new String[0]));
         byte[] manifest = bacaDariZip(base, "AndroidManifest.xml");
         if (manifest == null) throw new IOException("aapt2 tidak menghasilkan AndroidManifest.xml");
         if (!berisiInt(manifest, iconId))
             throw new IOException("Id resource pada manifest tidak cocok (aapt2 mengabaikan --stable-ids)");
 
-        // 2b) proyek Java/HTML/Situs Web/Kotlin/Python: kompilasi .java/.kt -> dex
+        // 2b) proyek Java/HTML/Situs Web/Kotlin/Python/Compose: kompilasi .java/.kt -> dex
         // (ECJ + D8 untuk Java; proyek HTML/Situs Web kini punya MainActivity.java
         // sendiri sehingga dikompilasi sama seperti Java; ECJ + kotlinc + D8
         // untuk Kotlin; ECJ + D8 + kelas Chaquopy untuk Python — lihat
-        // BangunPython), digabung ke kerangka pada rakit(). Proyek Compose
-        // belum bisa dikompilasi di perangkat (butuh pustaka Jetpack Compose
-        // + plugin compiler Compose; bangun lewat GitHub Actions / Termux).
-        byte[] dexProyek = null;
+        // BangunPython; ECJ + kotlinc + plugin Compose + D8 untuk Compose —
+        // lihat BangunCompose), digabung ke kerangka pada rakit().
+        // dexProyek berupa daftar (bisa lebih dari satu): proyek Compose
+        // menghasilkan beberapa classes.dex karena runtime Compose besar.
+        List<byte[]> dexProyek = null;
         // Runtime Chaquopy (chaquopy/ + lib/) untuk proyek Python; null untuk
         // tipe lain. Diisi BangunPython.siapkanRuntime() lalu dibaca rakit().
         File dirPython = null;
@@ -380,13 +395,13 @@ public class BangunLokal {
             kirim(PROGRESS, "Mengompilasi proyek Java...");
             List<File> rJava = new ArrayList<File>();
             kumpulBerakhiran(javaDir, ".java", rJava);
-            dexProyek = BangunJava.kompilasiUntukRakit(ctx, projectDir, rJava);
+            dexProyek = java.util.Collections.singletonList(BangunJava.kompilasiUntukRakit(ctx, projectDir, rJava));
             log.append(BangunJava.ringkasanKompilasiTerakhir());
         } else if ("kotlin".equals(info.tipe)) {
             kirim(PROGRESS, "Mengompilasi proyek Kotlin...");
             List<File> rJava = new ArrayList<File>();
             kumpulBerakhiran(javaDir, ".java", rJava);
-            dexProyek = BangunKotlin.kompilasiUntukRakit(ctx, projectDir, rJava);
+            dexProyek = java.util.Collections.singletonList(BangunKotlin.kompilasiUntukRakit(ctx, projectDir, rJava));
             log.append(BangunKotlin.ringkasanKompilasiTerakhir());
         } else if ("python".equals(info.tipe)) {
             kirim(PROGRESS, "Mengompilasi proyek Python (Chaquopy)...");
@@ -394,7 +409,7 @@ public class BangunLokal {
             kumpulBerakhiran(javaDir, ".java", rJava);
             File kerjaPython = new File(work, "python");
             kerjaPython.mkdirs();
-            dexProyek = BangunPython.kompilasiUntukRakit(ctx, projectDir, rJava, kerjaPython);
+            dexProyek = java.util.Collections.singletonList(BangunPython.kompilasiUntukRakit(ctx, projectDir, rJava, kerjaPython));
             log.append(BangunJava.ringkasanKompilasiTerakhir());
             kirim(PROGRESS, "Menyiapkan runtime Python (Chaquopy)...");
             dirPython = BangunPython.siapkanRuntime(ctx, projectDir, kerjaPython);
@@ -402,7 +417,11 @@ public class BangunLokal {
                     .append(" + Python ").append(BangunPython.PYTHON_VERSION)
                     .append(") disiapkan di ").append(dirPython.getPath()).append('\n');
         } else if ("compose".equals(info.tipe)) {
-            throw new IOException("Proyek Compose belum bisa dibangun di perangkat (butuh pustaka Jetpack Compose + plugin compiler Compose yang tidak tersedia di perangkat). Bangun lewat GitHub Actions (menu Bangun proyek > Bangun online) atau di Termux dengan Gradle (pack.py sudah menyuntikkan semua dependensi Compose ke proyek Gradle).");
+            kirim(PROGRESS, "Mengompilasi proyek Compose (kotlinc + plugin Compose)...");
+            List<File> rJava = new ArrayList<File>();
+            kumpulBerakhiran(javaDir, ".java", rJava);
+            dexProyek = BangunCompose.kompilasiUntukRakit(ctx, projectDir, rJava);
+            log.append(BangunCompose.ringkasanKompilasiTerakhir());
         }
 
         // 3) rakit APK dari kerangka
@@ -522,9 +541,89 @@ public class BangunLokal {
         return s;
     }
 
+    // ------------------------------------------------------------------ resource pustaka Compose
+
+    /**
+     * Menyiapkan resource pustaka Jetpack Compose untuk aapt2 link (hanya
+     * untuk proyek Compose). Mengembalikan argumen tambahan untuk perintah
+     * link: untuk tiap pustaka, "-R <flat>" dan "--extra-packages <paket>".
+     *
+     * Isi: aset alat/compose/compose-res.zip diekstrak ke work/compose-res/
+     * (satu folder per paket Android, mis. androidx.compose.ui/res/ ...),
+     * lalu tiap folder res/ dikompilasi aapt2 menjadi flat zip. Perintah
+     * link yang memakai flat-flat itu + --extra-packages membuat aapt2
+     * menghasilkan R.java untuk tiap paket pustaka (androidx.compose.ui.R,
+     * androidx.compose.material3.R, androidx.core.R, ...) dengan ID yang
+     * cocok dengan resources.arsc di base.apk. Tanpa ini, bytecode pustaka
+     * yang merujuk R$id / R$string pustaka akan gagal dimuat (kelas R
+     * tidak ada) atau membaca string yang salah.
+     *
+     * Catatan: aapt2 compile TIDAK bisa menerima banyak --dir sekaligus
+     * (hanya --dir terakhir yang dipakai), jadi tiap pustaka dikompilasi
+     * terpisah. Pustaka yang res-nya hanya values.xml kosong tetap ikut,
+     * supaya R.java-nya tetap dibuat bila bytecode merujuknya.
+     */
+    private List<String> siapkanResCompose(File lib, File aapt2, File work) throws Exception {
+        File dirRes = new File(work, "compose-res");
+        hapus(dirRes);
+        dirRes.mkdirs();
+        ekstrakZipAset("alat/compose/compose-res.zip", dirRes);
+        File[] paket = dirRes.listFiles();
+        if (paket == null || paket.length == 0)
+            throw new IOException("Resource pustaka Compose tidak ditemukan (alat/compose/compose-res.zip kosong). Coba pasang ulang aplikasi Create Aplikasi.");
+        java.util.Arrays.sort(paket);
+        List<String> tambahan = new ArrayList<String>();
+        int dihitung = 0;
+        for (File p : paket) {
+            if (!p.isDirectory()) continue;
+            File resDir = new File(p, "res");
+            if (!resDir.isDirectory()) continue;
+            File flat = new File(work, "compose-" + p.getName() + ".flat");
+            jalankanAapt2(lib, aapt2, "compile", "--dir", resDir.getPath(), "-o", flat.getPath());
+            tambahan.add("-R");
+            tambahan.add(flat.getPath());
+            tambahan.add("--extra-packages");
+            tambahan.add(p.getName());
+            dihitung++;
+        }
+        if (dihitung == 0)
+            throw new IOException("Resource pustaka Compose tidak ditemukan (alat/compose/compose-res.zip tidak berisi folder paket). Coba pasang ulang aplikasi Create Aplikasi.");
+        log.append("Resource pustaka Compose: ").append(dihitung).append(" paket digabung ke aapt2 link.\n");
+        return tambahan;
+    }
+
+    /** Mengekstrak satu aset zip (dari assets aplikasi) ke folder tujuan. */
+    private void ekstrakZipAset(String namaAset, File tujuan) throws IOException {
+        InputStream in = ctx.getAssets().open(namaAset);
+        try {
+            ZipInputStream zin = new ZipInputStream(in);
+            byte[] buf = new byte[65536];
+            ZipEntry e;
+            while ((e = zin.getNextEntry()) != null) {
+                File f = new File(tujuan, e.getName());
+                if (e.isDirectory()) {
+                    f.mkdirs();
+                } else {
+                    f.getParentFile().mkdirs();
+                    FileOutputStream o = new FileOutputStream(f);
+                    try {
+                        int n;
+                        while ((n = zin.read(buf)) != -1) o.write(buf, 0, n);
+                    } finally {
+                        o.close();
+                    }
+                }
+                zin.closeEntry();
+            }
+            zin.close();
+        } finally {
+            in.close();
+        }
+    }
+
     // ------------------------------------------------------------------ rakit zip
 
-    private void rakit(File template, byte[] manifest, File out, File libDir, byte[] dexTambahan, String aktivitasUtama, File baseApk, File dirPython) throws Exception {
+    private void rakit(File template, byte[] manifest, File out, File libDir, List<byte[]> dexTambahan, String aktivitasUtama, File baseApk, File dirPython) throws Exception {
         Set<String> buang = new HashSet<String>();
         Collections.addAll(buang, BUANG_ASET);
 

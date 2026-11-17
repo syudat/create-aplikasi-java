@@ -27,11 +27,11 @@ import novan.terminal.Env;
 /**
  * Terminal di dalam Create Aplikasi (Tahap 1-4).
  *
- * Tahap 2: keluaran dirender lewat parser VT (novan.terminal.Screen,
+ * Tahap 2: keluaran dirender lewat parser VT (kelas Screen,
  * grid 24x80) sehingga program interaktif (nano/vim/top/htop) tampil
  * benar — bukan lagi teks mentah yang dibersihkan dari escape.
  * Tahap 3: biner di folder aplikasi bisa dieksekusi lewat LD_PRELOAD
- * libnovanexec.so (diatur Env.vars di dalam Pty.open); tombol
+ * libkautsarexec.so (diatur Env.vars di dalam Pty.open); tombol
  * "Uji Exec" menjalankan Env.selfTest untuk membuktikannya.
  * Tahap 4: shell hidup di TerminalService (foreground) sehingga tetap
  * berjalan saat layar ini ditutup; ada riwayat perintah (tombol
@@ -41,6 +41,11 @@ import novan.terminal.Env;
  * "terminal_favorit"), dan tombol khusus (Tab, panah, Esc) untuk
  * program interaktif. "Bangun di Terminal" membuka layar ini dengan
  * perintah bangun proyek yang sudah diisi.
+ *
+ * Terminal Kautsar: bila lingkungan Termux belum dipasang, tombol
+ * "Pasang Termux" mengunduh bootstrap Termux resmi (per ABI) dan
+ * mengekstraknya ke prefix aplikasi, sehingga perintah "pkg update"
+ * dan "pkg install" benar-benar jalan (BootstrapTermux).
  *
  * Aksesibilitas: keluaran adalah teks di TextView yang bisa dibaca
  * Jieshuo; tombol "Bacakan layar" membacakan baris kursor + baris
@@ -64,6 +69,10 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
     private int posRiwayat = -1;
     private String teksDiketik = "";
     private List<PerintahFavorit.Favorit> favorit = new ArrayList<>();
+    /** Dialog kemajuan saat memasang lingkungan Termux. */
+    private AlertDialog dialogPasang;
+    /** true bila pemasangan Termux sedang berjalan. */
+    private boolean sedangPasang = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,6 +234,24 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
                 },
         }));
 
+        root.addView(buatBarisTombol(new String[][]{
+                {"Pasang Termux", "Pasang lingkungan Termux supaya pkg bisa dipakai"},
+                {"Buka di Termux", "Buka aplikasi Termux asli bila sudah terpasang"},
+        }, new View.OnClickListener[]{
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tawaranPasangTermux();
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bukaDiTermux();
+                    }
+                },
+        }));
+
         setContentView(root);
 
         inputView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -257,12 +284,20 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         sesi = TerminalService.ambilAtauBuat(this, cwd);
         if (sesi.isiLayar().isEmpty()) {
             StringBuilder sambutan = new StringBuilder();
-            sambutan.append("Terminal siap. Folder kerja: ").append(cwd).append("\r\n");
+            sambutan.append("Terminal Kautsar siap. Folder kerja: ").append(cwd).append("\r\n");
             sambutan.append("Exec biner: ");
             try {
-                sambutan.append(sesi.adaNovanExec(this)
-                        ? "aktif (libnovanexec.so ditemukan)."
-                        : "belum aktif (libnovanexec.so tidak ditemukan).");
+                sambutan.append(sesi.adaKautsarExec(this)
+                        ? "aktif (libkautsarexec.so ditemukan)."
+                        : "belum aktif (libkautsarexec.so tidak ditemukan).");
+            } catch (Throwable t) {
+                sambutan.append("tidak diketahui.");
+            }
+            sambutan.append("\r\nLingkungan Termux: ");
+            try {
+                sambutan.append(BootstrapTermux.sudahTerpasang(this)
+                        ? "terpasang (" + BootstrapTermux.VERSI_BOOTSTRAP + "). Ketik \"pkg update\" untuk mencoba."
+                        : "belum dipasang. Tekan \"Pasang Termux\" supaya perintah pkg bisa dipakai.");
             } catch (Throwable t) {
                 sambutan.append("tidak diketahui.");
             }
@@ -271,6 +306,10 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
             sesi.layar.write(sambutan.toString());
         }
         segarkanLayar();
+
+        if (!BootstrapTermux.sudahTerpasang(this)) {
+            tawaranPasangTermux();
+        }
 
         if (perintahExtra != null && !perintahExtra.isEmpty()) {
             inputView.setText(perintahExtra);
@@ -681,6 +720,125 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
                 });
             }
         }).start();
+    }
+
+    /**
+     * Tawarkan pemasangan lingkungan Termux bila belum terpasang.
+     * Unduhan on-demand (~33 MB, butuh internet) dari rilis resmi
+     * Termux; setelah terpasang, "pkg update" dan "pkg install"
+     * bisa jalan di Terminal ini.
+     */
+    private void tawaranPasangTermux() {
+        if (BootstrapTermux.sudahTerpasang(this)) {
+            announce("Lingkungan Termux sudah terpasang. Ketik pkg update untuk mencoba.");
+            Toast.makeText(this, "Lingkungan Termux sudah terpasang.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (sedangPasang) {
+            announce("Pemasangan Termux sedang berjalan, tunggu sebentar.");
+            return;
+        }
+        final String arch = BootstrapTermux.arsitekturBootstrap();
+        new AlertDialog.Builder(this)
+                .setTitle("Pasang lingkungan Termux?")
+                .setMessage("Terminal ini belum punya lingkungan Termux, jadi perintah "
+                        + "\"pkg update\" dan memasang paket belum bisa. Pasang sekarang? "
+                        + "Unduhan sekitar " + BootstrapTermux.ukuranUnduhan(arch)
+                        + " dari rilis resmi Termux (" + BootstrapTermux.VERSI_BOOTSTRAP + "), "
+                        + "butuh internet. Setelah terpasang, shell memakai bash dan perintah pkg bisa dipakai.")
+                .setPositiveButton("Pasang sekarang", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        mulaiPasangTermux();
+                    }
+                })
+                .setNegativeButton("Nanti saja", null)
+                .show();
+    }
+
+    /** Pasang lingkungan Termux di utas latar dengan dialog kemajuan. */
+    private void mulaiPasangTermux() {
+        if (sedangPasang) return;
+        sedangPasang = true;
+        announce("Memasang lingkungan Termux, tunggu sebentar.");
+        dialogPasang = new AlertDialog.Builder(this)
+                .setTitle("Memasang Termux")
+                .setMessage("Mengunduh lingkungan Termux…")
+                .setCancelable(false)
+                .create();
+        dialogPasang.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BootstrapTermux.pasang(TerminalActivity.this, new BootstrapTermux.Kemajuan() {
+                    @Override
+                    public void onKemajuan(final String tahap, final int persen) {
+                        uiHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dialogPasang != null) {
+                                    String teks = tahap;
+                                    if (persen >= 0) teks += " (" + persen + "%)";
+                                    dialogPasang.setMessage(teks);
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onSelesai(final boolean ok, final String pesan) {
+                        uiHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                sedangPasang = false;
+                                if (dialogPasang != null) {
+                                    dialogPasang.dismiss();
+                                    dialogPasang = null;
+                                }
+                                Toast.makeText(TerminalActivity.this, pesan, Toast.LENGTH_LONG).show();
+                                announce(pesan);
+                                if (ok) {
+                                    mulaiUlangShell();
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }).start();
+    }
+
+    /** Matikan shell lama (sh sistem) lalu buka shell baru (bash Termux). */
+    private void mulaiUlangShell() {
+        try {
+            TerminalService.tutupSesi(this);
+        } catch (Throwable ignored) {
+        }
+        sesi = null;
+        sesi = TerminalService.ambilAtauBuat(this, cwd);
+        if (sesi != null) {
+            sesi.layar.write("\r\nLingkungan Termux terpasang. Shell sekarang bash. "
+                    + "Ketik \"pkg update\" untuk mencoba.\r\n");
+        }
+        segarkanLayar();
+        announce("Shell dimulai ulang dengan bash Termux.");
+    }
+
+    /** Buka aplikasi Termux asli bila sudah terpasang di HP ini. */
+    private void bukaDiTermux() {
+        try {
+            Intent it = getPackageManager().getLaunchIntentForPackage("com.termux");
+            if (it != null) {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(it);
+                announce("Membuka Termux.");
+                return;
+            }
+        } catch (Throwable ignored) {
+        }
+        announce("Aplikasi Termux belum terpasang di HP ini. Tekan Pasang Termux untuk memakai pkg di Terminal ini.");
+        Toast.makeText(this, "Aplikasi Termux belum terpasang di HP ini.",
+                Toast.LENGTH_LONG).show();
     }
 
     private void tutupShell() {

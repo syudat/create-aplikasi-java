@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 /**
  * Parser VT (layar terminal) untuk Terminal Tahap 2 — port dari
- * Screen.java Termux Novan (murni Java, tanpa JNI).
+ * Screen.java hasil dekompilasi (murni Java, tanpa JNI).
  *
  * Memelihara grid layar (baris x kolom) + riwayat gulir (scrollback),
  * memahami escape sequence VT yang dipakai program interaktif
@@ -15,16 +15,16 @@ import java.util.Arrays;
  * sengaja TIDAK dirender — grid ini teks saja, karena yang dibaca
  * Jieshuo adalah teks; urutan SGR hanya dikonsumsi lalu diabaikan.
  *
- * Dua perbaikan dari kode Novan hasil dekompilasi (jadx):
- *  - CSI 'H' (CUP, posisi kursor) di Novan tidak melakukan apa-apa
+ * Dua perbaikan dari kode hasil dekompilasi (jadx):
+ *  - CSI 'H' (CUP, posisi kursor) di kode lama tidak melakukan apa-apa
  *    (case kosong); di sini 'H' berperilaku sama seperti 'f' (HVP).
- *  - CSI 'G' (CHA, kolom absolut) juga kosong di Novan; di sini
+ *  - CSI 'G' (CHA, kolom absolut) juga kosong di kode lama; di sini
  *    mengatur kolom kursor.
  *  - CSI 'm' (SGR, warna/atribut) ditangani eksplisit: dikonsumsi,
  *    diabaikan.
  *
  * API dibuat public supaya TerminalActivity (paket com.androlua)
- * bisa memakainya — di Novan semuanya package-private karena
+ * bisa memakainya — di kode lama semuanya package-private karena
  * MainActivity satu paket dengan Screen.
  */
 public class Screen {
@@ -288,7 +288,7 @@ public class Screen {
         }
         if (c == 'H' || c == 'f') {
             // CUP / HVP: posisi kursor (baris;kolom, 1-based).
-            // PERBAIKAN Tahap 2: di Novan 'H' tidak melakukan apa-apa.
+            // PERBAIKAN Tahap 2: di kode lama 'H' tidak melakukan apa-apa.
             int[] iArrNums3 = nums(str, 1);
             int i18 = this.rows - 1;
             int i19 = iArrNums3[0];
@@ -305,7 +305,7 @@ public class Screen {
         }
         if (c == 'G') {
             // CHA: kolom absolut (1-based).
-            // PERBAIKAN Tahap 2: di Novan 'G' tidak melakukan apa-apa.
+            // PERBAIKAN Tahap 2: di kode lama 'G' tidak melakukan apa-apa.
             this.cx = Math.max(0, Math.min(this.cols - 1, i4 - 1));
             return;
         }

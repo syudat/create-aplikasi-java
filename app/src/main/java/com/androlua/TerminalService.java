@@ -146,9 +146,9 @@ public class TerminalService extends Service {
             mintaSegarkan();
         }
 
-        /** true bila libnovanexec.so ada (jalur exec biner aktif). */
-        public boolean adaNovanExec(Context ctx) {
-            return Env.adaNovanExec(ctx);
+        /** true bila libkautsarexec.so ada (jalur exec biner aktif). */
+        public boolean adaKautsarExec(Context ctx) {
+            return Env.adaKautsarExec(ctx);
         }
 
         /** Uji jalan tidaknya exec biner (Env.selfTest). */

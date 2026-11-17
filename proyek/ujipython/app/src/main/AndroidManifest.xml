@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Manifest tampilan proyek ini. Manifest yang dipakai saat Bangun dibuat
+     otomatis dari template (alat/AndroidManifest.template.xml) dengan data
+     dari init.lua, jadi ubah nama / paket / versi di init.lua, bukan di sini. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.uji.python"
+    android:versionCode="1"
+    android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="33" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:label="Uji Python">
+        <activity android:name="com.uji.python.MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

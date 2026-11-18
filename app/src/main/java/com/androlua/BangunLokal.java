@@ -174,7 +174,7 @@ public class BangunLokal {
         i.appname = luaStr(s, "appname", projectDir.getName());
         i.appver = luaStr(s, "appver", "1.0");
         i.pkg = luaStr(s, "packagename", "");
-        i.tipe = luaStr(s, "tipe", "lua");
+        i.tipe = luaStr(s, "tipe", "java"); // Java IDE: tidak ada lagi proyek Lua; tanpa tipe eksplisit, anggap Java
         i.code = luaInt(s, "appcode", 1);
         i.min = luaInt(s, "appsdk", 21);
         i.target = luaInt(s, "targetsdk", 33);

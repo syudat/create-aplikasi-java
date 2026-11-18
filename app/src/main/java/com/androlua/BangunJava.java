@@ -251,6 +251,9 @@ public class BangunJava {
         kirim(PROGRESS, "Mengemas bytecode Java (D8)...");
         List<File> classFiles = new ArrayList<File>();
         kumpulBerakhiran(classesOut, ".class", classFiles);
+        // Kelas R hasil aapt2 jangan ikut di-dex (lihat buangKelasR): dex
+        // kerangka sudah berisi com.androlua.R yang sama.
+        buangKelasR(classFiles);
         if (classFiles.isEmpty()) throw new IOException("ECJ tidak menghasilkan berkas .class");
 
         File dexOut = new File(cache, "dexout");
@@ -304,6 +307,24 @@ public class BangunJava {
      * runtime Compose besar sehingga D8 memecahnya ke beberapa classes.dex).
      * Hasil: peta nama berkas -> isi (classes.dex, classes2.dex, dst. bila D8 memecahnya).
      */
+    /** Hapus kelas R (com.androlua.R dan R$*) dari daftar .class untuk D8.
+     *  R.java hasil aapt2 dikompilasi ECJ supaya nilai konstanta R.layout /
+     *  R.string bisa di-inline ke MainActivity, tapi kelas R-nya sendiri TIDAK
+     *  boleh ikut di-dex: dex kerangka (lama) sudah berisi com.androlua.R yang
+     *  sama, dan D8 gagal "Type com.androlua.R$drawable is defined multiple
+     *  times" saat menggabungkan dex bila keduanya ada. Aman dihapus karena
+     *  nilai R sudah di-inline ECJ ke kelas pemakai. Dipakai BangunJava,
+     *  BangunKotlin, dan BangunCompose (semuanya mengompilasi R.java). */
+    static void buangKelasR(List<File> classFiles) {
+        java.util.Iterator<File> it = classFiles.iterator();
+        while (it.hasNext()) {
+            String p = it.next().getAbsolutePath().replace(File.separatorChar, '/');
+            if (p.endsWith("/com/androlua/R.class") || p.contains("/com/androlua/R$")) {
+                it.remove();
+            }
+        }
+    }
+
     static java.util.Map<String, byte[]> gabungDex(Context ctx, List<byte[]> dexLama, List<byte[]> dexBaru) throws Exception {
         File cache = new File(ctx.getCacheDir(), "bangun-java-gabung");
         hapus(cache);

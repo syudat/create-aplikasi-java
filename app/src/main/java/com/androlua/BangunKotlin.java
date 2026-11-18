@@ -190,6 +190,9 @@ public class BangunKotlin {
         List<File> classFiles = new ArrayList<File>();
         kumpulBerakhiran(javaOut, ".class", classFiles);
         kumpulBerakhiran(kotlinOut, ".class", classFiles);
+        // Kelas R hasil aapt2 jangan ikut di-dex (lihat BangunJava.buangKelasR):
+        // dex kerangka sudah berisi com.androlua.R yang sama.
+        BangunJava.buangKelasR(classFiles);
         if (classFiles.isEmpty()) throw new IOException("kotlinc/ECJ tidak menghasilkan berkas .class");
 
         // Proyek Kotlin WAJIB punya kelas MainActivity (peluncur di manifest).

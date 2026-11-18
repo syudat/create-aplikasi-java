@@ -20,6 +20,19 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
+    // Tanda tangan debug TETAP (bukan kunci acak tiap build): keystore ini
+    // di-commit ke repo (app/debug.keystore, PKCS12, alias debugkey, kata
+    // sandi debug12345). Semua build GitHub Actions memakai kunci yang sama,
+    // jadi APK 5.6 bisa dipasang menimpa 5.5 tanpa hapus dulu. Ini kunci
+    // DEBUG saja, bukan kunci rilis Play Store.
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+            storePassword "debug12345"
+            keyAlias "debugkey"
+            keyPassword "debug12345"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -30,6 +43,7 @@ android {
             minifyEnabled false
             debuggable true
             jniDebuggable false
+            signingConfig signingConfigs.debug
         }
 
     }

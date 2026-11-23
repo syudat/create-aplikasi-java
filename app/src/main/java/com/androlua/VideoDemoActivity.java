@@ -67,7 +67,7 @@ public class VideoDemoActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Judul video:", false);
+        label(r, TeksUI.t("Judul video:"), false);
         eJudul = new EditText(this);
         GayaStudio.edit(eJudul);
         eJudul.setHint("Contoh: Demo Aplikasi Kalkulator Saya");
@@ -87,7 +87,7 @@ public class VideoDemoActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(13);
         tvHasil.setTextIsSelectable(true);
@@ -125,7 +125,7 @@ public class VideoDemoActivity extends Activity {
         String j = eJudul == null ? "" : eJudul.getText().toString().trim();
         if (j.isEmpty()) {
             File dir = dirTerpilih();
-            j = dir == null ? "Video Demo" : "Video Demo " + dir.getName();
+            j = dir == null ? TeksUI.t("Video Demo") : TeksUI.t("Video Demo ") + dir.getName();
         }
         return j;
     }
@@ -143,7 +143,7 @@ public class VideoDemoActivity extends Activity {
             return;
         }
         String ok = TeksUI.t("Skrip video demo disimpan ke video-demo.txt di proyek ")
-                + dir.getName() + " (total "
+                + dir.getName() + TeksUI.t(" (total ")
                 + VideoDemo.durasiTotal(VideoDemo.adeganBaku(dir.getName())) + TeksUI.t(" detik, 5 adegan).");
         toast(ok);
         announce(ok);
@@ -173,9 +173,9 @@ public class VideoDemoActivity extends Activity {
         toast(ok);
         announce(ok);
         if (tvHasil != null) {
-            tvHasil.setText("Slideshow video-demo.html dibuat dari gambar:\n"
+            tvHasil.setText(TeksUI.t("Slideshow video-demo.html dibuat dari gambar:") + "\n"
                     + gabungGambar(gambar)
-                    + "\n\nBuka berkas itu di browser HP — gambar berganti otomatis tiap 5 detik.");
+                    + "\n" + "\n" + TeksUI.t("Buka berkas itu di browser HP — gambar berganti otomatis tiap 5 detik."));
         }
     }
 

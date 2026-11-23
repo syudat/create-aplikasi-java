@@ -61,7 +61,7 @@ public class WidgetActivity extends Activity {
                 + TeksUI.t("HP (tanpa internet)."), false);
 
         // ---------------- Bagian widget ----------------
-        heading(r, "Pembuat Widget", 16);
+        heading(r, TeksUI.t("Pembuat Widget"), 16);
         label(r, TeksUI.t("Pilih proyek:"), false);
         muatDaftarProyek();
         spinnerProyek = new Spinner(this);
@@ -87,11 +87,11 @@ public class WidgetActivity extends Activity {
         });
 
         // ---------------- Bagian wallpaper ----------------
-        heading(r, "Pembuat Wallpaper", 16);
-        label(r, "Tulisan wallpaper:", false);
+        heading(r, TeksUI.t("Pembuat Wallpaper"), 16);
+        label(r, TeksUI.t("Tulisan wallpaper:"), false);
         teksWallpaperEdit = new EditText(this);
         GayaStudio.edit(teksWallpaperEdit);
-        teksWallpaperEdit.setHint("Contoh: Semangat!");
+        teksWallpaperEdit.setHint(TeksUI.t("Contoh: Semangat!"));
         r.addView(teksWallpaperEdit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -117,7 +117,7 @@ public class WidgetActivity extends Activity {
         });
 
         pratinjauView = new ImageView(this);
-        pratinjauView.setContentDescription("Pratinjau wallpaper.");
+        pratinjauView.setContentDescription(TeksUI.t("Pratinjau wallpaper."));
         r.addView(pratinjauView, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(240)));
 
@@ -135,7 +135,7 @@ public class WidgetActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         hasilView = new TextView(this);
         hasilView.setText("Belum ada hasil.");
         hasilView.setTextSize(14);
@@ -187,13 +187,13 @@ public class WidgetActivity extends Activity {
         String lap;
         if (galat != null) {
             lap = TeksUI.t("Widget dibuat, tapi manifest proyek belum diperbarui: ") + galat
-                    + "\nBerkas yang dibuat:\n- WidgetSaya.java\n- res/layout/widget_saya.xml"
+                    + "\n" + TeksUI.t("Berkas yang dibuat:") + "\n" + "- WidgetSaya.java" + "\n" + "- res/layout/widget_saya.xml"
                     + "\n- res/xml/widget_info.xml";
         } else {
             lap = TeksUI.t("Widget berhasil dibuat di proyek ") + nama + ":\n"
                     + "- WidgetSaya.java\n- res/layout/widget_saya.xml\n"
                     + "- res/xml/widget_info.xml\n"
-                    + "- receiver sudah ditambahkan ke AndroidManifest.xml proyek.\n"
+                    + TeksUI.t("- receiver sudah ditambahkan ke AndroidManifest.xml proyek.") + "\n"
                     + TeksUI.t("Bangun proyek, lalu pasang widget dari layar utama HP.");
         }
         hasilView.setText(lap);
@@ -219,13 +219,13 @@ public class WidgetActivity extends Activity {
         int tulis = parseWarna(hexTulisanEdit.getText().toString(), 0xFFFFFFFF);
         bitmapWallpaper = PembuatWallpaper.buatWallpaper(teks, latar, tulis, 1080, 1920);
         pratinjauView.setImageBitmap(bitmapWallpaper);
-        pratinjauView.setContentDescription("Pratinjau wallpaper: tulisan " + teks
-                + ", latar " + AnalisisGambar.heksa(latar) + ", tulisan "
+        pratinjauView.setContentDescription(TeksUI.t("Pratinjau wallpaper: tulisan ") + teks
+                + TeksUI.t(", latar ") + AnalisisGambar.heksa(latar) + TeksUI.t(", tulisan ")
                 + AnalisisGambar.heksa(tulis) + ".");
-        hasilView.setText("Pratinjau wallpaper dibuat: tulisan \"" + teks
-                + "\", latar " + AnalisisGambar.heksa(latar)
-                + ", tulisan " + AnalisisGambar.heksa(tulis) + ".");
-        announce("Pratinjau wallpaper dibuat.");
+        hasilView.setText(TeksUI.t("Pratinjau wallpaper dibuat: tulisan \"") + teks
+                + TeksUI.t("\", latar ") + AnalisisGambar.heksa(latar)
+                + TeksUI.t(", tulisan ") + AnalisisGambar.heksa(tulis) + ".");
+        announce(TeksUI.t("Pratinjau wallpaper dibuat."));
     }
 
     private void simpanWallpaper() {
@@ -237,7 +237,7 @@ public class WidgetActivity extends Activity {
                 + "/Download/wallpaper-" + System.currentTimeMillis() + ".png");
         if (PembuatWallpaper.simpanPng(bitmapWallpaper, target)) {
             hasilView.setText("Wallpaper disimpan di " + target.getPath() + ".");
-            Toast.makeText(this, "Wallpaper disimpan.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TeksUI.t("Wallpaper disimpan."), Toast.LENGTH_SHORT).show();
             announce(TeksUI.t("Wallpaper disimpan di folder Download."));
         } else {
             Toast.makeText(this, TeksUI.t("Gagal menyimpan wallpaper."), Toast.LENGTH_SHORT).show();
@@ -251,7 +251,7 @@ public class WidgetActivity extends Activity {
         }
         if (PembuatWallpaper.pasangWallpaper(this, bitmapWallpaper)) {
             hasilView.setText("Wallpaper sudah dipasang sebagai wallpaper HP.");
-            Toast.makeText(this, "Wallpaper dipasang.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TeksUI.t("Wallpaper dipasang."), Toast.LENGTH_SHORT).show();
             announce(TeksUI.t("Wallpaper sudah dipasang sebagai wallpaper HP."));
         } else {
             Toast.makeText(this, TeksUI.t("Gagal memasang wallpaper."), Toast.LENGTH_SHORT).show();

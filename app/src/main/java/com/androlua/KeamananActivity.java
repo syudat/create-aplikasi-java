@@ -71,7 +71,7 @@ public class KeamananActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         hasilView = new TextView(this);
         hasilView.setText("Belum ada hasil. Pilih proyek, lalu tekan Periksa Keamanan.");
         hasilView.setTextSize(14);
@@ -113,7 +113,7 @@ public class KeamananActivity extends Activity {
             if ("BAHAYA".equals(temuan.get(i).level)) bahaya++;
             else if ("PERINGATAN".equals(temuan.get(i).level)) peringatan++;
         }
-        String ringkas = TeksUI.t("Periksa keamanan selesai: ") + bahaya + " BAHAYA, "
+        String ringkas = TeksUI.t("Periksa keamanan selesai: ") + bahaya + TeksUI.t(" BAHAYA, ")
                 + peringatan + TeksUI.t(" PERINGATAN di proyek ") + nama + ".";
         Toast.makeText(this, ringkas, Toast.LENGTH_SHORT).show();
         announce(ringkas + TeksUI.t(" Laporan lengkap ada di layar."));

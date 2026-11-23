@@ -80,7 +80,7 @@ public class AiOfflineActivity extends Activity {
                     return;
                 }
                 teksTerakhir = AiOffline.perbaikiTeks(t);
-                tampilkan("Teks yang diperbaiki:\n" + teksTerakhir,
+                tampilkan(TeksUI.t("Teks yang diperbaiki:") + "\n" + teksTerakhir,
                         TeksUI.t("Teks diperbaiki."));
             }
         });
@@ -95,7 +95,7 @@ public class AiOfflineActivity extends Activity {
                     return;
                 }
                 teksTerakhir = AiOffline.ringkas(t, 3);
-                tampilkan("Ringkasan:\n" + teksTerakhir, TeksUI.t("Teks diringkas."));
+                tampilkan(TeksUI.t("Ringkasan:") + "\n" + teksTerakhir, TeksUI.t("Teks diringkas."));
             }
         });
 
@@ -115,7 +115,7 @@ public class AiOfflineActivity extends Activity {
                             + TeksUI.t("\"aplikasi catatan harian\"."), TeksUI.t("Tidak ada nama yang dibuat."));
                     return;
                 }
-                StringBuilder sb = new StringBuilder("Saran nama aplikasi:\n");
+                StringBuilder sb = new StringBuilder(TeksUI.t("Saran nama aplikasi:") + "\n");
                 for (int i = 0; i < nama.size(); i++) {
                     sb.append((i + 1)).append(". ").append(nama.get(i)).append("\n");
                 }
@@ -141,14 +141,14 @@ public class AiOfflineActivity extends Activity {
             }
         });
 
-        button(r, "Terapkan Teks yang Diperbaiki ke strings.xml", new View.OnClickListener() {
+        button(r, TeksUI.t("Terapkan Teks yang Diperbaiki ke strings.xml"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 terapkan();
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         hasilView = new TextView(this);
         hasilView.setText("Belum ada hasil. Tulis teks, lalu pilih salah satu alat di atas.");
         hasilView.setTextSize(14);
@@ -254,13 +254,13 @@ public class AiOfflineActivity extends Activity {
         File strings = new File(ROOT + "/" + nama
                 + "/app/src/main/res/values/strings.xml");
         if (!strings.isFile()) {
-            Toast.makeText(this, "strings.xml proyek tidak ditemukan.",
+            Toast.makeText(this, TeksUI.t("strings.xml proyek tidak ditemukan."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
         String isi = baca(strings);
         if (isi == null) {
-            Toast.makeText(this, "Tidak bisa membaca strings.xml.",
+            Toast.makeText(this, TeksUI.t("Tidak bisa membaca strings.xml."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -276,11 +276,11 @@ public class AiOfflineActivity extends Activity {
             baru = isi + "\n" + entri;
         }
         if (tulis(strings, baru) == null) {
-            tampilkan("Teks yang diperbaiki sudah ditulis ke strings.xml proyek "
+            tampilkan(TeksUI.t("Teks yang diperbaiki sudah ditulis ke strings.xml proyek ")
                     + nama + TeksUI.t(" sebagai entri teks_perbaikan."),
                     TeksUI.t("Teks diterapkan ke proyek ") + nama + ".");
         } else {
-            Toast.makeText(this, "Gagal menulis strings.xml.",
+            Toast.makeText(this, TeksUI.t("Gagal menulis strings.xml."),
                     Toast.LENGTH_SHORT).show();
         }
     }

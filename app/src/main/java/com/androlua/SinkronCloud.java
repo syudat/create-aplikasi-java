@@ -203,7 +203,7 @@ public class SinkronCloud {
                 return TeksUI.t("Gagal mengunggah ke GitHub (HTTP ") + r2.kode + ").";
             }
             if (r.kode == 401) return TeksUI.t("Token GitHub tidak valid (HTTP 401). Periksa token di Pengaturan GitHub.");
-            if (r.kode == 404) return "Repo \"" + repo + TeksUI.t("\" tidak ditemukan (HTTP 404). Buat dulu repo privat itu di GitHub.");
+            if (r.kode == 404) return TeksUI.t("Repo \"") + repo + TeksUI.t("\" tidak ditemukan (HTTP 404). Buat dulu repo privat itu di GitHub.");
             return TeksUI.t("Gagal mengunggah ke GitHub (HTTP ") + r.kode + ").";
         } catch (Exception e) {
             return TeksUI.t("Gagal mengunggah ke GitHub: ") + e.getMessage();

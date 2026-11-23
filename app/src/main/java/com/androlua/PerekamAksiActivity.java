@@ -86,7 +86,7 @@ public class PerekamAksiActivity extends Activity {
         r.addView(lv, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(280)));
 
-        button(r, "Putar Ulang", new View.OnClickListener() {
+        button(r, TeksUI.t("Putar Ulang"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 putarUlang();
@@ -103,7 +103,7 @@ public class PerekamAksiActivity extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 PerekamAksi.hapus(berkasRekaman());
                                 muatDaftar();
-                                toast("Rekaman dihapus.");
+                                toast(TeksUI.t("Rekaman dihapus."));
                             }
                         })
                         .setNegativeButton(TeksUI.t("Batal"), null)
@@ -118,7 +118,7 @@ public class PerekamAksiActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Perekam Aksi. " + daftar.size() + " aksi terekam, "
+        announce(TeksUI.t("Perekam Aksi. ") + daftar.size() + TeksUI.t(" aksi terekam, ")
                 + PerekamAksi.jumlahDapatDiputar(berkasRekaman()) + TeksUI.t(" bisa diputar ulang."));
     }
 
@@ -170,14 +170,14 @@ public class PerekamAksiActivity extends Activity {
             String hasil = jalankanSatu(a);
             if (hasil == null) {
                 // Navigasi: aksi dijalankan, pemutaran berhenti di sini.
-                log.append("• ").append(PerekamAksi.tampilkan(a)).append(" — dijalankan, pemutaran berhenti di sini.\n");
+                log.append("• ").append(PerekamAksi.tampilkan(a)).append(TeksUI.t(" — dijalankan, pemutaran berhenti di sini.") + "\n");
                 jalan++;
                 berhenti = true;
             } else if (hasil.isEmpty()) {
-                log.append("• ").append(PerekamAksi.tampilkan(a)).append(" — OK.\n");
+                log.append("• ").append(PerekamAksi.tampilkan(a)).append(TeksUI.t(" — OK.") + "\n");
                 jalan++;
             } else if (hasil.startsWith("LEWATI:")) {
-                log.append("• ").append(PerekamAksi.tampilkan(a)).append(" — dilewati (")
+                log.append("• ").append(PerekamAksi.tampilkan(a)).append(TeksUI.t(" — dilewati ("))
                         .append(hasil.substring(7)).append(").\n");
                 lewati++;
             } else {
@@ -185,14 +185,14 @@ public class PerekamAksiActivity extends Activity {
                         .append(hasil).append(".\n");
             }
         }
-        String ringkas = TeksUI.t("Putar ulang selesai: ") + jalan + " aksi dijalankan, "
-                + lewati + " dilewati."
+        String ringkas = TeksUI.t("Putar ulang selesai: ") + jalan + TeksUI.t(" aksi dijalankan, ")
+                + lewati + TeksUI.t(" dilewati.")
                 + (berhenti ? TeksUI.t(" Pemutaran berhenti di aksi navigasi.") : "");
         log.append("\n").append(ringkas);
         final String laporan = log.toString();
         final boolean berhentiAkhir = berhenti;
         new AlertDialog.Builder(this)
-                .setTitle("Hasil Putar Ulang")
+                .setTitle(TeksUI.t("Hasil Putar Ulang"))
                 .setMessage(laporan)
                 .setPositiveButton("OK", null)
                 .show();

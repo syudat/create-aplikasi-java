@@ -212,11 +212,11 @@ public class GitLokal {
             return new HasilCommit(null, TeksUI.t("Tidak ada perubahan untuk di-commit."));
         }
         String pesanBersih = pesan == null ? "" : pesan.trim();
-        if (pesanBersih.isEmpty()) pesanBersih = "Commit tanpa pesan";
+        if (pesanBersih.isEmpty()) pesanBersih = TeksUI.t("Commit tanpa pesan");
         // Satu baris saja (baris pertama) supaya metadata tetap satu baris.
         int nl = pesanBersih.indexOf('\n');
         if (nl >= 0) pesanBersih = pesanBersih.substring(0, nl).trim();
-        if (pesanBersih.isEmpty()) pesanBersih = "Commit tanpa pesan";
+        if (pesanBersih.isEmpty()) pesanBersih = TeksUI.t("Commit tanpa pesan");
         long waktu = System.currentTimeMillis();
         Map<String, String> kerja = new TreeMap<String, String>();
         for (String jalan : kumpulkanBerkas(dirProyek)) {
@@ -380,7 +380,7 @@ public class GitLokal {
             return TeksUI.t("Nama folder hasil clone kosong.");
         }
         if (new File(dirInduk, nama).exists()) {
-            return "Folder \"" + nama + TeksUI.t("\" sudah ada.");
+            return TeksUI.t("Folder \"") + nama + TeksUI.t("\" sudah ada.");
         }
         if (!adaGitSistem()) {
             return TeksUI.t("Biner git tidak tersedia di HP ini, jadi clone tidak bisa ")
@@ -442,7 +442,7 @@ public class GitLokal {
         if (!zip.isFile()) return TeksUI.t("Snapshot commit tidak ditemukan.");
         String galat = SinkronCloud.unggah(token, apiDasar, pemilik, repo,
                 JALUR_GIT_REPO + "/" + namaBerkasSnapshot(nama, idPendek),
-                zip, "Git: " + nama + " commit " + idPendek, http);
+                zip, TeksUI.t("Git: ") + nama + TeksUI.t(" commit ") + idPendek, http);
         if (galat != null) return galat;
         // Berkas HEAD supaya pull tahu commit terbaru.
         File head = null;
@@ -451,7 +451,7 @@ public class GitLokal {
             tulisTeks(head, id + "\n");
             galat = SinkronCloud.unggah(token, apiDasar, pemilik, repo,
                     JALUR_GIT_REPO + "/" + namaBerkasHead(nama),
-                    head, "Git: " + nama + " HEAD " + idPendek, http);
+                    head, TeksUI.t("Git: ") + nama + " HEAD " + idPendek, http);
         } catch (Exception e) {
             return TeksUI.t("Gagal mengunggah HEAD: ") + e.getMessage();
         } finally {
@@ -498,7 +498,7 @@ public class GitLokal {
                 JALUR_GIT_REPO + "/" + namaBerkasSnapshot(nama, idPendek),
                 zipTujuan, http);
         if (zip == null) {
-            return "Snapshot commit " + idPendek + TeksUI.t(" tidak ditemukan di GitHub.");
+            return TeksUI.t("Snapshot commit ") + idPendek + TeksUI.t(" tidak ditemukan di GitHub.");
         }
         String galat = ArsipProyek.ekstrakZip(zip, dirProyek);
         if (galat != null) return galat;

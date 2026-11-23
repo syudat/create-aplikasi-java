@@ -76,11 +76,11 @@ public class TerminalService extends Service {
             try {
                 dibuka = Pty.open(Env.shell(), dir.getAbsolutePath(), 24, 80);
             } catch (Throwable t) {
-                layar.write("\r\nGagal membuka shell: " + t.getMessage() + "\r\n");
+                layar.write("\r" + "\n" + TeksUI.t("Gagal membuka shell: ") + t.getMessage() + "\r\n");
                 return false;
             }
             if (dibuka == null) {
-                layar.write("\r\nGagal membuka shell. Pustaka ptyterm tidak termuat.\r\n");
+                layar.write("\r" + "\n" + TeksUI.t("Gagal membuka shell. Pustaka ptyterm tidak termuat.") + "\r" + "\n");
                 return false;
             }
             pty = dibuka;
@@ -100,7 +100,7 @@ public class TerminalService extends Service {
                     }
                     jalan = false;
                     try {
-                        layar.write("\r\n[Shell selesai]\r\n");
+                        layar.write("\r" + "\n" + TeksUI.t("[Shell selesai]") + "\r" + "\n");
                     } catch (Throwable ignored) {
                     }
                     mintaSegarkan();

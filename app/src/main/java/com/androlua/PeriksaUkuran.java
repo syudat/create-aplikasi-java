@@ -111,7 +111,7 @@ public class PeriksaUkuran {
             List<String> baris = new ArrayList<String>();
             for (Elemen e : h.elemen) {
                 if (e.lebarDp > lebar) {
-                    baris.add(e.berkas + ": elemen " + e.tag + " lebar tetap "
+                    baris.add(e.berkas + TeksUI.t(": elemen ") + e.tag + TeksUI.t(" lebar tetap ")
                             + angka(e.lebarDp) + TeksUI.t("dp melebihi lebar layar ") + lebar + "dp");
                 }
             }
@@ -130,11 +130,11 @@ public class PeriksaUkuran {
         for (int i = 0; i < LEBAR_LAYAR.length; i++) {
             int lebar = LEBAR_LAYAR[i];
             List<String> baris = h.masalah.get(lebar);
-            b.append('\n').append(TeksUI.t("Layar ")).append(lebar).append(" dp: ");
+            b.append('\n').append(TeksUI.t("Layar ")).append(lebar).append(TeksUI.t(" dp: "));
             if (baris == null || baris.isEmpty()) {
-                b.append("aman, tidak ada elemen yang meluber.\n");
+                b.append(TeksUI.t("aman, tidak ada elemen yang meluber.") + "\n");
             } else {
-                b.append(baris.size()).append(" elemen meluber:\n");
+                b.append(baris.size()).append(TeksUI.t(" elemen meluber:") + "\n");
                 for (String s : baris) b.append("- ").append(s).append('\n');
             }
         }

@@ -70,6 +70,10 @@ public class ProjectsActivity extends Activity {
             + "/Download/project";
     private static final String DIR_BACKUP = Environment.getExternalStorageDirectory().getPath()
             + "/Download/backup";
+    // Kunci Indonesia mentah; terjemahan diterapkan saat ditampilkan
+    // (menuProyekTampil / adaptor penyaring) dan pilihan dijalankan
+    // berdasarkan INDEKS, bukan membandingkan teks, supaya menu tetap
+    // berfungsi di semua bahasa.
     private static final String[] MENU_PROYEK = {
         "Buka", "Jalankan", "Bangun proyek", "Ekspor ZIP", "Ganti Ikon",
         "Cadangkan", "Bagikan", "Pratinjau ke HP Teman", "Uji Otomatis", "Hapus",
@@ -139,8 +143,12 @@ public class ProjectsActivity extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         filterSpinner = new Spinner(this);
+        String[] labelFilterTampil = new String[FILTER_LABELS.length];
+        for (int i = 0; i < FILTER_LABELS.length; i++) {
+            labelFilterTampil[i] = TeksUI.t(FILTER_LABELS[i]);
+        }
         ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, FILTER_LABELS);
+                android.R.layout.simple_spinner_item, labelFilterTampil);
         filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filterSpinner.setAdapter(filterAdapter);
         filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -157,7 +165,7 @@ public class ProjectsActivity extends Activity {
         root.addView(filterSpinner, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(root, "Folder project: Download/project", true);
+        label(root, TeksUI.t("Folder project: Download/project"), true);
         labelKosong = label(root, "", true);
         labelKosong.setVisibility(View.GONE);
 
@@ -216,13 +224,13 @@ public class ProjectsActivity extends Activity {
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Sama seperti onCreateOptionsMenu di main.lua (layar home/projects).
         menu.add(TeksUI.t("Buat proyek"));
-        menu.add("Muat ulang");
+        menu.add(TeksUI.t("Muat ulang"));
         menu.add(TeksUI.t("Pengaturan GitHub"));
         menu.add(TeksUI.t("Izin penyimpanan"));
         menu.add(TeksUI.t("Izin pasang APK"));
         menu.add(TeksUI.t("Tentang"));
         // Tahap 3C: Pulihkan cadangan + Impor proyek.
-        menu.add("Pulihkan cadangan");
+        menu.add(TeksUI.t("Pulihkan cadangan"));
         menu.add(TeksUI.t("Impor proyek"));
         return super.onCreateOptionsMenu(menu);
     }
@@ -237,7 +245,7 @@ public class ProjectsActivity extends Activity {
             } catch (Throwable e) {
                 toast("Gagal membuka Buat Proyek: " + e.getMessage());
             }
-        } else if ("Muat ulang".equals(t)) {
+        } else if (TeksUI.t("Muat ulang").equals(t)) {
             muatDaftar();
         } else if ((TeksUI.t("Pengaturan GitHub").equals(t) || TeksUI.t("Pengaturan GitHub").equals(t))) {
             GithubSettings.tampilkan(this, null);
@@ -251,7 +259,7 @@ public class ProjectsActivity extends Activity {
             } catch (Throwable e) {
                 toast("Gagal membuka Tentang Alat: " + e.getMessage());
             }
-        } else if ("Pulihkan cadangan".equals(t)) {
+        } else if (TeksUI.t("Pulihkan cadangan").equals(t)) {
             pulihkanCadangan();
         } else if ((TeksUI.t("Impor proyek").equals(t) || TeksUI.t("Impor proyek").equals(t))) {
             imporProyek();
@@ -433,7 +441,7 @@ public class ProjectsActivity extends Activity {
 
     private static String labelTipe(String tipe) {
         if ("html".equals(tipe)) return "HTML";
-        if ("situs".equals(tipe)) return "Situs Web";
+        if ("situs".equals(tipe)) return TeksUI.t("Situs Web");
         if ("java".equals(tipe)) return "Java";
         if ("kotlin".equals(tipe)) return "Kotlin";
         if ("compose".equals(tipe)) return "Compose";
@@ -472,27 +480,30 @@ public class ProjectsActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         if (which < 0 || which >= MENU_PROYEK.length) return;
                         String dir = ROOT + "/" + name;
-                        if ((TeksUI.t("Buka").equals(MENU_PROYEK[which]) || TeksUI.t("Buka").equals(MENU_PROYEK[which]))) {
+                        // Pilihan dijalankan berdasarkan indeks MENU_PROYEK
+                        // (urutan sama dengan menuProyekTampil), bukan teks,
+                        // supaya berfungsi di semua bahasa.
+                        if (which == 0) {
                             bukaEditor(name);
-                        } else if ("Jalankan".equals(MENU_PROYEK[which])) {
+                        } else if (which == 1) {
                             jalankanProyek(dir);
-                        } else if ((TeksUI.t("Bangun proyek").equals(MENU_PROYEK[which]) || TeksUI.t("Bangun proyek").equals(MENU_PROYEK[which]))) {
+                        } else if (which == 2) {
                             bangunProyek(dir);
-                        } else if ("Ekspor ZIP".equals(MENU_PROYEK[which])) {
+                        } else if (which == 3) {
                             eksporProyek(dir);
-                        } else if ("Ganti Ikon".equals(MENU_PROYEK[which])) {
+                        } else if (which == 4) {
                             gantiIkon(dir);
-                        } else if ("Cadangkan".equals(MENU_PROYEK[which])) {
+                        } else if (which == 5) {
                             cadangkanProyek(name);
-                        } else if ((TeksUI.t("Bagikan").equals(MENU_PROYEK[which]) || TeksUI.t("Bagikan").equals(MENU_PROYEK[which]))) {
+                        } else if (which == 6) {
                             bagikanProyek(name);
-                        } else if ((TeksUI.t("Pratinjau ke HP Teman").equals(MENU_PROYEK[which]) || TeksUI.t("Pratinjau ke HP Teman").equals(MENU_PROYEK[which]))) {
+                        } else if (which == 7) {
                             pratinjauProyek(name);
-                        } else if ("Uji Otomatis".equals(MENU_PROYEK[which])) {
+                        } else if (which == 8) {
                             ujiOtomatis(name);
-                        } else if ((TeksUI.t("Hapus").equals(MENU_PROYEK[which]) || TeksUI.t("Hapus").equals(MENU_PROYEK[which]))) {
+                        } else if (which == 9) {
                             konfirmasiHapus(name);
-                        } else if ((TeksUI.t("Bangun di Terminal").equals(MENU_PROYEK[which]) || TeksUI.t("Bangun di Terminal").equals(MENU_PROYEK[which]))) {
+                        } else if (which == 10) {
                             bangunDiTerminal(dir);
                         }
                     }
@@ -598,7 +609,7 @@ public class ProjectsActivity extends Activity {
                     + TeksUI.t("\" dari Create Aplikasi. Buka BACA-SAYA.txt di dalam ZIP ")
                     + TeksUI.t("untuk petunjuk membukanya."));
             it.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(it, "Pratinjau " + name + TeksUI.t(" ke HP teman")));
+            startActivity(Intent.createChooser(it, TeksUI.t("Pratinjau ") + name + TeksUI.t(" ke HP teman")));
             announce(TeksUI.t("Paket pratinjau proyek ") + name + TeksUI.t(" siap dibagikan ke HP teman."));
         } catch (Throwable t) {
             toast("Gagal membagikan pratinjau: " + t.getMessage());
@@ -620,7 +631,7 @@ public class ProjectsActivity extends Activity {
         ScrollView sv = new ScrollView(this);
         sv.addView(tv);
         new AlertDialog.Builder(this)
-                .setTitle("Uji Otomatis — " + name)
+                .setTitle(TeksUI.t("Uji Otomatis — ") + name)
                 .setView(sv)
                 .setPositiveButton(TeksUI.t("Tutup"), null)
                 .show();
@@ -677,9 +688,9 @@ public class ProjectsActivity extends Activity {
         }
         String[] nama = new String[cadangan.size()];
         for (int i = 0; i < cadangan.size(); i++) nama[i] = cadangan.get(i).getName();
-        announce("Pulihkan cadangan. " + cadangan.size() + " cadangan tersedia.");
+        announce(TeksUI.t("Pulihkan cadangan. ") + cadangan.size() + TeksUI.t(" cadangan tersedia."));
         new AlertDialog.Builder(this)
-                .setTitle("Pulihkan cadangan")
+                .setTitle(TeksUI.t("Pulihkan cadangan"))
                 .setItems(nama, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

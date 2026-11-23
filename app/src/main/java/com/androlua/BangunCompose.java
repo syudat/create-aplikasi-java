@@ -134,7 +134,7 @@ public class BangunCompose {
         if (!new File(ctx.getApplicationInfo().nativeLibraryDir).isDirectory())
             throw new IOException(TeksUI.t("Direktori native tidak ditemukan"));
 
-        kirim(PROGRESS, "Menyiapkan compiler Kotlin + plugin Compose (kotlinc 1.9.24 + Compose 1.5.14)...");
+        kirim(PROGRESS, TeksUI.t("Menyiapkan compiler Kotlin + plugin Compose (kotlinc 1.9.24 + Compose 1.5.14)..."));
         File cache = new File(ctx.getCacheDir(), "bangun-compose");
         hapus(cache);
         cache.mkdirs();
@@ -221,7 +221,7 @@ public class BangunCompose {
             ringkasan.append("  - ").append(p).append('\n');
         }
         if (!javaFiles.isEmpty())
-            ringkasan.append("Berkas .java proyek yang dikompilasi ECJ (").append(javaFiles.size() - jumlahR).append(" + ").append(jumlahR).append(" R.java hasil aapt2).\n");
+            ringkasan.append(TeksUI.t("Berkas .java proyek yang dikompilasi ECJ (")).append(javaFiles.size() - jumlahR).append(" + ").append(jumlahR).append(TeksUI.t(" R.java hasil aapt2).") + "\n");
         ringkasanTerakhir = ringkasan.toString();
 
         File javaOut = new File(cache, "classes-java");
@@ -232,18 +232,18 @@ public class BangunCompose {
         // 2) ECJ untuk .java (R.java aplikasi + R.java pustaka Compose) -> javaOut.
         // kotlinc butuh hasil ini di classpath-nya (R + kelas Java pengguna).
         if (!javaFiles.isEmpty()) {
-            kirim(PROGRESS, "Mengompilasi " + javaFiles.size() + " berkas .java (ECJ)...");
+            kirim(PROGRESS, TeksUI.t("Mengompilasi ") + javaFiles.size() + TeksUI.t(" berkas .java (ECJ)..."));
             kompilasiECJ(eclCl, javaFiles, androidJar, javaOut);
         }
 
         // 3) kotlinc + plugin Compose untuk .kt -> kotlinOut
-        kirim(PROGRESS, "Mengompilasi " + ktFiles.size() + TeksUI.t(" berkas .kt (kotlinc + plugin Compose)..."));
+        kirim(PROGRESS, TeksUI.t("Mengompilasi ") + ktFiles.size() + TeksUI.t(" berkas .kt (kotlinc + plugin Compose)..."));
         kompilasiKotlin(kotlinCl, ktFiles, androidJar, stdlibJar, runtimeJar, pluginDexJar, javaOut, kotlinHome, kotlinOut);
 
         // 4) dex hasil kompilasi (ECJ + kotlinc + runtime Compose + stdlib) dengan D8.
         // Runtime Compose besar (16 MB jar) sehingga D8 memecah ke beberapa
         // classes.dex — kembalikan SEMUANYA (bukan hanya classes.dex pertama).
-        kirim(PROGRESS, "Mengemas bytecode Compose (D8)...");
+        kirim(PROGRESS, TeksUI.t("Mengemas bytecode Compose (D8)..."));
         List<File> classFiles = new ArrayList<File>();
         kumpulBerakhiran(javaOut, ".class", classFiles);
         kumpulBerakhiran(kotlinOut, ".class", classFiles);
@@ -261,7 +261,7 @@ public class BangunCompose {
         }
         if (!adaMainActivity)
             throw new IOException(TeksUI.t("Proyek Compose tidak punya MainActivity: buat MainActivity.kt ")
-                    + "berisi kelas MainActivity turunan androidx.activity.ComponentActivity "
+                    + TeksUI.t("berisi kelas MainActivity turunan androidx.activity.ComponentActivity ")
                     + TeksUI.t("di paket proyek, lalu bangun lagi."));
 
         List<Path> programPaths = new ArrayList<Path>();
@@ -284,7 +284,7 @@ public class BangunCompose {
         if (hasil.isEmpty()) throw new IOException(TeksUI.t("D8 tidak menghasilkan classes.dex"));
         long total = 0;
         for (byte[] d : hasil) total += d.length;
-        kirim(PROGRESS, TeksUI.t("Kompilasi Compose selesai (") + hasil.size() + " dex, " + total + " bita).");
+        kirim(PROGRESS, TeksUI.t("Kompilasi Compose selesai (") + hasil.size() + TeksUI.t(" dex, ") + total + TeksUI.t(" bita)."));
         return hasil;
     }
 
@@ -329,7 +329,7 @@ public class BangunCompose {
         errPw.flush();
         log.append(outSw).append(errSw);
         if (!ok)
-            throw new IOException("Kompilasi Java (untuk Compose) gagal:\n" + errSw + (outSw.getBuffer().length() > 0 ? "\n" + outSw : ""));
+            throw new IOException(TeksUI.t("Kompilasi Java (untuk Compose) gagal:") + "\n" + errSw + (outSw.getBuffer().length() > 0 ? "\n" + outSw : ""));
     }
 
     // ------------------------------------------------------------------ kotlinc + plugin Compose (.kt)
@@ -404,7 +404,7 @@ public class BangunCompose {
         log.append(errText);
         if (!"OK".equals(String.valueOf(exitCode))) {
             String rincian = errText.trim().length() > 0 ? errText
-                    : "(compiler tidak menulis rincian; lihat log-build.txt)";
+                    : TeksUI.t("(compiler tidak menulis rincian; lihat log-build.txt)");
             throw new IOException(TeksUI.t("Kompilasi Compose gagal (") + exitCode + "):\n" + rincian);
         }
     }

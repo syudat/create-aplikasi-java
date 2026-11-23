@@ -240,18 +240,18 @@ public class AiOffline {
             String nilai = m.group(2).trim();
             String saran;
             if (nilai.startsWith("\"") || nilai.startsWith("'")) {
-                saran = "Ganti \"" + nama + "\" jadi \"teks" + kapital(nama)
-                        + "\" — namanya menjelaskan bahwa isinya teks.";
+                saran = TeksUI.t("Ganti \"") + nama + TeksUI.t("\" jadi \"teks") + kapital(nama)
+                        + TeksUI.t("\" — namanya menjelaskan bahwa isinya teks.");
             } else if (nilai.matches("^[0-9].*")) {
-                saran = "Ganti \"" + nama + "\" jadi \"angka" + kapital(nama)
-                        + "\" — namanya menjelaskan bahwa isinya angka.";
+                saran = TeksUI.t("Ganti \"") + nama + TeksUI.t("\" jadi \"angka") + kapital(nama)
+                        + TeksUI.t("\" — namanya menjelaskan bahwa isinya angka.");
             } else if ("true".equals(nilai) || "false".equals(nilai)) {
-                saran = "Ganti \"" + nama + "\" jadi \"apakah" + kapital(nama)
-                        + "\" — namanya menjelaskan bahwa isinya benar/salah.";
+                saran = TeksUI.t("Ganti \"") + nama + TeksUI.t("\" jadi \"apakah") + kapital(nama)
+                        + TeksUI.t("\" — namanya menjelaskan bahwa isinya benar/salah.");
             } else {
-                saran = "Ganti \"" + nama + "\" jadi nama yang menjelaskan isinya, "
-                        + "misalnya \"nilai" + kapital(nama) + "\" — nama 1-2 huruf "
-                        + "susah dibaca saat kode sudah panjang.";
+                saran = TeksUI.t("Ganti \"") + nama + TeksUI.t("\" jadi nama yang menjelaskan isinya, ")
+                        + TeksUI.t("misalnya \"nilai") + kapital(nama) + TeksUI.t("\" — nama 1-2 huruf ")
+                        + TeksUI.t("susah dibaca saat kode sudah panjang.");
             }
             hasil.add(new SaranNama("", i + 1, nama, saran));
         }

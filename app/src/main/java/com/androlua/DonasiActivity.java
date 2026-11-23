@@ -87,7 +87,7 @@ public class DonasiActivity extends Activity {
         tvRekening.setText(rekeningBri);
         GayaStudio.label(tvRekening, 16);
         tvRekening.setPadding(0, dp(2), 0, dp(4));
-        tvRekening.setContentDescription("Rekening BRI: " + rekeningBri);
+        tvRekening.setContentDescription(TeksUI.t("Rekening BRI: ") + rekeningBri);
         r.addView(tvRekening);
 
         button(r, TeksUI.t("Salin Rekening BRI"), new View.OnClickListener() {
@@ -200,9 +200,9 @@ public class DonasiActivity extends Activity {
         try {
             ClipboardManager cm = (ClipboardManager)
                     getSystemService(CLIPBOARD_SERVICE);
-            cm.setPrimaryClip(ClipData.newPlainText("Rekening BRI", rekeningBri));
-            toast("Rekening disalin");
-            announce("Rekening disalin: " + rekeningBri);
+            cm.setPrimaryClip(ClipData.newPlainText(TeksUI.t("Rekening BRI"), rekeningBri));
+            toast(TeksUI.t("Rekening disalin"));
+            announce(TeksUI.t("Rekening disalin: ") + rekeningBri);
         } catch (Throwable t) {
             toast("Gagal menyalin rekening: " + t.getMessage());
         }

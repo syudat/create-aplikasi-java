@@ -65,7 +65,7 @@ public class AnimasiActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Jenis animasi:", false);
+        label(r, TeksUI.t("Jenis animasi:"), false);
         spJenis = new Spinner(this);
         String[] jenis = new String[PembuatAnimasi.SEMUA.length];
         for (int i = 0; i < jenis.length; i++) {
@@ -78,7 +78,7 @@ public class AnimasiActivity extends Activity {
         r.addView(spJenis, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Durasi (milidetik, 100-10000):", false);
+        label(r, TeksUI.t("Durasi (milidetik, 100-10000):"), false);
         eDurasi = new EditText(this);
         GayaStudio.edit(eDurasi);
         eDurasi.setText("500");
@@ -86,7 +86,7 @@ public class AnimasiActivity extends Activity {
         r.addView(eDurasi, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Target animasi:", false);
+        label(r, TeksUI.t("Target animasi:"), false);
         spTarget = new Spinner(this);
         ArrayAdapter<String> adapterTarget = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, PembuatAnimasi.TARGET);
@@ -163,13 +163,13 @@ public class AnimasiActivity extends Activity {
         String berkas = ("html".equals(tipe) || "situs".equals(tipe))
                 ? "app/src/main/assets/animasi.css"
                 : "app/src/main/res/anim/" + PembuatAnimasi.namaBerkas(jenis.id);
-        String ok = "Animasi " + jenis.nama + TeksUI.t(" dibuat di ") + berkas
-                + " (durasi " + durasi + TeksUI.t(" ms). Contoh kode pemakaian ditampilkan di bawah.");
+        String ok = TeksUI.t("Animasi ") + jenis.nama + TeksUI.t(" dibuat di ") + berkas
+                + TeksUI.t(" (durasi ") + durasi + TeksUI.t(" ms). Contoh kode pemakaian ditampilkan di bawah.");
         toast(ok);
         announce(ok);
         new AlertDialog.Builder(this)
                 .setTitle(TeksUI.t("Animasi berhasil dibuat"))
-                .setMessage(ok + "\n\nContoh kode:\n" + contoh)
+                .setMessage(ok + "\n" + "\n" + TeksUI.t("Contoh kode:") + "\n" + contoh)
                 .setPositiveButton("OK", null)
                 .show();
     }

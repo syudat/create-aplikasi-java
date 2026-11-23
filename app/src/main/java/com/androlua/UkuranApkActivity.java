@@ -53,7 +53,7 @@ public class UkuranApkActivity extends Activity {
                 + TeksUI.t("terbesar, dan saran mengecilkan. Ini PERKIRAAN, bukan ")
                 + TeksUI.t("ukuran pasti — ukuran sungguhan bisa berbeda karena ")
                 + TeksUI.t("kompresi aapt2, penghapusan kode tak terpakai (R8), dan ")
-                + "resource hasil build.", false);
+                + TeksUI.t("resource hasil build."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -64,14 +64,14 @@ public class UkuranApkActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Hitung Perkiraan", new View.OnClickListener() {
+        button(r, TeksUI.t("Hitung Perkiraan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hitung();
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(13);
         tvHasil.setTextIsSelectable(true);

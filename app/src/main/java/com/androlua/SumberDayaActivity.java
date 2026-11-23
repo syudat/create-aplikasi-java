@@ -71,8 +71,8 @@ public class SumberDayaActivity extends Activity {
 
         heading(r, TeksUI.t("Tambah String Baru"), 16);
         eNamaString = field(r, TeksUI.t("Nama string (huruf kecil, contoh: judul_utama)"));
-        eNilaiString = field(r, "Isi string");
-        button(r, "Tambah String ke strings.xml", new View.OnClickListener() {
+        eNilaiString = field(r, TeksUI.t("Isi string"));
+        button(r, TeksUI.t("Tambah String ke strings.xml"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tambahString();
@@ -82,14 +82,14 @@ public class SumberDayaActivity extends Activity {
         heading(r, TeksUI.t("Tambah Warna Baru"), 16);
         eNamaWarna = field(r, TeksUI.t("Nama warna (huruf kecil, contoh: warna_aksen)"));
         eNilaiWarna = field(r, TeksUI.t("Nilai warna (contoh: #FF5722)"));
-        button(r, "Tambah Warna ke colors.xml", new View.OnClickListener() {
+        button(r, TeksUI.t("Tambah Warna ke colors.xml"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tambahWarna();
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(13);
         tvHasil.setTextIsSelectable(true);
@@ -133,8 +133,8 @@ public class SumberDayaActivity extends Activity {
         tvHasil.setText(SumberDaya.laporan(h, dir.getName()));
         if (h.galat == null) {
             announce(TeksUI.t("Selesai. ") + h.jumlahBerkas + TeksUI.t(" berkas sumber daya, ")
-                    + h.strings.size() + " string, " + h.colors.size() + TeksUI.t(" warna, ")
-                    + h.styles.size() + " gaya.");
+                    + h.strings.size() + TeksUI.t(" string, ") + h.colors.size() + TeksUI.t(" warna, ")
+                    + h.styles.size() + TeksUI.t(" gaya."));
         } else {
             announce(h.galat);
         }
@@ -149,12 +149,12 @@ public class SumberDayaActivity extends Activity {
                     eNamaString.getText().toString().trim(),
                     eNilaiString.getText().toString());
             if (!SumberDaya.tulis(berkas, baru)) {
-                toast("Gagal menulis strings.xml.");
-                announce("Gagal menulis strings.xml.");
+                toast(TeksUI.t("Gagal menulis strings.xml."));
+                announce(TeksUI.t("Gagal menulis strings.xml."));
                 return;
             }
             toast("String ditambahkan.");
-            announce("String " + eNamaString.getText().toString().trim() + " ditambahkan ke strings.xml.");
+            announce(TeksUI.t("String ") + eNamaString.getText().toString().trim() + TeksUI.t(" ditambahkan ke strings.xml."));
             eNamaString.setText("");
             eNilaiString.setText("");
             lihat();
@@ -173,12 +173,12 @@ public class SumberDayaActivity extends Activity {
                     eNamaWarna.getText().toString().trim(),
                     eNilaiWarna.getText().toString().trim());
             if (!SumberDaya.tulis(berkas, baru)) {
-                toast("Gagal menulis colors.xml.");
-                announce("Gagal menulis colors.xml.");
+                toast(TeksUI.t("Gagal menulis colors.xml."));
+                announce(TeksUI.t("Gagal menulis colors.xml."));
                 return;
             }
             toast("Warna ditambahkan.");
-            announce(TeksUI.t("Warna ") + eNamaWarna.getText().toString().trim() + " ditambahkan ke colors.xml.");
+            announce(TeksUI.t("Warna ") + eNamaWarna.getText().toString().trim() + TeksUI.t(" ditambahkan ke colors.xml."));
             eNamaWarna.setText("");
             eNilaiWarna.setText("");
             lihat();

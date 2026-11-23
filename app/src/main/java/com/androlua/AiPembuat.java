@@ -182,7 +182,7 @@ public class AiPembuat {
 
     private static String labelTipe(String tipe) {
         if ("html".equals(tipe)) return "HTML";
-        if ("situs".equals(tipe)) return "Situs Web";
+        if ("situs".equals(tipe)) return TeksUI.t("Situs Web");
         if ("java".equals(tipe)) return "Java";
         if ("kotlin".equals(tipe)) return "Kotlin";
         if ("compose".equals(tipe)) return "Compose";

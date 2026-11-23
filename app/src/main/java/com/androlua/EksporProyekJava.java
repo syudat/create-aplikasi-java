@@ -32,9 +32,9 @@ public class EksporProyekJava {
         }
         long ukuran = new File(hasil).length();
         new AlertDialog.Builder(activity).setTitle(TeksUI.t("Ekspor ZIP selesai"))
-                .setMessage("Proyek tersimpan sebagai:\n" + hasil
-                        + "\nUkuran: " + ukuran + " byte."
-                        + "\n\nFolder bin/ (APK hasil build) tidak ikut, supaya file tetap kecil dan mudah dibagikan.")
+                .setMessage(TeksUI.t("Proyek tersimpan sebagai:") + "\n" + hasil
+                        + "\n" + TeksUI.t("Ukuran: ") + ukuran + TeksUI.t(" byte.")
+                        + "\n" + "\n" + TeksUI.t("Folder bin/ (APK hasil build) tidak ikut, supaya file tetap kecil dan mudah dibagikan."))
                 .setPositiveButton(TeksUI.t("Bagikan"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

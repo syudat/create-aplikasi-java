@@ -155,7 +155,7 @@ public class SumberDaya {
         if (nilai == null) nilai = "";
         for (String[] s : daftarString(isiXml)) {
             if (s[0].equals(nama))
-                throw new IllegalArgumentException("String bernama \"" + nama + TeksUI.t("\" sudah ada."));
+                throw new IllegalArgumentException(TeksUI.t("String bernama \"") + nama + TeksUI.t("\" sudah ada."));
         }
         String baris = "    <string name=\"" + nama + "\">" + lolosXml(nilai) + "</string>\n";
         return sisipkan(isiXml, baris);
@@ -239,21 +239,21 @@ public class SumberDaya {
         }
         b.append(h.jumlahBerkas).append(TeksUI.t(" berkas, total ")).append(ukuran(h.totalBita)).append(".\n");
         for (Map.Entry<String, List<String>> e : h.perKategori.entrySet()) {
-            b.append("\nKategori ").append(e.getKey()).append(" (")
+            b.append("\n" + TeksUI.t("Kategori ")).append(e.getKey()).append(" (")
              .append(e.getValue().size()).append(TeksUI.t(" berkas, "))
              .append(ukuran(h.ukuranKategori.get(e.getKey()))).append("):\n");
             for (String s : e.getValue()) b.append("- ").append(s).append('\n');
         }
         if (!h.strings.isEmpty()) {
-            b.append("\nString di strings.xml (").append(h.strings.size()).append("):\n");
+            b.append("\n" + TeksUI.t("String di strings.xml (")).append(h.strings.size()).append("):\n");
             for (String[] s : h.strings) b.append("- ").append(s[0]).append(" = ").append(s[1]).append('\n');
         }
         if (!h.colors.isEmpty()) {
-            b.append("\nWarna di colors.xml (").append(h.colors.size()).append("):\n");
+            b.append("\n" + TeksUI.t("Warna di colors.xml (")).append(h.colors.size()).append("):\n");
             for (String[] s : h.colors) b.append("- ").append(s[0]).append(" = ").append(s[1]).append('\n');
         }
         if (!h.styles.isEmpty()) {
-            b.append("\nGaya di styles.xml (").append(h.styles.size()).append("):\n");
+            b.append("\n" + TeksUI.t("Gaya di styles.xml (")).append(h.styles.size()).append("):\n");
             for (String s : h.styles) b.append("- ").append(s).append('\n');
         }
         return b.toString();

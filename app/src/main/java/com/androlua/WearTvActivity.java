@@ -57,13 +57,13 @@ public class WearTvActivity extends Activity {
         label(r, TeksUI.t("Buat proyek baru untuk jam (Wear OS) atau TV (Android TV), ")
                 + TeksUI.t("atau terapkan penyesuaian ke proyek yang sudah ada. IDE ")
                 + TeksUI.t("mengubah manifest (uses-feature, LEANBACK_LAUNCHER, ")
-                + "banner) dan layout (Wear: layar kecil; TV: layar besar "
+                + TeksUI.t("banner) dan layout (Wear: layar kecil; TV: layar besar ")
                 + TeksUI.t("ramah D-pad). Ini template proyek — build + uji tetap ")
                 + TeksUI.t("butuh perangkat/emulator Wear OS atau Android TV. Banner ")
                 + TeksUI.t("TV (banner.png 320x180) tidak dibuat otomatis, harus ")
                 + "ditambahkan sendiri (mis. lewat Pembuat Ikon).", false);
 
-        label(r, "Target perangkat:", false);
+        label(r, TeksUI.t("Target perangkat:"), false);
         spTarget = new Spinner(this);
         String[] namaTarget = new String[ProyekWearTv.TARGET.length];
         for (int i = 0; i < namaTarget.length; i++) {
@@ -163,7 +163,7 @@ public class WearTvActivity extends Activity {
             toast(galat);
             return;
         }
-        String ok = "Penyesuaian " + ProyekWearTv.namaTarget(targetTerpilih())
+        String ok = TeksUI.t("Penyesuaian ") + ProyekWearTv.namaTarget(targetTerpilih())
                 + TeksUI.t(" diterapkan ke proyek ") + nama
                 + TeksUI.t(". Baca wear-tv.txt di proyek untuk langkah berikutnya.");
         toast(ok);

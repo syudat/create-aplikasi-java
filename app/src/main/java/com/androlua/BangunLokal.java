@@ -80,7 +80,7 @@ public class BangunLokal {
                     b.simpanLog(bin);
                     b.kirim(SUCCESS, apk);
                 } catch (Throwable e) {
-                    b.log.append("\nGAGAL: ").append(e).append('\n');
+                    b.log.append("\n" + TeksUI.t("GAGAL: ")).append(e).append('\n');
                     // Bila gagal saat/setelah kompilasi Java, tetap catat berkas
                     // apa saja yang sempat dikumpulkan ECJ (supaya terlihat di
                     // log-build.txt apakah berkas di samping MainActivity ikut).
@@ -96,7 +96,7 @@ public class BangunLokal {
                     String pesan = e.getMessage();
                     if (pesan == null && e.getCause() != null) pesan = e.getCause().toString();
                     if (pesan == null) pesan = e.toString();
-                    b.kirim(FAILED, TeksUI.t("Gagal: ") + pesan + "\n\nRincian: " + new File(bin, "log-build.txt"));
+                    b.kirim(FAILED, TeksUI.t("Gagal: ") + pesan + "\n" + "\n" + TeksUI.t("Rincian: ") + new File(bin, "log-build.txt"));
                 }
             }
         }, "BangunLokal").start();
@@ -321,7 +321,7 @@ public class BangunLokal {
         // Catatan perisai.dat-nya ditulis Penandatangan saat penandatanganan.
         if (antiTamperAktif()) {
             hasil = hasil.replace("com.androlua.Aplikasi", "com.androlua.PerisaiAplikasi");
-            log.append("Anti tamper aktif untuk proyek ini.\n");
+            log.append(TeksUI.t("Anti tamper aktif untuk proyek ini.") + "\n");
         }
         return hasil;
     }
@@ -345,7 +345,7 @@ public class BangunLokal {
     private String jalankan() throws Exception {
         kirim(PROGRESS, TeksUI.t("Membaca data proyek..."));
         Info info = bacaInit();
-        log.append(TeksUI.t("Aplikasi ")).append(info.appname).append(" | ").append(info.pkg).append(" | SDK ")
+        log.append(TeksUI.t("Aplikasi ")).append(info.appname).append(" | ").append(info.pkg).append(TeksUI.t(" | SDK "))
                 .append(info.min).append('/').append(info.target).append(TeksUI.t(" | izin ")).append(info.perms).append('\n');
 
         File lib = new File(ctx.getApplicationInfo().nativeLibraryDir);
@@ -359,7 +359,7 @@ public class BangunLokal {
         res.mkdirs();
 
         // 1) resource contoh + id yang sama dengan resources.arsc aplikasi ini
-        kirim(PROGRESS, "Menyiapkan manifest...");
+        kirim(PROGRESS, TeksUI.t("Menyiapkan manifest..."));
         tulis(new File(res, "drawable/icon.png"), android.util.Base64.decode(PNG_1X1, 0));
         tulis(new File(res, "values/styles.xml"),
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources><style name=\"app_theme\"/></resources>\n");
@@ -400,7 +400,7 @@ public class BangunLokal {
         File flat = new File(work, "compiled.zip");
         File base = new File(work, "base.apk");
         jalankanAapt2(lib, aapt2, "compile", "--dir", res.getPath(), "-o", flat.getPath());
-        kirim(PROGRESS, "Mengompilasi manifest (aapt2)...");
+        kirim(PROGRESS, TeksUI.t("Mengompilasi manifest (aapt2)..."));
         // Argumen link dibangun dinamis: proyek Compose menambah -R + --extra-packages
         // untuk tiap pustaka Compose (lihat siapkanResCompose), supaya aapt2
         // membuat R.java pustaka (androidx.compose.ui.R, dst.) dengan ID yang
@@ -420,7 +420,7 @@ public class BangunLokal {
         linkArgs.add("-o"); linkArgs.add(base.getPath());
         jalankanAapt2(lib, aapt2, linkArgs.toArray(new String[0]));
         byte[] manifest = bacaDariZip(base, "AndroidManifest.xml");
-        if (manifest == null) throw new IOException("aapt2 tidak menghasilkan AndroidManifest.xml");
+        if (manifest == null) throw new IOException(TeksUI.t("aapt2 tidak menghasilkan AndroidManifest.xml"));
         if (!berisiInt(manifest, iconId))
             throw new IOException(TeksUI.t("Id resource pada manifest tidak cocok (aapt2 mengabaikan --stable-ids)"));
 
@@ -456,10 +456,10 @@ public class BangunLokal {
             kerjaPython.mkdirs();
             dexProyek = java.util.Collections.singletonList(BangunPython.kompilasiUntukRakit(ctx, projectDir, rJava, kerjaPython));
             log.append(BangunJava.ringkasanKompilasiTerakhir());
-            kirim(PROGRESS, "Menyiapkan runtime Python (Chaquopy)...");
+            kirim(PROGRESS, TeksUI.t("Menyiapkan runtime Python (Chaquopy)..."));
             dirPython = BangunPython.siapkanRuntime(ctx, projectDir, kerjaPython);
-            log.append("Runtime Python (Chaquopy ").append(BangunPython.CHAQUOPY_VERSION)
-                    .append(" + Python ").append(BangunPython.PYTHON_VERSION)
+            log.append(TeksUI.t("Runtime Python (Chaquopy ")).append(BangunPython.CHAQUOPY_VERSION)
+                    .append(TeksUI.t(" + Python ")).append(BangunPython.PYTHON_VERSION)
                     .append(TeksUI.t(") disiapkan di ")).append(dirPython.getPath()).append('\n');
         } else if ("compose".equals(info.tipe)) {
             kirim(PROGRESS, TeksUI.t("Mengompilasi proyek Compose (kotlinc + plugin Compose)..."));
@@ -470,7 +470,7 @@ public class BangunLokal {
         }
 
         // 3) rakit APK dari kerangka
-        kirim(PROGRESS, "Merakit APK...");
+        kirim(PROGRESS, TeksUI.t("Merakit APK..."));
         File unsigned = new File(work, "unsigned.apk");
         rakit(new File(ctx.getPackageCodePath()), manifest, unsigned, lib, dexProyek, aktivitasUtama(info.tipe, info.pkg), base, dirPython);
 
@@ -538,8 +538,8 @@ public class BangunLokal {
                 return TeksUI.t("Gambar rusak atau bukan PNG yang valid") + di
                         + TeksUI.t(". Simpan ulang gambar itu sebagai PNG yang benar (atau hapus bila tidak dipakai).");
             if (kecil.contains("duplicate resource"))
-                return "Resource duplikat" + di
-                        + ". Ada dua resource dengan nama yang sama; hapus salah satunya.";
+                return TeksUI.t("Resource duplikat") + di
+                        + TeksUI.t(". Ada dua resource dengan nama yang sama; hapus salah satunya.");
             if (kecil.contains("not found") || kecil.contains("no resource found"))
                 return TeksUI.t("Resource tidak ditemukan") + di
                         + ". Periksa rujukan @drawable/@layout/@string/@color di berkas itu - nama resource yang dirujuk harus ada di folder res.";
@@ -577,7 +577,7 @@ public class BangunLokal {
     /** Ambil nomor baris dari "res/.../nama.xml:12: error: ..." (bila ada). */
     private static String ambilNomorBaris(String baris) {
         Matcher m = Pattern.compile("res/[^ :]+:(\\d+):").matcher(baris);
-        if (m.find()) return " (baris " + m.group(1) + ")";
+        if (m.find()) return TeksUI.t(" (baris ") + m.group(1) + ")";
         return "";
     }
 
@@ -615,7 +615,7 @@ public class BangunLokal {
         ekstrakZipAset("alat/compose/compose-res.zip", dirRes);
         File[] paket = dirRes.listFiles();
         if (paket == null || paket.length == 0)
-            throw new IOException("Resource pustaka Compose tidak ditemukan (alat/compose/compose-res.zip kosong). Coba pasang ulang aplikasi Create Aplikasi.");
+            throw new IOException(TeksUI.t("Resource pustaka Compose tidak ditemukan (alat/compose/compose-res.zip kosong). Coba pasang ulang aplikasi Create Aplikasi."));
         java.util.Arrays.sort(paket);
         List<String> tambahan = new ArrayList<String>();
         int dihitung = 0;
@@ -632,8 +632,8 @@ public class BangunLokal {
             dihitung++;
         }
         if (dihitung == 0)
-            throw new IOException("Resource pustaka Compose tidak ditemukan (alat/compose/compose-res.zip tidak berisi folder paket). Coba pasang ulang aplikasi Create Aplikasi.");
-        log.append("Resource pustaka Compose: ").append(dihitung).append(" paket digabung ke aapt2 link.\n");
+            throw new IOException(TeksUI.t("Resource pustaka Compose tidak ditemukan (alat/compose/compose-res.zip tidak berisi folder paket). Coba pasang ulang aplikasi Create Aplikasi."));
+        log.append(TeksUI.t("Resource pustaka Compose: ")).append(dihitung).append(TeksUI.t(" paket digabung ke aapt2 link.") + "\n");
         return tambahan;
     }
 
@@ -779,11 +779,11 @@ public class BangunLokal {
                     if (!ditulis.add(name)) continue;
                     tambah(zos, cnt, name, baca(new File(dirLibPy, rel)), false);
                 }
-                log.append("Runtime Python disalin ke APK: ")
+                log.append(TeksUI.t("Runtime Python disalin ke APK: "))
                         .append(BangunPython.daftarBerkas(dirChaquopy, "").size())
-                        .append(" aset chaquopy + ")
+                        .append(TeksUI.t(" aset chaquopy + "))
                         .append(BangunPython.daftarBerkas(dirLibPy, "").size())
-                        .append(" pustaka native\n");
+                        .append(TeksUI.t(" pustaka native") + "\n");
             }
 
             // Ronde 3: kunci lama IDE (kuncilua.bin) tidak ada lagi — aset Lua
@@ -852,7 +852,7 @@ public class BangunLokal {
             zos.close();
             zf.close();
         }
-        log.append("Rakit selesai: ").append(ditulis.size()).append(" entri, ").append(out.length()).append(" bita\n");
+        log.append(TeksUI.t("Rakit selesai: ")).append(ditulis.size()).append(TeksUI.t(" entri, ")).append(out.length()).append(TeksUI.t(" bita") + "\n");
     }
 
     private void kumpul(File dir, String prefix, Map<String, File> out) {

@@ -56,7 +56,7 @@ public class BackendActivity extends Activity {
         r.addView(eNama, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Jenis backend:", false);
+        label(r, TeksUI.t("Jenis backend:"), false);
         spJenis = new Spinner(this);
         String[] jenis = new String[BackendOtomatis.SEMUA.length];
         for (int i = 0; i < jenis.length; i++) {
@@ -104,7 +104,7 @@ public class BackendActivity extends Activity {
             toast(galat);
             return;
         }
-        String ok = "Backend " + jenis.nama + TeksUI.t(" berhasil dibuat: ") + nama
+        String ok = TeksUI.t("Backend ") + jenis.nama + TeksUI.t(" berhasil dibuat: ") + nama
                 + TeksUI.t(". Buka di Kelola Project untuk menjalankannya.");
         toast(ok);
         announce(ok);

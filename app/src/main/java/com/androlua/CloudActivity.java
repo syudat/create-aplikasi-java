@@ -59,7 +59,7 @@ public class CloudActivity extends Activity {
         label(r, TeksUI.t("Cadangkan proyekmu ke cloud supaya aman bila HP hilang atau rusak. ")
                 + TeksUI.t("Ada dua jalan: Cloud Lokal (cadangan tersimpan di folder Download/cloud di HP ini) ")
                 + TeksUI.t("dan GitHub (cadangan diunggah ke repo privatmu di GitHub). ")
-                + "Ini cadangan manual — tekan tombol untuk mencadangkan; belum ada sinkronisasi otomatis dua arah.",
+                + TeksUI.t("Ini cadangan manual — tekan tombol untuk mencadangkan; belum ada sinkronisasi otomatis dua arah."),
                 false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
@@ -198,7 +198,7 @@ public class CloudActivity extends Activity {
             });
             return;
         }
-        toast("Mengunggah " + nama + TeksUI.t(" ke GitHub..."));
+        toast(TeksUI.t("Mengunggah ") + nama + TeksUI.t(" ke GitHub..."));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -295,7 +295,7 @@ public class CloudActivity extends Activity {
     }
 
     private void unduhSatuGithub(final String token, final String pemilik, final String namaBerkas) {
-        toast("Mengunduh " + namaBerkas + TeksUI.t(" dari GitHub..."));
+        toast(TeksUI.t("Mengunduh ") + namaBerkas + TeksUI.t(" dari GitHub..."));
         new Thread(new Runnable() {
             @Override
             public void run() {

@@ -77,7 +77,7 @@ public class BelajarActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Belajar. " + Belajar.SEMUA.length + " pelajaran tersedia, "
+        announce(TeksUI.t("Belajar. ") + Belajar.SEMUA.length + TeksUI.t(" pelajaran tersedia, ")
                 + Belajar.jumlahSelesai(berkasProgres()) + TeksUI.t(" sudah selesai."));
     }
 
@@ -103,8 +103,8 @@ public class BelajarActivity extends Activity {
 
     private void tampilkanPelajaran(final Belajar.Pelajaran p) {
         boolean sudah = Belajar.bacaProgres(berkasProgres()).contains(p.id);
-        String isi = p.penjelasan + "\n\nTugas: " + p.tugas
-                + "\n\nStatus: " + (sudah ? TeksUI.t("Selesai.") : TeksUI.t("Belum selesai."));
+        String isi = p.penjelasan + "\n" + "\n" + TeksUI.t("Tugas: ") + p.tugas
+                + "\n" + "\n" + TeksUI.t("Status: ") + (sudah ? TeksUI.t("Selesai.") : TeksUI.t("Belum selesai."));
         new AlertDialog.Builder(this)
                 .setTitle(p.judul)
                 .setMessage(isi)

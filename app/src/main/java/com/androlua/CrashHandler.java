@@ -310,7 +310,7 @@ public class CrashHandler implements UncaughtExceptionHandler
 		// ID crash unik per kejadian (perintah al kautsar 2026-11-23):
 		// tampil sebagai baris pertama log dan menjadi bagian nama berkas.
 		String idCrash = buatIdCrash(System.currentTimeMillis(), new java.util.Random().nextInt());
-		sb.insert(0, "ID Crash: " + idCrash + "\n");
+		sb.insert(0, TeksUI.t("ID Crash: ") + idCrash + "\n");
 		try
 		{
 			long timestamp = System.currentTimeMillis();

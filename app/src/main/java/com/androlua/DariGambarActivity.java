@@ -73,7 +73,7 @@ public class DariGambarActivity extends Activity {
         label(r, TeksUI.t("Nama aplikasi (bawaan dari nama berkas gambar):"), false);
         namaEdit = new EditText(this);
         GayaStudio.edit(namaEdit);
-        namaEdit.setHint("Contoh: Pantai Sore");
+        namaEdit.setHint(TeksUI.t("Contoh: Pantai Sore"));
         r.addView(namaEdit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -85,7 +85,7 @@ public class DariGambarActivity extends Activity {
         });
         buatButton.setEnabled(false);
 
-        label(r, "Hasil analisis:", false);
+        label(r, TeksUI.t("Hasil analisis:"), false);
         hasilView = new TextView(this);
         hasilView.setText("Belum ada gambar yang dipilih.");
         hasilView.setTextSize(14);
@@ -167,14 +167,14 @@ public class DariGambarActivity extends Activity {
         }
         pratinjauView.setImageBitmap(bmp);
         pratinjauView.setContentDescription(TeksUI.t("Gambar yang dipilih, ukuran ")
-                + lebarGambar + " kali " + tinggiGambar + TeksUI.t(" piksel, warna dominan ")
+                + lebarGambar + TeksUI.t(" kali ") + tinggiGambar + TeksUI.t(" piksel, warna dominan ")
                 + heksa + ".");
-        String lap = "Gambar dianalisis:\n- Ukuran: " + lebarGambar + " x " + tinggiGambar
-                + " piksel.\n- Warna dominan: " + heksa + ".\n- Nama aplikasi yang "
-                + "disarankan: " + namaSaran + ".\nTekan Buat Aplikasi Galeri.";
+        String lap = TeksUI.t("Gambar dianalisis:") + "\n" + TeksUI.t("- Ukuran: ") + lebarGambar + " x " + tinggiGambar
+                + TeksUI.t(" piksel.") + "\n" + TeksUI.t("- Warna dominan: ") + heksa + "." + "\n" + TeksUI.t("- Nama aplikasi yang ")
+                + TeksUI.t("disarankan: ") + namaSaran + "." + "\n" + TeksUI.t("Tekan Buat Aplikasi Galeri.");
         hasilView.setText(lap);
         buatButton.setEnabled(true);
-        announce(TeksUI.t("Gambar dianalisis. Ukuran ") + lebarGambar + " kali " + tinggiGambar
+        announce(TeksUI.t("Gambar dianalisis. Ukuran ") + lebarGambar + TeksUI.t(" kali ") + tinggiGambar
                 + TeksUI.t(" piksel, warna dominan ") + heksa + TeksUI.t(". Tekan Buat Aplikasi Galeri."));
     }
 
@@ -200,8 +200,8 @@ public class DariGambarActivity extends Activity {
             Toast.makeText(this, galat, Toast.LENGTH_SHORT).show();
             return;
         }
-        String lap = TeksUI.t("Aplikasi galeri \"") + nama + "\" berhasil dibuat dari gambar.\n"
-                + TeksUI.t("- Ukuran gambar: ") + lebarGambar + " x " + tinggiGambar + " piksel.\n"
+        String lap = TeksUI.t("Aplikasi galeri \"") + nama + TeksUI.t("\" berhasil dibuat dari gambar.") + "\n"
+                + TeksUI.t("- Ukuran gambar: ") + lebarGambar + " x " + tinggiGambar + TeksUI.t(" piksel.") + "\n"
                 + TeksUI.t("- Warna tema: ") + AnalisisGambar.heksa(warnaDominan) + ".\n"
                 + TeksUI.t("Buka Kelola Project untuk menjalankan atau membangunnya.");
         hasilView.setText(lap);

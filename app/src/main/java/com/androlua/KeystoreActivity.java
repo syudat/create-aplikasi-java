@@ -66,10 +66,10 @@ public class KeystoreActivity extends Activity {
         ePass2 = field(r, TeksUI.t("Ulangi kata sandi"), TeksUI.t("Masukkan kata sandi yang sama sekali lagi"));
         eAlias = field(r, TeksUI.t("Nama samaran (alias)"), TeksUI.t("Masukkan nama samaran di sini, tanpa spasi, contoh: alkautsar"));
         eCN = field(r, TeksUI.t("Nama lengkap (CN)"), TeksUI.t("Masukkan nama lengkap di sini, contoh: Al Kautsar"));
-        eOU = field(r, "Unit organisasi (OU)", TeksUI.t("Masukkan unit organisasi di sini, contoh: Pengembangan Aplikasi"));
-        eO = field(r, "Organisasi (O)", TeksUI.t("Masukkan nama organisasi di sini, contoh: Suara Tekno Indonesia"));
-        eL = field(r, "Kota (L)", TeksUI.t("Masukkan nama kota di sini, contoh: Makassar"));
-        eST = field(r, "Provinsi (ST)", TeksUI.t("Masukkan nama provinsi di sini, contoh: Sulawesi Selatan"));
+        eOU = field(r, TeksUI.t("Unit organisasi (OU)"), TeksUI.t("Masukkan unit organisasi di sini, contoh: Pengembangan Aplikasi"));
+        eO = field(r, TeksUI.t("Organisasi (O)"), TeksUI.t("Masukkan nama organisasi di sini, contoh: Suara Tekno Indonesia"));
+        eL = field(r, TeksUI.t("Kota (L)"), TeksUI.t("Masukkan nama kota di sini, contoh: Makassar"));
+        eST = field(r, TeksUI.t("Provinsi (ST)"), TeksUI.t("Masukkan nama provinsi di sini, contoh: Sulawesi Selatan"));
         eC = field(r, TeksUI.t("Kode negara (C), kosong = ID"), TeksUI.t("Masukkan kode negara 2 huruf di sini, contoh: ID"));
         eYears = field(r, TeksUI.t("Masa berlaku dalam tahun (kosong = 25)"), TeksUI.t("Masukkan masa berlaku di sini, contoh: 25"), true);
         ePass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -297,7 +297,7 @@ public class KeystoreActivity extends Activity {
 
         final AlertDialog dlg = new AlertDialog.Builder(this)
                 .setTitle(TeksUI.t("Membuat keystore"))
-                .setMessage("Menyiapkan...")
+                .setMessage(TeksUI.t("Menyiapkan..."))
                 .setCancelable(false)
                 .setPositiveButton(TeksUI.t("Tutup"), null)
                 .create();
@@ -318,7 +318,7 @@ public class KeystoreActivity extends Activity {
                         dlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
                         if (kind == BangunLokal.SUCCESS) {
                             dlg.setTitle(TeksUI.t("Keystore berhasil dibuat"));
-                            dlg.setMessage("Tersimpan di:\n" + msg + "\n\nSaat membangun, centang "
+                            dlg.setMessage(TeksUI.t("Tersimpan di:") + "\n" + msg + "\n" + "\n" + TeksUI.t("Saat membangun, centang ")
                                     + TeksUI.t("\"Gunakan tanda tangan pribadi\" pada project, lalu pilih ")
                                     + TeksUI.t("tanda tangan ini dan masukkan kata sandinya."));
                         } else {

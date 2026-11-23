@@ -95,7 +95,7 @@ public class MediaSosialActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         hasilView = new TextView(this);
         hasilView.setText("Belum ada hasil. Pilih proyek, lalu pilih platform berbagi.");
         hasilView.setTextSize(14);
@@ -143,7 +143,7 @@ public class MediaSosialActivity extends Activity {
                     + dir.getName() + TeksUI.t(". Bangun proyek, lalu panggil fungsi bagikan")
                     + platform + TeksUI.t(" dari tombol di aplikasimu.");
             hasilView.setText(lap);
-            Toast.makeText(this, "Berbagi " + platform + " ditambahkan.",
+            Toast.makeText(this, TeksUI.t("Berbagi ") + platform + " ditambahkan.",
                     Toast.LENGTH_SHORT).show();
             announce(lap);
         } else if (hasil.startsWith("Kode berbagi")) {
@@ -172,7 +172,7 @@ public class MediaSosialActivity extends Activity {
             String hasil = MediaSosial.tambahBagikan(dir, tipe, p, nama);
             if (hasil == null) {
                 berhasil++;
-                sb.append("- ").append(p).append(": ditambahkan.\n");
+                sb.append("- ").append(p).append(TeksUI.t(": ditambahkan.") + "\n");
             } else {
                 sb.append("- ").append(p).append(": ").append(hasil).append("\n");
             }
@@ -191,7 +191,7 @@ public class MediaSosialActivity extends Activity {
         kirim.setType("text/plain");
         kirim.putExtra(Intent.EXTRA_TEXT, MediaSosial.teksContoh(nama));
         try {
-            startActivity(Intent.createChooser(kirim, "Uji Berbagi"));
+            startActivity(Intent.createChooser(kirim, TeksUI.t("Uji Berbagi")));
         } catch (Throwable t) {
             Toast.makeText(this, TeksUI.t("Tidak ada aplikasi berbagi: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();

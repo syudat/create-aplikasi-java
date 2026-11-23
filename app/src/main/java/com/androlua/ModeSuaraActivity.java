@@ -103,7 +103,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         r.addView(ePerintah, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Jalankan perintah", new View.OnClickListener() {
+        button(r, TeksUI.t("Jalankan perintah"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 jalankanUcapan(ePerintah.getText().toString());
@@ -117,7 +117,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setText(TeksUI.t("Belum ada perintah."));
         tvHasil.setTextSize(14);
@@ -212,7 +212,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             mulaiMendengarkan();
         } else {
-            tampilkan("Izin mikrofon ditolak. Mode Suara tidak bisa mendengarkan; "
+            tampilkan(TeksUI.t("Izin mikrofon ditolak. Mode Suara tidak bisa mendengarkan; ")
                     + TeksUI.t("perintah tetap bisa ditulis di kotak teks."));
         }
     }
@@ -287,7 +287,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
     private void perbaruiTombol() {
         if (tvStatus != null) {
             tvStatus.setText(mendengarkan
-                    ? "Status: mendengarkan terus-menerus."
+                    ? TeksUI.t("Status: mendengarkan terus-menerus.")
                     : TeksUI.t("Status: tidak mendengarkan."));
         }
         if (btnDengarkan != null) {
@@ -321,7 +321,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         it.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "id-ID");
         it.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
-        it.putExtra(RecognizerIntent.EXTRA_PROMPT, "Ucapkan perintah");
+        it.putExtra(RecognizerIntent.EXTRA_PROMPT, TeksUI.t("Ucapkan perintah"));
         try {
             startActivityForResult(it, MINTA_SUARA);
         } catch (ActivityNotFoundException e) {
@@ -413,7 +413,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         PerintahSuara.Perintah p = PerintahSuara.parse(teks);
         String aksi = p.aksi;
         if ("BANTUAN".equals(aksi)) {
-            StringBuilder sb = new StringBuilder("Perintah yang bisa diucapkan:\n");
+            StringBuilder sb = new StringBuilder(TeksUI.t("Perintah yang bisa diucapkan:") + "\n");
             for (int i = 0; i < PerintahSuara.DAFTAR_PERINTAH.length; i++) {
                 sb.append("\n\u2022 ").append(PerintahSuara.DAFTAR_PERINTAH[i]);
             }
@@ -617,7 +617,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             tampilkan(TeksUI.t("Menutup aplikasi."));
             finishAffinity();
         } else {
-            tampilkan("Perintah \"" + teks + TeksUI.t("\" tidak saya kenali. Ucapkan ")
+            tampilkan(TeksUI.t("Perintah \"") + teks + TeksUI.t("\" tidak saya kenali. Ucapkan ")
                     + TeksUI.t("\"bantuan\" untuk mendengar daftar perintah."));
         }
     }
@@ -650,7 +650,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             tampilkan(TeksUI.t("Belum ada proyek. Buat dulu dengan perintah \"buat proyek kalkulator\"."));
             return;
         }
-        StringBuilder sb = new StringBuilder("Proyek kamu:\n");
+        StringBuilder sb = new StringBuilder(TeksUI.t("Proyek kamu:") + "\n");
         String[] baris = hasil.split("\n");
         for (int i = 0; i < baris.length; i++) {
             if (baris[i].isEmpty()) continue;
@@ -751,10 +751,10 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             nama = TeksUI.t("AI Offline");
         } else if ("widget".equals(layar)) {
             tujuan = WidgetActivity.class;
-            nama = "Pembuat Widget & Wallpaper";
+            nama = TeksUI.t("Pembuat Widget & Wallpaper");
         } else if ("medsos".equals(layar)) {
             tujuan = MediaSosialActivity.class;
-            nama = "Integrasi Media Sosial";
+            nama = TeksUI.t("Integrasi Media Sosial");
         } else if ("dari-gambar".equals(layar)) {
             tujuan = DariGambarActivity.class;
             nama = TeksUI.t("Aplikasi dari Gambar");
@@ -772,7 +772,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             nama = TeksUI.t("AI Pemeriksa Kode");
         } else if ("belajar".equals(layar)) {
             tujuan = BelajarActivity.class;
-            nama = "Mode Belajar";
+            nama = TeksUI.t("Mode Belajar");
         } else if ("cloud".equals(layar)) {
             tujuan = CloudActivity.class;
             nama = TeksUI.t("Sinkronisasi Cloud");

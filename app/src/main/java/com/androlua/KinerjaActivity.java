@@ -76,7 +76,7 @@ public class KinerjaActivity extends Activity {
         label(r, TeksUI.t("Pantau pemakaian RAM dan CPU aplikasi yang sedang berjalan, ")
                 + TeksUI.t("misalnya aplikasi hasil build yang sedang kamu coba. ")
                 + TeksUI.t("Jalankan dulu aplikasinya, isi nama paketnya, lalu tekan ")
-                + "Mulai Pantau. Contoh diambil setiap 2 detik; tekan "
+                + TeksUI.t("Mulai Pantau. Contoh diambil setiap 2 detik; tekan ")
                 + TeksUI.t("Berhenti untuk melihat ringkasannya."), false);
 
         label(r, TeksUI.t("Pilih proyek (untuk mengisi nama paket):"), false);
@@ -116,7 +116,7 @@ public class KinerjaActivity extends Activity {
         });
         bBerhenti.setEnabled(false);
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(13);
         tvHasil.setTextIsSelectable(true);
@@ -175,7 +175,7 @@ public class KinerjaActivity extends Activity {
         }
         int pid = cariPid(paket);
         if (pid < 0) {
-            tvHasil.setText("Proses " + paket + TeksUI.t(" tidak ditemukan. Jalankan dulu aplikasinya, lalu coba lagi."));
+            tvHasil.setText(TeksUI.t("Proses ") + paket + TeksUI.t(" tidak ditemukan. Jalankan dulu aplikasinya, lalu coba lagi."));
             announce(TeksUI.t("Proses tidak ditemukan. Jalankan dulu aplikasinya."));
             return;
         }
@@ -200,14 +200,14 @@ public class KinerjaActivity extends Activity {
         if (tampilkan && catatan != null) {
             String ringkasan = Kinerja.laporanRingkasan(paketAktif, catatan);
             tvHasil.setText(ringkasan);
-            announce(TeksUI.t("Pemantauan berhenti. ") + catatan.contoh + " contoh tercatat.");
+            announce(TeksUI.t("Pemantauan berhenti. ") + catatan.contoh + TeksUI.t(" contoh tercatat."));
         }
     }
 
     private void ambilContoh() {
         int pid = cariPid(paketAktif);
         if (pid < 0) {
-            tvHasil.setText("Proses " + paketAktif + " tidak lagi berjalan. Pemantauan berhenti.\n\n"
+            tvHasil.setText(TeksUI.t("Proses ") + paketAktif + TeksUI.t(" tidak lagi berjalan. Pemantauan berhenti.") + "\n" + "\n"
                     + Kinerja.laporanRingkasan(paketAktif, catatan));
             announce(TeksUI.t("Proses berhenti. Pemantauan selesai."));
             berhenti(false);

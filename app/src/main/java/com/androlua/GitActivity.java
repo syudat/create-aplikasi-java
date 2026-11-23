@@ -90,7 +90,7 @@ public class GitActivity extends Activity {
             }
         });
 
-        label(r, "Pesan commit:", false);
+        label(r, TeksUI.t("Pesan commit:"), false);
         ePesan = new EditText(this);
         GayaStudio.edit(ePesan);
         ePesan.setHint("Contoh: Tambah tombol simpan");
@@ -121,13 +121,13 @@ public class GitActivity extends Activity {
                 pullGithub();
             }
         });
-        button(r, "Push (git sistem)", new View.OnClickListener() {
+        button(r, TeksUI.t("Push (git sistem)"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pushSistem();
             }
         });
-        button(r, "Pull (git sistem)", new View.OnClickListener() {
+        button(r, TeksUI.t("Pull (git sistem)"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pullSistem();
@@ -152,7 +152,7 @@ public class GitActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(14);
         tvHasil.setTextIsSelectable(true);
@@ -207,7 +207,7 @@ public class GitActivity extends Activity {
         if (galat == null) {
             tampil(TeksUI.t("Repo Git dibuat di proyek ") + dir.getName()
                     + TeksUI.t(" (cabang main). Silakan commit perubahan pertama."));
-            toast("Repo Git dibuat.");
+            toast(TeksUI.t("Repo Git dibuat."));
         } else {
             tampil(galat);
             toast(galat);
@@ -231,7 +231,7 @@ public class GitActivity extends Activity {
         }
         StringBuilder sb = new StringBuilder();
         sb.append(TeksUI.t("Status proyek ")).append(dir.getName()).append(" (")
-                .append(st.size()).append(" perubahan):\n");
+                .append(st.size()).append(TeksUI.t(" perubahan):") + "\n");
         for (int i = 0; i < st.size(); i++) {
             sb.append(st.get(i).status).append(": ").append(st.get(i).jalan).append("\n");
         }
@@ -273,13 +273,13 @@ public class GitActivity extends Activity {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("Log commit ").append(dir.getName()).append(" (")
+        sb.append(TeksUI.t("Log commit ")).append(dir.getName()).append(" (")
                 .append(daftar.size()).append("):\n");
         for (int i = 0; i < daftar.size(); i++) {
             GitLokal.Commit c = daftar.get(i);
             sb.append(c.idPendek()).append(" — ").append(c.tanggal())
                     .append(" — ").append(c.pesan)
-                    .append(" (").append(c.berkas).append(" berkas)\n");
+                    .append(" (").append(c.berkas).append(TeksUI.t(" berkas)") + "\n");
         }
         tampil(sb.toString());
     }
@@ -365,7 +365,7 @@ public class GitActivity extends Activity {
             toast("Pilih dulu proyeknya.");
             return;
         }
-        tampil("Menjalankan git push...");
+        tampil(TeksUI.t("Menjalankan git push..."));
         final File d = dir;
         new Thread(new Runnable() {
             @Override
@@ -387,7 +387,7 @@ public class GitActivity extends Activity {
             toast("Pilih dulu proyeknya.");
             return;
         }
-        tampil("Menjalankan git pull...");
+        tampil(TeksUI.t("Menjalankan git pull..."));
         final File d = dir;
         new Thread(new Runnable() {
             @Override
@@ -410,7 +410,7 @@ public class GitActivity extends Activity {
             toast("Isi dulu URL repo dan nama folder hasil clone.");
             return;
         }
-        tampil("Meng-clone " + url + "...");
+        tampil(TeksUI.t("Meng-clone ") + url + "...");
         final String u = url;
         final String n = nama;
         new Thread(new Runnable() {

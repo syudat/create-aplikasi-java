@@ -47,9 +47,9 @@ public class GameActivity extends Activity {
         label(r, TeksUI.t("Buat game tanpa menulis kode: pilih jenis game, isi nama ")
                 + TeksUI.t("dan pengaturannya, lalu tekan Buat Game. Game dibuat ")
                 + TeksUI.t("sebagai proyek Lua dan bisa langsung dijalankan di ")
-                + "Kelola Project.", false);
+                + TeksUI.t("Kelola Project."), false);
 
-        label(r, "Jenis game:", false);
+        label(r, TeksUI.t("Jenis game:"), false);
         spinnerGame = new Spinner(this);
         List<String> jenis = new ArrayList<String>();
         for (int i = 0; i < GameTanpaKode.SEMUA.length; i++) {
@@ -76,21 +76,21 @@ public class GameActivity extends Activity {
         label(r, TeksUI.t("Nama game:"), false);
         eNama = new EditText(this);
         GayaStudio.edit(eNama);
-        eNama.setHint("Contoh: Tebak Angkaku");
+        eNama.setHint(TeksUI.t("Contoh: Tebak Angkaku"));
         eNama.setSingleLine(true);
         r.addView(eNama, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        labelJumlah = label(r, "Jumlah level:", false);
+        labelJumlah = label(r, TeksUI.t("Jumlah level:"), false);
         eJumlah = new EditText(this);
         GayaStudio.edit(eJumlah);
-        eJumlah.setHint("Contoh: 3");
+        eJumlah.setHint(TeksUI.t("Contoh: 3"));
         eJumlah.setSingleLine(true);
         eJumlah.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         r.addView(eJumlah, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Pesan menang:", false);
+        label(r, TeksUI.t("Pesan menang:"), false);
         ePesan = new EditText(this);
         GayaStudio.edit(ePesan);
         ePesan.setHint("Contoh: Hebat, kamu menang!");
@@ -120,7 +120,7 @@ public class GameActivity extends Activity {
         int pos = spinnerGame.getSelectedItemPosition();
         if (pos < 0 || pos >= GameTanpaKode.SEMUA.length) return;
         GameTanpaKode.Info info = GameTanpaKode.SEMUA[pos];
-        labelJumlah.setText(info.labelJumlah + " (maksimal " + info.jumlahMaks + "):");
+        labelJumlah.setText(info.labelJumlah + TeksUI.t(" (maksimal ") + info.jumlahMaks + "):");
         if (eJumlah.getText().toString().trim().length() == 0) {
             eJumlah.setText(String.valueOf(info.jumlahBawaan));
         }
@@ -152,7 +152,7 @@ public class GameActivity extends Activity {
             Toast.makeText(this, TeksUI.t("Game gagal dibuat: ") + galat, Toast.LENGTH_SHORT).show();
             return;
         }
-        String ok = "Game \"" + new File(dir).getName()
+        String ok = TeksUI.t("Game \"") + new File(dir).getName()
                 + TeksUI.t("\" berhasil dibuat. Buka di Kelola Project untuk memainkannya.");
         Toast.makeText(this, ok, Toast.LENGTH_SHORT).show();
         announce(ok);

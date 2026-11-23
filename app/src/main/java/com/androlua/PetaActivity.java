@@ -61,7 +61,7 @@ public class PetaActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Tampilkan Peta", new View.OnClickListener() {
+        button(r, TeksUI.t("Tampilkan Peta"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tampilkanPeta();
@@ -74,7 +74,7 @@ public class PetaActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(13);
         tvHasil.setTextIsSelectable(true);

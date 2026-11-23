@@ -226,9 +226,9 @@ public class AnalitikActivity extends Activity {
                             pref.getString(AnalitikAplikasi.KUNCI_CRASH, ""));
             StringBuilder sb = new StringBuilder();
             sb.append(AnalitikAplikasi.formatRingkasan(buka, layar, crash));
-            sb.append("\nLayar yang sering dibuka:\n");
+            sb.append("\n" + TeksUI.t("Layar yang sering dibuka:") + "\n");
             if (layar.isEmpty()) {
-                sb.append("- Belum ada.\n");
+                sb.append(TeksUI.t("- Belum ada.") + "\n");
             } else {
                 int tampil = Math.min(layar.size(), AnalitikAplikasi.TAMPIL_LAYAR);
                 // Urutkan salinan dari yang terbanyak (daftar simpanan tetap apa adanya).
@@ -246,18 +246,18 @@ public class AnalitikActivity extends Activity {
                 for (int i = 0; i < tampil; i++) {
                     AnalitikAplikasi.Kunjungan k = urut.get(i);
                     sb.append("- ").append(k.nama).append(": ")
-                            .append(k.jumlah).append(" kali.\n");
+                            .append(k.jumlah).append(TeksUI.t(" kali.") + "\n");
                 }
             }
-            sb.append("\nCrash terakhir:\n");
+            sb.append("\n" + TeksUI.t("Crash terakhir:") + "\n");
             if (crash.isEmpty()) {
-                sb.append("- Belum ada crash tercatat.\n");
+                sb.append(TeksUI.t("- Belum ada crash tercatat.") + "\n");
             } else {
                 int tampil = Math.min(crash.size(), AnalitikAplikasi.TAMPIL_CRASH);
                 for (int i = 0; i < tampil; i++) {
                     AnalitikAplikasi.Crash c = crash.get(i);
                     sb.append("- ").append(c.tanggal).append(TeksUI.t(", layar "))
-                            .append(c.layar).append(".\n  Pesan: ")
+                            .append(c.layar).append("." + "\n" + TeksUI.t("  Pesan: "))
                             .append(c.pesan).append("\n  ")
                             .append(c.saran()).append("\n");
                 }
@@ -298,8 +298,8 @@ public class AnalitikActivity extends Activity {
                     .putString(AnalitikAplikasi.KUNCI_CRASH, "")
                     .putString(AnalitikAplikasi.KUNCI_LAYAR_TERAKHIR, "")
                     .apply();
-            toast("Data analitik dihapus");
-            announce("Data analitik dihapus.");
+            toast(TeksUI.t("Data analitik dihapus"));
+            announce(TeksUI.t("Data analitik dihapus."));
             muatUlang();
         } catch (Throwable t) {
             toast("Gagal menghapus data analitik: " + t.getMessage());

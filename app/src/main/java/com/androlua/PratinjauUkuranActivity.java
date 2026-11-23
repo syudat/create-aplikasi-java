@@ -67,7 +67,7 @@ public class PratinjauUkuranActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(13);
         tvHasil.setTextIsSelectable(true);
@@ -109,7 +109,7 @@ public class PratinjauUkuranActivity extends Activity {
             int n = terkecil == null ? 0 : terkecil.size();
             announce(TeksUI.t("Pemeriksaan selesai. ") + h.berkasLayout.size() + TeksUI.t(" berkas layout, ")
                     + h.elemen.size() + TeksUI.t(" elemen lebar tetap. Pada layar terkecil ")
-                    + PeriksaUkuran.LEBAR_LAYAR[0] + TeksUI.t(" dp ada ") + n + " elemen meluber.");
+                    + PeriksaUkuran.LEBAR_LAYAR[0] + TeksUI.t(" dp ada ") + n + TeksUI.t(" elemen meluber."));
         } else {
             announce(h.galat);
         }

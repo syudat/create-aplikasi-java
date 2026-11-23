@@ -50,7 +50,7 @@ public class TerjemahActivity extends Activity {
         label(r, TeksUI.t("Terjemahkan semua teks di aplikasimu ke bahasa lain. ")
                 + TeksUI.t("Kamus ada di dalam HP (tanpa internet, tanpa biaya). Kata ")
                 + TeksUI.t("yang belum ada di kamus dilaporkan apa adanya, tidak ")
-                + "pura-pura diterjemahkan.", false);
+                + TeksUI.t("pura-pura diterjemahkan."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         muatDaftarProyek();
@@ -82,7 +82,7 @@ public class TerjemahActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         hasilView = new TextView(this);
         hasilView.setText("Belum ada hasil. Pilih proyek dan bahasa, lalu tekan Terjemahkan.");
         hasilView.setTextSize(14);

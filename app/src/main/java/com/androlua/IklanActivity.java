@@ -56,7 +56,7 @@ public class IklanActivity extends Activity {
 
         heading(r, TeksUI.t("Pembuat Iklan"), 20);
         label(r, TeksUI.t("IDE membuatkan kode iklan siap tempel (Java, Kotlin, dan ")
-                + "Lua) + perubahan manifest + panduan langkah demi langkah. "
+                + TeksUI.t("Lua) + perubahan manifest + panduan langkah demi langkah. ")
                 + TeksUI.t("Ini template kode + panduan — SDK iklan TIDAK disertakan ")
                 + TeksUI.t("di IDE. Iklan sungguhan baru tampil setelah kamu membuat ")
                 + TeksUI.t("akun penyedia, membuat unit iklan, menempel ID unit ")
@@ -73,7 +73,7 @@ public class IklanActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Penyedia iklan:", false);
+        label(r, TeksUI.t("Penyedia iklan:"), false);
         spPenyedia = new Spinner(this);
         ArrayAdapter<String> adapterPenyedia = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, PembuatIklan.PENYEDIA);
@@ -82,7 +82,7 @@ public class IklanActivity extends Activity {
         r.addView(spPenyedia, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Jenis iklan:", false);
+        label(r, TeksUI.t("Jenis iklan:"), false);
         spJenis = new Spinner(this);
         ArrayAdapter<String> adapterJenis = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, PembuatIklan.JENIS);
@@ -94,7 +94,7 @@ public class IklanActivity extends Activity {
         label(r, TeksUI.t("ID unit iklan (kosong = pakai ID uji):"), false);
         eIdUnit = new EditText(this);
         GayaStudio.edit(eIdUnit);
-        eIdUnit.setHint("Contoh AdMob: ca-app-pub-3940256099942544/6300978111");
+        eIdUnit.setHint(TeksUI.t("Contoh AdMob: ca-app-pub-3940256099942544/6300978111"));
         r.addView(eIdUnit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -111,7 +111,7 @@ public class IklanActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(13);
         tvHasil.setTextIsSelectable(true);
@@ -163,7 +163,7 @@ public class IklanActivity extends Activity {
     private void buatKode() {
         String isi = PembuatIklan.isiBerkas(penyediaTerpilih(), jenisTerpilih(), idUnit());
         if (tvHasil != null) tvHasil.setText(isi);
-        announce(TeksUI.t("Kode iklan ") + penyediaTerpilih() + " " + jenisTerpilih() + " dibuat.");
+        announce(TeksUI.t("Kode iklan ") + penyediaTerpilih() + " " + jenisTerpilih() + TeksUI.t(" dibuat."));
     }
 
     private void simpanKeProyek() {

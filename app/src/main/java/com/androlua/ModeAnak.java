@@ -26,7 +26,7 @@ public class ModeAnak {
 
     /** Aksi aman yang boleh tampil di Mode Anak (hanya 4). */
     public static final String[] AKSI_AMAN = {
-        "Buat Proyek", "Buka Proyek", "Jalankan", "Belajar"
+        "Buat Proyek", "Buka Proyek", TeksUI.t("Jalankan"), "Belajar"
     };
 
     /** Satu template aman untuk anak: id, nama tampil, sumber. */
@@ -44,10 +44,10 @@ public class ModeAnak {
 
     /** Template yang aman untuk anak (kalkulator + 3 game). */
     public static final TemplateAman[] TEMPLATE_AMAN = {
-        new TemplateAman("kalkulator", "Kalkulator", "template"),
-        new TemplateAman("tebak-angka", "Tebak Angka", "game"),
-        new TemplateAman("kuis", "Kuis", "game"),
-        new TemplateAman("tangkap-bintang", "Tangkap Bintang", "game"),
+        new TemplateAman("kalkulator", TeksUI.t("Kalkulator"), "template"),
+        new TemplateAman("tebak-angka", TeksUI.t("Tebak Angka"), "game"),
+        new TemplateAman("kuis", TeksUI.t("Kuis"), "game"),
+        new TemplateAman("tangkap-bintang", TeksUI.t("Tangkap Bintang"), "game"),
     };
 
     /** Cari template aman berdasarkan id; null bila tidak ada. */

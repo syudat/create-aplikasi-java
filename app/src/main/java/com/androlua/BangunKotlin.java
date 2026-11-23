@@ -97,7 +97,7 @@ public class BangunKotlin {
         if (!new File(ctx.getApplicationInfo().nativeLibraryDir).isDirectory())
             throw new IOException(TeksUI.t("Direktori native tidak ditemukan"));
 
-        kirim(PROGRESS, "Menyiapkan compiler Kotlin (kotlinc 1.9.24 + ECJ + D8)...");
+        kirim(PROGRESS, TeksUI.t("Menyiapkan compiler Kotlin (kotlinc 1.9.24 + ECJ + D8)..."));
         File cache = new File(ctx.getCacheDir(), "bangun-kotlin");
         hapus(cache);
         cache.mkdirs();
@@ -166,7 +166,7 @@ public class BangunKotlin {
             ringkasan.append("  - ").append(p).append('\n');
         }
         if (!javaFiles.isEmpty())
-            ringkasan.append("Berkas .java proyek yang dikompilasi ECJ (").append(javaFiles.size() - jumlahR).append(" + ").append(jumlahR).append(" R.java hasil aapt2).\n");
+            ringkasan.append(TeksUI.t("Berkas .java proyek yang dikompilasi ECJ (")).append(javaFiles.size() - jumlahR).append(" + ").append(jumlahR).append(TeksUI.t(" R.java hasil aapt2).") + "\n");
         ringkasanTerakhir = ringkasan.toString();
 
         File javaOut = new File(cache, "classes-java");
@@ -177,16 +177,16 @@ public class BangunKotlin {
         // 2) ECJ untuk .java (R.java + .java pengguna) -> javaOut.
         // kotlinc butuh hasil ini di classpath-nya (R + kelas Java pengguna).
         if (!javaFiles.isEmpty()) {
-            kirim(PROGRESS, "Mengompilasi " + javaFiles.size() + " berkas .java (ECJ)...");
+            kirim(PROGRESS, TeksUI.t("Mengompilasi ") + javaFiles.size() + TeksUI.t(" berkas .java (ECJ)..."));
             kompilasiECJ(eclCl, javaFiles, androidJar, javaOut);
         }
 
         // 3) kotlinc untuk .kt -> kotlinOut
-        kirim(PROGRESS, "Mengompilasi " + ktFiles.size() + TeksUI.t(" berkas .kt (kotlinc)..."));
+        kirim(PROGRESS, TeksUI.t("Mengompilasi ") + ktFiles.size() + TeksUI.t(" berkas .kt (kotlinc)..."));
         kompilasiKotlin(kotlinCl, ktFiles, androidJar, stdlibJar, javaOut, kotlinHome, kotlinOut);
 
         // 4) dex hasil kompilasi (ECJ + kotlinc + stdlib) dengan D8 (R8 dalam mode dexer saja)
-        kirim(PROGRESS, "Mengemas bytecode Kotlin (D8)...");
+        kirim(PROGRESS, TeksUI.t("Mengemas bytecode Kotlin (D8)..."));
         List<File> classFiles = new ArrayList<File>();
         kumpulBerakhiran(javaOut, ".class", classFiles);
         kumpulBerakhiran(kotlinOut, ".class", classFiles);
@@ -206,7 +206,7 @@ public class BangunKotlin {
         }
         if (!adaMainActivity)
             throw new IOException(TeksUI.t("Proyek Kotlin tidak punya MainActivity: buat MainActivity.kt ")
-                    + "(atau MainActivity.java) berisi kelas MainActivity turunan android.app.Activity "
+                    + TeksUI.t("(atau MainActivity.java) berisi kelas MainActivity turunan android.app.Activity ")
                     + TeksUI.t("di paket proyek, lalu bangun lagi."));
 
         List<Path> programPaths = new ArrayList<Path>();
@@ -220,7 +220,7 @@ public class BangunKotlin {
         File hasil = new File(dexOut, "classes.dex");
         if (!hasil.isFile()) throw new IOException(TeksUI.t("D8 tidak menghasilkan classes.dex"));
         byte[] data = BangunLokal.baca(hasil);
-        kirim(PROGRESS, TeksUI.t("Kompilasi Kotlin selesai (") + data.length + " bita dex).");
+        kirim(PROGRESS, TeksUI.t("Kompilasi Kotlin selesai (") + data.length + TeksUI.t(" bita dex)."));
         return data;
     }
 
@@ -266,7 +266,7 @@ public class BangunKotlin {
         errPw.flush();
         log.append(outSw).append(errSw);
         if (!ok)
-            throw new IOException("Kompilasi Java (untuk Kotlin) gagal:\n" + errSw + (outSw.getBuffer().length() > 0 ? "\n" + outSw : ""));
+            throw new IOException(TeksUI.t("Kompilasi Java (untuk Kotlin) gagal:") + "\n" + errSw + (outSw.getBuffer().length() > 0 ? "\n" + outSw : ""));
     }
 
     // ------------------------------------------------------------------ kotlinc (.kt)
@@ -329,7 +329,7 @@ public class BangunKotlin {
         log.append(errText);
         if (!"OK".equals(String.valueOf(exitCode))) {
             String rincian = errText.trim().length() > 0 ? errText
-                    : "(compiler tidak menulis rincian; lihat log-build.txt)";
+                    : TeksUI.t("(compiler tidak menulis rincian; lihat log-build.txt)");
             throw new IOException(TeksUI.t("Kompilasi Kotlin gagal (") + exitCode + "):\n" + rincian);
         }
     }

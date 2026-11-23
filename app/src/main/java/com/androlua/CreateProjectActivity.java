@@ -273,7 +273,7 @@ public class CreateProjectActivity extends Activity {
         eName = field(r, t("Nama aplikasi"),
                 t("Masukkan nama aplikasi di sini, contoh: Garuda Decode"), false);
         ePkg = field(r, t("Nama paket (package name)"),
-                "Masukkan nama paket di sini, diawali com.android, contoh: com.android.garudadecode", false);
+                TeksUI.t("Masukkan nama paket di sini, diawali com.android, contoh: com.android.garudadecode"), false);
         eVer = field(r, t("Versi aplikasi (kosong = 1.0)"),
                 t("Masukkan versi aplikasi, contoh: 1.0"), false);
 
@@ -292,7 +292,7 @@ public class CreateProjectActivity extends Activity {
         eMin = field(r, tArg("SDK minimum (kosong = {N})", String.valueOf(DEFAULT_MIN)),
                 t("Android terendah yang didukung, contoh: 21 (21=Android 5.0, 26=8.0, 29=10, 31=12)"), true);
         eTarget = field(r, tArg("SDK target (kosong = {N})", String.valueOf(defaultTarget)),
-                "Versi Android yang dituju, contoh: 36 (maksimum 36; 33=Android 13, 34=14, 35=15, 36=16). "
+                TeksUI.t("Versi Android yang dituju, contoh: 36 (maksimum 36; 33=Android 13, 34=14, 35=15, 36=16). ")
                         + t("Android 14-16 tetap bisa menjalankannya"), true);
 
         // Kotak Skrip HTML (opsional): hanya untuk proyek HTML / Situs Web.
@@ -332,7 +332,7 @@ public class CreateProjectActivity extends Activity {
         cbSign.setText(t("Gunakan tanda tangan pribadi"));
         cbSign.setChecked(defaultTandaTangan);
         r.addView(cbSign);
-        label(r, "Dicentang: setelah build, Anda diminta memilih keystore buatan sendiri "
+        label(r, TeksUI.t("Dicentang: setelah build, Anda diminta memilih keystore buatan sendiri ")
                 + t("(menu Buat Keystore). Tidak dicentang: memakai kunci bawaan."), true);
 
         // Tahap 3B (Lisensi, versi berbayar): centang + kotak nomor WA.
@@ -512,8 +512,8 @@ public class CreateProjectActivity extends Activity {
         String tipeTemplate = info.tipe;
         templateTerpilih = null;
         if (templateBtn != null) templateBtn.setText(templateLabel());
-        toast("Template \"" + namaTemplate + t("\" hanya untuk proyek ")
-                + tipeTemplate + "; template dibatalkan karena jenis diubah.");
+        toast(TeksUI.t("Template \"") + namaTemplate + t("\" hanya untuk proyek ")
+                + tipeTemplate + TeksUI.t("; template dibatalkan karena jenis diubah."));
     }
 
     private String templateLabel() {
@@ -530,7 +530,7 @@ public class CreateProjectActivity extends Activity {
             pilihan[i + 1] = TemplateProyek.SEMUA[i].nama + " — "
                     + TemplateProyek.SEMUA[i].deskripsi;
         }
-        announce(t("Pilih Template. ") + pilihan.length + " pilihan.");
+        announce(t("Pilih Template. ") + pilihan.length + TeksUI.t(" pilihan."));
         new AlertDialog.Builder(this)
                 .setTitle(t("Pilih Template"))
                 .setItems(pilihan, new DialogInterface.OnClickListener() {
@@ -551,7 +551,7 @@ public class CreateProjectActivity extends Activity {
                         templateTerpilih = info.id;
                         templateBtn.setText(templateLabel());
                         perbaruiSkrip();
-                        announce("Template " + info.nama + t(" dipilih. Jenis proyek: ")
+                        announce(TeksUI.t("Template ") + info.nama + t(" dipilih. Jenis proyek: ")
                                 + info.tipe + ".");
                     }
                 })
@@ -581,7 +581,7 @@ public class CreateProjectActivity extends Activity {
     }
 
     private void pilihJenisAplikasi() {
-        announce(t("Pilih Jenis Aplikasi") + ". " + TIPE_LABELS.length + " pilihan.");
+        announce(t("Pilih Jenis Aplikasi") + ". " + TIPE_LABELS.length + TeksUI.t(" pilihan."));
         String[] tampil = new String[TIPE_LABELS.length];
         for (int i = 0; i < TIPE_LABELS.length; i++) tampil[i] = t(TIPE_LABELS[i]);
         new AlertDialog.Builder(this)
@@ -674,13 +674,13 @@ public class CreateProjectActivity extends Activity {
                 || name.indexOf('*') >= 0 || name.indexOf('?') >= 0 || name.indexOf('"') >= 0
                 || name.indexOf('<') >= 0 || name.indexOf('>') >= 0 || name.indexOf('|') >= 0
                 || ".".equals(name) || "..".equals(name)) {
-            toast("Nama aplikasi tidak boleh memuat karakter / \\ : * ? \" < > |");
+            toast(TeksUI.t("Nama aplikasi tidak boleh memuat karakter / \\ : * ? \" < > |"));
             return;
         }
         if (!pkg.matches("^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*[a-z0-9_.]*$")
                 || pkg.contains("..") || pkg.endsWith(".")) {
-            toast("Nama paket tidak valid. Contoh: com.android.garudadecode "
-                    + "(huruf kecil, minimal dua bagian dipisah titik)");
+            toast(TeksUI.t("Nama paket tidak valid. Contoh: com.android.garudadecode ")
+                    + TeksUI.t("(huruf kecil, minimal dua bagian dipisah titik)"));
             return;
         }
         if (min < 1 || target < 1) {
@@ -688,7 +688,7 @@ public class CreateProjectActivity extends Activity {
             return;
         }
         if (target > 36) {
-            toast("SDK target maksimum 36 (Android 16)");
+            toast(TeksUI.t("SDK target maksimum 36 (Android 16)"));
             return;
         }
         if (min > target) {
@@ -790,7 +790,7 @@ public class CreateProjectActivity extends Activity {
                     } else {
                         TemplateProyek.Info infoT = TemplateProyek.cari(templateTerpilih);
                         if (infoT != null) {
-                            toast("Template \"" + infoT.nama + "\" diterapkan");
+                            toast(TeksUI.t("Template \"") + infoT.nama + TeksUI.t("\" diterapkan"));
                         }
                     }
                 }

@@ -406,7 +406,7 @@ public class JavaHomeActivity extends Activity {
         // Pengaturan > Pengaturan GitHub; "Tentang" ada di tombol
         // "Tentang Alat" menu utama; izin penyimpanan/pasang APK diminta
         // lewat alurnya masing-masing (tombol izin / saat pasang APK).
-        menu.add("Muat ulang");
+        menu.add(TeksUI.t("Muat ulang"));
         menu.add(t("Pengaturan"));
         return super.onCreateOptionsMenu(menu);
     }
@@ -415,7 +415,7 @@ public class JavaHomeActivity extends Activity {
     public boolean onOptionsItemSelected(android.view.MenuItem item) {
         // Opsi Lainnya hanya Muat ulang + Pengaturan (reorganisasi 2026-11-17).
         String t = String.valueOf(item.getTitle());
-        if ("Muat ulang".equals(t)) {
+        if (TeksUI.t("Muat ulang").equals(t)) {
             perbaruiIzin();
         } else if (TeksUI.teks(kodeBahasa, t("Pengaturan")).equals(t)) {
             bukaPengaturan();
@@ -451,9 +451,9 @@ public class JavaHomeActivity extends Activity {
                 CrashHandler.tandaiDibaca(f);
                 return;
             }
-            if (isi.length() > 6000) isi = isi.substring(0, 6000) + "\n...(log dipotong)";
+            if (isi.length() > 6000) isi = isi.substring(0, 6000) + "\n" + TeksUI.t("...(log dipotong)");
             new AlertDialog.Builder(this)
-                    .setTitle("Log Crash Terakhir")
+                    .setTitle(TeksUI.t("Log Crash Terakhir"))
                     .setMessage(isi)
                     .setPositiveButton(t("Tutup"), new DialogInterface.OnClickListener() {
                         @Override
@@ -594,7 +594,7 @@ public class JavaHomeActivity extends Activity {
         try {
             Intent it = new Intent(this, TerminalActivity.class);
             startActivity(it);
-            announce("Terminal dibuka.");
+            announce(TeksUI.t("Terminal dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Terminal: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -605,7 +605,7 @@ public class JavaHomeActivity extends Activity {
     private void bukaModeSuara() {
         try {
             startActivity(new Intent(this, ModeSuaraActivity.class));
-            announce("Mode Suara dibuka.");
+            announce(TeksUI.t("Mode Suara dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Mode Suara: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -640,7 +640,7 @@ public class JavaHomeActivity extends Activity {
     private void bukaIklan() {
         try {
             startActivity(new Intent(this, IklanActivity.class));
-            announce("Pembuat Iklan dibuka.");
+            announce(TeksUI.t("Pembuat Iklan dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Pembuat Iklan: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -652,7 +652,7 @@ public class JavaHomeActivity extends Activity {
     private void bukaModeAnak() {
         try {
             startActivity(new Intent(this, ModeAnakActivity.class));
-            announce("Mode Anak dibuka.");
+            announce(TeksUI.t("Mode Anak dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Mode Anak: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -699,7 +699,7 @@ public class JavaHomeActivity extends Activity {
     private void bukaAnalisisApk() {
         try {
             startActivity(new Intent(this, AnalisisApkActivity.class));
-            announce("Penganalisis APK dibuka.");
+            announce(TeksUI.t("Penganalisis APK dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Penganalisis APK: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -721,7 +721,7 @@ public class JavaHomeActivity extends Activity {
     private void bukaSumberDaya() {
         try {
             startActivity(new Intent(this, SumberDayaActivity.class));
-            announce("Pengelola Sumber Daya dibuka.");
+            announce(TeksUI.t("Pengelola Sumber Daya dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Pengelola Sumber Daya: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -732,7 +732,7 @@ public class JavaHomeActivity extends Activity {
     private void bukaKinerja() {
         try {
             startActivity(new Intent(this, KinerjaActivity.class));
-            announce("Pemantau Kinerja Ringan dibuka.");
+            announce(TeksUI.t("Pemantau Kinerja Ringan dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Pemantau Kinerja Ringan: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -744,7 +744,7 @@ public class JavaHomeActivity extends Activity {
     private void bukaVideoDemo() {
         try {
             startActivity(new Intent(this, VideoDemoActivity.class));
-            announce("Pembuat Video Demo dibuka.");
+            announce(TeksUI.t("Pembuat Video Demo dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Pembuat Video Demo: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();

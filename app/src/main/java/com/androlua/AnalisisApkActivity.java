@@ -49,7 +49,7 @@ public class AnalisisApkActivity extends Activity {
                 + TeksUI.t("SDK, daftar izin, jumlah berkas dex, rincian ukuran per ")
                 + TeksUI.t("bagian (kode, resource, aset, pustaka native), dan entri ")
                 + TeksUI.t("terbesar. Berguna untuk tahu bagian mana yang membuat ")
-                + "APK besar.", false);
+                + TeksUI.t("APK besar."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -60,14 +60,14 @@ public class AnalisisApkActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Analisis APK Hasil Build", new View.OnClickListener() {
+        button(r, TeksUI.t("Analisis APK Hasil Build"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 analisis();
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(13);
         tvHasil.setTextIsSelectable(true);
@@ -126,7 +126,7 @@ public class AnalisisApkActivity extends Activity {
             announce(TeksUI.t("Belum ada APK hasil build di proyek ini."));
             return;
         }
-        tvHasil.setText("Menganalisis " + apk.getName() + "...");
+        tvHasil.setText(TeksUI.t("Menganalisis ") + apk.getName() + "...");
         new Thread(new Runnable() {
             @Override
             public void run() {

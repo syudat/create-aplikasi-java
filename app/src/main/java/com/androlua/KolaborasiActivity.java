@@ -58,7 +58,7 @@ public class KolaborasiActivity extends Activity {
         heading(r, TeksUI.t("Kolaborasi"), 20);
         label(r, TeksUI.t("Kerja bareng teman: kirim proyek beserta catatan perubahanmu, ")
                 + TeksUI.t("lalu terima balasannya. Catatan perubahan selalu ditampilkan ")
-                + "sebelum balasan diterapkan.", false);
+                + TeksUI.t("sebelum balasan diterapkan."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         muatDaftarProyek();
@@ -73,7 +73,7 @@ public class KolaborasiActivity extends Activity {
         label(r, TeksUI.t("Nama kamu (pengirim, boleh kosong):"), false);
         ePengirim = new EditText(this);
         GayaStudio.edit(ePengirim);
-        ePengirim.setHint("Contoh: Al Kautsar");
+        ePengirim.setHint(TeksUI.t("Contoh: Al Kautsar"));
         ePengirim.setSingleLine(true);
         r.addView(ePengirim, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -172,7 +172,7 @@ public class KolaborasiActivity extends Activity {
                     + TeksUI.t("berkas CATATAN.txt di ZIP ini."));
             it.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(Intent.createChooser(it, TeksUI.t("Bagikan paket kolaborasi")));
-            announce(TeksUI.t("Paket kolaborasi proyek ") + nama + " siap dibagikan.");
+            announce(TeksUI.t("Paket kolaborasi proyek ") + nama + TeksUI.t(" siap dibagikan."));
         } catch (Throwable t) {
             Toast.makeText(this, TeksUI.t("Gagal membagikan: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -209,7 +209,7 @@ public class KolaborasiActivity extends Activity {
         final String catatan = Kolaborasi.bacaCatatan(sementara);
         if (catatan == null) {
             new AlertDialog.Builder(this)
-                    .setTitle("Bukan paket kolaborasi")
+                    .setTitle(TeksUI.t("Bukan paket kolaborasi"))
                     .setMessage(TeksUI.t("Berkas ini tidak berisi CATATAN.txt, jadi bukan ")
                             + TeksUI.t("paket kolaborasi. Untuk ZIP proyek biasa, pakai ")
                             + TeksUI.t("Impor proyek di Kelola Project."))
@@ -227,8 +227,8 @@ public class KolaborasiActivity extends Activity {
         final File zipBalasan = sementara;
         new AlertDialog.Builder(this)
                 .setTitle(TeksUI.t("Balasan untuk proyek \"") + namaProyek + "\"")
-                .setMessage("Catatan perubahan dari teman:\n\n" + catatan
-                        + "\n\nTerapkan balasan ini ke proyek \"" + namaProyek + "\"?")
+                .setMessage(TeksUI.t("Catatan perubahan dari teman:") + "\n" + "\n" + catatan
+                        + "\n" + "\n" + TeksUI.t("Terapkan balasan ini ke proyek \"") + namaProyek + "\"?")
                 .setPositiveButton("Terapkan", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -242,7 +242,7 @@ public class KolaborasiActivity extends Activity {
                     }
                 })
                 .show();
-        announce("Balasan diterima. Catatan perubahan: " + catatan);
+        announce(TeksUI.t("Balasan diterima. Catatan perubahan: ") + catatan);
     }
 
     private void terapkanBalasan(final File zip, final String nama) {

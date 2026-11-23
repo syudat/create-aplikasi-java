@@ -132,10 +132,10 @@ public class Pengemas {
         } else if (r.code == 200) {
             branch = new JSONObject(r.body).optString("default_branch", "main");
         } else {
-            throw gagal("Memeriksa repo", r);
+            throw gagal(TeksUI.t("Memeriksa repo"), r);
         }
 
-        kirim(PROGRESS, "Membaca isi repo...");
+        kirim(PROGRESS, TeksUI.t("Membaca isi repo..."));
         Map<String, String> remote = remoteTree(base);
 
         // 2) mesin build (sekali saja; diunggah ulang hanya jika berubah)
@@ -193,7 +193,7 @@ public class Pengemas {
             Thread.sleep(4000);
             r = request("POST", base + "/actions/workflows/" + WORKFLOW + "/dispatches", body.toString());
         }
-        if (r.code != 204) throw gagal("Menjalankan workflow", r);
+        if (r.code != 204) throw gagal(TeksUI.t("Menjalankan workflow"), r);
 
         // 6) tunggu
         long runId = 0;
@@ -216,7 +216,7 @@ public class Pengemas {
                 }
             }
             if (run == null) {
-                if (!statusTerakhir.equals("antre")) kirim(PROGRESS, "Menunggu GitHub memulai build...");
+                if (!statusTerakhir.equals("antre")) kirim(PROGRESS, TeksUI.t("Menunggu GitHub memulai build..."));
                 statusTerakhir = "antre";
                 continue;
             }
@@ -235,7 +235,7 @@ public class Pengemas {
         }
 
         // 7) unduh APK
-        kirim(PROGRESS, "Mengunduh APK...");
+        kirim(PROGRESS, TeksUI.t("Mengunduh APK..."));
         r = request("GET", base + "/actions/runs/" + runId + "/artifacts", null);
         if (r.code != 200) throw gagal(TeksUI.t("Mengambil daftar artifact"), r);
         JSONArray arts = new JSONObject(r.body).optJSONArray("artifacts");
@@ -263,7 +263,7 @@ public class Pengemas {
                            String label) throws Exception {
         String sha = remote.get(path);
         if (sha != null && sha.equals(gitSha(data))) return false;
-        kirim(PROGRESS, "Mengunggah " + label);
+        kirim(PROGRESS, TeksUI.t("Mengunggah ") + label);
         JSONObject body = new JSONObject();
         body.put("message", "Pembuat Aplikasi: " + path);
         body.put("content", Base64.encodeToString(data, Base64.NO_WRAP));
@@ -308,7 +308,7 @@ public class Pengemas {
             out.close();
             zin.close();
             zip.delete();
-            ringkas.append("\nLog lengkap: ").append(logFile.getAbsolutePath());
+            ringkas.append("\n" + TeksUI.t("Log lengkap: ")).append(logFile.getAbsolutePath());
         } catch (Exception e) {
             ringkas.append(TeksUI.t("(log tidak dapat diambil: ")).append(e.getMessage()).append(")");
         }
@@ -324,9 +324,9 @@ public class Pengemas {
             try { Thread.sleep(2000); } catch (InterruptedException ignored) { }
             r = request("GET", base + "/git/trees/" + enc(branch) + "?recursive=1", null);
         }
-        if (r.code == 401 || r.code == 403) throw gagal("Token ditolak GitHub", r);
+        if (r.code == 401 || r.code == 403) throw gagal(TeksUI.t("Token ditolak GitHub"), r);
         if (r.code == 404) throw gagal(TeksUI.t("Repo atau cabang tidak ditemukan"), r);
-        if (r.code != 200) throw gagal("Membaca isi repo", r);
+        if (r.code != 200) throw gagal(TeksUI.t("Membaca isi repo"), r);
         JSONArray tree = new JSONObject(r.body).optJSONArray("tree");
         if (tree != null) {
             for (int i = 0; i < tree.length(); i++) {
@@ -418,7 +418,7 @@ public class Pengemas {
             pesan = new JSONObject(r.body).optString("message", r.body);
         } catch (Exception ignored) {
         }
-        return new IOException(langkah + " (HTTP " + r.code + "): " + pesan);
+        return new IOException(langkah + TeksUI.t(" (HTTP ") + r.code + "): " + pesan);
     }
 
     // ------------------------------------------------------------------ berkas

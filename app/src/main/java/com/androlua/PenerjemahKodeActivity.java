@@ -83,7 +83,7 @@ public class PenerjemahKodeActivity extends Activity {
             }
         });
 
-        tvArah = label(r, "Arah: " + PenerjemahKode.labelArah(arah), false);
+        tvArah = label(r, TeksUI.t("Arah: ") + PenerjemahKode.labelArah(arah), false);
         button(r, TeksUI.t("Pilih arah terjemahan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +107,7 @@ public class PenerjemahKodeActivity extends Activity {
         tvSumber.setMovementMethod(new ScrollingMovementMethod());
         r.addView(tvSumber);
 
-        label(r, "Hasil terjemahan:", false);
+        label(r, TeksUI.t("Hasil terjemahan:"), false);
         tvHasil = new TextView(this);
         tvHasil.setText("Belum ada hasil.");
         tvHasil.setTextSize(13);
@@ -181,7 +181,7 @@ public class PenerjemahKodeActivity extends Activity {
         }
         final List<File> berkas = cariBerkasKode(dirProyek);
         if (berkas.isEmpty()) {
-            Toast.makeText(this, "Tidak ada berkas .lua/.java/.kt di proyek ini.",
+            Toast.makeText(this, TeksUI.t("Tidak ada berkas .lua/.java/.kt di proyek ini."),
                     Toast.LENGTH_SHORT).show();
             announce(TeksUI.t("Tidak ada berkas kode di proyek ini."));
             return;
@@ -231,7 +231,7 @@ public class PenerjemahKodeActivity extends Activity {
                     public void onClick(DialogInterface d, int which) {
                         arah = PenerjemahKode.ARAH[which];
                         perbaruiArah();
-                        announce("Arah dipilih: " + item[which]);
+                        announce(TeksUI.t("Arah dipilih: ") + item[which]);
                     }
                 })
                 .setNegativeButton(TeksUI.t("Batal"), null)
@@ -239,7 +239,7 @@ public class PenerjemahKodeActivity extends Activity {
     }
 
     private void perbaruiArah() {
-        if (tvArah != null) tvArah.setText("Arah: " + PenerjemahKode.labelArah(arah));
+        if (tvArah != null) tvArah.setText(TeksUI.t("Arah: ") + PenerjemahKode.labelArah(arah));
     }
 
     private void terjemahkan() {
@@ -254,7 +254,7 @@ public class PenerjemahKodeActivity extends Activity {
         if (hasilTerjemah.adaYangGagal()) {
             sb.append("\n// ---------------- laporan ----------------\n");
             sb.append("// ").append(hasilTerjemah.tidakDiterjemahkan.size())
-                    .append(" baris tidak bisa diterjemahkan (disimpan apa adanya):\n");
+                    .append(TeksUI.t(" baris tidak bisa diterjemahkan (disimpan apa adanya):") + "\n");
             for (int i = 0; i < hasilTerjemah.tidakDiterjemahkan.size(); i++) {
                 sb.append("// ").append(hasilTerjemah.tidakDiterjemahkan.get(i)).append("\n");
             }

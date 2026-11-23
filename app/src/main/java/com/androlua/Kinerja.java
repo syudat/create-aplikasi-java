@@ -94,21 +94,21 @@ public class Kinerja {
     public static String laporanContoh(String paket, int pid, Catatan c,
                                        long ramTotalKB, long ramBebasKB) {
         StringBuilder b = new StringBuilder();
-        b.append("Memantau ").append(paket).append(" (pid ").append(pid).append(")\n");
+        b.append(TeksUI.t("Memantau ")).append(paket).append(TeksUI.t(" (pid ")).append(pid).append(")\n");
         b.append(TeksUI.t("Contoh ke-")).append(c.contoh).append('\n');
         if (c.pssTerakhirKB >= 0) {
             b.append(TeksUI.t("RAM aplikasi (PSS): ")).append(formatKB(c.pssTerakhirKB)).append('\n');
         } else {
-            b.append("RAM aplikasi: tidak terbaca\n");
+            b.append(TeksUI.t("RAM aplikasi: tidak terbaca") + "\n");
         }
         if (c.cpuTerakhir >= 0) {
             b.append(TeksUI.t("CPU aplikasi: ")).append(String.format("%.1f", c.cpuTerakhir)).append("%\n");
         } else {
-            b.append("CPU aplikasi: tidak terbaca di Android versi ini\n");
+            b.append(TeksUI.t("CPU aplikasi: tidak terbaca di Android versi ini") + "\n");
         }
         if (ramTotalKB > 0) {
-            b.append("RAM HP: total ").append(formatKB(ramTotalKB))
-             .append(", bebas ").append(formatKB(ramBebasKB)).append('\n');
+            b.append(TeksUI.t("RAM HP: total ")).append(formatKB(ramTotalKB))
+             .append(TeksUI.t(", bebas ")).append(formatKB(ramBebasKB)).append('\n');
         }
         return b.toString();
     }
@@ -116,20 +116,20 @@ public class Kinerja {
     /** Laporan ringkasan sesudah pemantauan berhenti. */
     public static String laporanRingkasan(String paket, Catatan c) {
         StringBuilder b = new StringBuilder();
-        b.append("Ringkasan pemantauan ").append(paket).append(":\n");
-        b.append(c.contoh).append(" contoh tercatat.\n");
+        b.append(TeksUI.t("Ringkasan pemantauan ")).append(paket).append(":\n");
+        b.append(c.contoh).append(TeksUI.t(" contoh tercatat.") + "\n");
         if (c.pssRataKB() >= 0) {
-            b.append("RAM (PSS) rata-rata ").append(formatKB(c.pssRataKB()))
-             .append(", puncak ").append(formatKB(c.pssPuncakKB))
-             .append(", terakhir ").append(formatKB(c.pssTerakhirKB)).append(".\n");
+            b.append(TeksUI.t("RAM (PSS) rata-rata ")).append(formatKB(c.pssRataKB()))
+             .append(TeksUI.t(", puncak ")).append(formatKB(c.pssPuncakKB))
+             .append(TeksUI.t(", terakhir ")).append(formatKB(c.pssTerakhirKB)).append(".\n");
         } else {
-            b.append("RAM aplikasi tidak terbaca selama pemantauan.\n");
+            b.append(TeksUI.t("RAM aplikasi tidak terbaca selama pemantauan.") + "\n");
         }
         if (c.cpuRata() >= 0) {
-            b.append("CPU rata-rata ").append(String.format("%.1f", c.cpuRata()))
-             .append("%, puncak ").append(String.format("%.1f", c.cpuPuncak)).append("%.\n");
+            b.append(TeksUI.t("CPU rata-rata ")).append(String.format("%.1f", c.cpuRata()))
+             .append(TeksUI.t("%, puncak ")).append(String.format("%.1f", c.cpuPuncak)).append("%.\n");
         } else {
-            b.append("CPU tidak terbaca di Android versi ini (akses /proc proses lain dibatasi).\n");
+            b.append(TeksUI.t("CPU tidak terbaca di Android versi ini (akses /proc proses lain dibatasi).") + "\n");
         }
         return b.toString();
     }

@@ -147,10 +147,10 @@ public class PetaProyek {
         }
         String[][] peran = {
             {"Manifest", "app/src/main/AndroidManifest.xml"},
-            {"Layout utama", "app/src/main/res/layout/activity_main.xml"},
+            {TeksUI.t("Layout utama"), "app/src/main/res/layout/activity_main.xml"},
             {"Strings", "app/src/main/res/values/strings.xml"},
-            {"Ikon", "app/src/main/res/drawable/icon.png"},
-            {"Halaman web", "app/src/main/assets/index.html"},
+            {TeksUI.t("Ikon"), "app/src/main/res/drawable/icon.png"},
+            {TeksUI.t("Halaman web"), "app/src/main/assets/index.html"},
             {"init.lua", "init.lua"},
         };
         for (int i = 0; i < peran.length; i++) {
@@ -168,8 +168,8 @@ public class PetaProyek {
         sb.append(TeksUI.t("Peta Proyek: ")).append(dirProyek == null ? "" : dirProyek.getName()).append("\n");
         sb.append(TeksUI.t("Jumlah berkas: ")).append(p.jumlahBerkas)
                 .append(TeksUI.t(" | Total ukuran: ")).append(formatUkuran(p.totalUkuran)).append("\n");
-        sb.append("(Folder bin/ dan .git/ tidak ikut dipetakan.)\n\n");
-        sb.append("== Struktur ==\n");
+        sb.append(TeksUI.t("(Folder bin/ dan .git/ tidak ikut dipetakan.)") + "\n" + "\n");
+        sb.append(TeksUI.t("== Struktur ==") + "\n");
         String folderSebelumnya = "";
         for (int i = 0; i < p.daftar.size(); i++) {
             Entri e = p.daftar.get(i);
@@ -187,15 +187,15 @@ public class PetaProyek {
             String nama = garis < 0 ? e.jalan : e.jalan.substring(garis + 1);
             sb.append("- ").append(nama).append(" (").append(formatUkuran(e.ukuran)).append(")\n");
         }
-        sb.append("\n== Ukuran per jenis ==\n");
+        sb.append("\n" + TeksUI.t("== Ukuran per jenis ==") + "\n");
         for (Map.Entry<String, Jumlah> e : p.perJenis.entrySet()) {
             sb.append(e.getKey()).append(": ").append(e.getValue().jumlah)
                     .append(TeksUI.t(" berkas, ")).append(formatUkuran(e.getValue().ukuran)).append("\n");
         }
-        sb.append("\n== Berkas penting ==\n");
+        sb.append("\n" + TeksUI.t("== Berkas penting ==") + "\n");
         List<String[]> utama = berkasUtama(dirProyek);
         if (utama.isEmpty()) {
-            sb.append("(tidak ada berkas utama yang dikenali)\n");
+            sb.append(TeksUI.t("(tidak ada berkas utama yang dikenali)") + "\n");
         } else {
             for (int i = 0; i < utama.size(); i++) {
                 sb.append(utama.get(i)[0]).append(": ").append(utama.get(i)[1]).append("\n");

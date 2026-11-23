@@ -44,7 +44,7 @@ public class PerintahFavorit {
     public static List<Favorit> bawaan() {
         List<Favorit> d = new ArrayList<>();
         d.add(new Favorit("Lihat berkas", "ls -la"));
-        d.add(new Favorit("Cek ruang", "df -h"));
+        d.add(new Favorit(TeksUI.t("Cek ruang"), "df -h"));
         d.add(new Favorit("Bersihkan layar", "clear"));
         return d;
     }

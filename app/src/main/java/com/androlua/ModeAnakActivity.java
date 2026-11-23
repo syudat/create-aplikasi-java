@@ -99,7 +99,7 @@ public class ModeAnakActivity extends Activity {
                 bukaProyek();
             }
         });
-        buttonBesar(r, "Jalankan", new View.OnClickListener() {
+        buttonBesar(r, TeksUI.t("Jalankan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 jalankanProyek();
@@ -161,7 +161,7 @@ public class ModeAnakActivity extends Activity {
     private void mintaBuatPin() {
         final EditText ePin = new EditText(this);
         GayaStudio.edit(ePin);
-        ePin.setHint("4 angka, contoh: 1234");
+        ePin.setHint(TeksUI.t("4 angka, contoh: 1234"));
         ePin.setInputType(InputType.TYPE_CLASS_NUMBER
                 | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         new AlertDialog.Builder(this)
@@ -179,7 +179,7 @@ public class ModeAnakActivity extends Activity {
                             return;
                         }
                         simpanPin(pin);
-                        toast("PIN Mode Anak disimpan.");
+                        toast(TeksUI.t("PIN Mode Anak disimpan."));
                     }
                 })
                 .setNegativeButton(TeksUI.t("Nanti saja"), null)
@@ -193,7 +193,7 @@ public class ModeAnakActivity extends Activity {
         }
         final EditText ePin = new EditText(this);
         GayaStudio.edit(ePin);
-        ePin.setHint("Masukkan PIN 4 angka");
+        ePin.setHint(TeksUI.t("Masukkan PIN 4 angka"));
         ePin.setInputType(InputType.TYPE_CLASS_NUMBER
                 | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         new AlertDialog.Builder(this)
@@ -249,7 +249,7 @@ public class ModeAnakActivity extends Activity {
             }
         }
         toast("Proyek " + nama + TeksUI.t(" dibuat. Buka di Kelola Project untuk melihatnya."));
-        announce(TeksUI.t("Proyek ") + nama + " dibuat.");
+        announce(TeksUI.t("Proyek ") + nama + TeksUI.t(" dibuat."));
         muatDaftar();
     }
 

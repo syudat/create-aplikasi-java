@@ -71,14 +71,14 @@ public class VoiceActivity extends Activity {
         r.addView(ePerintah, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Jalankan perintah", new View.OnClickListener() {
+        button(r, TeksUI.t("Jalankan perintah"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 jalankanUcapan(ePerintah.getText().toString());
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setText("Belum ada perintah.");
         tvHasil.setTextSize(14);
@@ -157,7 +157,7 @@ public class VoiceActivity extends Activity {
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         it.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "id-ID");
         it.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
-        it.putExtra(RecognizerIntent.EXTRA_PROMPT, "Ucapkan perintah");
+        it.putExtra(RecognizerIntent.EXTRA_PROMPT, TeksUI.t("Ucapkan perintah"));
         try {
             startActivityForResult(it, MINTA_SUARA);
         } catch (ActivityNotFoundException e) {
@@ -179,7 +179,7 @@ public class VoiceActivity extends Activity {
         PerintahSuara.Perintah p = PerintahSuara.parse(teks);
         String aksi = p.aksi;
         if ("BANTUAN".equals(aksi)) {
-            StringBuilder sb = new StringBuilder("Perintah yang bisa diucapkan:\n");
+            StringBuilder sb = new StringBuilder(TeksUI.t("Perintah yang bisa diucapkan:") + "\n");
             for (int i = 0; i < PerintahSuara.DAFTAR_PERINTAH.length; i++) {
                 sb.append("\n\u2022 ").append(PerintahSuara.DAFTAR_PERINTAH[i]);
             }
@@ -250,7 +250,7 @@ public class VoiceActivity extends Activity {
             tampilkan(TeksUI.t("Menutup aplikasi."));
             finishAffinity();
         } else {
-            tampilkan("Perintah \"" + teks + TeksUI.t("\" tidak saya kenali. Ucapkan ")
+            tampilkan(TeksUI.t("Perintah \"") + teks + TeksUI.t("\" tidak saya kenali. Ucapkan ")
                     + TeksUI.t("\"bantuan\" untuk mendengar daftar perintah."));
         }
     }
@@ -283,7 +283,7 @@ public class VoiceActivity extends Activity {
             tampilkan(TeksUI.t("Belum ada proyek. Buat dulu dengan perintah \"buat proyek kalkulator\"."));
             return;
         }
-        StringBuilder sb = new StringBuilder("Proyek kamu:\n");
+        StringBuilder sb = new StringBuilder(TeksUI.t("Proyek kamu:") + "\n");
         String[] baris = hasil.split("\n");
         for (int i = 0; i < baris.length; i++) {
             if (baris[i].isEmpty()) continue;

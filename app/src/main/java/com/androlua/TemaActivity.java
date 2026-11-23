@@ -50,7 +50,7 @@ public class TemaActivity extends Activity {
 
         heading(r, TeksUI.t("Desainer Tema"), 20);
         label(r, TeksUI.t("Pilih proyek dan tema warna — IDE menulis tema sungguhan ")
-                + "(colors.xml + styles.xml) ke proyekmu. Pratinjau di bawah "
+                + TeksUI.t("(colors.xml + styles.xml) ke proyekmu. Pratinjau di bawah ")
                 + TeksUI.t("menunjukkan enam warna tema yang dipilih."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
@@ -160,7 +160,7 @@ public class TemaActivity extends Activity {
         String galat = DesainerTema.terapkanTema(new File(ROOT + "/" + nama), t.id);
         if (galat == null) {
             String ok = TeksUI.t("Tema ") + t.nama + TeksUI.t(" diterapkan ke proyek ") + nama
-                    + " (colors.xml + styles.xml).";
+                    + TeksUI.t(" (colors.xml + styles.xml).");
             toast(ok);
             announce(ok);
         } else {

@@ -60,7 +60,7 @@ public class AiActivity extends Activity {
         r.addView(eDeskripsi, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Dikte deskripsi", new View.OnClickListener() {
+        button(r, TeksUI.t("Dikte deskripsi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dikte();
@@ -74,7 +74,7 @@ public class AiActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setText("Belum ada deskripsi.");
         tvHasil.setTextSize(14);
@@ -147,7 +147,7 @@ public class AiActivity extends Activity {
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         it.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "id-ID");
         it.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
-        it.putExtra(RecognizerIntent.EXTRA_PROMPT, "Diktekan deskripsi aplikasimu");
+        it.putExtra(RecognizerIntent.EXTRA_PROMPT, TeksUI.t("Diktekan deskripsi aplikasimu"));
         try {
             startActivityForResult(it, MINTA_DIKTE);
         } catch (ActivityNotFoundException e) {
@@ -170,7 +170,7 @@ public class AiActivity extends Activity {
             tampilkan(TeksUI.t("Proyek gagal dibuat. Coba lagi dengan deskripsi lain."));
             return;
         }
-        String teks = hasil.penjelasan + "\n\nProyek \"" + hasil.namaProyek
+        String teks = hasil.penjelasan + "\n" + "\n" + TeksUI.t("Proyek \"") + hasil.namaProyek
                 + TeksUI.t("\" sudah dibuat dan bisa dibuka di Kelola Project.");
         tampilkan(teks);
     }

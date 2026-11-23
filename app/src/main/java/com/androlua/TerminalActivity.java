@@ -111,7 +111,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         outputView.setTextSize(14);
         outputView.setTextIsSelectable(true);
         outputView.setMovementMethod(new ScrollingMovementMethod());
-        outputView.setContentDescription("Keluaran terminal");
+        outputView.setContentDescription(TeksUI.t("Keluaran terminal"));
         outputScroll = new ScrollView(this);
         outputScroll.addView(outputView);
         LinearLayout.LayoutParams outputParams = new LinearLayout.LayoutParams(
@@ -126,18 +126,18 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         inputView = new EditText(this);
 
         GayaStudio.terminalEdit(inputView);
-        inputView.setHint("Ketik perintah, mis. ls");
+        inputView.setHint(TeksUI.t("Ketik perintah, mis. ls"));
         inputView.setInputType(InputType.TYPE_CLASS_TEXT);
         inputView.setSingleLine(true);
-        inputView.setContentDescription("Kolom perintah terminal");
+        inputView.setContentDescription(TeksUI.t("Kolom perintah terminal"));
         LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
         inputRow.addView(inputView, inputParams);
 
         Button runButton = new Button(this);
         GayaStudio.tombol(runButton);
-        runButton.setText("Jalankan");
-        runButton.setContentDescription("Jalankan perintah");
+        runButton.setText(TeksUI.t("Jalankan"));
+        runButton.setContentDescription(TeksUI.t("Jalankan perintah"));
         runButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,9 +174,9 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         }));
 
         root.addView(buatBarisTombol(new String[][]{
-                {"Riwayat", TeksUI.t("Lihat riwayat perintah")},
-                {"Favorit", TeksUI.t("Lihat perintah favorit")},
-                {"Uji Exec", TeksUI.t("Uji exec biner folder aplikasi")},
+                {TeksUI.t("Riwayat"), TeksUI.t("Lihat riwayat perintah")},
+                {TeksUI.t("Favorit"), TeksUI.t("Lihat perintah favorit")},
+                {TeksUI.t("Uji Exec"), TeksUI.t("Uji exec biner folder aplikasi")},
                 {TeksUI.t("Tutup shell"), TeksUI.t("Matikan shell dan tutup terminal")},
         }, new View.OnClickListener[]{
                 new View.OnClickListener() {
@@ -207,8 +207,8 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
 
         root.addView(buatBarisTombol(new String[][]{
                 {"Tab", TeksUI.t("Kirim tombol Tab")},
-                {"Atas", TeksUI.t("Kirim panah atas")},
-                {"Bawah", TeksUI.t("Kirim panah bawah")},
+                {TeksUI.t("Atas"), TeksUI.t("Kirim panah atas")},
+                {TeksUI.t("Bawah"), TeksUI.t("Kirim panah bawah")},
                 {"Esc", TeksUI.t("Kirim tombol Escape")},
         }, new View.OnClickListener[]{
                 new View.OnClickListener() {
@@ -294,25 +294,25 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         sesi = TerminalService.ambilAtauBuat(this, cwd);
         if (sesi.isiLayar().isEmpty()) {
             StringBuilder sambutan = new StringBuilder();
-            sambutan.append("Terminal Kautsar siap. Folder kerja: ").append(cwd).append("\r\n");
-            sambutan.append("Exec biner: ");
+            sambutan.append(TeksUI.t("Terminal Kautsar siap. Folder kerja: ")).append(cwd).append("\r\n");
+            sambutan.append(TeksUI.t("Exec biner: "));
             try {
                 sambutan.append(sesi.adaKautsarExec(this)
-                        ? "aktif (libkautsarexec.so ditemukan)."
-                        : "belum aktif (libkautsarexec.so tidak ditemukan).");
+                        ? TeksUI.t("aktif (libkautsarexec.so ditemukan).")
+                        : TeksUI.t("belum aktif (libkautsarexec.so tidak ditemukan)."));
             } catch (Throwable t) {
                 sambutan.append(TeksUI.t("tidak diketahui."));
             }
-            sambutan.append("\r\nLingkungan Termux: ");
+            sambutan.append("\r" + "\n" + TeksUI.t("Lingkungan Termux: "));
             try {
                 sambutan.append(BootstrapTermux.sudahTerpasang(this)
-                        ? "terpasang (" + BootstrapTermux.VERSI_BOOTSTRAP + TeksUI.t("). Ketik \"pkg update\" untuk mencoba.")
+                        ? TeksUI.t("terpasang (") + BootstrapTermux.VERSI_BOOTSTRAP + TeksUI.t("). Ketik \"pkg update\" untuk mencoba.")
                         : TeksUI.t("belum dipasang. Tekan \"Pasang Termux\" supaya perintah pkg bisa dipakai."));
             } catch (Throwable t) {
                 sambutan.append(TeksUI.t("tidak diketahui."));
             }
-            sambutan.append("\r\nKetik perintah lalu tekan Jalankan. Contoh: ls\r\n");
-            sambutan.append("Shell tetap berjalan walau layar ini ditutup. Tekan Tutup shell untuk mematikannya.\r\n");
+            sambutan.append("\r" + "\n" + TeksUI.t("Ketik perintah lalu tekan Jalankan. Contoh: ls") + "\r" + "\n");
+            sambutan.append(TeksUI.t("Shell tetap berjalan walau layar ini ditutup. Tekan Tutup shell untuk mematikannya.") + "\r" + "\n");
             sesi.layar.write(sambutan.toString());
         }
         segarkanLayar();
@@ -475,7 +475,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
             return;
         }
         s.kirim("\u0003");
-        announce("Ctrl+C dikirim, perintah dihentikan.");
+        announce(TeksUI.t("Ctrl+C dikirim, perintah dihentikan."));
     }
 
     private void kirimTombol(String urutan) {
@@ -547,13 +547,13 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
             item[i] = riwayat.get(riwayat.size() - 1 - i);
         }
         new AlertDialog.Builder(this)
-                .setTitle("Riwayat perintah")
+                .setTitle(TeksUI.t("Riwayat perintah"))
                 .setItems(item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
                         inputView.setText(item[which]);
                         inputView.setSelection(inputView.getText().length());
-                        announce("Perintah dipilih: " + item[which]);
+                        announce(TeksUI.t("Perintah dipilih: ") + item[which]);
                     }
                 })
                 .setNegativeButton(TeksUI.t("Tutup"), null)
@@ -574,7 +574,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         item[daftar.size()] = TeksUI.t("Tambah favorit baru…");
         item[daftar.size() + 1] = TeksUI.t("Hapus favorit…");
         new AlertDialog.Builder(this)
-                .setTitle("Perintah favorit")
+                .setTitle(TeksUI.t("Perintah favorit"))
                 .setItems(item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
@@ -599,7 +599,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         namaView.setHint("Nama favorit, mis. Lihat berkas");
         lay.addView(namaView);
         final EditText cmdView = new EditText(this);
-        cmdView.setHint("Perintah, mis. ls -la");
+        cmdView.setHint(TeksUI.t("Perintah, mis. ls -la"));
         cmdView.setText(inputView.getText().toString().trim());
         lay.addView(cmdView);
         new AlertDialog.Builder(this)
@@ -630,7 +630,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
                             return;
                         }
                         simpanFavorit();
-                        announce("Favorit disimpan: " + PerintahFavorit.bersihkan(nama));
+                        announce(TeksUI.t("Favorit disimpan: ") + PerintahFavorit.bersihkan(nama));
                     }
                 })
                 .setNegativeButton(TeksUI.t("Batal"), null)
@@ -664,7 +664,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
                                     public void onClick(DialogInterface d2, int which2) {
                                         PerintahFavorit.hapus(favorit, f.nama);
                                         simpanFavorit();
-                                        announce("Favorit dihapus: " + f.nama);
+                                        announce(TeksUI.t("Favorit dihapus: ") + f.nama);
                                     }
                                 })
                                 .setNegativeButton(TeksUI.t("Batal"), null)
@@ -694,7 +694,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         s.kirim(cmd + "\n");
         riwayat = RiwayatTerminal.tambah(berkasRiwayat(), cmd);
         posRiwayat = riwayat.size();
-        announce("Menjalankan favorit: " + f.nama);
+        announce(TeksUI.t("Menjalankan favorit: ") + f.nama);
     }
 
     /** Uji jalan tidaknya exec biner (Env.selfTest) di utas latar. */
@@ -721,7 +721,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
                     @Override
                     public void run() {
                         new AlertDialog.Builder(TerminalActivity.this)
-                                .setTitle("Uji Exec")
+                                .setTitle(TeksUI.t("Uji Exec"))
                                 .setMessage(teksHasil)
                                 .setPositiveButton(TeksUI.t("Tutup"), null)
                                 .show();
@@ -753,7 +753,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
                 .setTitle(TeksUI.t("Pasang lingkungan Termux?"))
                 .setMessage(TeksUI.t("Terminal ini belum punya lingkungan Termux, jadi perintah ")
                         + TeksUI.t("\"pkg update\" dan memasang paket belum bisa. Pasang sekarang? ")
-                        + "Unduhan sekitar " + BootstrapTermux.ukuranUnduhan(arch)
+                        + TeksUI.t("Unduhan sekitar ") + BootstrapTermux.ukuranUnduhan(arch)
                         + TeksUI.t(" dari rilis resmi Termux (") + BootstrapTermux.VERSI_BOOTSTRAP + "), "
                         + TeksUI.t("butuh internet. Setelah terpasang, shell memakai bash dan perintah pkg bisa dipakai."))
                 .setPositiveButton(TeksUI.t("Pasang sekarang"), new DialogInterface.OnClickListener() {
@@ -772,8 +772,8 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         sedangPasang = true;
         announce(TeksUI.t("Memasang lingkungan Termux, tunggu sebentar."));
         dialogPasang = new AlertDialog.Builder(this)
-                .setTitle("Memasang Termux")
-                .setMessage("Mengunduh lingkungan Termux…")
+                .setTitle(TeksUI.t("Memasang Termux"))
+                .setMessage(TeksUI.t("Mengunduh lingkungan Termux…"))
                 .setCancelable(false)
                 .create();
         dialogPasang.show();
@@ -833,8 +833,8 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         boolean sudah = BootstrapTermux.sudahTerpasang(this);
         String paket = TeksUI.t(" Sesudah itu aplikasi memasang otomatis paket Linux dasar ")
                 + TeksUI.t("(git, python, curl, wget, nano, openssh, zip, unzip) dan alat bangun ")
-                + "APK beserta tanda tangan (openjdk-21, kotlin, gradle, ecj, aapt2, d8, "
-                + "apksigner, clang, cmake, ninja, make). Unduhan paket besar (ratusan MB) "
+                + TeksUI.t("APK beserta tanda tangan (openjdk-21, kotlin, gradle, ecj, aapt2, d8, ")
+                + TeksUI.t("apksigner, clang, cmake, ninja, make). Unduhan paket besar (ratusan MB) ")
                 + TeksUI.t("dan bisa lama. Selama pemasangan, kemajuan dan keluaran perintah tampil ")
                 + TeksUI.t("di layar utama Terminal, dan hasil akhir dibacakan.");
         String isi = sudah
@@ -947,8 +947,8 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
         sesi = null;
         sesi = TerminalService.ambilAtauBuat(this, cwd);
         if (sesi != null) {
-            sesi.layar.write("\r\nLingkungan Termux terpasang. Shell sekarang bash. "
-                    + "Ketik \"pkg update\" untuk mencoba.\r\n");
+            sesi.layar.write("\r" + "\n" + TeksUI.t("Lingkungan Termux terpasang. Shell sekarang bash. ")
+                    + TeksUI.t("Ketik \"pkg update\" untuk mencoba.") + "\r" + "\n");
         }
         segarkanLayar();
         announce(TeksUI.t("Shell dimulai ulang dengan bash Termux."));

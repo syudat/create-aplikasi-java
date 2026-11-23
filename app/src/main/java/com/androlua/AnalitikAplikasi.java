@@ -267,17 +267,17 @@ public class AnalitikAplikasi {
         if (gabung.contains("invalid parameters")
                 || (gabung.contains("handler") && gabung.contains("post"))) {
             return TeksUI.t("Saran: ini pola Handler.post yang salah. Selalu pakai ")
-                    + "Handler.post(Runnable{run=function() ... end}), jangan "
+                    + TeksUI.t("Handler.post(Runnable{run=function() ... end}), jangan ")
                     + TeksUI.t("pernah memberi fungsi mentah ke post atau postDelayed, ")
                     + TeksUI.t("karena fungsi mentah gagal diubah jadi Runnable di ")
-                    + "sebagian perangkat.";
+                    + TeksUI.t("sebagian perangkat.");
         }
         if (gabung.contains("luadialog") || gabung.contains("dialog")
                 || gabung.contains("badtoken")
                 || gabung.contains("calledfromwrongthread")
                 || gabung.contains("setview")) {
             return TeksUI.t("Saran: dialog hanya boleh dibuat dan ditampilkan dari ")
-                    + "thread utama lewat post(Runnable{...}), dengan urutan "
+                    + TeksUI.t("thread utama lewat post(Runnable{...}), dengan urutan ")
                     + TeksUI.t("setTitle lalu setView lalu show(), dan show() serta ")
                     + TeksUI.t("dismiss() dibungkus pcall. Jangan pernah membuat dialog ")
                     + TeksUI.t("dari callback jaringan atau thread latar.");
@@ -296,8 +296,8 @@ public class AnalitikAplikasi {
         if (gabung.contains("classnotfound")
                 || gabung.contains("noclassdeffound")) {
             return TeksUI.t("Saran: ada kelas yang tidak ditemukan di APK. Periksa ")
-                    + "nama paket dan import kelas itu, pastikan kelasnya "
-                    + "ikut terbawa saat build.";
+                    + TeksUI.t("nama paket dan import kelas itu, pastikan kelasnya ")
+                    + TeksUI.t("ikut terbawa saat build.");
         }
         if (gabung.contains("unknownhost") || gabung.contains("timeout")
                 || gabung.contains("network") || gabung.contains("http")) {
@@ -319,25 +319,25 @@ public class AnalitikAplikasi {
     public static String formatRingkasan(int buka, List<Kunjungan> layar,
             List<Crash> crash) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Dibuka: ").append(buka).append(" kali.\n");
+        sb.append(TeksUI.t("Dibuka: ")).append(buka).append(TeksUI.t(" kali.") + "\n");
         int jmlLayar = layar == null ? 0 : layar.size();
         sb.append(TeksUI.t("Layar tercatat: ")).append(jmlLayar).append(".\n");
         Kunjungan favorit = layarFavorit(layar);
         if (favorit == null) {
-            sb.append("Layar favorit: belum ada.\n");
+            sb.append(TeksUI.t("Layar favorit: belum ada.") + "\n");
         } else {
             sb.append(TeksUI.t("Layar favorit: ")).append(favorit.nama)
-                    .append(" (").append(favorit.jumlah).append(" kali).\n");
+                    .append(" (").append(favorit.jumlah).append(TeksUI.t(" kali).") + "\n");
         }
         int jmlCrash = crash == null ? 0 : crash.size();
-        sb.append("Jumlah crash: ").append(jmlCrash).append(".\n");
+        sb.append(TeksUI.t("Jumlah crash: ")).append(jmlCrash).append(".\n");
         if (jmlCrash > 0) {
             Crash terakhir = crash.get(0);
-            sb.append("Crash terakhir: ").append(terakhir.tanggal)
+            sb.append(TeksUI.t("Crash terakhir: ")).append(terakhir.tanggal)
                     .append(TeksUI.t(", layar ")).append(terakhir.layar)
                     .append(", ").append(terakhir.pesan).append("\n");
         } else {
-            sb.append("Crash terakhir: belum ada.\n");
+            sb.append(TeksUI.t("Crash terakhir: belum ada.") + "\n");
         }
         return sb.toString();
     }

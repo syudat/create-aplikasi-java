@@ -48,7 +48,7 @@ public class MarketActivity extends Activity {
         heading(r, TeksUI.t("Pasar Proyek"), 20);
         label(r, TeksUI.t("Proyek contoh bawaan aplikasi — ketuk satu untuk memasangnya ")
                 + TeksUI.t("ke folder proyekmu. Pasar online (unduh dari internet) belum ")
-                + "tersedia; pasar ini berisi contoh yang sudah ada di aplikasi.",
+                + TeksUI.t("tersedia; pasar ini berisi contoh yang sudah ada di aplikasi."),
                 false);
 
         List<String> baris = new ArrayList<String>();
@@ -88,7 +88,7 @@ public class MarketActivity extends Activity {
     private void tanyaPasang(final PasarProyek.Item item) {
         new AlertDialog.Builder(this)
                 .setTitle(TeksUI.t("Pasang ") + item.nama + "?")
-                .setMessage(item.deskripsi + "\n\nProyek akan dibuat di folder "
+                .setMessage(item.deskripsi + "\n" + "\n" + TeksUI.t("Proyek akan dibuat di folder ")
                         + TeksUI.t("Download/project dengan nama \"") + item.nama + "\".")
                 .setPositiveButton(TeksUI.t("Pasang"), new DialogInterface.OnClickListener() {
                     @Override

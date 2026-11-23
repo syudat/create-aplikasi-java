@@ -135,7 +135,7 @@ public class EditorActivity extends Activity {
         LinearLayout bottom = new LinearLayout(this);
         bottom.setOrientation(LinearLayout.HORIZONTAL);
         tambahAksi(bottom, TeksUI.t("Simpan"));
-        tambahAksi(bottom, "Jalankan");
+        tambahAksi(bottom, TeksUI.t("Jalankan"));
         tambahAksi(bottom, "Bangun");
         r.addView(bottom, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -236,7 +236,7 @@ public class EditorActivity extends Activity {
         if (data == null) data = new byte[0];
         String teks = new String(data, Charset.forName("UTF-8"));
         editBox.setText(teks);
-        setTitle(new File(dir).getName() + " / " + nama + " (" + data.length + " byte)");
+        setTitle(new File(dir).getName() + " / " + nama + " (" + data.length + TeksUI.t(" byte)"));
     }
 
     // Sama seperti saveCurrent() di main.lua: tulis, lalu verifikasi ukuran
@@ -264,7 +264,7 @@ public class EditorActivity extends Activity {
         if (disk == null || diDisk != data.length) {
             new AlertDialog.Builder(this)
                     .setTitle(TeksUI.t("Peringatan: file tidak utuh"))
-                    .setMessage(curFile + " seharusnya " + data.length + " byte, tetapi tersimpan "
+                    .setMessage(curFile + TeksUI.t(" seharusnya ") + data.length + " byte, tetapi tersimpan "
                             + diDisk + TeksUI.t(" byte. Coba simpan lagi atau pecah skrip menjadi ")
                             + TeksUI.t("beberapa file yang lebih kecil."))
                     .setPositiveButton("OK", null).show();
@@ -339,8 +339,8 @@ public class EditorActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if ((TeksUI.t("Simpan").equals(teksTombol) || TeksUI.t("Simpan").equals(teksTombol))) {
-                    if (simpanSaatIni()) toast("Tersimpan");
-                } else if ("Jalankan".equals(teksTombol)) {
+                    if (simpanSaatIni()) toast(TeksUI.t("Tersimpan"));
+                } else if (TeksUI.t("Jalankan").equals(teksTombol)) {
                     jalankan();
                 } else if ("Bangun".equals(teksTombol)) {
                     bangun();
@@ -420,10 +420,10 @@ public class EditorActivity extends Activity {
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Sama seperti onCreateOptionsMenu di main.lua (layar editor).
         menu.add(TeksUI.t("Simpan"));
-        menu.add("Jalankan");
+        menu.add(TeksUI.t("Jalankan"));
         menu.add(TeksUI.t("Bangun proyek"));
         menu.add(TeksUI.t("Bangun di Terminal"));
-        menu.add("Ekspor ZIP");
+        menu.add(TeksUI.t("Ekspor ZIP"));
         menu.add(TeksUI.t("Pengaturan GitHub"));
         menu.add(TeksUI.t("Tutup proyek"));
         return super.onCreateOptionsMenu(menu);
@@ -434,14 +434,14 @@ public class EditorActivity extends Activity {
         // Sama seperti onOptionsItemSelected di main.lua (layar editor).
         String t = String.valueOf(item.getTitle());
         if ((TeksUI.t("Simpan").equals(t) || TeksUI.t("Simpan").equals(t))) {
-            if (simpanSaatIni()) toast("Tersimpan");
-        } else if ("Jalankan".equals(t)) {
+            if (simpanSaatIni()) toast(TeksUI.t("Tersimpan"));
+        } else if (TeksUI.t("Jalankan").equals(t)) {
             jalankan();
         } else if ((TeksUI.t("Bangun proyek").equals(t) || TeksUI.t("Bangun proyek").equals(t))) {
             bangun();
         } else if ((TeksUI.t("Bangun di Terminal").equals(t) || TeksUI.t("Bangun di Terminal").equals(t))) {
             bangunDiTerminal();
-        } else if ("Ekspor ZIP".equals(t)) {
+        } else if (TeksUI.t("Ekspor ZIP").equals(t)) {
             ekspor();
         } else if ((TeksUI.t("Pengaturan GitHub").equals(t) || TeksUI.t("Pengaturan GitHub").equals(t))) {
             GithubSettings.tampilkan(this, null);

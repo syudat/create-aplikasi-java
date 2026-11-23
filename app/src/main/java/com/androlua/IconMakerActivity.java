@@ -89,7 +89,7 @@ public class IconMakerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pembuat Ikon Otomatis");
+        setTitle(TeksUI.t("Pembuat Ikon Otomatis"));
 
         dirProyek = getIntent().getStringExtra(EXTRA_DIR);
 
@@ -98,17 +98,17 @@ public class IconMakerActivity extends Activity {
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pembuat Ikon Otomatis", 20);
+        heading(r, TeksUI.t("Pembuat Ikon Otomatis"), 20);
         label(r, TeksUI.t("Buat ikon aplikasi dari tulisan dan warna. Ikon berukuran ")
                 + TeksUI.t("512x512 dan menggantikan icon.png 1x1 transparan di proyek ")
-                + "(manifest memakai @drawable/icon).", false);
+                + TeksUI.t("(manifest memakai @drawable/icon)."), false);
 
         labelProyek = label(r, labelProyekTeks(), false);
 
         label(r, TeksUI.t("Tulisan ikon (1-2 huruf, contoh: GD untuk Garuda Decode)"));
         eTeks = new EditText(this);
         GayaStudio.edit(eTeks);
-        eTeks.setHint("Contoh: GD");
+        eTeks.setHint(TeksUI.t("Contoh: GD"));
         eTeks.setTextSize(14);
         eTeks.setSingleLine(true);
         eTeks.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(4) });
@@ -158,7 +158,7 @@ public class IconMakerActivity extends Activity {
             }
         });
 
-        label(r, "Pratinjau ikon");
+        label(r, TeksUI.t("Pratinjau ikon"));
         pratinjau = new ImageView(this);
         pratinjau.setContentDescription(TeksUI.t("Belum ada pratinjau ikon."));
         LinearLayout.LayoutParams lpPratinjau = new LinearLayout.LayoutParams(
@@ -193,7 +193,7 @@ public class IconMakerActivity extends Activity {
         });
 
         perbaruiTombolProyek();
-        announce("Pembuat Ikon Otomatis");
+        announce(TeksUI.t("Pembuat Ikon Otomatis"));
     }
 
     @Override
@@ -294,7 +294,7 @@ public class IconMakerActivity extends Activity {
                             final EditText target) {
         final String[] tampil = new String[nama.length];
         for (int i = 0; i < nama.length; i++) tampil[i] = TeksUI.t(nama[i]);
-        announce(judul + ". " + nama.length + " pilihan.");
+        announce(judul + ". " + nama.length + TeksUI.t(" pilihan."));
         new AlertDialog.Builder(this)
                 .setTitle(judul)
                 .setItems(tampil, new DialogInterface.OnClickListener() {
@@ -393,10 +393,10 @@ public class IconMakerActivity extends Activity {
         if (bmp == null) return;
         bitmapIkon = bmp;
         pratinjau.setImageBitmap(bmp);
-        String deskripsi = "Pratinjau ikon: huruf "
+        String deskripsi = TeksUI.t("Pratinjau ikon: huruf ")
                 + eTeks.getText().toString().trim()
-                + ", latar " + eBgHex.getText().toString().trim()
-                + ", tulisan " + eFgHex.getText().toString().trim() + ".";
+                + TeksUI.t(", latar ") + eBgHex.getText().toString().trim()
+                + TeksUI.t(", tulisan ") + eFgHex.getText().toString().trim() + ".";
         pratinjau.setContentDescription(deskripsi);
         announce(deskripsi);
         toast("Ikon dibuat. Ukuran 512x512.");
@@ -416,7 +416,7 @@ public class IconMakerActivity extends Activity {
         File target = new File(dirProyek + "/app/src/main/res/drawable/icon.png");
         if (simpanPng(bmp, target)) {
             String pesan = TeksUI.t("Ikon disimpan ke proyek ") + new File(dirProyek).getName()
-                    + " (res/drawable/icon.png, 512x512).";
+                    + TeksUI.t(" (res/drawable/icon.png, 512x512).");
             toast(pesan);
             announce(pesan);
             finish();
@@ -437,7 +437,7 @@ public class IconMakerActivity extends Activity {
         File target = new File(Environment.getExternalStorageDirectory().getPath()
                 + "/Download/icon-" + teks + ".png");
         if (simpanPng(bmp, target)) {
-            String pesan = TeksUI.t("Ikon disimpan ke Download/icon-") + teks + ".png.";
+            String pesan = TeksUI.t("Ikon disimpan ke Download/icon-") + teks + TeksUI.t(".png.");
             toast(pesan);
             announce(pesan);
         } else {

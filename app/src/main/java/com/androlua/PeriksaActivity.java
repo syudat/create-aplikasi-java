@@ -68,7 +68,7 @@ public class PeriksaActivity extends Activity {
             }
         });
 
-        label(r, "Hasil:", false);
+        label(r, TeksUI.t("Hasil:"), false);
         hasilView = new TextView(this);
         hasilView.setText("Belum ada hasil. Pilih proyek, lalu tekan Periksa Kode.");
         hasilView.setTextSize(14);
@@ -114,7 +114,7 @@ public class PeriksaActivity extends Activity {
         String lap = PemeriksaKode.laporan(dir, temuan);
         hasilView.setText(lap);
         String ringkas = TeksUI.t("Periksa kode selesai: ") + temuan.size()
-                + (temuan.size() == 1 ? " temuan" : " temuan") + TeksUI.t(" di proyek ") + nama + ".";
+                + (temuan.size() == 1 ? TeksUI.t(" temuan") : TeksUI.t(" temuan")) + TeksUI.t(" di proyek ") + nama + ".";
         Toast.makeText(this, ringkas, Toast.LENGTH_SHORT).show();
         announce(ringkas + TeksUI.t(" Laporan lengkap ada di layar."));
     }

@@ -232,9 +232,9 @@ public class ArsipProyek {
      */
     public static String ekstrakZip(File zip, File dirTujuan) {
         if (zip == null || !zip.isFile()) return TeksUI.t("Berkas ZIP tidak ditemukan.");
-        if (dirTujuan == null) return "Folder tujuan tidak ditentukan.";
+        if (dirTujuan == null) return TeksUI.t("Folder tujuan tidak ditentukan.");
         if (!zipBerisiInitLua(zip)) {
-            return "Berkas ini bukan proyek Create Aplikasi (tidak ada berkas data proyek di dalamnya).";
+            return TeksUI.t("Berkas ini bukan proyek Create Aplikasi (tidak ada berkas data proyek di dalamnya).");
         }
         ZipInputStream masuk = null;
         try {
@@ -253,7 +253,7 @@ public class ArsipProyek {
                 File keluar = new File(dirTujuan, nama);
                 String kanonKeluar = keluar.getCanonicalPath();
                 if (!kanonKeluar.startsWith(kanonTujuan)) {
-                    return "ZIP ditolak: ada entri yang keluar dari folder proyek ("
+                    return TeksUI.t("ZIP ditolak: ada entri yang keluar dari folder proyek (")
                             + entri.getName() + ").";
                 }
                 if (entri.isDirectory()) {
@@ -272,11 +272,11 @@ public class ArsipProyek {
                 }
             }
             if (!new File(dirTujuan, "init.lua").isFile()) {
-                return "Ekstraksi selesai tetapi berkas data proyek tidak ditemukan di hasil.";
+                return TeksUI.t("Ekstraksi selesai tetapi berkas data proyek tidak ditemukan di hasil.");
             }
             return null;
         } catch (Exception e) {
-            return "Gagal mengekstrak ZIP: " + e.getMessage();
+            return TeksUI.t("Gagal mengekstrak ZIP: ") + e.getMessage();
         } finally {
             if (masuk != null) {
                 try {
@@ -289,8 +289,8 @@ public class ArsipProyek {
 
     /** Salin aliran masuk ke berkas (untuk impor dari pemilih berkas). */
     public static String salinAliran(InputStream masuk, File tujuan) {
-        if (masuk == null) return "Tidak ada data untuk disalin.";
-        if (tujuan == null) return "Tujuan tidak ditentukan.";
+        if (masuk == null) return TeksUI.t("Tidak ada data untuk disalin.");
+        if (tujuan == null) return TeksUI.t("Tujuan tidak ditentukan.");
         BufferedOutputStream keluar = null;
         try {
             File induk = tujuan.getParentFile();
@@ -302,11 +302,11 @@ public class ArsipProyek {
             keluar.close();
             keluar = null;
             if (!tujuan.isFile() || tujuan.length() == 0) {
-                return "Berkas hasil kosong.";
+                return TeksUI.t("Berkas hasil kosong.");
             }
             return null;
         } catch (Exception e) {
-            return "Gagal menyalin berkas: " + e.getMessage();
+            return TeksUI.t("Gagal menyalin berkas: ") + e.getMessage();
         } finally {
             if (keluar != null) {
                 try {

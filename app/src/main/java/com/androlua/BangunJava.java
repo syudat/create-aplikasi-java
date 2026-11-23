@@ -144,7 +144,7 @@ public class BangunJava {
         if (!new File(ctx.getApplicationInfo().nativeLibraryDir).isDirectory())
             throw new IOException(TeksUI.t("Direktori native tidak ditemukan"));
 
-        kirim(PROGRESS, "Menyiapkan compiler Java (ECJ + D8)...");
+        kirim(PROGRESS, TeksUI.t("Menyiapkan compiler Java (ECJ + D8)..."));
         File cache = new File(ctx.getCacheDir(), "bangun-java");
         hapus(cache);
         cache.mkdirs();
@@ -171,15 +171,15 @@ public class BangunJava {
         int jumlahR = sumberTambahan == null ? 0 : sumberTambahan.size();
         if (sumberTambahan != null) javaFiles.addAll(sumberTambahan);
         if (javaFiles.isEmpty())
-            throw new IOException("Tidak ada berkas .java di proyek ini");
+            throw new IOException(TeksUI.t("Tidak ada berkas .java di proyek ini"));
 
         // Catat daftar berkas proyek yang dikompilasi supaya BangunLokal bisa
         // menulisnya ke log-build.txt (pengguna bisa memastikan berkas di
         // samping MainActivity ikut di-build).
         int jumlahProyek = javaFiles.size() - jumlahR;
         StringBuilder ringkasan = new StringBuilder();
-        ringkasan.append("Berkas .java proyek yang dikompilasi ECJ (").append(jumlahProyek).append(")");
-        if (jumlahR > 0) ringkasan.append(" + ").append(jumlahR).append(" R.java hasil aapt2");
+        ringkasan.append(TeksUI.t("Berkas .java proyek yang dikompilasi ECJ (")).append(jumlahProyek).append(")");
+        if (jumlahR > 0) ringkasan.append(" + ").append(jumlahR).append(TeksUI.t(" R.java hasil aapt2"));
         ringkasan.append(":\n");
         String akar = projectDir.getAbsolutePath();
         for (int i = 0; i < jumlahProyek; i++) {
@@ -193,7 +193,7 @@ public class BangunJava {
         classesOut.mkdirs();
 
         // 2) kompilasi dengan ECJ
-        kirim(PROGRESS, "Mengompilasi " + javaFiles.size() + " berkas .java (ECJ)...");
+        kirim(PROGRESS, TeksUI.t("Mengompilasi ") + javaFiles.size() + TeksUI.t(" berkas .java (ECJ)..."));
         List<String> args = new ArrayList<String>();
         args.add("-nowarn");
         // -proc:none: matikan annotation processing. Tanpa ini ECJ memuat
@@ -245,10 +245,10 @@ public class BangunJava {
         errPw.flush();
         log.append(outSw).append(errSw);
         if (!ok)
-            throw new IOException("Kompilasi Java gagal:\n" + errSw + (outSw.getBuffer().length() > 0 ? "\n" + outSw : ""));
+            throw new IOException(TeksUI.t("Kompilasi Java gagal:") + "\n" + errSw + (outSw.getBuffer().length() > 0 ? "\n" + outSw : ""));
 
         // 3) dex hasil kompilasi dengan D8 (R8 dalam mode dexer saja)
-        kirim(PROGRESS, "Mengemas bytecode Java (D8)...");
+        kirim(PROGRESS, TeksUI.t("Mengemas bytecode Java (D8)..."));
         List<File> classFiles = new ArrayList<File>();
         kumpulBerakhiran(classesOut, ".class", classFiles);
         // Kelas R hasil aapt2 jangan ikut di-dex (lihat buangKelasR): dex
@@ -295,7 +295,7 @@ public class BangunJava {
         File hasil = new File(dexOut, "classes.dex");
         if (!hasil.isFile()) throw new IOException(TeksUI.t("D8 tidak menghasilkan classes.dex"));
         byte[] data = BangunLokal.baca(hasil);
-        kirim(PROGRESS, TeksUI.t("Kompilasi Java selesai (") + data.length + " bita dex).");
+        kirim(PROGRESS, TeksUI.t("Kompilasi Java selesai (") + data.length + TeksUI.t(" bita dex)."));
         return data;
     }
 

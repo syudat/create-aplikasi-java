@@ -85,7 +85,7 @@ public class BuatProyekHelper {
         param.ver = "1.0";
         param.code = 1;
         param.min = 21;
-        param.target = 33;
+        param.target = 36;
         param.tipe = tipe;
         param.skripHtml = null;
         param.split = false;

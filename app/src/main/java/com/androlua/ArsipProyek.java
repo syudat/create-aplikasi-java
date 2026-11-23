@@ -234,7 +234,7 @@ public class ArsipProyek {
         if (zip == null || !zip.isFile()) return "Berkas ZIP tidak ditemukan.";
         if (dirTujuan == null) return "Folder tujuan tidak ditentukan.";
         if (!zipBerisiInitLua(zip)) {
-            return "Berkas ini bukan proyek Create Aplikasi (tidak ada init.lua di dalamnya).";
+            return "Berkas ini bukan proyek Create Aplikasi (tidak ada berkas data proyek di dalamnya).";
         }
         ZipInputStream masuk = null;
         try {
@@ -272,7 +272,7 @@ public class ArsipProyek {
                 }
             }
             if (!new File(dirTujuan, "init.lua").isFile()) {
-                return "Ekstraksi selesai tetapi init.lua tidak ditemukan di hasil.";
+                return "Ekstraksi selesai tetapi berkas data proyek tidak ditemukan di hasil.";
             }
             return null;
         } catch (Exception e) {

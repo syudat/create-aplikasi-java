@@ -72,6 +72,72 @@ public class CrashHandler implements UncaughtExceptionHandler
 		Thread.setDefaultUncaughtExceptionHandler(this);
 	}
 
+	/** Membuat ID crash unik: CR-<tanggal>-<jam>-<4 hex acak>. */
+	public static String buatIdCrash(long waktuMs, int acak)
+	{
+		return IdCrash.buat(waktuMs, acak);
+	}
+
+	/** Folder log crash di penyimpanan internal aplikasi. */
+	public static File folderLogCrash(Context ctx)
+	{
+		return new File(ctx.getFilesDir(), "crash");
+	}
+
+	/** Berkas log crash terakhir yang belum ditampilkan, atau null. */
+	public static File logCrashTerakhir(Context ctx)
+	{
+		try
+		{
+			File[] semua = folderLogCrash(ctx).listFiles();
+			if (semua == null)
+				return null;
+			File terakhir = null;
+			for (File f : semua)
+			{
+				if (f.isFile() && f.getName().endsWith(".log")
+						&& (terakhir == null || f.lastModified() > terakhir.lastModified()))
+					terakhir = f;
+			}
+			return terakhir;
+		}
+		catch (Throwable t)
+		{
+			return null;
+		}
+	}
+
+	/** Membaca isi berkas teks (UTF-8); null bila gagal. */
+	public static String bacaTeks(File f)
+	{
+		try
+		{
+			java.io.FileInputStream in = new java.io.FileInputStream(f);
+			byte[] data = new byte[(int) Math.min(f.length(), 65536)];
+			int n = in.read(data);
+			in.close();
+			if (n <= 0)
+				return null;
+			return new String(data, 0, n, "UTF-8");
+		}
+		catch (Throwable t)
+		{
+			return null;
+		}
+	}
+
+	/** Menandai log crash sudah ditampilkan supaya tidak muncul lagi. */
+	public static void tandaiDibaca(File f)
+	{
+		try
+		{
+			f.renameTo(new File(f.getParentFile(), f.getName() + ".sudah"));
+		}
+		catch (Throwable ignored)
+		{
+		}
+	}
+
 	/**
 	 * Saat UncaughtException terjadi, penanganan dialihkan ke fungsi ini
 	 */
@@ -241,11 +307,15 @@ public class CrashHandler implements UncaughtExceptionHandler
 		printWriter.close();
 		String result = writer.toString();
 		sb.append(result);
+		// ID crash unik per kejadian (perintah al kautsar 2026-11-23):
+		// tampil sebagai baris pertama log dan menjadi bagian nama berkas.
+		String idCrash = buatIdCrash(System.currentTimeMillis(), new java.util.Random().nextInt());
+		sb.insert(0, "ID Crash: " + idCrash + "\n");
 		try
 		{
 			long timestamp = System.currentTimeMillis();
 			String time = formatter.format(new Date());
-			String fileName = "crash-" + time + "-" + timestamp + ".log";
+			String fileName = "crash-" + idCrash + ".log";
 			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) 
 			{
 				String path = "/sdcard/androlua/crash/";
@@ -259,6 +329,38 @@ public class CrashHandler implements UncaughtExceptionHandler
 				Log.e("crash",sb.toString());
 				
 				fos.close();
+			}
+			// Salinan di penyimpanan internal aplikasi: selalu bisa ditulis
+			// tanpa izin penyimpanan, dan dari sinilah log ditampilkan di
+			// layar pada pembukaan berikutnya (lihat JavaHomeActivity).
+			try
+			{
+				if (mContext != null)
+				{
+					File dirDalam = folderLogCrash(mContext);
+					if (!dirDalam.exists())
+						dirDalam.mkdirs();
+					FileOutputStream dalam = new FileOutputStream(new File(dirDalam, fileName));
+					dalam.write(sb.toString().getBytes());
+					dalam.close();
+					// Jaga tetap ringan: simpan paling banyak 5 log terakhir.
+					File[] semua = dirDalam.listFiles();
+					if (semua != null && semua.length > 5)
+					{
+						java.util.Arrays.sort(semua, new java.util.Comparator<File>()
+						{
+							public int compare(File a, File b)
+							{
+								return Long.compare(a.lastModified(), b.lastModified());
+							}
+						});
+						for (int i = 0; i < semua.length - 5; i++)
+							semua[i].delete();
+					}
+				}
+			}
+			catch (Throwable ignored)
+			{
 			}
 			return fileName;
 		}

@@ -72,6 +72,8 @@ public class PengaturanActivity extends Activity {
     public static final String KUNCI_BANGUN_HISTORY = "bangun_simpan_history";
     /** Tema aplikasi: id tema aksen (biru/hijau/ungu/merah/oranye). */
     public static final String KUNCI_TEMA = "tema_aplikasi";
+    /** Anti tamper aplikasi hasil build (bawaan: mati). Diatur di kategori Tanda Tangan. */
+    public static final String KUNCI_ANTI_TAMPER = "anti_tamper";
 
     /** Keamanan GitHub aktif? (bawaan true = skrip Lua hasil build dienkripsi). */
     public static boolean keamananGithub(Context ctx) {
@@ -115,6 +117,19 @@ public class PengaturanActivity extends Activity {
             return baca(ctx).getBoolean(KUNCI_BANGUN_HISTORY, true);
         } catch (Throwable ignored) {
             return true;
+        }
+    }
+
+    /**
+     * Anti tamper sebagai bawaan build? (bawaan false). Nilai ini bawaan
+     * umum; setelan per proyek di settings.gradle proyek menimpanya bila
+     * proyek itu punya setelan antiTamper sendiri.
+     */
+    public static boolean antiTamperBawaan(Context ctx) {
+        try {
+            return baca(ctx).getBoolean(KUNCI_ANTI_TAMPER, false);
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 
@@ -286,6 +301,26 @@ public class PengaturanActivity extends Activity {
                 "Nama, nomor WhatsApp, dan rekening di layar Donasi.");
         tombolKategori("Privasi dan Data", "privasi",
                 "Reset pengaturan dan hapus data aplikasi.");
+
+        // Bahasa Aplikasi di PALING BAWAH Pengaturan (perintah al kautsar
+        // 2026-11-23): 50 bahasa + pencarian, bawaan mengikuti sistem.
+        judul("Bahasa Aplikasi");
+        label("Bahasa saat ini: " + Bahasa.labelPilihan(
+                pref.getString(KUNCI_BAHASA, Bahasa.SISTEM),
+                java.util.Locale.getDefault().getLanguage()));
+        labelKecil("Bawaan mengikuti sistem Android. Bahasa terpilih dipakai "
+                + "di Tentang Alat dan menjadi bahasa aplikasi. Tersedia 50 "
+                + "bahasa dengan pencarian.");
+        button("Pilih Bahasa Aplikasi", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivity(new Intent(PengaturanActivity.this, BahasaActivity.class));
+                } catch (Throwable t) {
+                    toast("Gagal membuka pemilih bahasa: " + t.getMessage());
+                }
+            }
+        });
 
         button("Kembali ke Menu Utama", new View.OnClickListener() {
             @Override
@@ -484,7 +519,7 @@ public class PengaturanActivity extends Activity {
     private void muatUlangNilai() {
         if (nilaiBahasa != null) {
             nilaiBahasa.setText("Bahasa saat ini: " + labelBahasa(
-                    pref.getString(KUNCI_BAHASA, "id")));
+                    pref.getString(KUNCI_BAHASA, Bahasa.SISTEM)));
         }
         if (nilaiSuara != null) {
             nilaiSuara.setText("Kecepatan saat ini: " + labelSuara(
@@ -510,7 +545,7 @@ public class PengaturanActivity extends Activity {
     }
 
     private static String labelBahasa(String v) {
-        return "en".equals(v) ? "English" : "Indonesia";
+        return Bahasa.labelPilihan(v, java.util.Locale.getDefault().getLanguage());
     }
 
     private static String labelSuara(float v) {
@@ -787,6 +822,17 @@ public class PengaturanActivity extends Activity {
         judul("Tanda Tangan");
         labelKecil("Keystore untuk tanda tangan pribadi saat build. "
                 + "Bila belum ada keystore, buat dulu di sini.");
+        kotakCentang("Anti tamper aplikasi hasil build",
+                pref.getBoolean(KUNCI_ANTI_TAMPER, false),
+                KUNCI_ANTI_TAMPER);
+        labelKecil("Dicentang: aplikasi hasil build di perangkat menjaga "
+                + "dirinya sendiri. Saat dibuka, aplikasi memeriksa tanda "
+                + "tangannya dan isi berkas dex-nya; bila ada orang lain "
+                + "yang menandatangani ulang atau mengubah isinya, aplikasi "
+                + "menolak berjalan. Debugger dan alat injeksi seperti "
+                + "Frida/Xposed juga dideteksi, dan jendela aplikasi "
+                + "dikunci dari rekaman layar. Setelan ini tersimpan juga "
+                + "di berkas settings.gradle tiap proyek yang dibangun.");
         button("Buka Buat Keystore", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -849,25 +895,21 @@ public class PengaturanActivity extends Activity {
     private void bagianBahasaSuara() {
         judul("Bahasa dan Suara");
         nilaiBahasa = label("Bahasa saat ini: " + labelBahasa(
-                pref.getString(KUNCI_BAHASA, "id")));
-        labelKecil("Tersimpan. Pergantian bahasa antarmuka belum diterapkan "
-                + "di versi ini — pengaturan disimpan untuk pembaruan berikutnya.");
+                pref.getString(KUNCI_BAHASA, Bahasa.SISTEM)));
+        labelKecil("Bahasa aplikasi kini dipilih dari pemilih bahasa berisi "
+                + "50 bahasa dengan pencarian (juga ada di paling bawah menu "
+                + "Pengaturan). Bawaan mengikuti sistem Android. Bahasa "
+                + "terpilih dipakai di Tentang Alat dan menjadi bahasa "
+                + "aplikasi; pilihan berlaku penuh setelah aplikasi dibuka "
+                + "kembali.");
         button("Ubah Bahasa", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] nilai = {"id", "en"};
-                final String[] opsi = {"Indonesia", "English"};
-                pilihNilai("Pilih Bahasa", opsi,
-                        indeks(nilai, pref.getString(KUNCI_BAHASA, "id"), 0),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                simpan(KUNCI_BAHASA, nilai[which]);
-                                muatUlangNilai();
-                                toast("Bahasa tersimpan: " + opsi[which]);
-                                dialog.dismiss();
-                            }
-                        });
+                try {
+                    startActivity(new Intent(PengaturanActivity.this, BahasaActivity.class));
+                } catch (Throwable t) {
+                    toast("Gagal membuka pemilih bahasa: " + t.getMessage());
+                }
             }
         });
         nilaiSuara = label("Kecepatan saat ini: " + labelSuara(
@@ -952,15 +994,15 @@ public class PengaturanActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String t = eTarget.getText().toString().trim();
-                int target = 33;
+                int target = 36;
                 try {
                     target = Integer.parseInt(t);
                 } catch (Throwable ignored) {
                     toast("SDK target harus angka");
                     return;
                 }
-                if (target < 21 || target > 33) {
-                    toast("SDK target harus 21 sampai 33");
+                if (target < 21 || target > 36) {
+                    toast("SDK target harus 21 sampai 36");
                     return;
                 }
                 simpan(KUNCI_BUILD_TARGET, target);

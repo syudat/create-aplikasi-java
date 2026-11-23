@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.androlua"
-    android:versionCode="5600"
-    android:versionName="5.6">
+    android:versionCode="5700"
+    android:versionName="5.7">
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
@@ -298,6 +298,36 @@
             android:name="com.androlua.UkuranApkActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="Kalkulator Ukuran APK"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.AnalisisApkActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Penganalisis APK"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.PratinjauUkuranActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Pratinjau Ukuran Layar"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.SumberDayaActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Pengelola Sumber Daya"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.KinerjaActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Pemantau Kinerja Ringan"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.BahasaActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Bahasa Aplikasi"
             android:theme="@style/app_theme"
             android:exported="false" />
         <activity

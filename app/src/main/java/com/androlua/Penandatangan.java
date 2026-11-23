@@ -31,9 +31,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -222,6 +225,23 @@ public class Penandatangan {
     public static void tandatangani(final Context ctx, final String mentah, final String outDir, final String slug,
                                     final boolean pisah, final String p12, final String sandi, final int minSdk,
                                     final BangunLokal.Listener l) {
+        tandatangani(ctx, mentah, outDir, slug, pisah, p12, sandi, minSdk, false, null, l);
+    }
+
+    /**
+     * Menandatangani APK mentah dengan pilihan 5.7.
+     * - p12 kosong + dirProyek terisi: kunci bawaan UNIK milik proyek itu
+     *   sendiri (dibuat sekali di folder tanda-tangan-bawaan di dalam
+     *   proyek, lalu dipakai seterusnya), jadi tanda tangan bawaan
+     *   berbeda-beda antarproyek, tidak lagi satu kunci debug bersama.
+     * - p12 kosong + dirProyek kosong: kunci debug bersama lama.
+     * - antiTamper true: catatan assets/perisai.dat (hash sertifikat +
+     *   CRC32 dex) ditulis ke APK sebelum ditandatangani.
+     */
+    public static void tandatangani(final Context ctx, final String mentah, final String outDir, final String slug,
+                                    final boolean pisah, final String p12, final String sandi, final int minSdk,
+                                    final boolean antiTamper, final String dirProyek,
+                                    final BangunLokal.Listener l) {
         final Penandatangan p = new Penandatangan(ctx, l);
         new Thread(new Runnable() {
             @Override
@@ -230,9 +250,49 @@ public class Penandatangan {
                     PrivateKey key;
                     X509Certificate cert;
                     if (p12 == null || p12.length() == 0) {
-                        key = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(p.aset("alat/debug.pk8")));
-                        cert = (X509Certificate) CertificateFactory.getInstance("X.509")
-                                .generateCertificate(new ByteArrayInputStream(p.aset("alat/debug.der")));
+                        if (dirProyek != null && dirProyek.length() > 0) {
+                            // Kunci bawaan unik per proyek (dibuat sekali, dipakai seterusnya).
+                            File folder = new File(new File(dirProyek), "tanda-tangan-bawaan");
+                            File berkasP12 = new File(folder, "kunci.p12");
+                            File berkasSandi = new File(folder, "sandi.txt");
+                            String sandiProyek;
+                            if (berkasP12.isFile() && berkasSandi.isFile()) {
+                                sandiProyek = new String(BangunLokal.baca(berkasSandi), "UTF-8").trim();
+                            } else {
+                                p.kirim(BangunLokal.PROGRESS,
+                                        "Membuat tanda tangan bawaan khusus proyek ini...");
+                                folder.mkdirs();
+                                sandiProyek = sandiAcak();
+                                BangunLokal.tulis(berkasP12, buatP12("bawaan", sandiProyek,
+                                        "Create Aplikasi", "", "", "", "", "", 25));
+                                BangunLokal.tulis(berkasSandi, sandiProyek.getBytes("UTF-8"));
+                                BangunLokal.tulis(new File(folder, "info.txt"),
+                                        ("Tanda tangan bawaan khusus proyek ini.\n"
+                                                + "Dibuat otomatis oleh Create Aplikasi supaya tanda tangan "
+                                                + "bawaan proyek ini berbeda dari proyek lain.\n"
+                                                + "Jangan hapus folder ini: tanpa kunci ini, APK baru "
+                                                + "tidak bisa menimpa APK lama proyek yang sama.\n")
+                                                .getBytes("UTF-8"));
+                            }
+                            KeyStore ksP = KeyStore.getInstance("PKCS12");
+                            FileInputStream inP = new FileInputStream(berkasP12);
+                            try {
+                                ksP.load(inP, sandiProyek.toCharArray());
+                            } finally {
+                                inP.close();
+                            }
+                            Enumeration<String> enP = ksP.aliases();
+                            if (!enP.hasMoreElements()) throw new IOException("Kunci bawaan proyek kosong.");
+                            String aliasP = enP.nextElement();
+                            key = (PrivateKey) ksP.getKey(aliasP, sandiProyek.toCharArray());
+                            cert = (X509Certificate) ksP.getCertificate(aliasP);
+                            if (key == null || cert == null)
+                                throw new IOException("Kunci bawaan proyek tidak bisa dibaca.");
+                        } else {
+                            key = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(p.aset("alat/debug.pk8")));
+                            cert = (X509Certificate) CertificateFactory.getInstance("X.509")
+                                    .generateCertificate(new ByteArrayInputStream(p.aset("alat/debug.der")));
+                        }
                     } else {
                         KeyStore ks = KeyStore.getInstance("PKCS12");
                         FileInputStream in = new FileInputStream(p12);
@@ -257,12 +317,12 @@ public class Penandatangan {
                     List<String> hasil = new ArrayList<String>();
                     if (pisah) {
                         p.kirim(BangunLokal.PROGRESS, "Menyusun APK 64 bit...");
-                        hasil.add(p.satu(in, new File(out, slug + "-64bit.apk"), "armeabi-v7a", key, cert, minSdk));
+                        hasil.add(p.satu(in, new File(out, slug + "-64bit.apk"), "armeabi-v7a", key, cert, minSdk, antiTamper));
                         p.kirim(BangunLokal.PROGRESS, "Menyusun APK 32 bit...");
-                        hasil.add(p.satu(in, new File(out, slug + "-32bit.apk"), "arm64-v8a", key, cert, minSdk));
+                        hasil.add(p.satu(in, new File(out, slug + "-32bit.apk"), "arm64-v8a", key, cert, minSdk, antiTamper));
                     } else {
                         p.kirim(BangunLokal.PROGRESS, "Menandatangani APK...");
-                        hasil.add(p.satu(in, new File(out, slug + ".apk"), null, key, cert, minSdk));
+                        hasil.add(p.satu(in, new File(out, slug + ".apk"), null, key, cert, minSdk, antiTamper));
                     }
                     in.delete();
                     StringBuilder sb = new StringBuilder();
@@ -275,13 +335,24 @@ public class Penandatangan {
         }, "Penandatangan").start();
     }
 
+    /** Kata sandi acak untuk kunci bawaan proyek (huruf/angka tanpa yang mudah tertukar). */
+    private static String sandiAcak() {
+        String aksara = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+        SecureRandom r = new SecureRandom();
+        StringBuilder b = new StringBuilder(20);
+        for (int i = 0; i < 20; i++) b.append(aksara.charAt(r.nextInt(aksara.length())));
+        return b.toString();
+    }
+
     /** Salin APK tanpa tanda tangan lama dan tanpa pustaka ABI yang dibuang, lalu tandatangani. */
-    private String satu(File in, File out, String buangAbi, PrivateKey key, X509Certificate cert, int minSdk)
+    private String satu(File in, File out, String buangAbi, PrivateKey key, X509Certificate cert, int minSdk,
+                        boolean antiTamper)
             throws Exception {
         File tmp = new File(out.getPath() + ".tmp");
         ZipFile zf = new ZipFile(in);
         BangunLokal.Count cnt = new BangunLokal.Count(new java.io.BufferedOutputStream(new FileOutputStream(tmp), 65536));
         ZipOutputStream zos = new ZipOutputStream(cnt);
+        Map<String, Long> crcDex = antiTamper ? new LinkedHashMap<String, Long>() : null;
         try {
             Enumeration<? extends ZipEntry> en = zf.entries();
             while (en.hasMoreElements()) {
@@ -289,11 +360,24 @@ public class Penandatangan {
                 String n = e.getName();
                 if (e.isDirectory()) continue;
                 if (isTandaTangan(n)) continue;
+                if (antiTamper && n.equals(Perisai.NAMA_ASET)) continue; // ditulis ulang di bawah
                 if (buangAbi != null && n.startsWith("lib/" + buangAbi + "/")) continue;
                 InputStream is = zf.getInputStream(e);
                 byte[] data = BangunLokal.bacaStream(is);
                 is.close();
+                if (crcDex != null && Perisai.namaDex(n)) {
+                    CRC32 c = new CRC32();
+                    c.update(data);
+                    crcDex.put(n, c.getValue());
+                }
                 BangunLokal.tambah(zos, cnt, n, data, e.getMethod() != ZipEntry.STORED);
+            }
+            if (antiTamper) {
+                // Catatan perisai: hash sertifikat penandatangan + CRC dex.
+                // Ditulis SEBELUM penandatanganan; sertifikat tidak berubah
+                // oleh penandatanganan, jadi catatan tetap sah sesudahnya.
+                String dataPerisai = Perisai.buatData(Perisai.sha256Hex(cert.getEncoded()), crcDex);
+                BangunLokal.tambah(zos, cnt, Perisai.NAMA_ASET, dataPerisai.getBytes("UTF-8"), true);
             }
         } finally {
             zos.close();

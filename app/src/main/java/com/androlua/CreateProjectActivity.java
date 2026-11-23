@@ -52,7 +52,7 @@ import java.util.Set;
  */
 public class CreateProjectActivity extends Activity {
     private static final int DEFAULT_MIN = 21;
-    private static final int DEFAULT_TARGET = 33;
+    private static final int DEFAULT_TARGET = 36;
 
     private static final String[] TIPE_IDS = {
         "html", "situs", "java", "kotlin", "compose", "python"
@@ -213,7 +213,7 @@ public class CreateProjectActivity extends Activity {
                     getSharedPreferences(PengaturanActivity.NAMA_PREF, MODE_PRIVATE);
             int targetSimpan = prefPengaturan.getInt(
                     PengaturanActivity.KUNCI_BUILD_TARGET, DEFAULT_TARGET);
-            if (targetSimpan >= 21 && targetSimpan <= 34) defaultTarget = targetSimpan;
+            if (targetSimpan >= 21 && targetSimpan <= 36) defaultTarget = targetSimpan;
             defaultPisah = prefPengaturan.getBoolean(
                     PengaturanActivity.KUNCI_BUILD_PISAH, false);
             // Reorganisasi pengaturan 2026-11-17: bawaan tanda tangan
@@ -274,7 +274,7 @@ public class CreateProjectActivity extends Activity {
         eMin = field(r, "SDK minimum (kosong = " + DEFAULT_MIN + ")",
                 "Android terendah yang didukung, contoh: 21 (21=Android 5.0, 26=8.0, 29=10, 31=12)", true);
         eTarget = field(r, "SDK target (kosong = " + defaultTarget + ")",
-                "Versi Android yang dituju, contoh: 33 (maksimum 33; 30=Android 11, 31=12, 33=13). "
+                "Versi Android yang dituju, contoh: 36 (maksimum 36; 33=Android 13, 34=14, 35=15, 36=16). "
                         + "Android 14-16 tetap bisa menjalankannya", true);
 
         // Kotak Skrip HTML (opsional): hanya untuk proyek HTML / Situs Web.
@@ -665,8 +665,8 @@ public class CreateProjectActivity extends Activity {
             toast("SDK harus berupa angka positif");
             return;
         }
-        if (target > 33) {
-            toast("SDK target maksimum 33 (aplikasi tetap berjalan di Android 14-16)");
+        if (target > 36) {
+            toast("SDK target maksimum 36 (Android 16)");
             return;
         }
         if (min > target) {

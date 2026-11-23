@@ -1,6 +1,8 @@
 package com.androlua;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -97,6 +99,8 @@ public class JavaHomeActivity extends Activity {
         setContentView(sv);
 
         heading(r, APP_NAME, 22);
+        // Nama pengembang di samping judul (perintah al kautsar 2026-11-23).
+        label(r, "Developer by al kautsar", true);
 
         noticeLabel = label(r, "Aplikasi perlu " + pesanIzinPenyimpanan()
                 + " untuk menyimpan project di folder Download/project.", false);
@@ -293,6 +297,30 @@ public class JavaHomeActivity extends Activity {
                 bukaUkuranApk();
             }
         });
+        button(r, "Penganalisis APK", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaAnalisisApk();
+            }
+        });
+        button(r, "Pratinjau Ukuran Layar", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaPratinjauUkuran();
+            }
+        });
+        button(r, "Pengelola Sumber Daya", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaSumberDaya();
+            }
+        });
+        button(r, "Pemantau Kinerja Ringan", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaKinerja();
+            }
+        });
         button(r, "Pembuat Video Demo", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -332,6 +360,8 @@ public class JavaHomeActivity extends Activity {
         announce(APP_NAME);
         // Analitik: catat kunjungan layar utama (sekali per onCreate).
         AnalitikActivity.catatLayar(this, "Layar Utama");
+        // Log crash: tampilkan log pembukaan sebelumnya yang berakhir crash.
+        tampilkanLogCrashTerakhir();
     }
 
     @Override
@@ -387,6 +417,48 @@ public class JavaHomeActivity extends Activity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MINTA_IZIN) {
             perbaruiIzin();
+        }
+    }
+
+    // ------------------------------------------------------------- log crash
+
+    /**
+     * Log crash (perintah al kautsar 2026-11-23): bila pemakaian sebelumnya
+     * berakhir crash, log terakhirnya ditampilkan di layar pada pembukaan
+     * ini, lengkap dengan ID crash-nya. Tombol Tutup menandai log sudah
+     * dibaca (tidak tampil lagi); Hapus Log membuang berkasnya.
+     */
+    private void tampilkanLogCrashTerakhir() {
+        try {
+            final File f = CrashHandler.logCrashTerakhir(this);
+            if (f == null) return;
+            String isi = CrashHandler.bacaTeks(f);
+            if (isi == null || isi.length() == 0) {
+                CrashHandler.tandaiDibaca(f);
+                return;
+            }
+            if (isi.length() > 6000) isi = isi.substring(0, 6000) + "\n...(log dipotong)";
+            new AlertDialog.Builder(this)
+                    .setTitle("Log Crash Terakhir")
+                    .setMessage(isi)
+                    .setPositiveButton("Tutup", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface d, int w) {
+                            CrashHandler.tandaiDibaca(f);
+                        }
+                    })
+                    .setNegativeButton("Hapus Log", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface d, int w) {
+                            try {
+                                f.delete();
+                            } catch (Throwable ignored) {
+                            }
+                        }
+                    })
+                    .show();
+            announce("Ada log crash dari pemakaian sebelumnya. Lognya ditampilkan di layar.");
+        } catch (Throwable ignored) {
         }
     }
 
@@ -605,6 +677,50 @@ public class JavaHomeActivity extends Activity {
             announce("Kalkulator Ukuran APK dibuka.");
         } catch (Throwable t) {
             Toast.makeText(this, "Gagal membuka Kalkulator Ukuran APK: " + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // 5.7: Penganalisis APK (isi APK hasil build, ala APK Analyzer).
+    private void bukaAnalisisApk() {
+        try {
+            startActivity(new Intent(this, AnalisisApkActivity.class));
+            announce("Penganalisis APK dibuka.");
+        } catch (Throwable t) {
+            Toast.makeText(this, "Gagal membuka Penganalisis APK: " + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // 5.7: Pratinjau Ukuran Layar (periksa layout di banyak ukuran layar).
+    private void bukaPratinjauUkuran() {
+        try {
+            startActivity(new Intent(this, PratinjauUkuranActivity.class));
+            announce("Pratinjau Ukuran Layar dibuka.");
+        } catch (Throwable t) {
+            Toast.makeText(this, "Gagal membuka Pratinjau Ukuran Layar: " + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Pengelola Sumber Daya (pilihan al kautsar dari daftar Android Studio).
+    private void bukaSumberDaya() {
+        try {
+            startActivity(new Intent(this, SumberDayaActivity.class));
+            announce("Pengelola Sumber Daya dibuka.");
+        } catch (Throwable t) {
+            Toast.makeText(this, "Gagal membuka Pengelola Sumber Daya: " + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Pemantau Kinerja Ringan (pilihan al kautsar dari daftar Android Studio).
+    private void bukaKinerja() {
+        try {
+            startActivity(new Intent(this, KinerjaActivity.class));
+            announce("Pemantau Kinerja Ringan dibuka.");
+        } catch (Throwable t) {
+            Toast.makeText(this, "Gagal membuka Pemantau Kinerja Ringan: " + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }

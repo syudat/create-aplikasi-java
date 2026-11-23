@@ -74,9 +74,9 @@ public class UjiOtomatis {
 
         // 1) init.lua ada
         File initLua = new File(dirProyek, "init.lua");
-        hasil.add(new Hasil("init.lua ada", initLua.isFile(),
-                initLua.isFile() ? "init.lua ditemukan."
-                        : "init.lua tidak ada — proyek bukan proyek Create Aplikasi."));
+        hasil.add(new Hasil("berkas data proyek ada", initLua.isFile(),
+                initLua.isFile() ? "Berkas data proyek ditemukan."
+                        : "Berkas data proyek tidak ada — proyek bukan proyek Create Aplikasi."));
 
         // 2) AndroidManifest.xml ada
         File manifest = new File(dirProyek, "app/src/main/AndroidManifest.xml");
@@ -165,7 +165,7 @@ public class UjiOtomatis {
     /** Nama pemeriksaan ke-i (0-9), dipakai juga bila folder tidak ada. */
     public static String namaUji(int i) {
         switch (i) {
-            case 0: return "init.lua ada";
+            case 0: return "berkas data proyek ada";
             case 1: return "AndroidManifest.xml ada";
             case 2: return "Berkas utama ada";
             case 3: return "Layout activity_main.xml ada";

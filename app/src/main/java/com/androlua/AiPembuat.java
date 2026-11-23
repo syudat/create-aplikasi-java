@@ -23,7 +23,7 @@ public class AiPembuat {
         public final String templateId;
         /** Nama proyek yang disarankan. */
         public final String namaProyek;
-        /** Jenis proyek template ("lua", "java", "kotlin", "html", "situs", "compose"). */
+        /** Jenis proyek template ("java", "kotlin", "html", "situs", "compose", "python"). */
         public final String tipe;
         /** Penjelasan untuk pengguna (dibacakan lewat TTS di AiActivity). */
         public final String penjelasan;
@@ -117,7 +117,7 @@ public class AiPembuat {
         if (templateId == null) {
             String nama = ambilNama(asli, null);
             if (nama.isEmpty()) nama = "Aplikasi Saya";
-            return new Hasil("kosong", nama, "lua",
+            return new Hasil("kosong", nama, "java",
                     "Saya belum punya template untuk \"" + asli.trim()
                     + "\", jadi saya buatkan proyek kosong. Kamu bisa mengisi "
                     + "kodenya sendiri di editor.",
@@ -128,7 +128,7 @@ public class AiPembuat {
         if (nama.isEmpty()) {
             nama = info != null ? info.nama : "Aplikasi Saya";
         }
-        String tipe = info != null && info.tipe != null ? info.tipe : "lua";
+        String tipe = info != null && info.tipe != null ? info.tipe : "java";
         String penjelasan = "Saya buatkan proyek "
                 + (info != null ? info.nama : templateId)
                 + " (" + labelTipe(tipe) + ") dari deskripsimu. Kode awalnya "
@@ -181,7 +181,6 @@ public class AiPembuat {
     }
 
     private static String labelTipe(String tipe) {
-        if ("lua".equals(tipe)) return "Lua";
         if ("html".equals(tipe)) return "HTML";
         if ("situs".equals(tipe)) return "Situs Web";
         if ("java".equals(tipe)) return "Java";

@@ -73,7 +73,7 @@ public class AplikasiDariGambar {
         }
         String paket = InfoProyek.namaPaket(dirProyek);
         if (paket == null || paket.isEmpty()) {
-            return "Nama paket proyek tidak terbaca dari init.lua.";
+            return "Nama paket proyek tidak terbaca dari berkas data proyek.";
         }
         File dirAssets = new File(dirProyek, "app/src/main/assets");
         if (!dirAssets.mkdirs() && !dirAssets.isDirectory()) {

@@ -690,10 +690,10 @@ public class ProjectsActivity extends Activity {
             new AlertDialog.Builder(this)
                     .setTitle("Bukan cadangan proyek")
                     .setMessage("Berkas " + zip.getName()
-                            + " bukan proyek Create Aplikasi (tidak ada init.lua di dalamnya).")
+                            + " bukan proyek Create Aplikasi (tidak ada berkas data proyek di dalamnya).")
                     .setPositiveButton("OK", null)
                     .show();
-            announce("Berkas ini bukan proyek Create Aplikasi, tidak ada init.lua di dalamnya.");
+            announce("Berkas ini bukan proyek Create Aplikasi, tidak ada berkas data proyek di dalamnya.");
             return;
         }
         String nama = ArsipProyek.namaProyekDariIsi(zip);
@@ -735,10 +735,10 @@ public class ProjectsActivity extends Activity {
             new AlertDialog.Builder(this)
                     .setTitle("Bukan proyek Create Aplikasi")
                     .setMessage("Berkas yang dipilih bukan proyek Create Aplikasi "
-                            + "(tidak ada init.lua di dalamnya).")
+                            + "(tidak ada berkas data proyek di dalamnya).")
                     .setPositiveButton("OK", null)
                     .show();
-            announce("Berkas yang dipilih bukan proyek Create Aplikasi, tidak ada init.lua di dalamnya.");
+            announce("Berkas yang dipilih bukan proyek Create Aplikasi, tidak ada berkas data proyek di dalamnya.");
             sementara.delete();
             return;
         }

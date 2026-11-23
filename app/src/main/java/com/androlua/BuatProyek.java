@@ -235,6 +235,21 @@ public class BuatProyek {
                 return "GAGAL:Gagal menulis " + f.rel + ": " + galat.toString();
             }
         }
+        // Setelan proyek tersimpan di dalam proyek itu sendiri
+        // (settings.gradle, seperti proyek GitHub/Gradle): centang
+        // arsitektur terpisah + tanda tangan pribadi dari layar Buat
+        // Proyek ikut tersimpan dan terbaca lagi saat proyek dibangun.
+        // Kunci antiTamper belum ditulis di sini — nilai bawaannya dari
+        // Pengaturan, dan nilai efektifnya ditulis BangunProyek sesudah
+        // build pertama berhasil.
+        try {
+            SetelanProyek.Setelan sp = new SetelanProyek.Setelan();
+            sp.arsitekturTerpisah = p.split;
+            sp.tandaTanganPribadi = p.signing;
+            sp.appsdk = p.min;
+            SetelanProyek.tulis(dir, sp, false);
+        } catch (Throwable ignored) {
+        }
         return "OK:" + dir.getAbsolutePath();
     }
 

@@ -139,7 +139,7 @@ public class BangunLokal {
     private static class Info {
         String appname, appver, pkg;
         String tipe = "java"; // "java" | "kotlin" | "html" | "situs" | "compose" | "python" (Lua dihapus)
-        int code = 1, min = 21, target = 33;
+        int code = 1, min = 21, target = 36;
         List<String> perms = new ArrayList<String>();
         // Komponen tambahan (mis. <service> keyboard) dari AndroidManifest.xml
         // proyek, disisipkan ke template lewat {{EXTRA_COMPONENTS}}.
@@ -168,7 +168,7 @@ public class BangunLokal {
 
     private Info bacaInit() throws IOException {
         File f = new File(projectDir, "init.lua");
-        if (!f.isFile()) throw new IOException("init.lua tidak ditemukan di " + projectDir);
+        if (!f.isFile()) throw new IOException("Berkas data proyek tidak ditemukan di " + projectDir);
         String s = new String(baca(f), "UTF-8").replaceAll("--[^\\n]*", "");
         Info i = new Info();
         i.appname = luaStr(s, "appname", projectDir.getName());
@@ -205,13 +205,11 @@ public class BangunLokal {
                 }
                 // Komponen tambahan: semua blok <service>...</service> dari
                 // manifest proyek (mis. layanan keyboard) disisipkan apa adanya
-                // ke template lewat {{EXTRA_COMPONENTS}}.
-                Matcher sm = Pattern.compile("<service\\b[^>]*?(?:/\\s*>|>.*?</service>)", Pattern.DOTALL).matcher(xml);
+                // ke template lewat {{EXTRA_COMPONENTS}}, dengan saringan
+                // layanan aksesibilitas (lihat panenLayanan).
                 StringBuilder ec = new StringBuilder();
-                while (sm.find()) {
-                    if (ec.length() > 0) ec.append('\n');
-                    ec.append(sm.group());
-                }
+                String layanan = panenLayanan(xml, i.perms.contains("ACCESSIBILITY_SERVICE"));
+                if (layanan.length() > 0) ec.append(layanan);
                 // Komponen tambahan: semua blok <activity>...</activity> dari
                 // manifest proyek (mis. Pengaturan AI) juga disisipkan, KECUALI
                 // activity utama (sudah ada di template lewat {{MAIN_ACTIVITY}}).
@@ -266,9 +264,34 @@ public class BangunLokal {
         // Bila init.lua proyek Python masih 21-23, naikkan diam-diam ke 24
         // (CreateProjectActivity sudah menolak <24 saat proyek dibuat).
         if ("python".equals(i.tipe) && i.min < BangunPython.MIN_SDK) i.min = BangunPython.MIN_SDK;
-        if (i.target > 33) i.target = 33;
+        if (i.target > 36) i.target = 36;
         if (i.target < i.min) i.target = i.min;
         return i;
+    }
+
+    /** True bila blok <service> ini mendeklarasikan layanan aksesibilitas. */
+    static boolean layananAksesibilitas(String blok) {
+        return blok.contains("android.accessibilityservice.AccessibilityService")
+                || blok.contains("BIND_ACCESSIBILITY_SERVICE");
+    }
+
+    /**
+     * Panen blok <service> dari manifest proyek untuk {{EXTRA_COMPONENTS}}.
+     * Perbaikan bug (perintah al kautsar 2026-11-23): blok layanan
+     * aksesibilitas dibuang bila izin ACCESSIBILITY_SERVICE tidak dicentang
+     * di proyek, supaya aplikasi hasil tidak muncul di Pengaturan
+     * Aksesibilitas HP pengguna; bila dicentang, bloknya dipertahankan.
+     */
+    static String panenLayanan(String xml, boolean izinAksesibilitas) {
+        Matcher sm = Pattern.compile("<service\\b[^>]*?(?:/\\s*>|>.*?</service>)", Pattern.DOTALL).matcher(xml);
+        StringBuilder ec = new StringBuilder();
+        while (sm.find()) {
+            String blok = sm.group();
+            if (!izinAksesibilitas && layananAksesibilitas(blok)) continue;
+            if (ec.length() > 0) ec.append('\n');
+            ec.append(blok);
+        }
+        return ec.toString();
     }
 
     private static String xml(String s) {
@@ -279,12 +302,12 @@ public class BangunLokal {
         String t = new String(bacaAset("alat/AndroidManifest.template.xml"), "UTF-8");
         StringBuilder p = new StringBuilder();
         for (String name : i.perms) {
-            if (name.equals("ACCESSIBILITY_SERVICE")) continue; // layanan sudah ada di manifest
+            if (name.equals("ACCESSIBILITY_SERVICE")) continue; // bukan uses-permission; layanannya disaring di readInfo
             String full = name.contains(".") ? name : "android.permission." + name;
             if (p.length() > 0) p.append('\n');
             p.append("    <uses-permission android:name=\"").append(xml(full)).append("\" />");
         }
-        return t.replace("{{PACKAGE}}", i.pkg)
+        String hasil = t.replace("{{PACKAGE}}", i.pkg)
                 .replace("{{VERSION_CODE}}", String.valueOf(i.code))
                 .replace("{{VERSION_NAME}}", xml(i.appver))
                 .replace("{{LABEL}}", xml(i.appname))
@@ -293,12 +316,34 @@ public class BangunLokal {
                 .replace("{{MAIN_ACTIVITY}}", aktivitasUtama(i.tipe, i.pkg))
                 .replace("{{PERMISSIONS}}", p.toString())
                 .replace("{{EXTRA_COMPONENTS}}", i.extraComponents == null ? "" : i.extraComponents);
+        // Anti tamper (5.7): kelas Application hasil diganti PerisaiAplikasi
+        // (pemeriksa sertifikat + dex + debugger + hook + FLAG_SECURE).
+        // Catatan perisai.dat-nya ditulis Penandatangan saat penandatanganan.
+        if (antiTamperAktif()) {
+            hasil = hasil.replace("com.androlua.Aplikasi", "com.androlua.PerisaiAplikasi");
+            log.append("Anti tamper aktif untuk proyek ini.\n");
+        }
+        return hasil;
+    }
+
+    /** Anti tamper untuk proyek ini? settings.gradle proyek menang atas bawaan Pengaturan. */
+    private boolean antiTamperAktif() {
+        try {
+            SetelanProyek.Setelan s = SetelanProyek.baca(projectDir);
+            if (s.adaAntiTamper) return s.antiTamper;
+        } catch (Throwable ignored) {
+        }
+        try {
+            return PengaturanActivity.antiTamperBawaan(ctx);
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     // ------------------------------------------------------------------ alur utama
 
     private String jalankan() throws Exception {
-        kirim(PROGRESS, "Membaca init.lua...");
+        kirim(PROGRESS, "Membaca data proyek...");
         Info info = bacaInit();
         log.append("Aplikasi ").append(info.appname).append(" | ").append(info.pkg).append(" | SDK ")
                 .append(info.min).append('/').append(info.target).append(" | izin ").append(info.perms).append('\n');
@@ -682,6 +727,10 @@ public class BangunLokal {
                         || kunciRel.startsWith("app/src/main/java/")
                         || kunciRel.startsWith("app/src/main/kotlin/")
                         || kunciRel.endsWith(".java") || kunciRel.endsWith(".kt")) continue;
+                // Setelan proyek + kunci bawaan proyek adalah berkas milik
+                // IDE, bukan isi aplikasi hasil — jangan ikut disalin.
+                if (kunciRel.equals("settings.gradle")
+                        || kunciRel.startsWith("tanda-tangan-bawaan/")) continue;
                 // Python: kode .py di app/src/main/python/ sudah di-zip ke
                 // assets/chaquopy/app.imy oleh BangunPython — jangan salin
                 // mentah-mentah ke assets/ (juga jangan enkripsi seperti .lua).

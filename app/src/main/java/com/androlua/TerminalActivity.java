@@ -45,7 +45,10 @@ import novan.terminal.Env;
  * Terminal Kautsar: bila lingkungan Termux belum dipasang, tombol
  * "Pasang Termux" mengunduh bootstrap Termux resmi (per ABI) dan
  * mengekstraknya ke prefix aplikasi, sehingga perintah "pkg update"
- * dan "pkg install" benar-benar jalan (BootstrapTermux).
+ * dan "pkg install" benar-benar jalan (BootstrapTermux). Tombol
+ * "Pasang Alat Terminal" (uji coba) melakukan hal yang sama dari
+ * cermin di repositori alat-termux milik pengembang, ditambah alat
+ * skrip tambahan dari indeks repositori itu.
  *
  * Aksesibilitas: keluaran adalah teks di TextView yang bisa dibaca
  * Jieshuo; tombol "Bacakan layar" membacakan baris kursor + baris
@@ -236,12 +239,19 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
 
         root.addView(buatBarisTombol(new String[][]{
                 {"Pasang Termux", "Pasang lingkungan Termux supaya pkg bisa dipakai"},
+                {"Pasang Alat Terminal", "Uji coba: pasang Termux dan alat dari repositori al kautsar"},
                 {"Buka di Termux", "Buka aplikasi Termux asli bila sudah terpasang"},
         }, new View.OnClickListener[]{
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         tawaranPasangTermux();
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tawaranPasangAlatTerminal();
                     }
                 },
                 new View.OnClickListener() {
@@ -798,6 +808,126 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
                                 Toast.makeText(TerminalActivity.this, pesan, Toast.LENGTH_LONG).show();
                                 announce(pesan);
                                 if (ok) {
+                                    mulaiUlangShell();
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }).start();
+    }
+
+    /**
+     * Pasang Alat Terminal (UJI COBA, perintah al kautsar 2026-11-23):
+     * memasang lingkungan Termux dari cermin di repositori alat-termux
+     * milik pengembang, lalu alat skrip tambahan dari indeks repositori.
+     * Bila lingkungan sudah terpasang, hanya alat tambahannya dipasang.
+     */
+    private void tawaranPasangAlatTerminal() {
+        if (sedangPasang) {
+            announce("Pemasangan sedang berjalan, tunggu sebentar.");
+            return;
+        }
+        final String arch = BootstrapTermux.arsitekturBootstrap();
+        boolean sudah = BootstrapTermux.sudahTerpasang(this);
+        String paket = " Sesudah itu aplikasi memasang otomatis paket Linux dasar "
+                + "(git, python, curl, wget, nano, openssh, zip, unzip) dan alat bangun "
+                + "APK beserta tanda tangan (openjdk-21, kotlin, gradle, ecj, aapt2, d8, "
+                + "apksigner, clang, cmake, ninja, make). Unduhan paket besar (ratusan MB) "
+                + "dan bisa lama. Selama pemasangan, kemajuan dan keluaran perintah tampil "
+                + "di layar utama Terminal, dan hasil akhir dibacakan.";
+        String isi = sudah
+                ? "Fitur uji coba: memasang alat tambahan dari repositori alat-termux "
+                  + "milik pengembang ke terminal ini (info-terminal, bersih-terminal, "
+                  + "cadangkan-proyek). Lingkungan Termux sudah terpasang, jadi hanya "
+                  + "alatnya yang diunduh. Butuh internet." + paket
+                : "Fitur uji coba: memasang lingkungan Termux dari cermin di repositori "
+                  + "alat-termux milik pengembang (unduhan sekitar "
+                  + BootstrapTermux.ukuranUnduhan(arch) + "), lalu alat tambahan dari "
+                  + "repositori yang sama. Sesudah terpasang, perintah pkg bisa dipakai. "
+                  + "Butuh internet." + paket;
+        new AlertDialog.Builder(this)
+                .setTitle("Pasang Alat Terminal (uji coba)?")
+                .setMessage(isi)
+                .setPositiveButton("Pasang sekarang", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        mulaiPasangAlatTerminal();
+                    }
+                })
+                .setNegativeButton("Nanti saja", null)
+                .show();
+    }
+
+    /** Tulis satu baris ke layar utama terminal (aman bila sesi belum ada). */
+    private void tulisKeLayar(String teks) {
+        try {
+            if (sesi != null && sesi.layar != null) {
+                sesi.layar.write("\r\n" + teks + "\r\n");
+                segarkanLayar();
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** Jalankan Pasang Alat Terminal di utas latar dengan dialog kemajuan. */
+    private void mulaiPasangAlatTerminal() {
+        if (sedangPasang) return;
+        sedangPasang = true;
+        final boolean sudahAda = BootstrapTermux.sudahTerpasang(this);
+        announce("Memasang alat terminal dari repositori, tunggu sebentar.");
+        // Kemajuan juga tampil di layar utama terminal (perintah al
+        // kautsar 2026-11-23), bukan hanya di kotak dialog.
+        tulisKeLayar("=== Memasang Alat Terminal (uji coba) ===");
+        final int[] persenLayar = {-1};
+        dialogPasang = new AlertDialog.Builder(this)
+                .setTitle("Memasang Alat Terminal (uji coba)")
+                .setMessage("Mengunduh dari repositori…")
+                .setCancelable(false)
+                .create();
+        dialogPasang.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BootstrapTermux.pasangDariRepo(TerminalActivity.this, new BootstrapTermux.Kemajuan() {
+                    @Override
+                    public void onKemajuan(final String tahap, final int persen) {
+                        uiHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dialogPasang != null) {
+                                    String teks = tahap;
+                                    if (persen >= 0) teks += " (" + persen + "%)";
+                                    dialogPasang.setMessage(teks);
+                                }
+                                // Cerminkan ke layar utama: baris tahap
+                                // selalu; persen unduhan hanya tiap 25%
+                                // supaya layar tidak kebanjiran.
+                                if (persen < 0) {
+                                    tulisKeLayar(tahap);
+                                } else if (persen / 25 != persenLayar[0] / 25) {
+                                    persenLayar[0] = persen;
+                                    tulisKeLayar(tahap + " (" + persen + "%)");
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onSelesai(final boolean ok, final String pesan) {
+                        uiHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                sedangPasang = false;
+                                if (dialogPasang != null) {
+                                    dialogPasang.dismiss();
+                                    dialogPasang = null;
+                                }
+                                tulisKeLayar((ok ? "=== Selesai: " : "=== Gagal: ") + pesan);
+                                Toast.makeText(TerminalActivity.this, pesan, Toast.LENGTH_LONG).show();
+                                announce(pesan);
+                                if (ok && !sudahAda) {
                                     mulaiUlangShell();
                                 }
                             }

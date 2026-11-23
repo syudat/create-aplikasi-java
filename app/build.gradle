@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 android {
-    compileSdk 34
+    compileSdk 36
     namespace 'com.androlua'
     defaultConfig {
         applicationId "com.pembuataplikasi"
         minSdk 21
-        targetSdk 34
+        targetSdk 36
         multiDexEnabled true
         ndk {
             ldLibs "log"
@@ -35,7 +35,11 @@ android {
     }
     buildTypes {
         release {
+            // minify (R8) SENGAJA masih false: aturan sudah disiapkan di
+            // proguard-rules.pro, tetapi menyalakannya wajib lewat build
+            // Actions + uji HP dulu (aplikasi sarat refleksi Lua/JNI).
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             debuggable false
             jniDebuggable false
         }

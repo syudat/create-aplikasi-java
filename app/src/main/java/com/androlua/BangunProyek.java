@@ -118,6 +118,8 @@ public class BangunProyek {
     private String appver = "1.0";
     private boolean splitAbi = false;
     private boolean tandaTanganPribadi = false;
+    private boolean antiTamper = false;
+    private String namaKeystoreTerpilih = "";
     private int appsdk = 21;
     private AlertDialog progressDlg;
     /** Build ini lewat GitHub (true) atau perangkat (false) — untuk history. */
@@ -149,6 +151,15 @@ public class BangunProyek {
         splitAbi = InfoProyek.kunciTrue(dir, "split_abi");
         tandaTanganPribadi = InfoProyek.kunciTrue(dir, "tanda_tangan_pribadi");
         appsdk = angka(InfoProyek.bacaKunci(dir, "appsdk", "21"), 21);
+        // Setelan per proyek di settings.gradle menimpa init.lua bila ada
+        // (permintaan al kautsar: setelan menempel di proyek itu sendiri).
+        SetelanProyek.Setelan sp = SetelanProyek.baca(dir);
+        if (sp.adaArsitekturTerpisah) splitAbi = sp.arsitekturTerpisah;
+        if (sp.adaTandaTanganPribadi) tandaTanganPribadi = sp.tandaTanganPribadi;
+        if (sp.adaAppsdk) appsdk = sp.appsdk;
+        if (sp.adaNamaKeystore) namaKeystoreTerpilih = sp.namaKeystore;
+        antiTamper = sp.adaAntiTamper ? sp.antiTamper
+                : PengaturanActivity.antiTamperBawaan(activity);
         // 4) pilih cara membangun.
         List<String> pilihan = new ArrayList<String>();
         pilihan.add("Bangun di perangkat (offline)");
@@ -310,6 +321,7 @@ public class BangunProyek {
 
     /** Minta kata sandi keystore pribadi. */
     private void tanyaKataSandi(final String raw, final String nama) {
+        namaKeystoreTerpilih = nama == null ? "" : nama;
         // Reorganisasi pengaturan 2026-11-17: bila "Simpan kata sandi" aktif
         // dan kata sandi keystore ini tersimpan, pakai langsung tanpa bertanya.
         if (PengaturanActivity.simpanKataSandiBangun(activity)) {
@@ -367,12 +379,26 @@ public class BangunProyek {
         }
     }
 
-    /** Menandatangani APK mentah (pengganti doSign di Lua). p12 kosong = kunci bawaan aplikasi. */
+    /** Simpan setelan efektif proyek ini ke settings.gradle di folder proyek. */
+    private void simpanSetelanProyek() {
+        try {
+            SetelanProyek.Setelan s = new SetelanProyek.Setelan();
+            s.arsitekturTerpisah = splitAbi;
+            s.tandaTanganPribadi = tandaTanganPribadi;
+            s.antiTamper = antiTamper;
+            s.namaKeystore = namaKeystoreTerpilih == null ? "" : namaKeystoreTerpilih;
+            s.appsdk = appsdk;
+            SetelanProyek.tulis(dir, s, true);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** Menandatangani APK mentah (pengganti doSign di Lua). p12 kosong = kunci bawaan proyek. */
     private void tandatangani(final String raw, String p12, String sandi) {
         tampilkanProgress("Menandatangani APK");
         Penandatangan.tandatangani(activity, raw, new File(dir, "bin").getAbsolutePath(),
                 namaFile(), splitAbi, p12 == null ? "" : p12, sandi == null ? "" : sandi,
-                appsdk, new BangunLokal.Listener() {
+                appsdk, antiTamper, dir.getAbsolutePath(), new BangunLokal.Listener() {
                     @Override
                     public void onEvent(int kind, String msg) {
                         if (progressDlg == null) return;
@@ -398,6 +424,9 @@ public class BangunProyek {
                             // Reorganisasi pengaturan 2026-11-17: catat build
                             // yang berhasil ke history (bila centang aktif).
                             catatHistoryBuild();
+                            // Setelan efektif build ini menempel di proyek
+                            // (settings.gradle), terbaca lagi build berikutnya.
+                            simpanSetelanProyek();
                             final List<String> daftarApk = daftar;
                             new AlertDialog.Builder(activity).setTitle("APK siap dipasang")
                                     .setMessage("APK sudah ditandatangani dan tersimpan di:\n"

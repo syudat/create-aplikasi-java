@@ -130,6 +130,38 @@ public class BootstrapTermux {
      * Bila sudah terpasang, langsung memanggil onSelesai(true).
      */
     public static void pasang(final Context ctx, final Kemajuan cb) {
+        pasangInternal(ctx, cb, urlBootstrap(arsitekturBootstrap()), false);
+    }
+
+    /**
+     * Pasang Alat Terminal (uji coba, perintah al kautsar 2026-11-23):
+     * sama seperti pasang(), tetapi bootstrap diambil dari cermin di
+     * repositori alat-termux milik pengembang, dan sesudahnya alat
+     * skrip tambahan dari indeks repositori dipasang ke prefix. Bila
+     * lingkungan sudah terpasang, hanya alat tambahannya yang dipasang.
+     * HARUS dipanggil dari utas latar.
+     */
+    public static void pasangDariRepo(final Context ctx, final Kemajuan cb) {
+        if (sudahTerpasang(ctx)) {
+            try {
+                File prefix = prefixAplikasi(ctx);
+                int n = pasangAlatTambahan(ctx, prefix, cb);
+                boolean paket = pasangPaketOtomatis(ctx, prefix, cb);
+                cb.onSelesai(true, "Lingkungan Termux sudah terpasang. "
+                        + n + " alat tambahan dipasang dari repositori. "
+                        + (paket
+                            ? "Paket Linux dasar dan alat bangun APK sudah terpasang."
+                            : "Pemasangan paket belum tuntas; tekan Pasang Alat Terminal lagi untuk melanjutkan."));
+            } catch (Throwable t) {
+                cb.onSelesai(false, "Gagal memasang alat tambahan: " + t.getMessage());
+            }
+            return;
+        }
+        pasangInternal(ctx, cb, IndeksAlat.urlBootstrap(arsitekturBootstrap()), true);
+    }
+
+    private static void pasangInternal(final Context ctx, final Kemajuan cb,
+                                       final String urlUnduh, final boolean denganAlat) {
         if (sudahTerpasang(ctx)) {
             cb.onSelesai(true, "Lingkungan Termux sudah terpasang.");
             return;
@@ -139,9 +171,9 @@ public class BootstrapTermux {
         final File staging = new File(ctx.getFilesDir(), "usr-tahap");
         final File zip = new File(ctx.getFilesDir(), "bootstrap-" + arch + ".zip");
         try {
-            // 1. Unduh bootstrap resmi.
+            // 1. Unduh bootstrap.
             cb.onKemajuan("Mengunduh lingkungan Termux (" + ukuranUnduhan(arch) + ")…", 0);
-            unduh(urlBootstrap(arch), zip, cb);
+            unduh(urlUnduh, zip, cb);
             // 2. Verifikasi SHA-256.
             cb.onKemajuan("Memeriksa keutuhan unduhan…", -1);
             String sha = sha256(zip);
@@ -174,13 +206,204 @@ public class BootstrapTermux {
             jalankanTahapKedua(ctx, prefix);
             // 8. Bersihkan zip unduhan.
             zip.delete();
-            cb.onSelesai(true, "Lingkungan Termux " + VERSI_BOOTSTRAP
-                    + " berhasil dipasang. Ketik \"pkg update\" untuk mencoba.");
+            String pesan = "Lingkungan Termux " + VERSI_BOOTSTRAP
+                    + " berhasil dipasang. Ketik \"pkg update\" untuk mencoba.";
+            if (denganAlat) {
+                int n = pasangAlatTambahan(ctx, prefix, cb);
+                pesan += " " + n + " alat tambahan dipasang dari repositori.";
+                boolean paket = pasangPaketOtomatis(ctx, prefix, cb);
+                pesan += paket
+                        ? " Paket Linux dasar dan alat bangun APK terpasang."
+                        : " Pemasangan paket belum tuntas; tekan Pasang Alat Terminal lagi untuk melanjutkan.";
+            }
+            cb.onSelesai(true, pesan);
         } catch (Throwable t) {
             try { hapusRekursif(staging); } catch (Throwable ignored) {}
             try { zip.delete(); } catch (Throwable ignored) {}
             cb.onSelesai(false, "Gagal memasang lingkungan Termux: " + t.getMessage()
                     + ". Periksa koneksi internet lalu coba lagi.");
+        }
+    }
+
+    /**
+     * Mengunduh indeks repositori lalu memasang setiap alat skrip ke
+     * prefix (sesuai kolom tujuan di indeks) dan membuatnya bisa
+     * dijalankan. Mengembalikan jumlah alat yang berhasil dipasang;
+     * kegagalan indeks mengembalikan 0 tanpa menggagalkan pemasangan
+     * bootstrap yang sudah selesai.
+     */
+    private static int pasangAlatTambahan(Context ctx, File prefix, Kemajuan cb) {
+        int terpasang = 0;
+        try {
+            cb.onKemajuan("Mengunduh indeks alat dari repositori…", -1);
+            File indeks = new File(ctx.getFilesDir(), "daftar-alat.json");
+            unduh(IndeksAlat.urlIndeks(), indeks, cb);
+            java.util.List<IndeksAlat.Alat> daftar =
+                    IndeksAlat.urai(SumberDaya.teks(indeks));
+            indeks.delete();
+            for (IndeksAlat.Alat a : daftar) {
+                try {
+                    cb.onKemajuan("Memasang alat " + a.nama + "…", -1);
+                    File tujuan = new File(prefix, a.tujuan);
+                    if (tujuan.getParentFile() != null) tujuan.getParentFile().mkdirs();
+                    unduh(IndeksAlat.urlBerkas(a.berkas), tujuan, cb);
+                    tujuan.setExecutable(true, false);
+                    terpasang++;
+                } catch (Throwable ignored) {
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        return terpasang;
+    }
+
+    /**
+     * Paket Linux dasar yang dipasang otomatis (perintah al kautsar
+     * 2026-11-23: "Linux dipasang juga, supaya lebih bagus lebih luas").
+     * Semua nama terverifikasi ada di repositori resmi Termux.
+     */
+    public static final String[] PAKET_DASAR = {
+            "git", "python", "curl", "wget", "nano", "openssh", "zip", "unzip",
+    };
+
+    /**
+     * Alat bangun APK + tanda tangan yang dipasang otomatis (perintah
+     * al kautsar 2026-11-23). apksigner menandatangani APK, keytool
+     * (bawaan JDK) membuat kunci tanda tangan, dan clang/cmake/ninja/
+     * make adalah alat bangun asli (keluarga NDK) di Termux. Semua nama
+     * terverifikasi ada di repositori resmi Termux.
+     */
+    public static final String[] PAKET_BANGUN_APK = {
+            "openjdk-21", "kotlin", "gradle", "ecj", "aapt2", "d8",
+            "apksigner", "clang", "cmake", "ninja", "make",
+    };
+
+    /** Nama berkas penanda bahwa paket otomatis sudah terpasang penuh. */
+    public static final String NAMA_PENANDA_PAKET = ".kautsar-paket-selesai";
+
+    /** true bila paket otomatis sudah terpasang penuh. */
+    public static boolean paketSudahTerpasang(Context ctx) {
+        try {
+            return new File(prefixAplikasi(ctx), NAMA_PENANDA_PAKET).isFile();
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * Pasang paket dasar + alat bangun APK lewat apt di dalam prefix,
+     * mengalirkan setiap baris keluaran apt ke laporan kemajuan (yang
+     * oleh TerminalActivity juga ditampilkan di layar utama terminal).
+     * Kegagalan TIDAK menggagalkan pemasangan bootstrap: mengembalikan
+     * false dan penanda tidak ditulis, jadi menekan Pasang Alat
+     * Terminal lagi akan melanjutkan pemasangan paket. HARUS dipanggil
+     * dari utas latar.
+     */
+    private static boolean pasangPaketOtomatis(Context ctx, File prefix, Kemajuan cb) {
+        try {
+            if (new File(prefix, NAMA_PENANDA_PAKET).isFile()) {
+                cb.onKemajuan("Paket Linux dasar dan alat bangun APK sudah terpasang.", -1);
+                return true;
+            }
+            File aptGet = new File(prefix, "bin/apt-get");
+            if (!aptGet.isFile()) {
+                cb.onKemajuan("apt-get tidak ditemukan di lingkungan Termux; pemasangan paket dilewati.", -1);
+                return false;
+            }
+            java.util.List<String> semua = new java.util.ArrayList<String>();
+            for (String p : PAKET_DASAR) semua.add(p);
+            for (String p : PAKET_BANGUN_APK) semua.add(p);
+
+            cb.onKemajuan("Memperbarui daftar paket (apt-get update)…", -1);
+            int kode = jalankanMengalir(ctx, prefix, cb,
+                    new String[]{aptGet.getPath(), "update"});
+            if (kode != 0) {
+                cb.onKemajuan("apt-get update gagal (kode " + kode + "). Pemasangan paket ditunda.", -1);
+                return false;
+            }
+            cb.onKemajuan("Memasang " + semua.size() + " paket: "
+                    + android.text.TextUtils.join(", ", semua) + " …", -1);
+            java.util.List<String> perintah = new java.util.ArrayList<String>();
+            perintah.add(aptGet.getPath());
+            perintah.add("install");
+            perintah.add("-y");
+            perintah.addAll(semua);
+            kode = jalankanMengalir(ctx, prefix, cb,
+                    perintah.toArray(new String[0]));
+            if (kode != 0) {
+                cb.onKemajuan("Pemasangan paket berhenti (kode " + kode
+                        + "). Tekan Pasang Alat Terminal lagi untuk melanjutkan.", -1);
+                return false;
+            }
+            File penanda = new File(prefix, NAMA_PENANDA_PAKET);
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(penanda));
+            try {
+                out.write(("paket dasar + bangun apk\n").getBytes("UTF-8"));
+                out.flush();
+            } finally {
+                out.close();
+            }
+            cb.onKemajuan("Semua paket selesai dipasang.", -1);
+            return true;
+        } catch (Throwable t) {
+            try {
+                cb.onKemajuan("Pemasangan paket gagal: " + t.getMessage(), -1);
+            } catch (Throwable ignored) {}
+            return false;
+        }
+    }
+
+    /**
+     * Jalankan satu perintah di dalam prefix sambil mengalirkan setiap
+     * baris keluarannya ke laporan kemajuan. Mengembalikan kode keluar
+     * proses, atau -1 bila waktu habis (batas 45 menit) / gagal jalan.
+     */
+    private static int jalankanMengalir(Context ctx, File prefix, final Kemajuan cb,
+                                        String[] perintah) {
+        Process proses = null;
+        try {
+            ProcessBuilder pb = new ProcessBuilder(perintah);
+            java.util.Map<String, String> env = pb.environment();
+            env.putAll(Env.petaVars(ctx));
+            env.put("TERMUX_PREFIX", prefix.getPath());
+            env.put("TERMUX_PACKAGE_MANAGER", "apt");
+            env.put("DEBIAN_FRONTEND", "noninteractive");
+            pb.directory(new File(prefix, "bin"));
+            pb.redirectErrorStream(true);
+            proses = pb.start();
+            final InputStream masuk = proses.getInputStream();
+            Thread pembaca = new Thread(new Runnable() {
+                @Override public void run() {
+                    try {
+                        java.io.BufferedReader br = new java.io.BufferedReader(
+                                new java.io.InputStreamReader(masuk, "UTF-8"));
+                        String baris;
+                        while ((baris = br.readLine()) != null) {
+                            String rapi = baris.trim();
+                            if (rapi.isEmpty()) continue;
+                            if (rapi.length() > 200) rapi = rapi.substring(0, 200);
+                            cb.onKemajuan(rapi, -1);
+                        }
+                    } catch (Throwable ignored) {}
+                }
+            });
+            pembaca.start();
+            long batas = System.currentTimeMillis() + 45 * 60 * 1000L;
+            while (System.currentTimeMillis() < batas) {
+                try {
+                    return proses.exitValue();
+                } catch (IllegalThreadStateException belum) {
+                    try { Thread.sleep(500); } catch (InterruptedException ie) { break; }
+                }
+            }
+            try { proses.destroy(); } catch (Throwable ignored) {}
+            return -1;
+        } catch (Throwable t) {
+            return -1;
+        } finally {
+            if (proses != null) {
+                try { proses.getInputStream().close(); } catch (Throwable ignored) {}
+            }
         }
     }
 

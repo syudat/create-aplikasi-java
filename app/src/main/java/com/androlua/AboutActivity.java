@@ -62,7 +62,7 @@ public class AboutActivity extends Activity {
     + "\n" +
     "5. Isi versi aplikasi, contoh: 1.0, dan kode versi berupa angka, contoh: 1. Apabila dikosongkan, versi akan diisi otomatis dengan 1.0 dan kode versi 1."
     + "\n" +
-    "6. Isi SDK minimum dan SDK target apabila diperlukan. Apabila dikosongkan, nilai bawaan akan digunakan. SDK minimum adalah versi Android terendah yang didukung, contoh: 21 berarti Android 5.0. SDK target maksimum adalah 33."
+    "6. Isi SDK minimum dan SDK target apabila diperlukan. Apabila dikosongkan, nilai bawaan akan digunakan. SDK minimum adalah versi Android terendah yang didukung, contoh: 21 berarti Android 5.0. SDK target maksimum adalah 36 (Android 16)."
     + "\n" +
     "7. Tekan tombol Pilih Izin untuk memilih izin aplikasi, contoh: INTERNET. Izin INTERNET sudah dicentang secara bawaan. Centang hanya izin yang memang dibutuhkan oleh aplikasi."
     + "\n" +
@@ -90,13 +90,13 @@ public class AboutActivity extends Activity {
     + "\n" +
     "Susunan berkas proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python"
     + "\n" +
-    "Proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python tersusun seperti proyek Android pada umumnya. Di dalam folder app terdapat folder src, dan di dalamnya terdapat folder main. Di dalam folder main terdapat AndroidManifest.xml di samping folder java, folder res yang berisi layout/activity_main.xml dan values/strings.xml serta values/styles.xml, dan untuk HTML dan Situs Web terdapat folder assets yang berisi index.html (Situs Web juga memiliki tentang.html dan kontak.html). Proyek HTML dan Situs Web juga memiliki MainActivity sendiri di app/src/main/java/<nama-paket>/MainActivity.java, yang memuat index.html di WebView dan menjadi launcher di AndroidManifest. Proyek Python memiliki kode Python di app/src/main/python/main.py dan host MainActivity.java di app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, layout, strings, dan styles dapat dibuka dan diubah di editor, sama seperti MainActivity. Proyek lama yang manifest-nya masih berada di samping folder app tetap dapat dibangun, karena pada saat membangun, aplikasi memeriksa AndroidManifest.xml di app/src/main/ terlebih dahulu, kemudian yang di samping folder app, dan terakhir init.lua."
+    "Proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python tersusun seperti proyek Android pada umumnya. Di dalam folder app terdapat folder src, dan di dalamnya terdapat folder main. Di dalam folder main terdapat AndroidManifest.xml di samping folder java, folder res yang berisi layout/activity_main.xml dan values/strings.xml serta values/styles.xml, dan untuk HTML dan Situs Web terdapat folder assets yang berisi index.html (Situs Web juga memiliki tentang.html dan kontak.html). Proyek HTML dan Situs Web juga memiliki MainActivity sendiri di app/src/main/java/<nama-paket>/MainActivity.java, yang memuat index.html di WebView dan menjadi launcher di AndroidManifest. Proyek Python memiliki kode Python di app/src/main/python/main.py dan host MainActivity.java di app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, layout, strings, dan styles dapat dibuka dan diubah di editor, sama seperti MainActivity. Proyek lama yang manifest-nya masih berada di samping folder app tetap dapat dibangun, karena pada saat membangun, aplikasi memeriksa AndroidManifest.xml di app/src/main/ terlebih dahulu, kemudian yang di samping folder app, dan terakhir berkas data proyek."
     + "\n" +
     ""
     + "\n" +
     "Aturan izin (penting)"
     + "\n" +
-    "Izin yang dicentang saat membuat proyek hanya tercatat di satu tempat, sesuai jenis proyeknya. Untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python, izin yang dicentang tercatat HANYA di AndroidManifest.xml yang berada di app/src/main/, di samping folder java, di dalam folder proyek. Berkas init.lua untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python tidak berisi daftar izin. Apabila memilih Java lalu mencentang INTERNET dan CAMERA, yang tercatat di AndroidManifest.xml hanyalah INTERNET dan CAMERA, tanpa izin lain yang ikut. Pada saat membangun, aplikasi membaca izin dari tempat yang sama: dari AndroidManifest.xml di app/src/main/ untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python (apabila tidak ada, dari AndroidManifest.xml di samping folder app untuk proyek lama), dan dari init.lua untuk proyek lama."
+    "Izin yang dicentang saat membuat proyek hanya tercatat di satu tempat, sesuai jenis proyeknya. Untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python, izin yang dicentang tercatat HANYA di AndroidManifest.xml yang berada di app/src/main/, di samping folder java, di dalam folder proyek. Berkas data proyek untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python tidak berisi daftar izin. Apabila memilih Java lalu mencentang INTERNET dan CAMERA, yang tercatat di AndroidManifest.xml hanyalah INTERNET dan CAMERA, tanpa izin lain yang ikut. Pada saat membangun, aplikasi membaca izin dari tempat yang sama: dari AndroidManifest.xml di app/src/main/ untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python (apabila tidak ada, dari AndroidManifest.xml di samping folder app untuk proyek lama), dan dari berkas data proyek untuk proyek lama."
     + "\n" +
     ""
     + "\n" +
@@ -188,7 +188,7 @@ public class AboutActivity extends Activity {
     + "\n" +
     "Lisensi (versi berbayar)"
     + "\n" +
-    "Untuk menjual aplikasi, centang \"Aktifkan Lisensi\" saat membuat proyek, lalu isi nomor WhatsApp Anda. Aplikasi hasil build akan meminta kode lisensi saat pertama dibuka: pengguna melihat ID perangkatnya, menekan tombol Kirim ID Perangkat untuk mengirim ID tersebut ke WhatsApp Anda, lalu Anda membalas kode lisensinya. Kode lisensi dihitung dari ID perangkat dan kata sandi proyek (lisensi_seed di init.lua) — simpan kata sandi tersebut dengan baik dan jangan dibagikan. Setelah kode yang benar dimasukkan, aplikasi terbuka dan tidak meminta kode lagi."
+    "Untuk menjual aplikasi, centang \"Aktifkan Lisensi\" saat membuat proyek, lalu isi nomor WhatsApp Anda. Aplikasi hasil build akan meminta kode lisensi saat pertama dibuka: pengguna melihat ID perangkatnya, menekan tombol Kirim ID Perangkat untuk mengirim ID tersebut ke WhatsApp Anda, lalu Anda membalas kode lisensinya. Kode lisensi dihitung dari ID perangkat dan kata sandi proyek (lisensi_seed di berkas data proyek) — simpan kata sandi tersebut dengan baik dan jangan dibagikan. Setelah kode yang benar dimasukkan, aplikasi terbuka dan tidak meminta kode lagi."
     + "\n" +
     ""
     + "\n" +
@@ -212,7 +212,7 @@ public class AboutActivity extends Activity {
     + "\n" +
     "Bagikan dan Impor Proyek"
     + "\n" +
-    "Untuk berbagi proyek kepada teman: di Kelola Project, tahan lama nama proyek, lalu pilih Bagikan. Proyek dikirim sebagai ZIP melalui aplikasi berbagi (WhatsApp, Telegram, dan lain-lain). Untuk menerima proyek dari teman: buka menu di Kelola Project, pilih Impor proyek, lalu pilih berkas ZIP-nya. Berkas ZIP tersebut harus berisi init.lua — apabila tidak ada, berkas ditolak dengan pesan yang jelas, karena berkas tersebut bukan proyek Create Aplikasi. Apabila nama proyek sudah ada, aplikasi akan menanyakan: Timpa proyek lama, atau simpan dengan Nama baru."
+    "Untuk berbagi proyek kepada teman: di Kelola Project, tahan lama nama proyek, lalu pilih Bagikan. Proyek dikirim sebagai ZIP melalui aplikasi berbagi (WhatsApp, Telegram, dan lain-lain). Untuk menerima proyek dari teman: buka menu di Kelola Project, pilih Impor proyek, lalu pilih berkas ZIP-nya. Berkas ZIP tersebut harus berisi berkas data proyek — apabila tidak ada, berkas ditolak dengan pesan yang jelas, karena berkas tersebut bukan proyek Create Aplikasi. Apabila nama proyek sudah ada, aplikasi akan menanyakan: Timpa proyek lama, atau simpan dengan Nama baru."
     + "\n" +
     ""
     + "\n" +
@@ -266,7 +266,7 @@ public class AboutActivity extends Activity {
     + "\n" +
     "Uji Aplikasi Otomatis"
     + "\n" +
-    "Untuk memeriksa proyek sebelum dibangun: di Kelola Project, tahan lama nama proyek lalu pilih Uji Otomatis. IDE memeriksa 10 hal tanpa membangun APK — berkas wajib ada (init.lua, manifest, berkas utama, layout, strings), nama paket dan versi, izin yang dipakai, ikon, dan keseimbangan kurung kode. Hasilnya ditampilkan per item (LULUS/GAGAL beserta pesan) dan dibacakan oleh Jieshuo. Perbaiki terlebih dahulu semua yang GAGAL, baru tekan Bangun proyek."
+    "Untuk memeriksa proyek sebelum dibangun: di Kelola Project, tahan lama nama proyek lalu pilih Uji Otomatis. IDE memeriksa 10 hal tanpa membangun APK — berkas wajib ada (berkas data proyek, manifest, berkas utama, layout, strings), nama paket dan versi, izin yang dipakai, ikon, dan keseimbangan kurung kode. Hasilnya ditampilkan per item (LULUS/GAGAL beserta pesan) dan dibacakan oleh Jieshuo. Perbaiki terlebih dahulu semua yang GAGAL, baru tekan Bangun proyek."
     + "\n" +
     ""
     + "\n" +
@@ -360,6 +360,12 @@ public class AboutActivity extends Activity {
     + "\n" +
     ""
     + "\n" +
+    "Pasang Alat Terminal (Uji Coba)"
+    + "\n" +
+    "Fitur yang masih dalam uji coba: di Terminal ada tombol Pasang Alat Terminal untuk memasang lingkungan Termux dari cermin di repositori alat-termux milik pengembang (github.com/syudat/alat-termux), sebagai jalur lain selain tombol Pasang Termux yang mengambil dari rilis resmi Termux. Isi cerminnya sama persis dengan rilis resmi dan diperiksa dengan SHA-256 saat pemasangan. Sesudah lingkungan terpasang, perintah pkg update dan pkg install bisa dipakai, dan alat tambahan dari repositori ikut dipasang ke terminal: info-terminal untuk melihat info lingkungan, bersih-terminal untuk membersihkan cache, dan cadangkan-proyek untuk mengarsipkan folder proyek menjadi satu berkas tar.gz bertanggal. Sesudah itu aplikasi memasang otomatis paket Linux dasar (git, python, curl, wget, nano, openssh, zip, unzip) dan alat bangun APK beserta tanda tangan (openjdk-21, kotlin, gradle, ecj, aapt2, d8, apksigner, clang, cmake, ninja, make) dari repositori resmi Termux, jadi terminal langsung siap dipakai membangun aplikasi. Unduhan paket besar (ratusan MB) dan bisa lama. Selama pemasangan berjalan, kemajuan dan keluaran perintah tampil di layar utama Terminal, dan hasil akhirnya dibacakan oleh pembaca layar. Bila pemasangan paket belum tuntas, tekan Pasang Alat Terminal lagi untuk melanjutkannya."
+    + "\n" +
+    ""
+    + "\n" +
     "Mode Suara Penuh"
     + "\n" +
     "Untuk mengendalikan IDE sepenuhnya dengan suara: buka Mode Suara di menu utama, lalu tekan Mulai Mendengarkan. IDE mendengarkan terus-menerus — tidak perlu menekan tombol tiap perintah — menjalankan perintah dan menjawab dengan suara. Terdapat 26 perintah: buat, bangun, buka, jalankan, daftar, cari, hapus, uji, periksa, ekspor, cadangkan, bagikan, buat ikon, terjemahkan, bangun di terminal, baca layar, buka semua layar (termasuk keamanan, AI offline, widget, media sosial, game, belajar, cloud, backend, tema, animasi, perekam), kembali, tutup, dan bantuan. Apabila mode ditinggal aktif, mendengarkan dilanjutkan otomatis saat layar ini dibuka lagi. Tekan Berhenti Mendengarkan untuk mematikan mode ini. Apabila HP tidak memiliki layanan pengenal suara, perintah tetap dapat ditulis di kotak teks."
@@ -408,6 +414,36 @@ public class AboutActivity extends Activity {
     + "\n" +
     ""
     + "\n" +
+    "Penganalisis APK"
+    + "\n" +
+    "Untuk membaca isi APK yang sudah jadi (seperti APK Analyzer di Android Studio): buka Penganalisis APK di menu utama, pilih proyek, lalu tekan Analisis APK Hasil Build. IDE membaca APK terbaru di folder bin proyek itu dan melaporkan nama paket, versi, SDK minimum dan target, daftar izin yang dipakai, jumlah berkas dex, rincian ukuran per bagian (kode program, resource, aset, pustaka native, tanda tangan), dan 10 entri terbesar. Berguna untuk tahu bagian mana yang membuat APK besar dan izin apa saja yang dipakai aplikasi hasil."
+    + "\n" +
+    ""
+    + "\n" +
+    "Pratinjau Ukuran Layar"
+    + "\n" +
+    "Untuk memeriksa tampilan proyek pada banyak ukuran layar sekaligus (seperti di Android Studio): buka Pratinjau Ukuran Layar di menu utama, pilih proyek, lalu tekan Periksa Ukuran Layar. IDE membaca semua layout proyek dan melaporkan elemen yang lebarnya ditulis tetap (misalnya 400dp) dan melebihi lebar layar 320, 360, 411, atau 480 dp, karena di HP berlayar kecil elemen seperti itu bisa tertutup atau meluber. Elemen dengan lebar match_parent atau wrap_content menyesuaikan layar secara otomatis dan tidak perlu diperiksa."
+    + "\n" +
+    ""
+    + "\n" +
+    "Pengelola Sumber Daya"
+    + "\n" +
+    "Untuk melihat dan mengatur semua sumber daya proyek dalam satu tempat (seperti Resource Manager di Android Studio): buka Pengelola Sumber Daya di menu utama, pilih proyek, lalu tekan Lihat Sumber Daya. IDE melaporkan jumlah dan ukuran berkas per kategori (drawable, layout, values, mipmap, dan lainnya), isi strings.xml, colors.xml, dan styles.xml. Dari layar yang sama, string baru bisa ditambahkan ke strings.xml dan warna baru ke colors.xml dengan mengisi nama dan nilainya — nama diperiksa dan duplikat ditolak, jadi berkas XML tidak rusak."
+    + "\n" +
+    ""
+    + "\n" +
+    "Pemantau Kinerja Ringan"
+    + "\n" +
+    "Untuk memantau pemakaian RAM dan prosesor aplikasi yang sedang berjalan (seperti Profiler di Android Studio, versi ringan): buka Pemantau Kinerja Ringan di menu utama, jalankan dulu aplikasi yang mau diperiksa (misalnya aplikasi hasil build yang sedang dicoba), isi nama paketnya — atau pilih proyek lalu tekan Isi Nama Paket dari Proyek — kemudian tekan Mulai Pantau. Setiap 2 detik IDE mencatat RAM (PSS) dan CPU aplikasi itu beserta RAM HP yang bebas; tekan Berhenti untuk melihat ringkasan rata-rata dan puncaknya. Tanpa izin tambahan. Di Android versi baru, akses baca prosesor aplikasi lain dibatasi sistem, jadi bila CPU tidak terbaca, laporan menyebutkannya apa adanya dan RAM tetap terpantau."
+    + "\n" +
+    ""
+    + "\n" +
+    "Tanda Tangan Bawaan per Proyek dan Anti Tamper"
+    + "\n" +
+    "Sejak versi 5.7, proyek yang tidak memakai tanda tangan pribadi ditandatangani dengan kunci bawaan KHUSUS proyek itu sendiri (dibuat sekali di folder tanda-tangan-bawaan di dalam proyek, lalu dipakai seterusnya), jadi tanda tangan bawaan berbeda-beda antarproyek — tidak lagi satu kunci bersama untuk semua aplikasi. Jangan hapus folder tanda-tangan-bawaan: tanpa kunci itu, APK baru tidak bisa menimpa APK lama proyek yang sama. Setelan tiap proyek (arsitektur terpisah, tanda tangan pribadi, anti tamper, keystore terpilih, SDK) kini tersimpan di berkas settings.gradle di dalam proyek dan terbaca lagi setiap proyek dibangun. Di Pengaturan kategori Tanda Tangan ada centang Anti tamper aplikasi hasil build: bila aktif, aplikasi hasil build di perangkat memeriksa tanda tangan dan isi dex-nya setiap dibuka; bila ditandatangani ulang atau diubah orang lain, aplikasi menolak berjalan. Debugger dan alat injeksi seperti Frida/Xposed juga dideteksi, dan jendela aplikasi dikunci dari rekaman layar."
+    + "\n" +
+    ""
+    + "\n" +
     "Pembuat Video Demo"
     + "\n" +
     "Untuk membuat video demo aplikasi hasil: buka Pembuat Video Demo di menu utama, pilih proyek, isi judul video, lalu tekan Buat Skrip Video Demo — IDE menulis video-demo.txt berisi 5 adegan baku (pembuka, tampilan utama, fitur 1, fitur 2, penutup) beserta teks narasi dan durasi tiap adegan. Tekan Buat Slideshow HTML untuk membuat video-demo.html dari gambar-gambar proyek (ikon + tangkapan layar apabila ada) yang berganti otomatis tiap 5 detik. Ini BUKAN video .mp4 — untuk video sungguhan, buka video-demo.html di browser HP lalu rekam layar, atau baca narasi di video-demo.txt sambil merekam aplikasi yang sedang berjalan."
@@ -422,7 +458,7 @@ public class AboutActivity extends Activity {
     + "\n" +
     "Pengaturan"
     + "\n" +
-    "Untuk mengatur aplikasi: buka menu Opsi di layar utama lalu tekan Pengaturan. Di dalamnya terdapat 12 kategori: Pengaturan GitHub (keamanan, tanda tangan pribadi, history build, dan token GitHub), Pengaturan Bangun APK Perangkat (simpan kata sandi keystore dan history build di perangkat), Tema (warna aplikasi), Tanda Tangan (buat keystore untuk tanda tangan pribadi), Folder Proyek (lokasi folder proyek), Bahasa dan Suara (bahasa antarmuka dan kecepatan suara Mode Suara), Ukuran Teks dan Tampilan (ukuran font editor), Build (SDK target bawaan dan pisah arsitektur bawaan untuk layar Buat Proyek), Notifikasi (bunyi saat build selesai), Cadangan Otomatis (jadwal cadangan proyek), Profil Pengembang (nama, nomor WhatsApp, dan rekening yang tampil di layar Donasi), serta Privasi dan Data (reset pengaturan dan hapus data aplikasi). Setiap kategori memiliki tombol Kembali ke Sebelumnya untuk kembali ke menu kategori. Pengaturan yang baru disimpan saja (belum diterapkan) ditulis keterangannya di layar dengan jujur."
+    "Untuk mengatur aplikasi: buka menu Opsi di layar utama lalu tekan Pengaturan. Di dalamnya terdapat 12 kategori: Pengaturan GitHub (keamanan, tanda tangan pribadi, history build, dan token GitHub), Pengaturan Bangun APK Perangkat (simpan kata sandi keystore dan history build di perangkat), Tema (warna aplikasi), Tanda Tangan (buat keystore untuk tanda tangan pribadi dan centang anti tamper aplikasi hasil build), Folder Proyek (lokasi folder proyek), Bahasa dan Suara (bahasa antarmuka dan kecepatan suara Mode Suara), Ukuran Teks dan Tampilan (ukuran font editor), Build (SDK target bawaan dan pisah arsitektur bawaan untuk layar Buat Proyek), Notifikasi (bunyi saat build selesai), Cadangan Otomatis (jadwal cadangan proyek), Profil Pengembang (nama, nomor WhatsApp, dan rekening yang tampil di layar Donasi), serta Privasi dan Data (reset pengaturan dan hapus data aplikasi). Setiap kategori memiliki tombol Kembali ke Sebelumnya untuk kembali ke menu kategori. Pengaturan yang baru disimpan saja (belum diterapkan) ditulis keterangannya di layar dengan jujur."
     + "\n" +
     ""
     + "\n" +
@@ -466,6 +502,37 @@ public class AboutActivity extends Activity {
         setContentView(sv);
 
         heading(r, "Tentang Alat", 20);
+
+        // Deskripsi profesional mengikuti bahasa terpilih (perintah al
+        // kautsar 2026-11-23): judul layar + paragraf pembuka Tentang
+        // Alat tampil dalam bahasa efektif aplikasi (50 bahasa); panduan
+        // lengkap di bawahnya tetap bahasa Indonesia dan itu dicatat.
+        try {
+            String kode = Bahasa.kodeEfektif(
+                    PengaturanActivity.baca(this).getString(
+                            PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
+                    java.util.Locale.getDefault().getLanguage());
+            TextView tvJudulBahasa = new TextView(this);
+            tvJudulBahasa.setText(TentangBahasa.judul(kode));
+            GayaStudio.judul(tvJudulBahasa, 17);
+            tvJudulBahasa.setPadding(dp(16), dp(8), dp(16), 0);
+            r.addView(tvJudulBahasa);
+            TextView tvDeskripsi = new TextView(this);
+            tvDeskripsi.setText(TentangBahasa.deskripsi(kode));
+            GayaStudio.label(tvDeskripsi, 15);
+            tvDeskripsi.setTextIsSelectable(true);
+            tvDeskripsi.setPadding(dp(16), dp(4), dp(16), 0);
+            r.addView(tvDeskripsi);
+            String catatan = TentangBahasa.catatanPanduan(kode);
+            if (catatan != null && catatan.length() > 0) {
+                TextView tvCatatan = new TextView(this);
+                tvCatatan.setText(catatan);
+                GayaStudio.labelKecil(tvCatatan, 12);
+                tvCatatan.setPadding(dp(16), dp(4), dp(16), 0);
+                r.addView(tvCatatan);
+            }
+        } catch (Throwable ignored) {
+        }
 
         TextView tv = new TextView(this);
         tv.setText(TENTANG);

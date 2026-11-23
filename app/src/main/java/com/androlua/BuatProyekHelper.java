@@ -101,13 +101,13 @@ public class BuatProyekHelper {
         try {
             s = BuatProyek.buat(param);
         } catch (Throwable t) {
-            Toast.makeText(ctx, "Gagal membuat proyek: " + t.getMessage(),
+            Toast.makeText(ctx, TeksUI.t("Gagal membuat proyek: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
             return null;
         }
         if (s == null || !s.startsWith("OK:")) {
             String pesan = (s != null && s.startsWith("GAGAL:")) ? s.substring(6) : s;
-            Toast.makeText(ctx, pesan == null ? "Gagal membuat proyek." : pesan,
+            Toast.makeText(ctx, pesan == null ? TeksUI.t("Gagal membuat proyek.") : pesan,
                     Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -115,7 +115,7 @@ public class BuatProyekHelper {
         if (templateId != null && !"kosong".equals(templateId)) {
             String galat = TemplateProyek.terapkan(new File(dir), templateId, paket, namaUnik);
             if (galat != null) {
-                Toast.makeText(ctx, "Template gagal diterapkan: " + galat,
+                Toast.makeText(ctx, TeksUI.t("Template gagal diterapkan: ") + galat,
                         Toast.LENGTH_SHORT).show();
             }
         }

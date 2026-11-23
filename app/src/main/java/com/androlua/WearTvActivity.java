@@ -46,21 +46,21 @@ public class WearTvActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Wear OS & TV");
+        setTitle(TeksUI.t("Wear OS & TV"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pembuat Aplikasi Wear OS & TV", 20);
-        label(r, "Buat proyek baru untuk jam (Wear OS) atau TV (Android TV), "
-                + "atau terapkan penyesuaian ke proyek yang sudah ada. IDE "
-                + "mengubah manifest (uses-feature, LEANBACK_LAUNCHER, "
+        heading(r, TeksUI.t("Pembuat Aplikasi Wear OS & TV"), 20);
+        label(r, TeksUI.t("Buat proyek baru untuk jam (Wear OS) atau TV (Android TV), ")
+                + TeksUI.t("atau terapkan penyesuaian ke proyek yang sudah ada. IDE ")
+                + TeksUI.t("mengubah manifest (uses-feature, LEANBACK_LAUNCHER, ")
                 + "banner) dan layout (Wear: layar kecil; TV: layar besar "
-                + "ramah D-pad). Ini template proyek — build + uji tetap "
-                + "butuh perangkat/emulator Wear OS atau Android TV. Banner "
-                + "TV (banner.png 320x180) tidak dibuat otomatis, harus "
+                + TeksUI.t("ramah D-pad). Ini template proyek — build + uji tetap ")
+                + TeksUI.t("butuh perangkat/emulator Wear OS atau Android TV. Banner ")
+                + TeksUI.t("TV (banner.png 320x180) tidak dibuat otomatis, harus ")
                 + "ditambahkan sendiri (mis. lewat Pembuat Ikon).", false);
 
         label(r, "Target perangkat:", false);
@@ -76,20 +76,20 @@ public class WearTvActivity extends Activity {
         r.addView(spTarget, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Nama proyek baru:", false);
+        label(r, TeksUI.t("Nama proyek baru:"), false);
         eNama = new EditText(this);
         GayaStudio.edit(eNama);
         eNama.setHint("Contoh: Jam Saya");
         r.addView(eNama, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button(r, "Buat Proyek Baru Wear/TV", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Proyek Baru Wear/TV"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatProyekBaru();
             }
         });
 
-        label(r, "Atau terapkan ke proyek yang sudah ada:", false);
+        label(r, TeksUI.t("Atau terapkan ke proyek yang sudah ada:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -97,13 +97,13 @@ public class WearTvActivity extends Activity {
         spProyek.setAdapter(adapterProyek);
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button(r, "Terapkan ke Proyek Ini", new View.OnClickListener() {
+        button(r, TeksUI.t("Terapkan ke Proyek Ini"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 terapkanKeProyek();
             }
         });
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -111,7 +111,7 @@ public class WearTvActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Pembuat Aplikasi Wear OS dan TV. Pilih target, lalu buat proyek baru atau terapkan ke proyek yang ada.");
+        announce(TeksUI.t("Pembuat Aplikasi Wear OS dan TV. Pilih target, lalu buat proyek baru atau terapkan ke proyek yang ada."));
     }
 
     @Override
@@ -145,8 +145,8 @@ public class WearTvActivity extends Activity {
             toast("Proyek dibuat, tetapi penyesuaian Wear/TV gagal: " + galat);
             return;
         }
-        String ok = "Proyek " + nama + " (" + ProyekWearTv.namaTarget(targetTerpilih())
-                + ") dibuat. Baca wear-tv.txt di proyek untuk langkah berikutnya.";
+        String ok = TeksUI.t("Proyek ") + nama + " (" + ProyekWearTv.namaTarget(targetTerpilih())
+                + TeksUI.t(") dibuat. Baca wear-tv.txt di proyek untuk langkah berikutnya.");
         toast(ok);
         announce(ok);
         muatDaftar();
@@ -164,8 +164,8 @@ public class WearTvActivity extends Activity {
             return;
         }
         String ok = "Penyesuaian " + ProyekWearTv.namaTarget(targetTerpilih())
-                + " diterapkan ke proyek " + nama
-                + ". Baca wear-tv.txt di proyek untuk langkah berikutnya.";
+                + TeksUI.t(" diterapkan ke proyek ") + nama
+                + TeksUI.t(". Baca wear-tv.txt di proyek untuk langkah berikutnya.");
         toast(ok);
         announce(ok);
     }

@@ -52,18 +52,18 @@ public class PerekamAksiActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Perekam Aksi");
+        setTitle(TeksUI.t("Perekam Aksi"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Perekam Aksi", 20);
-        label(r, "IDE merekam aksi yang kamu lakukan (buka, jalankan, bangun, ekspor, "
-                + "cadangkan, buat proyek, simpan berkas). Tekan Putar Ulang untuk "
-                + "menjalankan kembali aksi yang bisa diotomatisasi — aksi yang tidak "
-                + "bisa otomatis akan dilewati dan dilaporkan.", false);
+        heading(r, TeksUI.t("Perekam Aksi"), 20);
+        label(r, TeksUI.t("IDE merekam aksi yang kamu lakukan (buka, jalankan, bangun, ekspor, ")
+                + TeksUI.t("cadangkan, buat proyek, simpan berkas). Tekan Putar Ulang untuk ")
+                + TeksUI.t("menjalankan kembali aksi yang bisa diotomatisasi — aksi yang tidak ")
+                + TeksUI.t("bisa otomatis akan dilewati dan dilaporkan."), false);
 
         lv = new ListView(this);
         adapter = new ArrayAdapter<String>(this,
@@ -92,13 +92,13 @@ public class PerekamAksiActivity extends Activity {
                 putarUlang();
             }
         });
-        button(r, "Hapus Rekaman", new View.OnClickListener() {
+        button(r, TeksUI.t("Hapus Rekaman"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(PerekamAksiActivity.this)
-                        .setTitle("Hapus Rekaman")
-                        .setMessage("Hapus seluruh rekaman aksi?")
-                        .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
+                        .setTitle(TeksUI.t("Hapus Rekaman"))
+                        .setMessage(TeksUI.t("Hapus seluruh rekaman aksi?"))
+                        .setPositiveButton(TeksUI.t("Hapus"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 PerekamAksi.hapus(berkasRekaman());
@@ -106,11 +106,11 @@ public class PerekamAksiActivity extends Activity {
                                 toast("Rekaman dihapus.");
                             }
                         })
-                        .setNegativeButton("Batal", null)
+                        .setNegativeButton(TeksUI.t("Batal"), null)
                         .show();
             }
         });
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -119,7 +119,7 @@ public class PerekamAksiActivity extends Activity {
 
         muatDaftar();
         announce("Perekam Aksi. " + daftar.size() + " aksi terekam, "
-                + PerekamAksi.jumlahDapatDiputar(berkasRekaman()) + " bisa diputar ulang.");
+                + PerekamAksi.jumlahDapatDiputar(berkasRekaman()) + TeksUI.t(" bisa diputar ulang."));
     }
 
     @Override
@@ -139,8 +139,8 @@ public class PerekamAksiActivity extends Activity {
             baris.add(PerekamAksi.tampilkan(daftar.get(i)));
         }
         if (baris.isEmpty()) {
-            baris.add("Belum ada aksi yang terekam. Lakukan dulu sesuatu di IDE "
-                    + "(buka proyek, bangun, simpan berkas), lalu kembali ke sini.");
+            baris.add(TeksUI.t("Belum ada aksi yang terekam. Lakukan dulu sesuatu di IDE ")
+                    + TeksUI.t("(buka proyek, bangun, simpan berkas), lalu kembali ke sini."));
         }
         if (adapter != null) adapter.notifyDataSetChanged();
     }
@@ -181,13 +181,13 @@ public class PerekamAksiActivity extends Activity {
                         .append(hasil.substring(7)).append(").\n");
                 lewati++;
             } else {
-                log.append("• ").append(PerekamAksi.tampilkan(a)).append(" — GAGAL: ")
+                log.append("• ").append(PerekamAksi.tampilkan(a)).append(TeksUI.t(" — GAGAL: "))
                         .append(hasil).append(".\n");
             }
         }
-        String ringkas = "Putar ulang selesai: " + jalan + " aksi dijalankan, "
+        String ringkas = TeksUI.t("Putar ulang selesai: ") + jalan + " aksi dijalankan, "
                 + lewati + " dilewati."
-                + (berhenti ? " Pemutaran berhenti di aksi navigasi." : "");
+                + (berhenti ? TeksUI.t(" Pemutaran berhenti di aksi navigasi.") : "");
         log.append("\n").append(ringkas);
         final String laporan = log.toString();
         final boolean berhentiAkhir = berhenti;
@@ -211,7 +211,7 @@ public class PerekamAksiActivity extends Activity {
      *         pesan galat bila gagal.
      */
     private String jalankanSatu(PerekamAksi.Aksi a) {
-        if (a == null) return "LEWATI:aksi kosong";
+        if (a == null) return TeksUI.t("LEWATI:aksi kosong");
         String dir = ROOT + "/" + a.target;
         if ("buka".equals(a.jenis) || "simpan".equals(a.jenis)) {
             try {
@@ -220,14 +220,14 @@ public class PerekamAksiActivity extends Activity {
                 startActivity(it);
                 return null;
             } catch (Throwable t) {
-                return "Gagal membuka editor: " + t.getMessage();
+                return TeksUI.t("Gagal membuka editor: ") + t.getMessage();
             }
         }
         if ("jalankan".equals(a.jenis)) {
             try {
                 JalankanProyek.jalankan(this, new File(dir));
             } catch (Throwable t) {
-                return "Gagal menjalankan: " + t.getMessage();
+                return TeksUI.t("Gagal menjalankan: ") + t.getMessage();
             }
             return null;
         }
@@ -235,7 +235,7 @@ public class PerekamAksiActivity extends Activity {
             try {
                 BangunProyek.bangun(this, new File(dir));
             } catch (Throwable t) {
-                return "Gagal membangun: " + t.getMessage();
+                return TeksUI.t("Gagal membangun: ") + t.getMessage();
             }
             return null;
         }
@@ -243,22 +243,22 @@ public class PerekamAksiActivity extends Activity {
             try {
                 EksporProyekJava.ekspor(this, new File(dir));
             } catch (Throwable t) {
-                return "Gagal mengekspor: " + t.getMessage();
+                return TeksUI.t("Gagal mengekspor: ") + t.getMessage();
             }
             return null;
         }
         if ("cadangkan".equals(a.jenis)) {
             File hasil = ArsipProyek.buatCadangan(new File(dir), new File(DIR_BACKUP));
-            if (hasil == null) return "Gagal membuat cadangan";
+            if (hasil == null) return TeksUI.t("Gagal membuat cadangan");
             return "";
         }
         if ("buat".equals(a.jenis)) {
             String tipe = a.detail == null || a.detail.isEmpty() ? "lua" : a.detail;
             String dibuat = BuatProyekHelper.buat(this, a.target, tipe, "kosong");
-            if (dibuat == null || dibuat.isEmpty()) return "Gagal membuat proyek";
+            if (dibuat == null || dibuat.isEmpty()) return TeksUI.t("Gagal membuat proyek");
             return "";
         }
-        return "LEWATI:aksi \"" + a.jenis + "\" tidak bisa diputar ulang otomatis";
+        return "LEWATI:aksi \"" + a.jenis + TeksUI.t("\" tidak bisa diputar ulang otomatis");
     }
 
     // ------------------------------------------------------------------ UI

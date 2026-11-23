@@ -33,7 +33,7 @@ public class MediaSosial {
 
     /** Teks contoh untuk uji berbagi dari IDE. */
     public static String teksContoh(String namaAplikasi) {
-        return "Coba aplikasi " + namaAplikasi + " buatan saya! Dibuat dengan Create Aplikasi.";
+        return TeksUI.t("Coba aplikasi ") + namaAplikasi + TeksUI.t(" buatan saya! Dibuat dengan Create Aplikasi.");
     }
 
     /**
@@ -76,13 +76,13 @@ public class MediaSosial {
                                        String platform, String namaAplikasi) {
         File utama = berkasUtama(dirProyek, tipe);
         if (utama == null || !utama.isFile()) {
-            return "Berkas utama proyek tidak ditemukan.";
+            return TeksUI.t("Berkas utama proyek tidak ditemukan.");
         }
         String isi = baca(utama);
-        if (isi == null) return "Tidak bisa membaca berkas utama proyek.";
+        if (isi == null) return TeksUI.t("Tidak bisa membaca berkas utama proyek.");
         String penanda = penanda(platform);
         if (isi.contains(penanda)) {
-            return "Kode berbagi " + platform + " sudah ada di proyek ini.";
+            return TeksUI.t("Kode berbagi ") + platform + TeksUI.t(" sudah ada di proyek ini.");
         }
         String kode = kodeBagikan(tipe, platform, namaAplikasi);
         String baru;
@@ -98,7 +98,7 @@ public class MediaSosial {
         } else {
             // Java/Kotlin/Compose: sisipkan sebelum kurung kurawal penutup kelas.
             int pos = isi.lastIndexOf("}");
-            if (pos < 0) return "Berkas utama proyek tidak berisi penutup kelas.";
+            if (pos < 0) return TeksUI.t("Berkas utama proyek tidak berisi penutup kelas.");
             baru = isi.substring(0, pos) + kode + isi.substring(pos);
             // Metode berbagi memakai Intent — pastikan impornya ada, karena
             // template MainActivity IDE tidak mengimpor android.content.Intent.
@@ -334,7 +334,7 @@ public class MediaSosial {
             }
             return null;
         } catch (Exception e) {
-            return "Tidak bisa menulis " + target.getName() + ": " + e.getMessage();
+            return TeksUI.t("Tidak bisa menulis ") + target.getName() + ": " + e.getMessage();
         }
     }
 }

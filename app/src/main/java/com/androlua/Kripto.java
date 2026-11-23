@@ -27,7 +27,7 @@ public class Kripto {
     }
 
     public static byte[] enkripsi(byte[] data, byte[] key) throws Exception {
-        if (key == null || key.length != KEY_LEN) throw new IllegalArgumentException("Kunci harus 32 byte");
+        if (key == null || key.length != KEY_LEN) throw new IllegalArgumentException(TeksUI.t("Kunci harus 32 byte"));
         byte[] iv = new byte[IV_LEN];
         new SecureRandom().nextBytes(iv);
         Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");

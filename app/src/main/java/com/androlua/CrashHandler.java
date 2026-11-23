@@ -366,7 +366,7 @@ public class CrashHandler implements UncaughtExceptionHandler
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "an error occured while writing file...", e);
+			Log.e(TAG, TeksUI.t("an error occured while writing file..."), e);
 		}
 		return null;
 	}

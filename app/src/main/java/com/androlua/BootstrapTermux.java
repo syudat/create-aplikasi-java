@@ -147,13 +147,13 @@ public class BootstrapTermux {
                 File prefix = prefixAplikasi(ctx);
                 int n = pasangAlatTambahan(ctx, prefix, cb);
                 boolean paket = pasangPaketOtomatis(ctx, prefix, cb);
-                cb.onSelesai(true, "Lingkungan Termux sudah terpasang. "
-                        + n + " alat tambahan dipasang dari repositori. "
+                cb.onSelesai(true, TeksUI.t("Lingkungan Termux sudah terpasang. ")
+                        + n + TeksUI.t(" alat tambahan dipasang dari repositori. ")
                         + (paket
-                            ? "Paket Linux dasar dan alat bangun APK sudah terpasang."
+                            ? TeksUI.t("Paket Linux dasar dan alat bangun APK sudah terpasang.")
                             : "Pemasangan paket belum tuntas; tekan Pasang Alat Terminal lagi untuk melanjutkan."));
             } catch (Throwable t) {
-                cb.onSelesai(false, "Gagal memasang alat tambahan: " + t.getMessage());
+                cb.onSelesai(false, TeksUI.t("Gagal memasang alat tambahan: ") + t.getMessage());
             }
             return;
         }
@@ -163,7 +163,7 @@ public class BootstrapTermux {
     private static void pasangInternal(final Context ctx, final Kemajuan cb,
                                        final String urlUnduh, final boolean denganAlat) {
         if (sudahTerpasang(ctx)) {
-            cb.onSelesai(true, "Lingkungan Termux sudah terpasang.");
+            cb.onSelesai(true, TeksUI.t("Lingkungan Termux sudah terpasang."));
             return;
         }
         final String arch = arsitekturBootstrap();
@@ -179,7 +179,7 @@ public class BootstrapTermux {
             String sha = sha256(zip);
             String harap = sha256Bootstrap(arch);
             if (!harap.isEmpty() && !harap.equalsIgnoreCase(sha)) {
-                throw new RuntimeException("SHA-256 tidak cocok (unduhan rusak). "
+                throw new RuntimeException(TeksUI.t("SHA-256 tidak cocok (unduhan rusak). ")
                         + "Diharapkan " + harap + ", didapat " + sha + ".");
             }
             // 3. Ekstrak ke staging (symlink + izin seperti TermuxInstaller).
@@ -194,10 +194,10 @@ public class BootstrapTermux {
             pindahKePrefix(staging, prefix);
             hapusRekursif(staging);
             // 5. Tambal jalur prefix yang dikodekan keras di berkas teks.
-            cb.onKemajuan("Menyesuaikan jalur ke folder aplikasi…", -1);
+            cb.onKemajuan(TeksUI.t("Menyesuaikan jalur ke folder aplikasi…"), -1);
             tambalPrefix(ctx, prefix);
             // 6. Konfigurasi apt + pembungkus dpkg.
-            cb.onKemajuan("Menyiapkan apt dan dpkg…", -1);
+            cb.onKemajuan(TeksUI.t("Menyiapkan apt dan dpkg…"), -1);
             tulisAptConf(prefix);
             tulisWrapperDpkg(prefix);
             // 7. Tandai selesai, lalu jalankan tahap kedua (postinst).
@@ -207,21 +207,21 @@ public class BootstrapTermux {
             // 8. Bersihkan zip unduhan.
             zip.delete();
             String pesan = "Lingkungan Termux " + VERSI_BOOTSTRAP
-                    + " berhasil dipasang. Ketik \"pkg update\" untuk mencoba.";
+                    + TeksUI.t(" berhasil dipasang. Ketik \"pkg update\" untuk mencoba.");
             if (denganAlat) {
                 int n = pasangAlatTambahan(ctx, prefix, cb);
-                pesan += " " + n + " alat tambahan dipasang dari repositori.";
+                pesan += " " + n + TeksUI.t(" alat tambahan dipasang dari repositori.");
                 boolean paket = pasangPaketOtomatis(ctx, prefix, cb);
                 pesan += paket
-                        ? " Paket Linux dasar dan alat bangun APK terpasang."
+                        ? TeksUI.t(" Paket Linux dasar dan alat bangun APK terpasang.")
                         : " Pemasangan paket belum tuntas; tekan Pasang Alat Terminal lagi untuk melanjutkan.";
             }
             cb.onSelesai(true, pesan);
         } catch (Throwable t) {
             try { hapusRekursif(staging); } catch (Throwable ignored) {}
             try { zip.delete(); } catch (Throwable ignored) {}
-            cb.onSelesai(false, "Gagal memasang lingkungan Termux: " + t.getMessage()
-                    + ". Periksa koneksi internet lalu coba lagi.");
+            cb.onSelesai(false, TeksUI.t("Gagal memasang lingkungan Termux: ") + t.getMessage()
+                    + TeksUI.t(". Periksa koneksi internet lalu coba lagi."));
         }
     }
 
@@ -235,7 +235,7 @@ public class BootstrapTermux {
     private static int pasangAlatTambahan(Context ctx, File prefix, Kemajuan cb) {
         int terpasang = 0;
         try {
-            cb.onKemajuan("Mengunduh indeks alat dari repositori…", -1);
+            cb.onKemajuan(TeksUI.t("Mengunduh indeks alat dari repositori…"), -1);
             File indeks = new File(ctx.getFilesDir(), "daftar-alat.json");
             unduh(IndeksAlat.urlIndeks(), indeks, cb);
             java.util.List<IndeksAlat.Alat> daftar =
@@ -302,7 +302,7 @@ public class BootstrapTermux {
     private static boolean pasangPaketOtomatis(Context ctx, File prefix, Kemajuan cb) {
         try {
             if (new File(prefix, NAMA_PENANDA_PAKET).isFile()) {
-                cb.onKemajuan("Paket Linux dasar dan alat bangun APK sudah terpasang.", -1);
+                cb.onKemajuan(TeksUI.t("Paket Linux dasar dan alat bangun APK sudah terpasang."), -1);
                 return true;
             }
             File aptGet = new File(prefix, "bin/apt-get");
@@ -314,11 +314,11 @@ public class BootstrapTermux {
             for (String p : PAKET_DASAR) semua.add(p);
             for (String p : PAKET_BANGUN_APK) semua.add(p);
 
-            cb.onKemajuan("Memperbarui daftar paket (apt-get update)…", -1);
+            cb.onKemajuan(TeksUI.t("Memperbarui daftar paket (apt-get update)…"), -1);
             int kode = jalankanMengalir(ctx, prefix, cb,
                     new String[]{aptGet.getPath(), "update"});
             if (kode != 0) {
-                cb.onKemajuan("apt-get update gagal (kode " + kode + "). Pemasangan paket ditunda.", -1);
+                cb.onKemajuan(TeksUI.t("apt-get update gagal (kode ") + kode + "). Pemasangan paket ditunda.", -1);
                 return false;
             }
             cb.onKemajuan("Memasang " + semua.size() + " paket: "
@@ -331,8 +331,8 @@ public class BootstrapTermux {
             kode = jalankanMengalir(ctx, prefix, cb,
                     perintah.toArray(new String[0]));
             if (kode != 0) {
-                cb.onKemajuan("Pemasangan paket berhenti (kode " + kode
-                        + "). Tekan Pasang Alat Terminal lagi untuk melanjutkan.", -1);
+                cb.onKemajuan(TeksUI.t("Pemasangan paket berhenti (kode ") + kode
+                        + TeksUI.t("). Tekan Pasang Alat Terminal lagi untuk melanjutkan."), -1);
                 return false;
             }
             File penanda = new File(prefix, NAMA_PENANDA_PAKET);
@@ -343,11 +343,11 @@ public class BootstrapTermux {
             } finally {
                 out.close();
             }
-            cb.onKemajuan("Semua paket selesai dipasang.", -1);
+            cb.onKemajuan(TeksUI.t("Semua paket selesai dipasang."), -1);
             return true;
         } catch (Throwable t) {
             try {
-                cb.onKemajuan("Pemasangan paket gagal: " + t.getMessage(), -1);
+                cb.onKemajuan(TeksUI.t("Pemasangan paket gagal: ") + t.getMessage(), -1);
             } catch (Throwable ignored) {}
             return false;
         }
@@ -418,11 +418,11 @@ public class BootstrapTermux {
             conn.setConnectTimeout(30000);
             conn.setReadTimeout(60000);
             conn.setInstanceFollowRedirects(true);
-            conn.setRequestProperty("User-Agent", "Create-Aplikasi-Terminal-Kautsar");
+            conn.setRequestProperty("User-Agent", TeksUI.t("Create-Aplikasi-Terminal-Kautsar"));
             conn.connect();
             int kode = conn.getResponseCode();
             if (kode < 200 || kode >= 300) {
-                throw new RuntimeException("Unduhan gagal, kode HTTP " + kode + ".");
+                throw new RuntimeException(TeksUI.t("Unduhan gagal, kode HTTP ") + kode + ".");
             }
             long total = conn.getContentLengthLong();
             in = new BufferedInputStream(conn.getInputStream());
@@ -439,7 +439,7 @@ public class BootstrapTermux {
                     if (persen != persenTerakhir) {
                         persenTerakhir = persen;
                         cb.onKemajuan("Mengunduh lingkungan Termux (" + sudah / 1048576
-                                + " MB dari " + total / 1048576 + " MB)…", persen);
+                                + TeksUI.t(" MB dari ") + total / 1048576 + " MB)…", persen);
                     }
                 } else if (sudah % 4194304 < 65536) {
                     cb.onKemajuan("Mengunduh lingkungan Termux (" + sudah / 1048576
@@ -505,7 +505,7 @@ public class BootstrapTermux {
                 if (butuhIzinEksekusi(nama)) tambahIzinEksekusi(tujuan);
                 jumlah++;
                 if (jumlah % 500 == 0) {
-                    cb.onKemajuan("Mengekstrak lingkungan Termux (" + jumlah + " berkas)…", -1);
+                    cb.onKemajuan("Mengekstrak lingkungan Termux (" + jumlah + TeksUI.t(" berkas)…"), -1);
                 }
             }
             // Buat symlink dari SYMLINKS.txt.

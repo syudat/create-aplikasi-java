@@ -97,7 +97,7 @@ public class IoUtil {
                 File temp = new File(fname).getParentFile();
                 if (!temp.exists()) {
                     if (!temp.mkdirs()) {
-                        throw new RuntimeException("create file " + temp.getName() + " fail");
+                        throw new RuntimeException(TeksUI.t("create file ") + temp.getName() + " fail");
                     }
                 }
 

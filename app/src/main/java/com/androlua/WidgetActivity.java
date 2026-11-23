@@ -48,21 +48,21 @@ public class WidgetActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Widget & Wallpaper");
+        setTitle(TeksUI.t("Widget & Wallpaper"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Widget & Wallpaper", 20);
-        label(r, "Buat widget layar utama untuk proyekmu, atau buat gambar "
-                + "wallpaper dari tulisan dan warna. Semua berjalan di dalam "
-                + "HP (tanpa internet).", false);
+        heading(r, TeksUI.t("Widget & Wallpaper"), 20);
+        label(r, TeksUI.t("Buat widget layar utama untuk proyekmu, atau buat gambar ")
+                + TeksUI.t("wallpaper dari tulisan dan warna. Semua berjalan di dalam ")
+                + TeksUI.t("HP (tanpa internet)."), false);
 
         // ---------------- Bagian widget ----------------
         heading(r, "Pembuat Widget", 16);
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         muatDaftarProyek();
         spinnerProyek = new Spinner(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -72,14 +72,14 @@ public class WidgetActivity extends Activity {
         r.addView(spinnerProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Teks widget:", false);
+        label(r, TeksUI.t("Teks widget:"), false);
         teksWidgetEdit = new EditText(this);
         GayaStudio.edit(teksWidgetEdit);
         teksWidgetEdit.setHint("Contoh: Aplikasi Saya");
         r.addView(teksWidgetEdit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Buat Widget", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Widget"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatWidget();
@@ -95,21 +95,21 @@ public class WidgetActivity extends Activity {
         r.addView(teksWallpaperEdit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Warna latar (heksa, contoh #2196F3):", false);
+        label(r, TeksUI.t("Warna latar (heksa, contoh #2196F3):"), false);
         hexLatarEdit = new EditText(this);
         GayaStudio.edit(hexLatarEdit);
         hexLatarEdit.setText("#2196F3");
         r.addView(hexLatarEdit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Warna tulisan (heksa, contoh #FFFFFF):", false);
+        label(r, TeksUI.t("Warna tulisan (heksa, contoh #FFFFFF):"), false);
         hexTulisanEdit = new EditText(this);
         GayaStudio.edit(hexTulisanEdit);
         hexTulisanEdit.setText("#FFFFFF");
         r.addView(hexTulisanEdit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Buat Pratinjau Wallpaper", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Pratinjau Wallpaper"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatPratinjau();
@@ -121,14 +121,14 @@ public class WidgetActivity extends Activity {
         r.addView(pratinjauView, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(240)));
 
-        button(r, "Simpan Wallpaper (Download)", new View.OnClickListener() {
+        button(r, TeksUI.t("Simpan Wallpaper (Download)"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 simpanWallpaper();
             }
         });
 
-        button(r, "Pasang sebagai Wallpaper", new View.OnClickListener() {
+        button(r, TeksUI.t("Pasang sebagai Wallpaper"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pasangWallpaper();
@@ -143,35 +143,35 @@ public class WidgetActivity extends Activity {
         hasilView.setPadding(dp(4), dp(4), dp(4), dp(4));
         r.addView(hasilView);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Widget dan Wallpaper. Pilih proyek untuk membuat widget, "
-                + "atau isi tulisan dan warna untuk membuat wallpaper.");
+        announce(TeksUI.t("Widget dan Wallpaper. Pilih proyek untuk membuat widget, ")
+                + TeksUI.t("atau isi tulisan dan warna untuk membuat wallpaper."));
     }
 
     private void muatDaftarProyek() {
         daftarProyek.clear();
         daftarProyek.addAll(InfoProyek.daftarNama(new File(ROOT)));
-        if (daftarProyek.isEmpty()) daftarProyek.add("(belum ada proyek)");
+        if (daftarProyek.isEmpty()) daftarProyek.add(TeksUI.t("(belum ada proyek)"));
     }
 
     private void buatWidget() {
         if (spinnerProyek.getSelectedItem() == null) return;
         String nama = String.valueOf(spinnerProyek.getSelectedItem());
-        if ("(belum ada proyek)".equals(nama)) {
-            Toast.makeText(this, "Belum ada proyek. Buat proyek dulu.",
+        if ((TeksUI.t("(belum ada proyek)").equals(nama) || TeksUI.t("(belum ada proyek)").equals(nama))) {
+            Toast.makeText(this, TeksUI.t("Belum ada proyek. Buat proyek dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
         File dir = new File(ROOT + "/" + nama);
         String paket = InfoProyek.namaPaket(dir);
         if (paket == null || paket.length() == 0) {
-            Toast.makeText(this, "Nama paket proyek tidak ditemukan.",
+            Toast.makeText(this, TeksUI.t("Nama paket proyek tidak ditemukan."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -186,19 +186,19 @@ public class WidgetActivity extends Activity {
                 new File(dir, "app/src/main/AndroidManifest.xml"), paket);
         String lap;
         if (galat != null) {
-            lap = "Widget dibuat, tapi manifest proyek belum diperbarui: " + galat
+            lap = TeksUI.t("Widget dibuat, tapi manifest proyek belum diperbarui: ") + galat
                     + "\nBerkas yang dibuat:\n- WidgetSaya.java\n- res/layout/widget_saya.xml"
                     + "\n- res/xml/widget_info.xml";
         } else {
-            lap = "Widget berhasil dibuat di proyek " + nama + ":\n"
+            lap = TeksUI.t("Widget berhasil dibuat di proyek ") + nama + ":\n"
                     + "- WidgetSaya.java\n- res/layout/widget_saya.xml\n"
                     + "- res/xml/widget_info.xml\n"
                     + "- receiver sudah ditambahkan ke AndroidManifest.xml proyek.\n"
-                    + "Bangun proyek, lalu pasang widget dari layar utama HP.";
+                    + TeksUI.t("Bangun proyek, lalu pasang widget dari layar utama HP.");
         }
         hasilView.setText(lap);
-        Toast.makeText(this, "Widget berhasil dibuat.", Toast.LENGTH_SHORT).show();
-        announce("Widget berhasil dibuat di proyek " + nama + ". " + lap);
+        Toast.makeText(this, TeksUI.t("Widget berhasil dibuat."), Toast.LENGTH_SHORT).show();
+        announce(TeksUI.t("Widget berhasil dibuat di proyek ") + nama + ". " + lap);
     }
 
     private int parseWarna(String heksa, int bawaan) {
@@ -214,7 +214,7 @@ public class WidgetActivity extends Activity {
 
     private void buatPratinjau() {
         String teks = teksWallpaperEdit.getText().toString().trim();
-        if (teks.length() == 0) teks = "Aplikasi Saya";
+        if (teks.length() == 0) teks = TeksUI.t("Aplikasi Saya");
         int latar = parseWarna(hexLatarEdit.getText().toString(), 0xFF2196F3);
         int tulis = parseWarna(hexTulisanEdit.getText().toString(), 0xFFFFFFFF);
         bitmapWallpaper = PembuatWallpaper.buatWallpaper(teks, latar, tulis, 1080, 1920);
@@ -230,7 +230,7 @@ public class WidgetActivity extends Activity {
 
     private void simpanWallpaper() {
         if (bitmapWallpaper == null) {
-            Toast.makeText(this, "Buat pratinjau dulu.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TeksUI.t("Buat pratinjau dulu."), Toast.LENGTH_SHORT).show();
             return;
         }
         File target = new File(Environment.getExternalStorageDirectory().getPath()
@@ -238,23 +238,23 @@ public class WidgetActivity extends Activity {
         if (PembuatWallpaper.simpanPng(bitmapWallpaper, target)) {
             hasilView.setText("Wallpaper disimpan di " + target.getPath() + ".");
             Toast.makeText(this, "Wallpaper disimpan.", Toast.LENGTH_SHORT).show();
-            announce("Wallpaper disimpan di folder Download.");
+            announce(TeksUI.t("Wallpaper disimpan di folder Download."));
         } else {
-            Toast.makeText(this, "Gagal menyimpan wallpaper.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TeksUI.t("Gagal menyimpan wallpaper."), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void pasangWallpaper() {
         if (bitmapWallpaper == null) {
-            Toast.makeText(this, "Buat pratinjau dulu.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TeksUI.t("Buat pratinjau dulu."), Toast.LENGTH_SHORT).show();
             return;
         }
         if (PembuatWallpaper.pasangWallpaper(this, bitmapWallpaper)) {
             hasilView.setText("Wallpaper sudah dipasang sebagai wallpaper HP.");
             Toast.makeText(this, "Wallpaper dipasang.", Toast.LENGTH_SHORT).show();
-            announce("Wallpaper sudah dipasang sebagai wallpaper HP.");
+            announce(TeksUI.t("Wallpaper sudah dipasang sebagai wallpaper HP."));
         } else {
-            Toast.makeText(this, "Gagal memasang wallpaper.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TeksUI.t("Gagal memasang wallpaper."), Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -39,20 +39,20 @@ public class TerjemahActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Penerjemah Aplikasi");
+        setTitle(TeksUI.t("Penerjemah Aplikasi"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Penerjemah Aplikasi", 20);
-        label(r, "Terjemahkan semua teks di aplikasimu ke bahasa lain. "
-                + "Kamus ada di dalam HP (tanpa internet, tanpa biaya). Kata "
-                + "yang belum ada di kamus dilaporkan apa adanya, tidak "
+        heading(r, TeksUI.t("Penerjemah Aplikasi"), 20);
+        label(r, TeksUI.t("Terjemahkan semua teks di aplikasimu ke bahasa lain. ")
+                + TeksUI.t("Kamus ada di dalam HP (tanpa internet, tanpa biaya). Kata ")
+                + TeksUI.t("yang belum ada di kamus dilaporkan apa adanya, tidak ")
                 + "pura-pura diterjemahkan.", false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         muatDaftarProyek();
         spinnerProyek = new Spinner(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -62,7 +62,7 @@ public class TerjemahActivity extends Activity {
         r.addView(spinnerProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Bahasa target:", false);
+        label(r, TeksUI.t("Bahasa target:"), false);
         spinnerBahasa = new Spinner(this);
         List<String> bahasa = new ArrayList<String>();
         for (int i = 0; i < Penerjemah.BAHASA_NAMA.length; i++) {
@@ -90,14 +90,14 @@ public class TerjemahActivity extends Activity {
         hasilView.setPadding(dp(4), dp(4), dp(4), dp(4));
         r.addView(hasilView);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Penerjemah Aplikasi. Pilih proyek dan bahasa target, lalu tekan Terjemahkan.");
+        announce(TeksUI.t("Penerjemah Aplikasi. Pilih proyek dan bahasa target, lalu tekan Terjemahkan."));
     }
 
     private void muatDaftarProyek() {
@@ -112,14 +112,14 @@ public class TerjemahActivity extends Activity {
                 }
             }
         }
-        if (daftarProyek.isEmpty()) daftarProyek.add("(belum ada proyek)");
+        if (daftarProyek.isEmpty()) daftarProyek.add(TeksUI.t("(belum ada proyek)"));
     }
 
     private void terjemahkan() {
         if (spinnerProyek.getSelectedItem() == null) return;
         String nama = String.valueOf(spinnerProyek.getSelectedItem());
-        if ("(belum ada proyek)".equals(nama)) {
-            Toast.makeText(this, "Belum ada proyek. Buat proyek dulu.",
+        if ((TeksUI.t("(belum ada proyek)").equals(nama) || TeksUI.t("(belum ada proyek)").equals(nama))) {
+            Toast.makeText(this, TeksUI.t("Belum ada proyek. Buat proyek dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -128,15 +128,15 @@ public class TerjemahActivity extends Activity {
         Penerjemah.Laporan lap = Penerjemah.terjemahkanProyek(dir, bahasa);
         if (lap == null) {
             hasilView.setText("Tidak ada teks yang bisa diterjemahkan di proyek ini.");
-            announce("Tidak ada teks yang bisa diterjemahkan di proyek ini.");
+            announce(TeksUI.t("Tidak ada teks yang bisa diterjemahkan di proyek ini."));
             return;
         }
         hasilView.setText(lap.laporan);
-        String ringkas = "Selesai menerjemahkan ke " + Penerjemah.namaBahasa(bahasa)
-                + ": " + lap.jumlahTeks + " teks, " + lap.kataDiterjemahkan
-                + " kata diterjemahkan, " + lap.kataBelum + " kata belum diterjemahkan.";
+        String ringkas = TeksUI.t("Selesai menerjemahkan ke ") + Penerjemah.namaBahasa(bahasa)
+                + ": " + lap.jumlahTeks + TeksUI.t(" teks, ") + lap.kataDiterjemahkan
+                + TeksUI.t(" kata diterjemahkan, ") + lap.kataBelum + TeksUI.t(" kata belum diterjemahkan.");
         Toast.makeText(this, ringkas, Toast.LENGTH_LONG).show();
-        announce(ringkas + " Laporan lengkap ada di layar.");
+        announce(ringkas + TeksUI.t(" Laporan lengkap ada di layar."));
     }
 
     // ------------------------------------------------------------------ UI

@@ -79,13 +79,13 @@ public class Pengemas {
                 try {
                     p.jalankan();
                 } catch (java.net.UnknownHostException e) {
-                    p.kirim(FAILED, "Tidak bisa menjangkau GitHub (" + e.getMessage() + ").\n\n"
-                            + "Periksa koneksi internet: pastikan data seluler/Wi-Fi aktif dan benar-benar punya akses internet, "
-                            + "matikan VPN atau DNS pribadi yang bermasalah, lalu coba lagi.");
+                    p.kirim(FAILED, TeksUI.t("Tidak bisa menjangkau GitHub (") + e.getMessage() + ").\n\n"
+                            + TeksUI.t("Periksa koneksi internet: pastikan data seluler/Wi-Fi aktif dan benar-benar punya akses internet, ")
+                            + TeksUI.t("matikan VPN atau DNS pribadi yang bermasalah, lalu coba lagi."));
                 } catch (java.net.SocketTimeoutException e) {
-                    p.kirim(FAILED, "Koneksi ke GitHub terlalu lambat (waktu habis). Coba lagi saat sinyal lebih baik.");
+                    p.kirim(FAILED, TeksUI.t("Koneksi ke GitHub terlalu lambat (waktu habis). Coba lagi saat sinyal lebih baik."));
                 } catch (Throwable e) {
-                    p.kirim(FAILED, "Gagal: " + e.getMessage());
+                    p.kirim(FAILED, TeksUI.t("Gagal: ") + e.getMessage());
                 }
             }
         }, "Pengemas").start();
@@ -103,30 +103,30 @@ public class Pengemas {
     // ------------------------------------------------------------------ alur utama
 
     private void jalankan() throws Exception {
-        if (token == null || token.length() < 10) throw new IOException("Token GitHub belum diisi");
+        if (token == null || token.length() < 10) throw new IOException(TeksUI.t("Token GitHub belum diisi"));
         if (!fileWorkflow.isFile() || !fileMesin.isFile())
-            throw new IOException("Berkas mesin build tidak ditemukan di aplikasi (bangun-proyek.yml / engine.zip). "
-                    + "Pasang ulang aplikasi versi terbaru.");
+            throw new IOException(TeksUI.t("Berkas mesin build tidak ditemukan di aplikasi (bangun-proyek.yml / engine.zip). ")
+                    + TeksUI.t("Pasang ulang aplikasi versi terbaru."));
 
         // 1) siapkan repo
-        kirim(PROGRESS, "Memeriksa akun GitHub...");
+        kirim(PROGRESS, TeksUI.t("Memeriksa akun GitHub..."));
         Resp r = request("GET", "/user", null);
-        if (r.code == 401) throw gagal("Token tidak valid", r);
-        if (r.code != 200) throw gagal("Membaca akun", r);
+        if (r.code == 401) throw gagal(TeksUI.t("Token tidak valid"), r);
+        if (r.code != 200) throw gagal(TeksUI.t("Membaca akun"), r);
         owner = new JSONObject(r.body).optString("login");
         repo = NAMA_REPO;
         String base = "/repos/" + owner + "/" + repo;
 
         r = request("GET", base, null);
         if (r.code == 404) {
-            kirim(PROGRESS, "Membuat repo privat " + owner + "/" + repo + "...");
+            kirim(PROGRESS, TeksUI.t("Membuat repo privat ") + owner + "/" + repo + "...");
             JSONObject b = new JSONObject();
             b.put("name", repo);
             b.put("private", true);
             b.put("auto_init", true);
             b.put("description", "Mesin build Pembuat Aplikasi (dibuat otomatis)");
             Resp c = request("POST", "/user/repos", b.toString());
-            if (c.code != 201) throw gagal("Membuat repo", c);
+            if (c.code != 201) throw gagal(TeksUI.t("Membuat repo"), c);
             branch = new JSONObject(c.body).optString("default_branch", "main");
             Thread.sleep(3000);
         } else if (r.code == 200) {
@@ -140,19 +140,19 @@ public class Pengemas {
 
         // 2) mesin build (sekali saja; diunggah ulang hanya jika berubah)
         String prefix = "proyek/" + slug + "/";
-        kirim(PROGRESS, "Memeriksa workflow dan mesin build...");
+        kirim(PROGRESS, TeksUI.t("Memeriksa workflow dan mesin build..."));
         if (unggah(base, remote, ".github/workflows/bangun-proyek.yml", baca(fileWorkflow),
-                "Workflow bangun-proyek.yml")) {
+                TeksUI.t("Workflow bangun-proyek.yml"))) {
             // workflow baru: beri waktu GitHub mendaftarkannya
             Thread.sleep(3000);
         }
         unggah(base, remote, "mesin/engine.zip", baca(fileMesin),
-                "Mesin build (sekali saja, beberapa MB)");
+                TeksUI.t("Mesin build (sekali saja, beberapa MB)"));
 
         // 3) kumpulkan dan unggah file proyek yang berubah (hemat internet)
         List<File> files = new ArrayList<File>();
         kumpulkan(projectDir, files, true);
-        if (files.isEmpty()) throw new IOException("Tidak ada file proyek untuk diunggah");
+        if (files.isEmpty()) throw new IOException(TeksUI.t("Tidak ada file proyek untuk diunggah"));
         int n = 0, diunggah = 0;
         Map<String, Boolean> lokal = new HashMap<String, Boolean>();
         for (File f : files) {
@@ -167,7 +167,7 @@ public class Pengemas {
         for (Map.Entry<String, String> e : remote.entrySet()) {
             String path = e.getKey();
             if (path.startsWith(prefix) && !lokal.containsKey(path)) {
-                kirim(PROGRESS, "Menghapus " + path.substring(prefix.length()));
+                kirim(PROGRESS, TeksUI.t("Menghapus ") + path.substring(prefix.length()));
                 JSONObject body = new JSONObject();
                 body.put("message", "Pembuat Aplikasi: hapus " + path);
                 body.put("sha", e.getValue());
@@ -175,11 +175,11 @@ public class Pengemas {
                 request("DELETE", base + "/contents/" + enc(path), body.toString());
             }
         }
-        kirim(PROGRESS, "Unggah selesai (" + diunggah + " file proyek berubah).");
+        kirim(PROGRESS, TeksUI.t("Unggah selesai (") + diunggah + TeksUI.t(" file proyek berubah)."));
 
         // 5) jalankan workflow
         long idTerakhir = idRunTerakhir(base);
-        kirim(PROGRESS, "Memulai build di GitHub Actions...");
+        kirim(PROGRESS, TeksUI.t("Memulai build di GitHub Actions..."));
         JSONObject inputs = new JSONObject();
         inputs.put("slug", slug);
         // Reorganisasi pengaturan 2026-11-17: teruskan pilihan Keamanan
@@ -201,7 +201,7 @@ public class Pengemas {
         long mulai = System.currentTimeMillis();
         while (true) {
             if (System.currentTimeMillis() - mulai > 30L * 60 * 1000)
-                throw new IOException("Build melebihi 30 menit, dihentikan menunggu");
+                throw new IOException(TeksUI.t("Build melebihi 30 menit, dihentikan menunggu"));
             Thread.sleep(5000);
             r = request("GET", base + "/actions/workflows/" + WORKFLOW
                     + "/runs?event=workflow_dispatch&per_page=5", null);
@@ -224,8 +224,8 @@ public class Pengemas {
             String status = run.optString("status");
             if (!status.equals(statusTerakhir)) {
                 statusTerakhir = status;
-                kirim(PROGRESS, "completed".equals(status) ? "Build selesai, memeriksa hasil..."
-                        : "queued".equals(status) ? "Build antre di GitHub..." : "Build sedang berjalan (bisa beberapa menit)...");
+                kirim(PROGRESS, "completed".equals(status) ? TeksUI.t("Build selesai, memeriksa hasil...")
+                        : "queued".equals(status) ? TeksUI.t("Build antre di GitHub...") : TeksUI.t("Build sedang berjalan (bisa beberapa menit)..."));
             }
             if ("completed".equals(status)) {
                 if ("success".equals(run.optString("conclusion"))) break;
@@ -237,7 +237,7 @@ public class Pengemas {
         // 7) unduh APK
         kirim(PROGRESS, "Mengunduh APK...");
         r = request("GET", base + "/actions/runs/" + runId + "/artifacts", null);
-        if (r.code != 200) throw gagal("Mengambil daftar artifact", r);
+        if (r.code != 200) throw gagal(TeksUI.t("Mengambil daftar artifact"), r);
         JSONArray arts = new JSONObject(r.body).optJSONArray("artifacts");
         long artId = 0;
         if (arts != null) {
@@ -246,7 +246,7 @@ public class Pengemas {
                 if (!a.optBoolean("expired")) { artId = a.optLong("id"); break; }
             }
         }
-        if (artId == 0) throw new IOException("Build sukses tetapi APK tidak ditemukan");
+        if (artId == 0) throw new IOException(TeksUI.t("Build sukses tetapi APK tidak ditemukan"));
         File bin = new File(projectDir, "bin");
         bin.mkdirs();
         File zip = new File(bin, ".unduhan.zip");
@@ -254,7 +254,7 @@ public class Pengemas {
         File apk = new File(bin, slug + "-belum-ditandatangani.apk");
         boolean ada = ekstrakApk(zip, apk);
         zip.delete();
-        if (!ada) throw new IOException("Arsip hasil build tidak berisi APK");
+        if (!ada) throw new IOException(TeksUI.t("Arsip hasil build tidak berisi APK"));
         kirim(SUCCESS, apk.getAbsolutePath());
     }
 
@@ -271,13 +271,13 @@ public class Pengemas {
         if (sha != null) body.put("sha", sha);
         Resp r = request("PUT", base + "/contents/" + enc(path), body.toString());
         if (r.code == 404 && path.startsWith(".github/"))
-            throw new IOException("Token tidak boleh menulis workflow. Buat token klasik dengan izin 'repo' dan 'workflow'.");
-        if (r.code != 200 && r.code != 201) throw gagal("Unggah " + path, r);
+            throw new IOException(TeksUI.t("Token tidak boleh menulis workflow. Buat token klasik dengan izin 'repo' dan 'workflow'."));
+        if (r.code != 200 && r.code != 201) throw gagal(TeksUI.t("Unggah ") + path, r);
         return true;
     }
 
     private void gagalBuild(String base, long runId, String kesimpulan) throws Exception {
-        kirim(PROGRESS, "Build gagal, mengambil log...");
+        kirim(PROGRESS, TeksUI.t("Build gagal, mengambil log..."));
         StringBuilder ringkas = new StringBuilder();
         try {
             File bin = new File(projectDir, "bin");
@@ -310,9 +310,9 @@ public class Pengemas {
             zip.delete();
             ringkas.append("\nLog lengkap: ").append(logFile.getAbsolutePath());
         } catch (Exception e) {
-            ringkas.append("(log tidak dapat diambil: ").append(e.getMessage()).append(")");
+            ringkas.append(TeksUI.t("(log tidak dapat diambil: ")).append(e.getMessage()).append(")");
         }
-        kirim(FAILED, "Build gagal (" + kesimpulan + ").\n\n" + ringkas);
+        kirim(FAILED, TeksUI.t("Build gagal (") + kesimpulan + ").\n\n" + ringkas);
     }
 
     // ------------------------------------------------------------------ GitHub API
@@ -325,7 +325,7 @@ public class Pengemas {
             r = request("GET", base + "/git/trees/" + enc(branch) + "?recursive=1", null);
         }
         if (r.code == 401 || r.code == 403) throw gagal("Token ditolak GitHub", r);
-        if (r.code == 404) throw gagal("Repo atau cabang tidak ditemukan", r);
+        if (r.code == 404) throw gagal(TeksUI.t("Repo atau cabang tidak ditemukan"), r);
         if (r.code != 200) throw gagal("Membaca isi repo", r);
         JSONArray tree = new JSONObject(r.body).optJSONArray("tree");
         if (tree != null) {
@@ -401,7 +401,7 @@ public class Pengemas {
             c.setRequestProperty("User-Agent", "PembuatAplikasi");
             code = c.getResponseCode();
         }
-        if (code != 200) throw new IOException("Unduhan gagal (HTTP " + code + ")");
+        if (code != 200) throw new IOException(TeksUI.t("Unduhan gagal (HTTP ") + code + ")");
         InputStream in = c.getInputStream();
         OutputStream out = new FileOutputStream(tujuan);
         byte[] buf = new byte[16384];

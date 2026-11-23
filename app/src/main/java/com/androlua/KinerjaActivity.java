@@ -65,21 +65,21 @@ public class KinerjaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pemantau Kinerja Ringan");
+        setTitle(TeksUI.t("Pemantau Kinerja Ringan"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pemantau Kinerja Ringan", 20);
-        label(r, "Pantau pemakaian RAM dan CPU aplikasi yang sedang berjalan, "
-                + "misalnya aplikasi hasil build yang sedang kamu coba. "
-                + "Jalankan dulu aplikasinya, isi nama paketnya, lalu tekan "
+        heading(r, TeksUI.t("Pemantau Kinerja Ringan"), 20);
+        label(r, TeksUI.t("Pantau pemakaian RAM dan CPU aplikasi yang sedang berjalan, ")
+                + TeksUI.t("misalnya aplikasi hasil build yang sedang kamu coba. ")
+                + TeksUI.t("Jalankan dulu aplikasinya, isi nama paketnya, lalu tekan ")
                 + "Mulai Pantau. Contoh diambil setiap 2 detik; tekan "
-                + "Berhenti untuk melihat ringkasannya.", false);
+                + TeksUI.t("Berhenti untuk melihat ringkasannya."), false);
 
-        label(r, "Pilih proyek (untuk mengisi nama paket):", false);
+        label(r, TeksUI.t("Pilih proyek (untuk mengisi nama paket):"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -87,14 +87,14 @@ public class KinerjaActivity extends Activity {
         spProyek.setAdapter(adapterProyek);
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button(r, "Isi Nama Paket dari Proyek", new View.OnClickListener() {
+        button(r, TeksUI.t("Isi Nama Paket dari Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isiPaketDariProyek();
             }
         });
 
-        label(r, "Nama paket yang dipantau:", false);
+        label(r, TeksUI.t("Nama paket yang dipantau:"), false);
         ePaket = new EditText(this);
         ePaket.setHint("contoh: com.contoh.aplikasi");
         ePaket.setSingleLine(true);
@@ -102,13 +102,13 @@ public class KinerjaActivity extends Activity {
         r.addView(ePaket, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        bMulai = button(r, "Mulai Pantau", new View.OnClickListener() {
+        bMulai = button(r, TeksUI.t("Mulai Pantau"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mulai();
             }
         });
-        bBerhenti = button(r, "Berhenti", new View.OnClickListener() {
+        bBerhenti = button(r, TeksUI.t("Berhenti"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 berhenti(true);
@@ -122,7 +122,7 @@ public class KinerjaActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -130,7 +130,7 @@ public class KinerjaActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Pemantau Kinerja Ringan. Isi nama paket aplikasi yang sedang berjalan, lalu tekan Mulai Pantau.");
+        announce(TeksUI.t("Pemantau Kinerja Ringan. Isi nama paket aplikasi yang sedang berjalan, lalu tekan Mulai Pantau."));
     }
 
     @Override
@@ -160,11 +160,11 @@ public class KinerjaActivity extends Activity {
         String paket = InfoProyek.namaPaket(dir);
         if (paket == null || paket.length() == 0) {
             toast("Nama paket proyek tidak terbaca.");
-            announce("Nama paket proyek tidak terbaca.");
+            announce(TeksUI.t("Nama paket proyek tidak terbaca."));
             return;
         }
         ePaket.setText(paket);
-        announce("Nama paket diisi: " + paket);
+        announce(TeksUI.t("Nama paket diisi: ") + paket);
     }
 
     private void mulai() {
@@ -175,8 +175,8 @@ public class KinerjaActivity extends Activity {
         }
         int pid = cariPid(paket);
         if (pid < 0) {
-            tvHasil.setText("Proses " + paket + " tidak ditemukan. Jalankan dulu aplikasinya, lalu coba lagi.");
-            announce("Proses tidak ditemukan. Jalankan dulu aplikasinya.");
+            tvHasil.setText("Proses " + paket + TeksUI.t(" tidak ditemukan. Jalankan dulu aplikasinya, lalu coba lagi."));
+            announce(TeksUI.t("Proses tidak ditemukan. Jalankan dulu aplikasinya."));
             return;
         }
         paketAktif = paket;
@@ -186,7 +186,7 @@ public class KinerjaActivity extends Activity {
         memantau = true;
         bMulai.setEnabled(false);
         bBerhenti.setEnabled(true);
-        announce("Mulai memantau " + paket + ".");
+        announce(TeksUI.t("Mulai memantau ") + paket + ".");
         ambilContoh();
         handler.postDelayed(putaran, JEDA_MS);
     }
@@ -200,7 +200,7 @@ public class KinerjaActivity extends Activity {
         if (tampilkan && catatan != null) {
             String ringkasan = Kinerja.laporanRingkasan(paketAktif, catatan);
             tvHasil.setText(ringkasan);
-            announce("Pemantauan berhenti. " + catatan.contoh + " contoh tercatat.");
+            announce(TeksUI.t("Pemantauan berhenti. ") + catatan.contoh + " contoh tercatat.");
         }
     }
 
@@ -209,7 +209,7 @@ public class KinerjaActivity extends Activity {
         if (pid < 0) {
             tvHasil.setText("Proses " + paketAktif + " tidak lagi berjalan. Pemantauan berhenti.\n\n"
                     + Kinerja.laporanRingkasan(paketAktif, catatan));
-            announce("Proses berhenti. Pemantauan selesai.");
+            announce(TeksUI.t("Proses berhenti. Pemantauan selesai."));
             berhenti(false);
             bMulai.setEnabled(true);
             bBerhenti.setEnabled(false);

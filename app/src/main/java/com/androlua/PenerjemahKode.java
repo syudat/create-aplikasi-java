@@ -89,7 +89,7 @@ public class PenerjemahKode {
         if (JAVA_LUA.equals(arah)) return terjemahJavaKeLua(kode);
         if (JAVA_KOTLIN.equals(arah)) return terjemahJavaKeKotlin(kode);
         List<String> gagal = new ArrayList<>();
-        gagal.add("arah tidak dikenal: " + arah);
+        gagal.add(TeksUI.t("arah tidak dikenal: ") + arah);
         return new Hasil(kode, gagal, 0, 0);
     }
 

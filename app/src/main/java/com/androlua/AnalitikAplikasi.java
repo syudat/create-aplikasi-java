@@ -219,7 +219,7 @@ public class AnalitikAplikasi {
         String p = bersihkan(pesan);
         if (t.isEmpty() || p.isEmpty()) return false;
         String l = bersihkan(layar);
-        if (l.isEmpty()) l = "Tidak tercatat";
+        if (l.isEmpty()) l = TeksUI.t("Tidak tercatat");
         daftar.add(0, new Crash(t, l, p, ringkasJejak(jejak)));
         while (daftar.size() > MAKS_CRASH) {
             daftar.remove(daftar.size() - 1);
@@ -252,7 +252,7 @@ public class AnalitikAplikasi {
             String l = bersihkan(bagian[1]);
             String p = bersihkan(bagian[2]);
             if (t.isEmpty() || p.isEmpty()) continue;
-            if (l.isEmpty()) l = "Tidak tercatat";
+            if (l.isEmpty()) l = TeksUI.t("Tidak tercatat");
             d.add(new Crash(t, l, p, bersihkan(bagian[3])));
         }
         return d;
@@ -266,50 +266,50 @@ public class AnalitikAplikasi {
         String gabung = (bersihkan(pesan) + " " + bersihkan(jejak)).toLowerCase();
         if (gabung.contains("invalid parameters")
                 || (gabung.contains("handler") && gabung.contains("post"))) {
-            return "Saran: ini pola Handler.post yang salah. Selalu pakai "
+            return TeksUI.t("Saran: ini pola Handler.post yang salah. Selalu pakai ")
                     + "Handler.post(Runnable{run=function() ... end}), jangan "
-                    + "pernah memberi fungsi mentah ke post atau postDelayed, "
-                    + "karena fungsi mentah gagal diubah jadi Runnable di "
+                    + TeksUI.t("pernah memberi fungsi mentah ke post atau postDelayed, ")
+                    + TeksUI.t("karena fungsi mentah gagal diubah jadi Runnable di ")
                     + "sebagian perangkat.";
         }
         if (gabung.contains("luadialog") || gabung.contains("dialog")
                 || gabung.contains("badtoken")
                 || gabung.contains("calledfromwrongthread")
                 || gabung.contains("setview")) {
-            return "Saran: dialog hanya boleh dibuat dan ditampilkan dari "
+            return TeksUI.t("Saran: dialog hanya boleh dibuat dan ditampilkan dari ")
                     + "thread utama lewat post(Runnable{...}), dengan urutan "
-                    + "setTitle lalu setView lalu show(), dan show() serta "
-                    + "dismiss() dibungkus pcall. Jangan pernah membuat dialog "
-                    + "dari callback jaringan atau thread latar.";
+                    + TeksUI.t("setTitle lalu setView lalu show(), dan show() serta ")
+                    + TeksUI.t("dismiss() dibungkus pcall. Jangan pernah membuat dialog ")
+                    + TeksUI.t("dari callback jaringan atau thread latar.");
         }
         if (gabung.contains("nullpointer") || gabung.contains("null pointer")) {
-            return "Saran: ada nilai kosong yang dipakai sebelum diperiksa. "
-                    + "Periksa dulu nilainya tidak kosong sebelum dipakai, "
-                    + "dan bungkus pemanggilan yang berisiko dengan pcall "
-                    + "supaya gagalnya memberi pesan yang jelas.";
+            return TeksUI.t("Saran: ada nilai kosong yang dipakai sebelum diperiksa. ")
+                    + TeksUI.t("Periksa dulu nilainya tidak kosong sebelum dipakai, ")
+                    + TeksUI.t("dan bungkus pemanggilan yang berisiko dengan pcall ")
+                    + TeksUI.t("supaya gagalnya memberi pesan yang jelas.");
         }
         if (gabung.contains("outofmemory")) {
-            return "Saran: memori HP habis. Kecilkan ukuran gambar atau suara "
-                    + "yang dimuat, dan lepaskan pemutar, listener, dan "
-                    + "handler saat layar selesai dipakai.";
+            return TeksUI.t("Saran: memori HP habis. Kecilkan ukuran gambar atau suara ")
+                    + TeksUI.t("yang dimuat, dan lepaskan pemutar, listener, dan ")
+                    + TeksUI.t("handler saat layar selesai dipakai.");
         }
         if (gabung.contains("classnotfound")
                 || gabung.contains("noclassdeffound")) {
-            return "Saran: ada kelas yang tidak ditemukan di APK. Periksa "
+            return TeksUI.t("Saran: ada kelas yang tidak ditemukan di APK. Periksa ")
                     + "nama paket dan import kelas itu, pastikan kelasnya "
                     + "ikut terbawa saat build.";
         }
         if (gabung.contains("unknownhost") || gabung.contains("timeout")
                 || gabung.contains("network") || gabung.contains("http")) {
-            return "Saran: masalah jaringan. Periksa internet HP, jangan "
-                    + "menyentuh tampilan langsung dari callback Http, dan "
-                    + "semua perubahan tampilan dari callback wajib lewat "
+            return TeksUI.t("Saran: masalah jaringan. Periksa internet HP, jangan ")
+                    + TeksUI.t("menyentuh tampilan langsung dari callback Http, dan ")
+                    + TeksUI.t("semua perubahan tampilan dari callback wajib lewat ")
                     + "post(Runnable{...}).";
         }
-        return "Saran: catat langkah terakhir sebelum crash ini, lalu coba "
-                + "ulangi langkah itu. Bila crash berulang di langkah yang "
-                + "sama, laporkan pesan error di atas persis seperti tertulis "
-                + "supaya penyebabnya bisa dicari.";
+        return TeksUI.t("Saran: catat langkah terakhir sebelum crash ini, lalu coba ")
+                + TeksUI.t("ulangi langkah itu. Bila crash berulang di langkah yang ")
+                + TeksUI.t("sama, laporkan pesan error di atas persis seperti tertulis ")
+                + TeksUI.t("supaya penyebabnya bisa dicari.");
     }
 
     /**
@@ -321,12 +321,12 @@ public class AnalitikAplikasi {
         StringBuilder sb = new StringBuilder();
         sb.append("Dibuka: ").append(buka).append(" kali.\n");
         int jmlLayar = layar == null ? 0 : layar.size();
-        sb.append("Layar tercatat: ").append(jmlLayar).append(".\n");
+        sb.append(TeksUI.t("Layar tercatat: ")).append(jmlLayar).append(".\n");
         Kunjungan favorit = layarFavorit(layar);
         if (favorit == null) {
             sb.append("Layar favorit: belum ada.\n");
         } else {
-            sb.append("Layar favorit: ").append(favorit.nama)
+            sb.append(TeksUI.t("Layar favorit: ")).append(favorit.nama)
                     .append(" (").append(favorit.jumlah).append(" kali).\n");
         }
         int jmlCrash = crash == null ? 0 : crash.size();
@@ -334,7 +334,7 @@ public class AnalitikAplikasi {
         if (jmlCrash > 0) {
             Crash terakhir = crash.get(0);
             sb.append("Crash terakhir: ").append(terakhir.tanggal)
-                    .append(", layar ").append(terakhir.layar)
+                    .append(TeksUI.t(", layar ")).append(terakhir.layar)
                     .append(", ").append(terakhir.pesan).append("\n");
         } else {
             sb.append("Crash terakhir: belum ada.\n");

@@ -100,7 +100,7 @@ public class PeriksaUkuran {
         Hasil h = new Hasil();
         h.berkasLayout = cariLayout(dirProyek);
         if (h.berkasLayout.isEmpty()) {
-            h.galat = "Tidak ada berkas layout (folder res/layout) di proyek ini.";
+            h.galat = TeksUI.t("Tidak ada berkas layout (folder res/layout) di proyek ini.");
             return h;
         }
         for (File f : h.berkasLayout) {
@@ -112,7 +112,7 @@ public class PeriksaUkuran {
             for (Elemen e : h.elemen) {
                 if (e.lebarDp > lebar) {
                     baris.add(e.berkas + ": elemen " + e.tag + " lebar tetap "
-                            + angka(e.lebarDp) + "dp melebihi lebar layar " + lebar + "dp");
+                            + angka(e.lebarDp) + TeksUI.t("dp melebihi lebar layar ") + lebar + "dp");
                 }
             }
             h.masalah.put(lebar, baris);
@@ -124,13 +124,13 @@ public class PeriksaUkuran {
     public static String laporan(Hasil h, String namaProyek) {
         if (h.galat != null) return h.galat;
         StringBuilder b = new StringBuilder();
-        b.append("Pratinjau ukuran layar proyek: ").append(namaProyek).append('\n');
-        b.append("Berkas layout diperiksa: ").append(h.berkasLayout.size()).append('\n');
-        b.append("Elemen dengan lebar tetap (dp): ").append(h.elemen.size()).append('\n');
+        b.append(TeksUI.t("Pratinjau ukuran layar proyek: ")).append(namaProyek).append('\n');
+        b.append(TeksUI.t("Berkas layout diperiksa: ")).append(h.berkasLayout.size()).append('\n');
+        b.append(TeksUI.t("Elemen dengan lebar tetap (dp): ")).append(h.elemen.size()).append('\n');
         for (int i = 0; i < LEBAR_LAYAR.length; i++) {
             int lebar = LEBAR_LAYAR[i];
             List<String> baris = h.masalah.get(lebar);
-            b.append('\n').append("Layar ").append(lebar).append(" dp: ");
+            b.append('\n').append(TeksUI.t("Layar ")).append(lebar).append(" dp: ");
             if (baris == null || baris.isEmpty()) {
                 b.append("aman, tidak ada elemen yang meluber.\n");
             } else {
@@ -138,10 +138,10 @@ public class PeriksaUkuran {
                 for (String s : baris) b.append("- ").append(s).append('\n');
             }
         }
-        b.append('\n').append("Catatan: elemen dengan lebar match_parent atau ")
-                .append("wrap_content menyesuaikan layar secara otomatis dan tidak ")
-                .append("diperiksa di sini. Lebar tetap yang melebihi layar membuat ")
-                .append("elemen tertutup atau meluber di HP berlayar kecil.");
+        b.append('\n').append(TeksUI.t("Catatan: elemen dengan lebar match_parent atau "))
+                .append(TeksUI.t("wrap_content menyesuaikan layar secara otomatis dan tidak "))
+                .append(TeksUI.t("diperiksa di sini. Lebar tetap yang melebihi layar membuat "))
+                .append(TeksUI.t("elemen tertutup atau meluber di HP berlayar kecil."));
         return b.toString();
     }
 

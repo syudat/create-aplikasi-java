@@ -88,7 +88,7 @@ public class BangunJava {
                 } catch (Throwable e) {
                     String pesan = e.getMessage();
                     if (pesan == null && e.getCause() != null) pesan = e.getCause().toString();
-                    b.kirim(FAILED, "Gagal: " + pesan);
+                    b.kirim(FAILED, TeksUI.t("Gagal: ") + pesan);
                 }
             }
         }, "BangunJava").start();
@@ -142,7 +142,7 @@ public class BangunJava {
 
     private byte[] jalankan() throws Exception {
         if (!new File(ctx.getApplicationInfo().nativeLibraryDir).isDirectory())
-            throw new IOException("Direktori native tidak ditemukan");
+            throw new IOException(TeksUI.t("Direktori native tidak ditemukan"));
 
         kirim(PROGRESS, "Menyiapkan compiler Java (ECJ + D8)...");
         File cache = new File(ctx.getCacheDir(), "bangun-java");
@@ -232,9 +232,9 @@ public class BangunJava {
             // log-build.txt (lihat tulisRantaiPenyebab di BangunLokal).
             Throwable penyebab = ite.getCause();
             if (penyebab != null) {
-                log.append("Disebabkan oleh: ").append(penyebab).append('\n');
+                log.append(TeksUI.t("Disebabkan oleh: ")).append(penyebab).append('\n');
                 for (StackTraceElement s : penyebab.getStackTrace()) {
-                    log.append("    di ").append(s).append('\n');
+                    log.append(TeksUI.t("    di ")).append(s).append('\n');
                 }
                 if (penyebab instanceof Exception) throw (Exception) penyebab;
                 if (penyebab instanceof Error) throw (Error) penyebab;
@@ -254,7 +254,7 @@ public class BangunJava {
         // Kelas R hasil aapt2 jangan ikut di-dex (lihat buangKelasR): dex
         // kerangka sudah berisi com.androlua.R yang sama.
         buangKelasR(classFiles);
-        if (classFiles.isEmpty()) throw new IOException("ECJ tidak menghasilkan berkas .class");
+        if (classFiles.isEmpty()) throw new IOException(TeksUI.t("ECJ tidak menghasilkan berkas .class"));
 
         File dexOut = new File(cache, "dexout");
         dexOut.mkdirs();
@@ -286,16 +286,16 @@ public class BangunJava {
         for (Object c : cOutputMode.getEnumConstants()) {
             if (c.toString().equals("DexIndexed")) dexIndexed = c;
         }
-        if (dexIndexed == null) throw new IOException("OutputMode.DexIndexed tidak ditemukan");
+        if (dexIndexed == null) throw new IOException(TeksUI.t("OutputMode.DexIndexed tidak ditemukan"));
         cBuilder.getMethod("setOutput", Path.class, cOutputMode).invoke(builder, dexOut.toPath(), dexIndexed);
         Object command = cBuilder.getMethod("build").invoke(builder);
         Method mRun = cD8.getMethod("run", cD8Command);
         mRun.invoke(null, command);
 
         File hasil = new File(dexOut, "classes.dex");
-        if (!hasil.isFile()) throw new IOException("D8 tidak menghasilkan classes.dex");
+        if (!hasil.isFile()) throw new IOException(TeksUI.t("D8 tidak menghasilkan classes.dex"));
         byte[] data = BangunLokal.baca(hasil);
-        kirim(PROGRESS, "Kompilasi Java selesai (" + data.length + " bita dex).");
+        kirim(PROGRESS, TeksUI.t("Kompilasi Java selesai (") + data.length + " bita dex).");
         return data;
     }
 
@@ -395,7 +395,7 @@ public class BangunJava {
                 if (f.getName().endsWith(".dex")) hasil.put(f.getName(), BangunLokal.baca(f));
             }
         }
-        if (hasil.isEmpty()) throw new IOException("D8 gagal menggabungkan dex");
+        if (hasil.isEmpty()) throw new IOException(TeksUI.t("D8 gagal menggabungkan dex"));
         return hasil;
     }
 

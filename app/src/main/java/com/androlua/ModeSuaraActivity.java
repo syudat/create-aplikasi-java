@@ -73,29 +73,29 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Mode Suara");
+        setTitle(TeksUI.t("Mode Suara"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Mode Suara", 20);
-        label(r, "Tekan Mulai Mendengarkan, lalu ucapkan perintah. "
-                + "Saya mendengarkan terus-menerus, menjalankan perintah, "
-                + "dan menjawab dengan suara. Tekan Berhenti Mendengarkan "
-                + "untuk mematikan mode ini.", false);
+        heading(r, TeksUI.t("Mode Suara"), 20);
+        label(r, TeksUI.t("Tekan Mulai Mendengarkan, lalu ucapkan perintah. ")
+                + TeksUI.t("Saya mendengarkan terus-menerus, menjalankan perintah, ")
+                + TeksUI.t("dan menjawab dengan suara. Tekan Berhenti Mendengarkan ")
+                + TeksUI.t("untuk mematikan mode ini."), false);
 
-        tvStatus = label(r, "Status: tidak mendengarkan.", false);
+        tvStatus = label(r, TeksUI.t("Status: tidak mendengarkan."), false);
 
-        btnDengarkan = button(r, "Mulai Mendengarkan", new View.OnClickListener() {
+        btnDengarkan = button(r, TeksUI.t("Mulai Mendengarkan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alihkanMendengarkan();
             }
         });
 
-        label(r, "Atau tulis perintah di sini:", false);
+        label(r, TeksUI.t("Atau tulis perintah di sini:"), false);
         ePerintah = new EditText(this);
         GayaStudio.edit(ePerintah);
         ePerintah.setHint("Contoh: buat proyek kalkulator");
@@ -110,7 +110,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             }
         });
 
-        button(r, "Bantuan perintah", new View.OnClickListener() {
+        button(r, TeksUI.t("Bantuan perintah"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 jalankanUcapan("bantuan");
@@ -119,11 +119,11 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
 
         label(r, "Hasil:", false);
         tvHasil = new TextView(this);
-        tvHasil.setText("Belum ada perintah.");
+        tvHasil.setText(TeksUI.t("Belum ada perintah."));
         tvHasil.setTextSize(14);
         r.addView(tvHasil);
 
-        label(r, "Perintah yang bisa diucapkan:", false);
+        label(r, TeksUI.t("Perintah yang bisa diucapkan:"), false);
         StringBuilder daftar = new StringBuilder();
         for (int i = 0; i < PerintahSuara.DAFTAR_PERINTAH.length; i++) {
             if (i > 0) daftar.append("\n");
@@ -131,7 +131,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         }
         label(r, daftar.toString(), true);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -154,7 +154,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         if (pref.getBoolean(KUNCI_AKTIF, false)) {
             alihkanMendengarkan();
         } else {
-            announce("Mode Suara. Tekan Mulai Mendengarkan, lalu ucapkan perintah.");
+            announce(TeksUI.t("Mode Suara. Tekan Mulai Mendengarkan, lalu ucapkan perintah."));
         }
     }
 
@@ -192,13 +192,13 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != MINTA_SUARA) return;
         if (resultCode != RESULT_OK || data == null) {
-            tampilkan("Tidak ada ucapan yang dikenali. Coba lagi.");
+            tampilkan(TeksUI.t("Tidak ada ucapan yang dikenali. Coba lagi."));
             return;
         }
         ArrayList<String> hasil = data.getStringArrayListExtra(
                 RecognizerIntent.EXTRA_RESULTS);
         if (hasil == null || hasil.isEmpty()) {
-            tampilkan("Tidak ada ucapan yang dikenali. Coba lagi.");
+            tampilkan(TeksUI.t("Tidak ada ucapan yang dikenali. Coba lagi."));
             return;
         }
         jalankanUcapan(hasil.get(0));
@@ -213,7 +213,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             mulaiMendengarkan();
         } else {
             tampilkan("Izin mikrofon ditolak. Mode Suara tidak bisa mendengarkan; "
-                    + "perintah tetap bisa ditulis di kotak teks.");
+                    + TeksUI.t("perintah tetap bisa ditulis di kotak teks."));
         }
     }
 
@@ -222,7 +222,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
     private void alihkanMendengarkan() {
         if (mendengarkan) {
             berhentiMendengarkan();
-            tampilkan("Mode Suara dimatikan. Tekan Mulai Mendengarkan untuk menghidupkan lagi.");
+            tampilkan(TeksUI.t("Mode Suara dimatikan. Tekan Mulai Mendengarkan untuk menghidupkan lagi."));
             return;
         }
         if (Build.VERSION.SDK_INT >= 23) {
@@ -241,8 +241,8 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
     private void mulaiMendengarkan() {
         if (!pengenalTersedia) {
             // Tanpa layanan pengenal: sekali ucap lewat RecognizerIntent.
-            tampilkan("HP ini tidak punya layanan pengenal suara terus-menerus. "
-                    + "Membuka pengenal suara sekali ucap.");
+            tampilkan(TeksUI.t("HP ini tidak punya layanan pengenal suara terus-menerus. ")
+                    + TeksUI.t("Membuka pengenal suara sekali ucap."));
             dengarkanSekali();
             return;
         }
@@ -252,14 +252,14 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
                 pengenal.setRecognitionListener(new PendengarSuara());
             }
         } catch (Throwable t) {
-            tampilkan("Gagal menyiapkan pengenal suara: " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal menyiapkan pengenal suara: ") + t.getMessage());
             return;
         }
         mendengarkan = true;
         galatBeruntun = 0;
         simpanKeadaan(true);
         perbaruiTombol();
-        tampilkan("Mode Suara aktif. Saya mendengarkan terus-menerus. Ucapkan perintah.");
+        tampilkan(TeksUI.t("Mode Suara aktif. Saya mendengarkan terus-menerus. Ucapkan perintah."));
         dengarkanSekaliTerus();
     }
 
@@ -288,13 +288,13 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         if (tvStatus != null) {
             tvStatus.setText(mendengarkan
                     ? "Status: mendengarkan terus-menerus."
-                    : "Status: tidak mendengarkan.");
+                    : TeksUI.t("Status: tidak mendengarkan."));
         }
         if (btnDengarkan != null) {
             btnDengarkan.setText(mendengarkan
-                    ? "Berhenti Mendengarkan" : "Mulai Mendengarkan");
+                    ? TeksUI.t("Berhenti Mendengarkan") : TeksUI.t("Mulai Mendengarkan"));
             btnDengarkan.setContentDescription(mendengarkan
-                    ? "Berhenti mendengarkan" : "Mulai mendengarkan terus-menerus");
+                    ? TeksUI.t("Berhenti mendengarkan") : TeksUI.t("Mulai mendengarkan terus-menerus"));
         }
     }
 
@@ -310,7 +310,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             it.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
             pengenal.startListening(it);
         } catch (Throwable t) {
-            tampilkan("Gagal mulai mendengarkan: " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal mulai mendengarkan: ") + t.getMessage());
         }
     }
 
@@ -326,7 +326,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             startActivityForResult(it, MINTA_SUARA);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this,
-                    "Tidak ada aplikasi pengenal suara di HP ini. Tulis perintah di kotak teks.",
+                    TeksUI.t("Tidak ada aplikasi pengenal suara di HP ini. Tulis perintah di kotak teks."),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -358,9 +358,9 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             galatBeruntun++;
             if (galatBeruntun >= 5) {
                 berhentiMendengarkan();
-                tampilkan("Mendengarkan dijeda karena galat beruntun "
-                        + "(mungkin tidak ada suara / layanan sibuk). "
-                        + "Tekan Mulai Mendengarkan untuk mencoba lagi.");
+                tampilkan(TeksUI.t("Mendengarkan dijeda karena galat beruntun ")
+                        + TeksUI.t("(mungkin tidak ada suara / layanan sibuk). ")
+                        + TeksUI.t("Tekan Mulai Mendengarkan untuk mencoba lagi."));
                 return;
             }
             // Galat biasa (tidak ada suara, tidak cocok): dengar lagi.
@@ -406,7 +406,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         if (ucapan == null) ucapan = "";
         String teks = ucapan.trim();
         if (teks.isEmpty()) {
-            tampilkan("Perintah masih kosong. Ucapkan atau tulis perintah dulu.");
+            tampilkan(TeksUI.t("Perintah masih kosong. Ucapkan atau tulis perintah dulu."));
             return;
         }
         ePerintah.setText(teks);
@@ -420,17 +420,17 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             tampilkan(sb.toString());
         } else if ("BACA".equals(aksi)) {
             String isi = tvHasil == null ? "" : tvHasil.getText().toString();
-            if (isi.isEmpty() || "Belum ada perintah.".equals(isi)) {
-                tampilkan("Belum ada hasil untuk dibacakan. Ucapkan perintah dulu.");
+            if (isi.isEmpty() || (TeksUI.t("Belum ada perintah.").equals(isi) || TeksUI.t("Belum ada perintah.").equals(isi))) {
+                tampilkan(TeksUI.t("Belum ada hasil untuk dibacakan. Ucapkan perintah dulu."));
             } else {
                 tampilkan(isi);
             }
         } else if ("BUAT_FORM".equals(aksi)) {
-            tampilkan("Membuka form Buat Proyek.");
+            tampilkan(TeksUI.t("Membuka form Buat Proyek."));
             try {
                 startActivity(new Intent(this, CreateProjectActivity.class));
             } catch (Throwable t) {
-                tampilkan("Gagal membuka Buat Proyek: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal membuka Buat Proyek: ") + t.getMessage());
             }
         } else if ("BUAT".equals(aksi)) {
             String tipe = "lua";
@@ -440,21 +440,21 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             }
             String dir = BuatProyekHelper.buat(this, p.argumen, tipe, p.templateId);
             if (dir != null) {
-                tampilkan("Proyek " + p.argumen + " berhasil dibuat.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" berhasil dibuat."));
             } else {
-                tampilkan("Proyek " + p.argumen + " gagal dibuat.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" gagal dibuat."));
             }
         } else if ("BANGUN".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             bangunProyek(dir);
         } else if ("BANGUN_TERMINAL".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             PerintahBangun.Hasil hb = PerintahBangun.untuk(dir);
@@ -465,39 +465,39 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
                 it.putExtra(TerminalActivity.EXTRA_JALANKAN, hb.adaGradle);
                 startActivity(it);
                 tampilkan(hb.adaGradle
-                        ? "Membuka Terminal dan membangun proyek " + p.argumen + "."
-                        : "Membuka Terminal di folder proyek " + p.argumen + ". " + hb.petunjuk);
+                        ? TeksUI.t("Membuka Terminal dan membangun proyek ") + p.argumen + "."
+                        : TeksUI.t("Membuka Terminal di folder proyek ") + p.argumen + ". " + hb.petunjuk);
             } catch (Throwable t) {
-                tampilkan("Gagal membuka Terminal: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal membuka Terminal: ") + t.getMessage());
             }
         } else if ("BUKA".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             try {
                 Intent it = new Intent(this, EditorActivity.class);
                 it.putExtra(EditorActivity.EXTRA_DIR, dir.getAbsolutePath());
                 startActivity(it);
-                tampilkan("Membuka proyek " + p.argumen + " di editor.");
+                tampilkan(TeksUI.t("Membuka proyek ") + p.argumen + TeksUI.t(" di editor."));
             } catch (Throwable t) {
-                tampilkan("Gagal membuka proyek: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal membuka proyek: ") + t.getMessage());
             }
         } else if ("JALANKAN".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             // Jalankan kini Java murni (Tahap 3I).
             try {
                 JalankanProyek.jalankan(this, dir);
             } catch (Throwable t) {
-                tampilkan("Gagal menjalankan: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal menjalankan: ") + t.getMessage());
                 return;
             }
-            tampilkan("Menjalankan proyek " + p.argumen + ".");
+            tampilkan(TeksUI.t("Menjalankan proyek ") + p.argumen + ".");
             finish();
         } else if ("DAFTAR".equals(aksi)) {
             daftarProyek();
@@ -506,69 +506,69 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
                 Intent it = new Intent(this, ProjectsActivity.class);
                 it.putExtra(ProjectsActivity.EXTRA_CARI, p.argumen);
                 startActivity(it);
-                tampilkan("Mencari proyek " + p.argumen + ".");
+                tampilkan(TeksUI.t("Mencari proyek ") + p.argumen + ".");
             } catch (Throwable t) {
-                tampilkan("Gagal membuka Kelola Project: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal membuka Kelola Project: ") + t.getMessage());
             }
         } else if ("HAPUS".equals(aksi)) {
             hapusProyek(p.argumen);
         } else if ("UJI".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             try {
                 List<UjiOtomatis.Hasil> hasil = UjiOtomatis.uji(dir);
-                tampilkan("Uji Otomatis proyek " + p.argumen + ": "
+                tampilkan(TeksUI.t("Uji Otomatis proyek ") + p.argumen + ": "
                         + UjiOtomatis.ringkasan(hasil) + "\n" + UjiOtomatis.laporan(hasil));
             } catch (Throwable t) {
-                tampilkan("Gagal menguji proyek: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal menguji proyek: ") + t.getMessage());
             }
         } else if ("PERIKSA".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             try {
                 List<PemeriksaKode.Masalah> masalah = PemeriksaKode.periksa(dir);
-                tampilkan("Pemeriksaan kode proyek " + p.argumen + ":\n"
+                tampilkan(TeksUI.t("Pemeriksaan kode proyek ") + p.argumen + ":\n"
                         + PemeriksaKode.laporan(dir, masalah));
             } catch (Throwable t) {
-                tampilkan("Gagal memeriksa proyek: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal memeriksa proyek: ") + t.getMessage());
             }
         } else if ("EKSPOR".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             String jalur = EksporProyek.ekspor(dir.getAbsolutePath());
             if (jalur == null || jalur.isEmpty()) {
-                tampilkan("Gagal mengekspor proyek " + p.argumen + ". Periksa izin penyimpanan.");
+                tampilkan(TeksUI.t("Gagal mengekspor proyek ") + p.argumen + TeksUI.t(". Periksa izin penyimpanan."));
             } else {
-                tampilkan("Proyek " + p.argumen + " diekspor ke " + jalur + ".");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" diekspor ke ") + jalur + ".");
             }
         } else if ("CADANGKAN".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             File hasil = ArsipProyek.buatCadangan(dir,
                     new File(Environment.getExternalStorageDirectory(), "Download/backup"));
             if (hasil != null) {
-                tampilkan("Cadangan proyek " + p.argumen + " tersimpan di "
+                tampilkan(TeksUI.t("Cadangan proyek ") + p.argumen + TeksUI.t(" tersimpan di ")
                         + hasil.getAbsolutePath() + ".");
             } else {
-                tampilkan("Gagal membuat cadangan proyek " + p.argumen
-                        + ". Periksa izin penyimpanan.");
+                tampilkan(TeksUI.t("Gagal membuat cadangan proyek ") + p.argumen
+                        + TeksUI.t(". Periksa izin penyimpanan."));
             }
         } else if ("BAGIKAN".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             bagikanProyek(dir);
@@ -578,17 +578,17 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
                 if (p.argumen != null && !p.argumen.isEmpty()) {
                     File dir = cariFolderProyek(p.argumen);
                     if (dir == null) {
-                        tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                        tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                         return;
                     }
                     it.putExtra(IconMakerActivity.EXTRA_DIR, dir.getAbsolutePath());
                 }
                 startActivity(it);
                 tampilkan(p.argumen == null || p.argumen.isEmpty()
-                        ? "Membuka Pembuat Ikon."
-                        : "Membuka Pembuat Ikon untuk proyek " + p.argumen + ".");
+                        ? TeksUI.t("Membuka Pembuat Ikon.")
+                        : TeksUI.t("Membuka Pembuat Ikon untuk proyek ") + p.argumen + ".");
             } catch (Throwable t) {
-                tampilkan("Gagal membuka Pembuat Ikon: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal membuka Pembuat Ikon: ") + t.getMessage());
             }
         } else if ("TERJEMAH".equals(aksi)) {
             try {
@@ -596,29 +596,29 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
                 if (p.argumen != null && !p.argumen.isEmpty()) {
                     File dir = cariFolderProyek(p.argumen);
                     if (dir == null) {
-                        tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                        tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                         return;
                     }
                     it.putExtra(PenerjemahKodeActivity.EXTRA_PROYEK, dir.getAbsolutePath());
                 }
                 startActivity(it);
                 tampilkan(p.argumen == null || p.argumen.isEmpty()
-                        ? "Membuka Penerjemah Kode."
-                        : "Membuka Penerjemah Kode untuk proyek " + p.argumen + ".");
+                        ? TeksUI.t("Membuka Penerjemah Kode.")
+                        : TeksUI.t("Membuka Penerjemah Kode untuk proyek ") + p.argumen + ".");
             } catch (Throwable t) {
-                tampilkan("Gagal membuka Penerjemah Kode: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal membuka Penerjemah Kode: ") + t.getMessage());
             }
         } else if ("LAYAR".equals(aksi)) {
             bukaLayar(p.argumen);
         } else if ("KEMBALI".equals(aksi)) {
-            tampilkan("Kembali ke menu sebelumnya.");
+            tampilkan(TeksUI.t("Kembali ke menu sebelumnya."));
             finish();
         } else if ("TUTUP".equals(aksi)) {
-            tampilkan("Menutup aplikasi.");
+            tampilkan(TeksUI.t("Menutup aplikasi."));
             finishAffinity();
         } else {
-            tampilkan("Perintah \"" + teks + "\" tidak saya kenali. Ucapkan "
-                    + "\"bantuan\" untuk mendengar daftar perintah.");
+            tampilkan("Perintah \"" + teks + TeksUI.t("\" tidak saya kenali. Ucapkan ")
+                    + TeksUI.t("\"bantuan\" untuk mendengar daftar perintah."));
         }
     }
 
@@ -629,10 +629,10 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         try {
             BangunProyek.bangun(this, dir);
         } catch (Throwable t) {
-            tampilkan("Gagal membangun: " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal membangun: ") + t.getMessage());
             return;
         }
-        tampilkan("Membangun proyek " + dir.getName() + ".");
+        tampilkan(TeksUI.t("Membangun proyek ") + dir.getName() + ".");
     }
 
     // Daftar proyek kini Java murni (Tahap 3I): InfoProyek.daftar membaca
@@ -643,11 +643,11 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         try {
             hasil = InfoProyek.daftar(new File(BuatProyekHelper.root()));
         } catch (Throwable t) {
-            tampilkan("Gagal memuat daftar proyek: " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal memuat daftar proyek: ") + t.getMessage());
             return;
         }
         if (hasil == null || hasil.isEmpty()) {
-            tampilkan("Belum ada proyek. Buat dulu dengan perintah \"buat proyek kalkulator\".");
+            tampilkan(TeksUI.t("Belum ada proyek. Buat dulu dengan perintah \"buat proyek kalkulator\"."));
             return;
         }
         StringBuilder sb = new StringBuilder("Proyek kamu:\n");
@@ -663,22 +663,22 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
     private void hapusProyek(final String nama) {
         final File dir = cariFolderProyek(nama);
         if (dir == null) {
-            tampilkan("Proyek " + nama + " tidak ditemukan.");
+            tampilkan(TeksUI.t("Proyek ") + nama + TeksUI.t(" tidak ditemukan."));
             return;
         }
         new AlertDialog.Builder(this)
-                .setTitle("Hapus proyek?")
-                .setMessage("Proyek " + nama + " akan dihapus beserta semua berkasnya. "
-                        + "Tindakan ini tidak bisa dibatalkan.")
-                .setPositiveButton("Ya, hapus", new DialogInterface.OnClickListener() {
+                .setTitle(TeksUI.t("Hapus proyek?"))
+                .setMessage(TeksUI.t("Proyek ") + nama + TeksUI.t(" akan dihapus beserta semua berkasnya. ")
+                        + TeksUI.t("Tindakan ini tidak bisa dibatalkan."))
+                .setPositiveButton(TeksUI.t("Ya, hapus"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
                         boolean ok = hapusRekursif(dir);
-                        tampilkan(ok ? "Proyek " + nama + " sudah dihapus."
-                                : "Gagal menghapus proyek " + nama + ".");
+                        tampilkan(ok ? TeksUI.t("Proyek ") + nama + TeksUI.t(" sudah dihapus.")
+                                : TeksUI.t("Gagal menghapus proyek ") + nama + ".");
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -699,7 +699,7 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
     private void bagikanProyek(File dir) {
         String jalurZip = EksporProyek.ekspor(dir.getAbsolutePath());
         if (jalurZip == null || jalurZip.isEmpty()) {
-            tampilkan("Gagal membuat ZIP proyek. Periksa izin penyimpanan.");
+            tampilkan(TeksUI.t("Gagal membuat ZIP proyek. Periksa izin penyimpanan."));
             return;
         }
         try {
@@ -709,10 +709,10 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             it.setType("application/zip");
             it.putExtra(Intent.EXTRA_STREAM, uri);
             it.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(it, "Bagikan " + dir.getName() + ".zip"));
-            tampilkan("Membagikan proyek " + dir.getName() + ".");
+            startActivity(Intent.createChooser(it, TeksUI.t("Bagikan ") + dir.getName() + ".zip"));
+            tampilkan(TeksUI.t("Membagikan proyek ") + dir.getName() + ".");
         } catch (Throwable t) {
-            tampilkan("Gagal membagikan: " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal membagikan: ") + t.getMessage());
         }
     }
 
@@ -721,34 +721,34 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
         String nama = "";
         if ("ikon".equals(layar)) {
             tujuan = IconMakerActivity.class;
-            nama = "Pembuat Ikon";
+            nama = TeksUI.t("Pembuat Ikon");
         } else if ("terminal".equals(layar)) {
             tujuan = TerminalActivity.class;
-            nama = "Terminal";
+            nama = TeksUI.t("Terminal");
         } else if ("pasar".equals(layar)) {
             tujuan = MarketActivity.class;
-            nama = "Pasar Proyek";
+            nama = TeksUI.t("Pasar Proyek");
         } else if ("ai".equals(layar)) {
             tujuan = AiActivity.class;
-            nama = "AI Pembuat Aplikasi";
+            nama = TeksUI.t("AI Pembuat Aplikasi");
         } else if ("kolaborasi".equals(layar)) {
             tujuan = KolaborasiActivity.class;
-            nama = "Kolaborasi";
+            nama = TeksUI.t("Kolaborasi");
         } else if ("keystore".equals(layar)) {
             tujuan = KeystoreActivity.class;
-            nama = "Buat Keystore";
+            nama = TeksUI.t("Buat Keystore");
         } else if ("tentang".equals(layar)) {
             tujuan = AboutActivity.class;
-            nama = "Tentang Alat";
+            nama = TeksUI.t("Tentang Alat");
         } else if ("kelola".equals(layar)) {
             tujuan = ProjectsActivity.class;
-            nama = "Kelola Project";
+            nama = TeksUI.t("Kelola Project");
         } else if ("keamanan".equals(layar)) {
             tujuan = KeamananActivity.class;
-            nama = "Keamanan Otomatis";
+            nama = TeksUI.t("Keamanan Otomatis");
         } else if ("ai-offline".equals(layar)) {
             tujuan = AiOfflineActivity.class;
-            nama = "AI Offline";
+            nama = TeksUI.t("AI Offline");
         } else if ("widget".equals(layar)) {
             tujuan = WidgetActivity.class;
             nama = "Pembuat Widget & Wallpaper";
@@ -757,53 +757,53 @@ public class ModeSuaraActivity extends Activity implements TextToSpeech.OnInitLi
             nama = "Integrasi Media Sosial";
         } else if ("dari-gambar".equals(layar)) {
             tujuan = DariGambarActivity.class;
-            nama = "Aplikasi dari Gambar";
+            nama = TeksUI.t("Aplikasi dari Gambar");
         } else if ("terjemah".equals(layar)) {
             tujuan = TerjemahActivity.class;
-            nama = "Penerjemah Bahasa";
+            nama = TeksUI.t("Penerjemah Bahasa");
         } else if ("game".equals(layar)) {
             tujuan = GameActivity.class;
-            nama = "Game Tanpa Kode";
+            nama = TeksUI.t("Game Tanpa Kode");
         } else if ("uji".equals(layar)) {
             tujuan = ProjectsActivity.class;
-            nama = "Kelola Project (pilih proyek, lalu Uji Otomatis)";
+            nama = TeksUI.t("Kelola Project (pilih proyek, lalu Uji Otomatis)");
         } else if ("periksa".equals(layar)) {
             tujuan = PeriksaActivity.class;
-            nama = "AI Pemeriksa Kode";
+            nama = TeksUI.t("AI Pemeriksa Kode");
         } else if ("belajar".equals(layar)) {
             tujuan = BelajarActivity.class;
             nama = "Mode Belajar";
         } else if ("cloud".equals(layar)) {
             tujuan = CloudActivity.class;
-            nama = "Sinkronisasi Cloud";
+            nama = TeksUI.t("Sinkronisasi Cloud");
         } else if ("backend".equals(layar)) {
             tujuan = BackendActivity.class;
             nama = "Backend";
         } else if ("tema".equals(layar)) {
             tujuan = TemaActivity.class;
-            nama = "Tema";
+            nama = TeksUI.t("Tema");
         } else if ("animasi".equals(layar)) {
             tujuan = AnimasiActivity.class;
-            nama = "Pembuat Animasi";
+            nama = TeksUI.t("Pembuat Animasi");
         } else if ("perekam".equals(layar)) {
             tujuan = PerekamAksiActivity.class;
-            nama = "Perekam Aksi";
+            nama = TeksUI.t("Perekam Aksi");
         } else if ("mode-suara".equals(layar)) {
-            tampilkan("Anda sudah berada di Mode Suara.");
+            tampilkan(TeksUI.t("Anda sudah berada di Mode Suara."));
             return;
         } else if ("penerjemah-kode".equals(layar)) {
             tujuan = PenerjemahKodeActivity.class;
-            nama = "Penerjemah Kode";
+            nama = TeksUI.t("Penerjemah Kode");
         }
         if (tujuan == null) {
-            tampilkan("Layar tidak dikenal.");
+            tampilkan(TeksUI.t("Layar tidak dikenal."));
             return;
         }
         try {
             startActivity(new Intent(this, tujuan));
-            tampilkan("Membuka " + nama + ".");
+            tampilkan(TeksUI.t("Membuka ") + nama + ".");
         } catch (Throwable t) {
-            tampilkan("Gagal membuka " + nama + ": " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal membuka ") + nama + ": " + t.getMessage());
         }
     }
 

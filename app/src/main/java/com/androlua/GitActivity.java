@@ -51,24 +51,24 @@ public class GitActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Git di Dalam Aplikasi");
+        setTitle(TeksUI.t("Git di Dalam Aplikasi"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Git di Dalam Aplikasi", 20);
-        label(r, "Git lokal (init, status, commit, log) jalan tanpa internet. "
-                + "Push/pull ke GitHub memakai snapshot lewat token GitHub. "
-                + "Clone dan push/pull git sistem hanya jalan bila biner git "
-                + "terpasang di HP (biasanya tidak ada). Ini bukan git penuh: "
-                + "tidak ada merge, branch, atau diff — tiap commit menyimpan "
-                + "snapshot ZIP utuh proyek.", false);
-        label(r, "Git sistem di HP ini: "
-                + (GitLokal.adaGitSistem() ? "TERSEDIA" : "TIDAK TERSEDIA"), false);
+        heading(r, TeksUI.t("Git di Dalam Aplikasi"), 20);
+        label(r, TeksUI.t("Git lokal (init, status, commit, log) jalan tanpa internet. ")
+                + TeksUI.t("Push/pull ke GitHub memakai snapshot lewat token GitHub. ")
+                + TeksUI.t("Clone dan push/pull git sistem hanya jalan bila biner git ")
+                + TeksUI.t("terpasang di HP (biasanya tidak ada). Ini bukan git penuh: ")
+                + TeksUI.t("tidak ada merge, branch, atau diff — tiap commit menyimpan ")
+                + TeksUI.t("snapshot ZIP utuh proyek."), false);
+        label(r, TeksUI.t("Git sistem di HP ini: ")
+                + (GitLokal.adaGitSistem() ? "TERSEDIA" : TeksUI.t("TIDAK TERSEDIA")), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -77,13 +77,13 @@ public class GitActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Buat Repo Git", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Repo Git"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatRepo();
             }
         });
-        button(r, "Periksa Status", new View.OnClickListener() {
+        button(r, TeksUI.t("Periksa Status"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 periksaStatus();
@@ -102,20 +102,20 @@ public class GitActivity extends Activity {
                 buatCommit();
             }
         });
-        button(r, "Lihat Log Commit", new View.OnClickListener() {
+        button(r, TeksUI.t("Lihat Log Commit"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 lihatLog();
             }
         });
 
-        button(r, "Push ke GitHub (snapshot)", new View.OnClickListener() {
+        button(r, TeksUI.t("Push ke GitHub (snapshot)"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pushGithub();
             }
         });
-        button(r, "Pull dari GitHub (snapshot)", new View.OnClickListener() {
+        button(r, TeksUI.t("Pull dari GitHub (snapshot)"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pullGithub();
@@ -134,7 +134,7 @@ public class GitActivity extends Activity {
             }
         });
 
-        label(r, "Clone dari URL:", false);
+        label(r, TeksUI.t("Clone dari URL:"), false);
         eUrlClone = new EditText(this);
         GayaStudio.edit(eUrlClone);
         eUrlClone.setHint("https://github.com/pemilik/repo.git");
@@ -158,7 +158,7 @@ public class GitActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -166,7 +166,7 @@ public class GitActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Git di Dalam Aplikasi. Pilih proyek, lalu buat repo, commit, atau push.");
+        announce(TeksUI.t("Git di Dalam Aplikasi. Pilih proyek, lalu buat repo, commit, atau push."));
     }
 
     @Override
@@ -205,8 +205,8 @@ public class GitActivity extends Activity {
         }
         String galat = GitLokal.init(dir);
         if (galat == null) {
-            tampil("Repo Git dibuat di proyek " + dir.getName()
-                    + " (cabang main). Silakan commit perubahan pertama.");
+            tampil(TeksUI.t("Repo Git dibuat di proyek ") + dir.getName()
+                    + TeksUI.t(" (cabang main). Silakan commit perubahan pertama."));
             toast("Repo Git dibuat.");
         } else {
             tampil(galat);
@@ -221,16 +221,16 @@ public class GitActivity extends Activity {
             return;
         }
         if (!GitLokal.adaGit(dir)) {
-            tampil("Proyek ini belum punya repo Git. Tekan \"Buat Repo Git\" dulu.");
+            tampil(TeksUI.t("Proyek ini belum punya repo Git. Tekan \"Buat Repo Git\" dulu."));
             return;
         }
         List<GitLokal.StatusItem> st = GitLokal.status(dir);
         if (st == null || st.isEmpty()) {
-            tampil("Bersih — tidak ada perubahan sejak commit terakhir.");
+            tampil(TeksUI.t("Bersih — tidak ada perubahan sejak commit terakhir."));
             return;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("Status proyek ").append(dir.getName()).append(" (")
+        sb.append(TeksUI.t("Status proyek ")).append(dir.getName()).append(" (")
                 .append(st.size()).append(" perubahan):\n");
         for (int i = 0; i < st.size(); i++) {
             sb.append(st.get(i).status).append(": ").append(st.get(i).jalan).append("\n");
@@ -247,7 +247,7 @@ public class GitActivity extends Activity {
         GitLokal.HasilCommit h = GitLokal.commit(dir,
                 ePesan == null ? "" : ePesan.getText().toString());
         if (h.berhasil()) {
-            tampil("Commit berhasil: " + h.id.substring(0, 7)
+            tampil(TeksUI.t("Commit berhasil: ") + h.id.substring(0, 7)
                     + " — " + (ePesan == null ? "" : ePesan.getText().toString().trim()));
             toast("Commit berhasil.");
             if (ePesan != null) ePesan.setText("");
@@ -264,12 +264,12 @@ public class GitActivity extends Activity {
             return;
         }
         if (!GitLokal.adaGit(dir)) {
-            tampil("Proyek ini belum punya repo Git. Tekan \"Buat Repo Git\" dulu.");
+            tampil(TeksUI.t("Proyek ini belum punya repo Git. Tekan \"Buat Repo Git\" dulu."));
             return;
         }
         List<GitLokal.Commit> daftar = GitLokal.log(dir);
         if (daftar.isEmpty()) {
-            tampil("Belum ada commit di proyek ini.");
+            tampil(TeksUI.t("Belum ada commit di proyek ini."));
             return;
         }
         StringBuilder sb = new StringBuilder();
@@ -296,7 +296,7 @@ public class GitActivity extends Activity {
             GithubSettings.tampilkan(this, null);
             return;
         }
-        tampil("Mengunggah snapshot ke GitHub...");
+        tampil(TeksUI.t("Mengunggah snapshot ke GitHub..."));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -309,7 +309,7 @@ public class GitActivity extends Activity {
                     @Override
                     public void run() {
                         if (galat == null) {
-                            tampil("Push ke GitHub berhasil (snapshot commit terakhir).");
+                            tampil(TeksUI.t("Push ke GitHub berhasil (snapshot commit terakhir)."));
                             toast("Push berhasil.");
                         } else {
                             tampil(galat);
@@ -333,7 +333,7 @@ public class GitActivity extends Activity {
             GithubSettings.tampilkan(this, null);
             return;
         }
-        tampil("Mengunduh snapshot dari GitHub...");
+        tampil(TeksUI.t("Mengunduh snapshot dari GitHub..."));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -347,7 +347,7 @@ public class GitActivity extends Activity {
                     @Override
                     public void run() {
                         if (galat == null) {
-                            tampil("Pull dari GitHub berhasil. Berkas proyek sudah diperbarui.");
+                            tampil(TeksUI.t("Pull dari GitHub berhasil. Berkas proyek sudah diperbarui."));
                             toast("Pull berhasil.");
                         } else {
                             tampil(galat);
@@ -374,7 +374,7 @@ public class GitActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        tampil(galat == null ? "git push berhasil." : galat);
+                        tampil(galat == null ? TeksUI.t("git push berhasil.") : galat);
                     }
                 });
             }
@@ -396,7 +396,7 @@ public class GitActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        tampil(galat == null ? "git pull berhasil." : galat);
+                        tampil(galat == null ? TeksUI.t("git pull berhasil.") : galat);
                     }
                 });
             }
@@ -421,8 +421,8 @@ public class GitActivity extends Activity {
                     @Override
                     public void run() {
                         if (galat == null) {
-                            tampil("Clone berhasil ke folder " + n
-                                    + ". Buka di Kelola Project.");
+                            tampil(TeksUI.t("Clone berhasil ke folder ") + n
+                                    + TeksUI.t(". Buka di Kelola Project."));
                             toast("Clone berhasil.");
                             muatDaftar();
                         } else {
@@ -502,17 +502,17 @@ public class GitActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        menu.add("Pengaturan GitHub");
-        menu.add("Tentang");
+        menu.add(TeksUI.t("Pengaturan GitHub"));
+        menu.add(TeksUI.t("Tentang"));
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(android.view.MenuItem item) {
         String t = String.valueOf(item.getTitle());
-        if ("Pengaturan GitHub".equals(t)) {
+        if ((TeksUI.t("Pengaturan GitHub").equals(t) || TeksUI.t("Pengaturan GitHub").equals(t))) {
             GithubSettings.tampilkan(this, null);
-        } else if ("Tentang".equals(t)) {
+        } else if ((TeksUI.t("Tentang").equals(t) || TeksUI.t("Tentang").equals(t))) {
             startActivity(new Intent(this, AboutActivity.class));
         } else {
             return super.onOptionsItemSelected(item);

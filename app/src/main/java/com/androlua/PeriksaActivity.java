@@ -37,21 +37,21 @@ public class PeriksaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Periksa Kode");
+        setTitle(TeksUI.t("Periksa Kode"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Periksa Kode", 20);
-        label(r, "Periksa kode proyekmu dari pola yang sering bermasalah. "
-                + "Pemeriksaan berjalan di dalam HP (tanpa internet). "
-                + "Pemeriksa ini berbasis pola, bukan AI sungguhan — masalah "
-                + "yang tidak berpola tetap bisa lolos, dan itu ditulis "
-                + "jujur di laporan.", false);
+        heading(r, TeksUI.t("Periksa Kode"), 20);
+        label(r, TeksUI.t("Periksa kode proyekmu dari pola yang sering bermasalah. ")
+                + TeksUI.t("Pemeriksaan berjalan di dalam HP (tanpa internet). ")
+                + TeksUI.t("Pemeriksa ini berbasis pola, bukan AI sungguhan — masalah ")
+                + TeksUI.t("yang tidak berpola tetap bisa lolos, dan itu ditulis ")
+                + TeksUI.t("jujur di laporan."), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         muatDaftarProyek();
         spinnerProyek = new Spinner(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -61,7 +61,7 @@ public class PeriksaActivity extends Activity {
         r.addView(spinnerProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Periksa Kode", new View.OnClickListener() {
+        button(r, TeksUI.t("Periksa Kode"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 periksa();
@@ -76,14 +76,14 @@ public class PeriksaActivity extends Activity {
         hasilView.setPadding(dp(4), dp(4), dp(4), dp(4));
         r.addView(hasilView);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Periksa Kode. Pilih proyek, lalu tekan Periksa Kode.");
+        announce(TeksUI.t("Periksa Kode. Pilih proyek, lalu tekan Periksa Kode."));
     }
 
     private void muatDaftarProyek() {
@@ -98,14 +98,14 @@ public class PeriksaActivity extends Activity {
                 }
             }
         }
-        if (daftarProyek.isEmpty()) daftarProyek.add("(belum ada proyek)");
+        if (daftarProyek.isEmpty()) daftarProyek.add(TeksUI.t("(belum ada proyek)"));
     }
 
     private void periksa() {
         if (spinnerProyek.getSelectedItem() == null) return;
         String nama = String.valueOf(spinnerProyek.getSelectedItem());
-        if ("(belum ada proyek)".equals(nama)) {
-            Toast.makeText(this, "Belum ada proyek. Buat proyek dulu.",
+        if ((TeksUI.t("(belum ada proyek)").equals(nama) || TeksUI.t("(belum ada proyek)").equals(nama))) {
+            Toast.makeText(this, TeksUI.t("Belum ada proyek. Buat proyek dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -113,10 +113,10 @@ public class PeriksaActivity extends Activity {
         List<PemeriksaKode.Masalah> temuan = PemeriksaKode.periksa(dir);
         String lap = PemeriksaKode.laporan(dir, temuan);
         hasilView.setText(lap);
-        String ringkas = "Periksa kode selesai: " + temuan.size()
-                + (temuan.size() == 1 ? " temuan" : " temuan") + " di proyek " + nama + ".";
+        String ringkas = TeksUI.t("Periksa kode selesai: ") + temuan.size()
+                + (temuan.size() == 1 ? " temuan" : " temuan") + TeksUI.t(" di proyek ") + nama + ".";
         Toast.makeText(this, ringkas, Toast.LENGTH_SHORT).show();
-        announce(ringkas + " Laporan lengkap ada di layar.");
+        announce(ringkas + TeksUI.t(" Laporan lengkap ada di layar."));
     }
 
     // ------------------------------------------------------------------ UI

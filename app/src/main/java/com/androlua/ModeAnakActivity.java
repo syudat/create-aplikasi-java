@@ -48,19 +48,19 @@ public class ModeAnakActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Mode Anak");
+        setTitle(TeksUI.t("Mode Anak"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Mode Anak", 26);
-        label(r, "Mode sederhana untuk anak. Hanya ada 4 tombol aman di "
-                + "sini: buat proyek, buka proyek, jalankan, dan belajar. "
-                + "Tidak ada tombol hapus atau pengaturan.", false);
+        heading(r, TeksUI.t("Mode Anak"), 26);
+        label(r, TeksUI.t("Mode sederhana untuk anak. Hanya ada 4 tombol aman di ")
+                + TeksUI.t("sini: buat proyek, buka proyek, jalankan, dan belajar. ")
+                + TeksUI.t("Tidak ada tombol hapus atau pengaturan."), false);
 
-        label(r, "Buat proyek baru:", false);
+        label(r, TeksUI.t("Buat proyek baru:"), false);
         eNama = new EditText(this);
         GayaStudio.edit(eNama);
         eNama.setHint("Nama proyek, contoh: Game Saya");
@@ -78,14 +78,14 @@ public class ModeAnakActivity extends Activity {
         spTemplate.setAdapter(adapterTemplate);
         r.addView(spTemplate, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        buttonBesar(r, "Buat Proyek", new View.OnClickListener() {
+        buttonBesar(r, TeksUI.t("Buat Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatProyekAnak();
             }
         });
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -93,7 +93,7 @@ public class ModeAnakActivity extends Activity {
         spProyek.setAdapter(adapterProyek);
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        buttonBesar(r, "Buka Proyek", new View.OnClickListener() {
+        buttonBesar(r, TeksUI.t("Buka Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaProyek();
@@ -105,7 +105,7 @@ public class ModeAnakActivity extends Activity {
                 jalankanProyek();
             }
         });
-        buttonBesar(r, "Belajar", new View.OnClickListener() {
+        buttonBesar(r, TeksUI.t("Belajar"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -115,7 +115,7 @@ public class ModeAnakActivity extends Activity {
                 }
             }
         });
-        buttonBesar(r, "Keluar dari Mode Anak", new View.OnClickListener() {
+        buttonBesar(r, TeksUI.t("Keluar dari Mode Anak"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mintaPinKeluar();
@@ -127,7 +127,7 @@ public class ModeAnakActivity extends Activity {
         if (bacaPin().isEmpty()) {
             mintaBuatPin();
         }
-        announce("Mode Anak. Ada empat tombol: Buat Proyek, Buka Proyek, Jalankan, dan Belajar.");
+        announce(TeksUI.t("Mode Anak. Ada empat tombol: Buat Proyek, Buka Proyek, Jalankan, dan Belajar."));
     }
 
     @Override
@@ -165,11 +165,11 @@ public class ModeAnakActivity extends Activity {
         ePin.setInputType(InputType.TYPE_CLASS_NUMBER
                 | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         new AlertDialog.Builder(this)
-                .setTitle("Buat PIN Mode Anak")
-                .setMessage("Buat PIN 4 angka. PIN ini dipakai orang tua untuk "
-                        + "keluar dari Mode Anak. Ingat baik-baik PIN-nya.")
+                .setTitle(TeksUI.t("Buat PIN Mode Anak"))
+                .setMessage(TeksUI.t("Buat PIN 4 angka. PIN ini dipakai orang tua untuk ")
+                        + TeksUI.t("keluar dari Mode Anak. Ingat baik-baik PIN-nya."))
                 .setView(ePin)
-                .setPositiveButton("Simpan PIN", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Simpan PIN"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String pin = ePin.getText().toString().trim();
@@ -182,7 +182,7 @@ public class ModeAnakActivity extends Activity {
                         toast("PIN Mode Anak disimpan.");
                     }
                 })
-                .setNegativeButton("Nanti saja", null)
+                .setNegativeButton(TeksUI.t("Nanti saja"), null)
                 .show();
     }
 
@@ -197,10 +197,10 @@ public class ModeAnakActivity extends Activity {
         ePin.setInputType(InputType.TYPE_CLASS_NUMBER
                 | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         new AlertDialog.Builder(this)
-                .setTitle("Keluar dari Mode Anak")
-                .setMessage("Masukkan PIN 4 angka untuk kembali ke menu utama.")
+                .setTitle(TeksUI.t("Keluar dari Mode Anak"))
+                .setMessage(TeksUI.t("Masukkan PIN 4 angka untuk kembali ke menu utama."))
                 .setView(ePin)
-                .setPositiveButton("Keluar", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Keluar"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String masuk = ePin.getText().toString().trim();
@@ -212,7 +212,7 @@ public class ModeAnakActivity extends Activity {
                         }
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -242,14 +242,14 @@ public class ModeAnakActivity extends Activity {
         if (dir == null) return;
         if ("game".equals(t.sumber)) {
             String galat = GameTanpaKode.terapkanGame(new File(dir), t.id, nama, 5,
-                    "Selamat, kamu menang!");
+                    TeksUI.t("Selamat, kamu menang!"));
             if (galat != null) {
                 toast("Game gagal diterapkan: " + galat);
                 return;
             }
         }
-        toast("Proyek " + nama + " dibuat. Buka di Kelola Project untuk melihatnya.");
-        announce("Proyek " + nama + " dibuat.");
+        toast("Proyek " + nama + TeksUI.t(" dibuat. Buka di Kelola Project untuk melihatnya."));
+        announce(TeksUI.t("Proyek ") + nama + " dibuat.");
         muatDaftar();
     }
 

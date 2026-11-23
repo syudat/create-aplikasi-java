@@ -38,20 +38,20 @@ public class PratinjauUkuranActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pratinjau Ukuran Layar");
+        setTitle(TeksUI.t("Pratinjau Ukuran Layar"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pratinjau Ukuran Layar", 20);
-        label(r, "Periksa layout proyek pada beberapa lebar layar sekaligus: "
-                + "320, 360, 411, dan 480 dp. Elemen yang lebarnya ditulis "
-                + "tetap dan melebihi lebar layar akan dilaporkan, karena di "
-                + "HP berlayar kecil elemen itu bisa tertutup atau meluber.", false);
+        heading(r, TeksUI.t("Pratinjau Ukuran Layar"), 20);
+        label(r, TeksUI.t("Periksa layout proyek pada beberapa lebar layar sekaligus: ")
+                + TeksUI.t("320, 360, 411, dan 480 dp. Elemen yang lebarnya ditulis ")
+                + TeksUI.t("tetap dan melebihi lebar layar akan dilaporkan, karena di ")
+                + TeksUI.t("HP berlayar kecil elemen itu bisa tertutup atau meluber."), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -60,7 +60,7 @@ public class PratinjauUkuranActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Periksa Ukuran Layar", new View.OnClickListener() {
+        button(r, TeksUI.t("Periksa Ukuran Layar"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 periksa();
@@ -73,7 +73,7 @@ public class PratinjauUkuranActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -81,7 +81,7 @@ public class PratinjauUkuranActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Pratinjau Ukuran Layar. Pilih proyek, lalu tekan Periksa Ukuran Layar.");
+        announce(TeksUI.t("Pratinjau Ukuran Layar. Pilih proyek, lalu tekan Periksa Ukuran Layar."));
     }
 
     @Override
@@ -107,9 +107,9 @@ public class PratinjauUkuranActivity extends Activity {
         if (h.galat == null) {
             List<String> terkecil = h.masalah.get(PeriksaUkuran.LEBAR_LAYAR[0]);
             int n = terkecil == null ? 0 : terkecil.size();
-            announce("Pemeriksaan selesai. " + h.berkasLayout.size() + " berkas layout, "
-                    + h.elemen.size() + " elemen lebar tetap. Pada layar terkecil "
-                    + PeriksaUkuran.LEBAR_LAYAR[0] + " dp ada " + n + " elemen meluber.");
+            announce(TeksUI.t("Pemeriksaan selesai. ") + h.berkasLayout.size() + TeksUI.t(" berkas layout, ")
+                    + h.elemen.size() + TeksUI.t(" elemen lebar tetap. Pada layar terkecil ")
+                    + PeriksaUkuran.LEBAR_LAYAR[0] + TeksUI.t(" dp ada ") + n + " elemen meluber.");
         } else {
             announce(h.galat);
         }

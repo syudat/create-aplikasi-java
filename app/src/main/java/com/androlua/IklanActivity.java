@@ -47,24 +47,24 @@ public class IklanActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pembuat Iklan");
+        setTitle(TeksUI.t("Pembuat Iklan"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pembuat Iklan", 20);
-        label(r, "IDE membuatkan kode iklan siap tempel (Java, Kotlin, dan "
+        heading(r, TeksUI.t("Pembuat Iklan"), 20);
+        label(r, TeksUI.t("IDE membuatkan kode iklan siap tempel (Java, Kotlin, dan ")
                 + "Lua) + perubahan manifest + panduan langkah demi langkah. "
-                + "Ini template kode + panduan — SDK iklan TIDAK disertakan "
-                + "di IDE. Iklan sungguhan baru tampil setelah kamu membuat "
-                + "akun penyedia, membuat unit iklan, menempel ID unit "
-                + "sendiri, dan menambah dependensi SDK di build.gradle "
-                + "proyek. ID yang dipakai bila kolom kosong adalah ID UJI "
-                + "(AdMob) atau tempat kosong (Unity/AppLovin).", false);
+                + TeksUI.t("Ini template kode + panduan — SDK iklan TIDAK disertakan ")
+                + TeksUI.t("di IDE. Iklan sungguhan baru tampil setelah kamu membuat ")
+                + TeksUI.t("akun penyedia, membuat unit iklan, menempel ID unit ")
+                + TeksUI.t("sendiri, dan menambah dependensi SDK di build.gradle ")
+                + TeksUI.t("proyek. ID yang dipakai bila kolom kosong adalah ID UJI ")
+                + TeksUI.t("(AdMob) atau tempat kosong (Unity/AppLovin)."), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -91,20 +91,20 @@ public class IklanActivity extends Activity {
         r.addView(spJenis, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "ID unit iklan (kosong = pakai ID uji):", false);
+        label(r, TeksUI.t("ID unit iklan (kosong = pakai ID uji):"), false);
         eIdUnit = new EditText(this);
         GayaStudio.edit(eIdUnit);
         eIdUnit.setHint("Contoh AdMob: ca-app-pub-3940256099942544/6300978111");
         r.addView(eIdUnit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Buat Kode Iklan", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Kode Iklan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatKode();
             }
         });
-        button(r, "Simpan ke Proyek", new View.OnClickListener() {
+        button(r, TeksUI.t("Simpan ke Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 simpanKeProyek();
@@ -117,7 +117,7 @@ public class IklanActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -125,7 +125,7 @@ public class IklanActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Pembuat Iklan. Pilih proyek, penyedia, dan jenis iklan, lalu tekan Buat Kode Iklan.");
+        announce(TeksUI.t("Pembuat Iklan. Pilih proyek, penyedia, dan jenis iklan, lalu tekan Buat Kode Iklan."));
     }
 
     @Override
@@ -163,7 +163,7 @@ public class IklanActivity extends Activity {
     private void buatKode() {
         String isi = PembuatIklan.isiBerkas(penyediaTerpilih(), jenisTerpilih(), idUnit());
         if (tvHasil != null) tvHasil.setText(isi);
-        announce("Kode iklan " + penyediaTerpilih() + " " + jenisTerpilih() + " dibuat.");
+        announce(TeksUI.t("Kode iklan ") + penyediaTerpilih() + " " + jenisTerpilih() + " dibuat.");
     }
 
     private void simpanKeProyek() {
@@ -178,9 +178,9 @@ public class IklanActivity extends Activity {
             toast("Gagal menyimpan kode iklan ke proyek.");
             return;
         }
-        String ok = "Kode iklan disimpan ke " + hasil.getName()
-                + " di proyek " + dir.getName()
-                + ". Buka berkas itu di editor untuk melihat kode + panduan.";
+        String ok = TeksUI.t("Kode iklan disimpan ke ") + hasil.getName()
+                + TeksUI.t(" di proyek ") + dir.getName()
+                + TeksUI.t(". Buka berkas itu di editor untuk melihat kode + panduan.");
         toast(ok);
         announce(ok);
         if (tvHasil != null) tvHasil.setText(PembuatIklan.isiBerkas(

@@ -57,23 +57,23 @@ public class VideoDemo {
     /** 5 adegan baku untuk satu aplikasi. */
     public static List<Adegan> adeganBaku(String namaAplikasi) {
         String nama = namaAplikasi == null || namaAplikasi.isEmpty()
-                ? "Aplikasi Saya" : namaAplikasi;
+                ? TeksUI.t("Aplikasi Saya") : namaAplikasi;
         List<Adegan> hasil = new ArrayList<Adegan>();
         hasil.add(new Adegan("Pembuka", 3,
-                "Halo, ini aplikasi " + nama + " yang saya buat sendiri di HP.",
-                "ikon aplikasi"));
+                TeksUI.t("Halo, ini aplikasi ") + nama + TeksUI.t(" yang saya buat sendiri di HP."),
+                TeksUI.t("ikon aplikasi")));
         hasil.add(new Adegan("Tampilan Utama", 5,
-                "Ini tampilan utama " + nama + ". Semua menu ada di sini.",
-                "tangkapan layar utama"));
+                TeksUI.t("Ini tampilan utama ") + nama + TeksUI.t(". Semua menu ada di sini."),
+                TeksUI.t("tangkapan layar utama")));
         hasil.add(new Adegan("Fitur 1", 5,
-                "Fitur pertama: coba tekan tombol utamanya dan lihat hasilnya.",
-                "tangkapan layar fitur 1"));
+                TeksUI.t("Fitur pertama: coba tekan tombol utamanya dan lihat hasilnya."),
+                TeksUI.t("tangkapan layar fitur 1")));
         hasil.add(new Adegan("Fitur 2", 5,
-                "Fitur kedua: bagian ini yang paling saya suka dari " + nama + ".",
-                "tangkapan layar fitur 2"));
+                TeksUI.t("Fitur kedua: bagian ini yang paling saya suka dari ") + nama + ".",
+                TeksUI.t("tangkapan layar fitur 2")));
         hasil.add(new Adegan("Penutup", 3,
-                "Terima kasih sudah menonton. " + nama + " dibuat dengan Create Aplikasi.",
-                "ikon aplikasi"));
+                TeksUI.t("Terima kasih sudah menonton. ") + nama + TeksUI.t(" dibuat dengan Create Aplikasi."),
+                TeksUI.t("ikon aplikasi")));
         return hasil;
     }
 
@@ -89,7 +89,7 @@ public class VideoDemo {
     public static String teksSkrip(String judul, List<Adegan> adegan) {
         StringBuilder sb = new StringBuilder();
         sb.append("Skrip Video Demo: ").append(judul == null ? "" : judul).append("\n");
-        sb.append("Total durasi: ").append(durasiTotal(adegan)).append(" detik (")
+        sb.append("Total durasi: ").append(durasiTotal(adegan)).append(TeksUI.t(" detik ("))
                 .append(adegan == null ? 0 : adegan.size()).append(" adegan)\n\n");
         if (adegan != null) {
             for (int i = 0; i < adegan.size(); i++) {
@@ -185,7 +185,7 @@ public class VideoDemo {
                 + DURASI_GAMBAR_DETIK + " detik. Rekam layar HP untuk menjadi video.</p>\n");
         for (int i = 0; i < gambar.size(); i++) {
             sb.append("<img src=\"").append(escapeHtml(gambar.get(i))).append("\"")
-                    .append(i == 0 ? " class=\"aktif\"" : "")
+                    .append(i == 0 ? TeksUI.t(" class=\"aktif\"") : "")
                     .append(" alt=\"Gambar ").append(i + 1).append("\">\n");
         }
         sb.append("<script>\n");

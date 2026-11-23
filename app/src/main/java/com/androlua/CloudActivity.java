@@ -48,21 +48,21 @@ public class CloudActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Sinkronisasi Cloud");
+        setTitle(TeksUI.t("Sinkronisasi Cloud"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Sinkronisasi Cloud", 20);
-        label(r, "Cadangkan proyekmu ke cloud supaya aman bila HP hilang atau rusak. "
-                + "Ada dua jalan: Cloud Lokal (cadangan tersimpan di folder Download/cloud di HP ini) "
-                + "dan GitHub (cadangan diunggah ke repo privatmu di GitHub). "
+        heading(r, TeksUI.t("Sinkronisasi Cloud"), 20);
+        label(r, TeksUI.t("Cadangkan proyekmu ke cloud supaya aman bila HP hilang atau rusak. ")
+                + TeksUI.t("Ada dua jalan: Cloud Lokal (cadangan tersimpan di folder Download/cloud di HP ini) ")
+                + TeksUI.t("dan GitHub (cadangan diunggah ke repo privatmu di GitHub). ")
                 + "Ini cadangan manual — tekan tombol untuk mencadangkan; belum ada sinkronisasi otomatis dua arah.",
                 false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -73,31 +73,31 @@ public class CloudActivity extends Activity {
 
         tvStatus = label(r, "", false);
 
-        button(r, "Cadangkan ke Cloud Lokal", new View.OnClickListener() {
+        button(r, TeksUI.t("Cadangkan ke Cloud Lokal"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cadangkanLokal();
             }
         });
-        button(r, "Pulihkan dari Cloud Lokal", new View.OnClickListener() {
+        button(r, TeksUI.t("Pulihkan dari Cloud Lokal"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pulihkanLokal();
             }
         });
-        button(r, "Unggah ke GitHub", new View.OnClickListener() {
+        button(r, TeksUI.t("Unggah ke GitHub"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 unggahGithub();
             }
         });
-        button(r, "Unduh dari GitHub", new View.OnClickListener() {
+        button(r, TeksUI.t("Unduh dari GitHub"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 unduhGithub();
             }
         });
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -105,7 +105,7 @@ public class CloudActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Sinkronisasi Cloud. Pilih proyek, lalu cadangkan ke Cloud Lokal atau GitHub.");
+        announce(TeksUI.t("Sinkronisasi Cloud. Pilih proyek, lalu cadangkan ke Cloud Lokal atau GitHub."));
     }
 
     @Override
@@ -120,9 +120,9 @@ public class CloudActivity extends Activity {
         if (adapterProyek != null) adapterProyek.notifyDataSetChanged();
         if (tvStatus != null) {
             tvStatus.setText(daftarProyek.isEmpty()
-                    ? "Belum ada proyek di Download/project."
-                    : daftarProyek.size() + " proyek tersedia. Cadangan cloud lokal: "
-                    + SinkronCloud.daftarCadanganCloud(new File(DIR_CLOUD)).size() + " berkas.");
+                    ? TeksUI.t("Belum ada proyek di Download/project.")
+                    : daftarProyek.size() + TeksUI.t(" proyek tersedia. Cadangan cloud lokal: ")
+                    + SinkronCloud.daftarCadanganCloud(new File(DIR_CLOUD)).size() + TeksUI.t(" berkas."));
         }
     }
 
@@ -160,14 +160,14 @@ public class CloudActivity extends Activity {
         final String[] nama = new String[cadangan.size()];
         for (int i = 0; i < cadangan.size(); i++) nama[i] = cadangan.get(i).getName();
         new AlertDialog.Builder(this)
-                .setTitle("Pulihkan dari Cloud Lokal")
+                .setTitle(TeksUI.t("Pulihkan dari Cloud Lokal"))
                 .setItems(nama, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         File zip = cadangan.get(which);
                         String galat = SinkronCloud.pulihkan(zip, new File(ROOT));
                         if (galat == null) {
-                            String ok = "Proyek dipulihkan dari " + zip.getName();
+                            String ok = TeksUI.t("Proyek dipulihkan dari ") + zip.getName();
                             toast(ok);
                             announce(ok);
                             muatDaftar();
@@ -176,7 +176,7 @@ public class CloudActivity extends Activity {
                         }
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -198,7 +198,7 @@ public class CloudActivity extends Activity {
             });
             return;
         }
-        toast("Mengunggah " + nama + " ke GitHub...");
+        toast("Mengunggah " + nama + TeksUI.t(" ke GitHub..."));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -207,7 +207,7 @@ public class CloudActivity extends Activity {
                     @Override
                     public void run() {
                         if (hasil == null) {
-                            String ok = "Proyek " + nama + " terunggah ke GitHub.";
+                            String ok = TeksUI.t("Proyek ") + nama + TeksUI.t(" terunggah ke GitHub.");
                             toast(ok);
                             announce(ok);
                         } else {
@@ -224,18 +224,18 @@ public class CloudActivity extends Activity {
         SinkronCloud.PengirimHttp http = new SinkronCloud.PengirimHttpBawaan();
         String pemilik = SinkronCloud.namaPengguna(token, SinkronCloud.API_GITHUB, http);
         if (pemilik.isEmpty()) {
-            return "Gagal membaca akun GitHub. Periksa token di Pengaturan GitHub.";
+            return TeksUI.t("Gagal membaca akun GitHub. Periksa token di Pengaturan GitHub.");
         }
         String jalurZip = EksporProyek.ekspor(ROOT + "/" + nama);
         if (jalurZip == null || jalurZip.isEmpty()) {
-            return "Gagal membuat ZIP proyek. Periksa izin penyimpanan.";
+            return TeksUI.t("Gagal membuat ZIP proyek. Periksa izin penyimpanan.");
         }
         File zip = new File(jalurZip);
         try {
             String namaBerkas = ArsipProyek.namaBerkasCadangan(nama);
             return SinkronCloud.unggah(token, SinkronCloud.API_GITHUB, pemilik,
                     SinkronCloud.REPO_CADANGAN, SinkronCloud.JALUR_CLOUD + "/" + namaBerkas,
-                    zip, "Cadangan proyek " + nama, http);
+                    zip, TeksUI.t("Cadangan proyek ") + nama, http);
         } finally {
             zip.delete();
         }
@@ -283,19 +283,19 @@ public class CloudActivity extends Activity {
         }
         final String[] nama = daftar.toArray(new String[daftar.size()]);
         new AlertDialog.Builder(this)
-                .setTitle("Unduh dari GitHub")
+                .setTitle(TeksUI.t("Unduh dari GitHub"))
                 .setItems(nama, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         unduhSatuGithub(token, pemilik, nama[which]);
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
     private void unduhSatuGithub(final String token, final String pemilik, final String namaBerkas) {
-        toast("Mengunduh " + namaBerkas + " dari GitHub...");
+        toast("Mengunduh " + namaBerkas + TeksUI.t(" dari GitHub..."));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -308,12 +308,12 @@ public class CloudActivity extends Activity {
                     @Override
                     public void run() {
                         if (hasil == null) {
-                            toast("Gagal mengunduh " + namaBerkas + " dari GitHub.");
+                            toast("Gagal mengunduh " + namaBerkas + TeksUI.t(" dari GitHub."));
                             return;
                         }
                         String galat = SinkronCloud.pulihkan(hasil, new File(ROOT));
                         if (galat == null) {
-                            String ok = "Proyek dipulihkan dari GitHub: " + namaBerkas;
+                            String ok = TeksUI.t("Proyek dipulihkan dari GitHub: ") + namaBerkas;
                             toast(ok);
                             announce(ok);
                             muatDaftar();

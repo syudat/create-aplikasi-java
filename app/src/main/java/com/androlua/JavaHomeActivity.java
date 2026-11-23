@@ -105,6 +105,7 @@ public class JavaHomeActivity extends Activity {
                 PengaturanActivity.baca(this).getString(
                         PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
                 java.util.Locale.getDefault().getLanguage());
+        TeksUI.kodeAktif = kodeBahasa;
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
@@ -116,7 +117,7 @@ public class JavaHomeActivity extends Activity {
         label(r, "Developer by al kautsar", true);
 
         noticeLabel = label(r, t("Aplikasi perlu ") + pesanIzinPenyimpanan()
-                + " untuk menyimpan project di folder Download/project.", false);
+                + t(" untuk menyimpan project di folder Download/project."), false);
         noticeButton = button(r, t("Berikan Izin Penyimpanan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -372,7 +373,7 @@ public class JavaHomeActivity extends Activity {
         perbaruiIzin();
         announce(APP_NAME);
         // Analitik: catat kunjungan layar utama (sekali per onCreate).
-        AnalitikActivity.catatLayar(this, "Layar Utama");
+        AnalitikActivity.catatLayar(this, t("Layar Utama"));
         // Log crash: tampilkan log pembukaan sebelumnya yang berakhir crash.
         tampilkanLogCrashTerakhir();
     }
@@ -416,7 +417,7 @@ public class JavaHomeActivity extends Activity {
         String t = String.valueOf(item.getTitle());
         if ("Muat ulang".equals(t)) {
             perbaruiIzin();
-        } else if (TeksUI.teks(kodeBahasa, "Pengaturan").equals(t)) {
+        } else if (TeksUI.teks(kodeBahasa, t("Pengaturan")).equals(t)) {
             bukaPengaturan();
         } else {
             return super.onOptionsItemSelected(item);
@@ -454,13 +455,13 @@ public class JavaHomeActivity extends Activity {
             new AlertDialog.Builder(this)
                     .setTitle("Log Crash Terakhir")
                     .setMessage(isi)
-                    .setPositiveButton("Tutup", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(t("Tutup"), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface d, int w) {
                             CrashHandler.tandaiDibaca(f);
                         }
                     })
-                    .setNegativeButton("Hapus Log", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(t("Hapus Log"), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface d, int w) {
                             try {
@@ -470,7 +471,7 @@ public class JavaHomeActivity extends Activity {
                         }
                     })
                     .show();
-            announce("Ada log crash dari pemakaian sebelumnya. Lognya ditampilkan di layar.");
+            announce(t("Ada log crash dari pemakaian sebelumnya. Lognya ditampilkan di layar."));
         } catch (Throwable ignored) {
         }
     }
@@ -544,11 +545,11 @@ public class JavaHomeActivity extends Activity {
 
     private String pesanIzinPenyimpanan() {
         if (Build.VERSION.SDK_INT >= 30) {
-            return "izin akses semua file";
+            return t("izin akses semua file");
         } else if (Build.VERSION.SDK_INT >= 23) {
-            return "izin penyimpanan (baca/tulis penyimpanan)";
+            return t("izin penyimpanan (baca/tulis penyimpanan)");
         } else {
-            return "izin penyimpanan";
+            return t("izin penyimpanan");
         }
     }
 
@@ -595,7 +596,7 @@ public class JavaHomeActivity extends Activity {
             startActivity(it);
             announce("Terminal dibuka.");
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Terminal: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Terminal: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -606,7 +607,7 @@ public class JavaHomeActivity extends Activity {
             startActivity(new Intent(this, ModeSuaraActivity.class));
             announce("Mode Suara dibuka.");
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Mode Suara: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Mode Suara: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -615,9 +616,9 @@ public class JavaHomeActivity extends Activity {
     private void bukaPenerjemahKode() {
         try {
             startActivity(new Intent(this, PenerjemahKodeActivity.class));
-            announce("Penerjemah Kode dibuka.");
+            announce(t("Penerjemah Kode dibuka."));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Penerjemah Kode: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Penerjemah Kode: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -627,9 +628,9 @@ public class JavaHomeActivity extends Activity {
     private void bukaGit() {
         try {
             startActivity(new Intent(this, GitActivity.class));
-            announce("Git di Dalam Aplikasi dibuka.");
+            announce(t("Git di Dalam Aplikasi dibuka."));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Git: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Git: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -641,7 +642,7 @@ public class JavaHomeActivity extends Activity {
             startActivity(new Intent(this, IklanActivity.class));
             announce("Pembuat Iklan dibuka.");
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pembuat Iklan: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pembuat Iklan: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -653,7 +654,7 @@ public class JavaHomeActivity extends Activity {
             startActivity(new Intent(this, ModeAnakActivity.class));
             announce("Mode Anak dibuka.");
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Mode Anak: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Mode Anak: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -663,9 +664,9 @@ public class JavaHomeActivity extends Activity {
     private void bukaWearTv() {
         try {
             startActivity(new Intent(this, WearTvActivity.class));
-            announce("Wear OS dan TV dibuka.");
+            announce(t("Wear OS dan TV dibuka."));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Wear OS dan TV: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Wear OS dan TV: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -675,9 +676,9 @@ public class JavaHomeActivity extends Activity {
     private void bukaPeta() {
         try {
             startActivity(new Intent(this, PetaActivity.class));
-            announce("Peta Proyek dibuka.");
+            announce(t("Peta Proyek dibuka."));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Peta Proyek: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Peta Proyek: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -687,9 +688,9 @@ public class JavaHomeActivity extends Activity {
     private void bukaUkuranApk() {
         try {
             startActivity(new Intent(this, UkuranApkActivity.class));
-            announce("Kalkulator Ukuran APK dibuka.");
+            announce(t("Kalkulator Ukuran APK dibuka."));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Kalkulator Ukuran APK: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Kalkulator Ukuran APK: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -700,7 +701,7 @@ public class JavaHomeActivity extends Activity {
             startActivity(new Intent(this, AnalisisApkActivity.class));
             announce("Penganalisis APK dibuka.");
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Penganalisis APK: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Penganalisis APK: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -709,9 +710,9 @@ public class JavaHomeActivity extends Activity {
     private void bukaPratinjauUkuran() {
         try {
             startActivity(new Intent(this, PratinjauUkuranActivity.class));
-            announce("Pratinjau Ukuran Layar dibuka.");
+            announce(t("Pratinjau Ukuran Layar dibuka."));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pratinjau Ukuran Layar: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pratinjau Ukuran Layar: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -722,7 +723,7 @@ public class JavaHomeActivity extends Activity {
             startActivity(new Intent(this, SumberDayaActivity.class));
             announce("Pengelola Sumber Daya dibuka.");
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pengelola Sumber Daya: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pengelola Sumber Daya: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -733,7 +734,7 @@ public class JavaHomeActivity extends Activity {
             startActivity(new Intent(this, KinerjaActivity.class));
             announce("Pemantau Kinerja Ringan dibuka.");
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pemantau Kinerja Ringan: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pemantau Kinerja Ringan: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -745,7 +746,7 @@ public class JavaHomeActivity extends Activity {
             startActivity(new Intent(this, VideoDemoActivity.class));
             announce("Pembuat Video Demo dibuka.");
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pembuat Video Demo: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pembuat Video Demo: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -757,7 +758,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, CreateProjectActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Buat Proyek: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Buat Proyek: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -769,7 +770,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, ProjectsActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Kelola Project: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Kelola Project: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -782,7 +783,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, KeystoreActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Buat Keystore: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Buat Keystore: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -793,7 +794,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, AboutActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Tentang Alat: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Tentang Alat: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -803,7 +804,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, PengaturanActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pengaturan: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pengaturan: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -812,7 +813,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, DonasiActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Donasi: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Donasi: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -822,7 +823,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, AnalitikActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Analitik: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Analitik: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -833,7 +834,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, IconMakerActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pembuat Ikon: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pembuat Ikon: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -844,7 +845,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, VoiceActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Bangun dengan Suara: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Bangun dengan Suara: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -855,7 +856,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, AiActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka AI Pembuat Aplikasi: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka AI Pembuat Aplikasi: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -866,7 +867,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, MarketActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pasar Proyek: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pasar Proyek: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -877,7 +878,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, KolaborasiActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Kolaborasi: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Kolaborasi: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -888,7 +889,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, TerjemahActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Penerjemah Aplikasi: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Penerjemah Aplikasi: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -899,7 +900,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, GameActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pembuat Game: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pembuat Game: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -910,7 +911,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, PeriksaActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Periksa Kode: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Periksa Kode: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -921,7 +922,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, BelajarActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Belajar: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Belajar: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -932,7 +933,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, CloudActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Sinkronisasi Cloud: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Sinkronisasi Cloud: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -943,7 +944,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, BackendActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pembuat Backend: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pembuat Backend: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -954,7 +955,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, TemaActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Desainer Tema: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Desainer Tema: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -965,7 +966,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, AnimasiActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Pembuat Animasi: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Pembuat Animasi: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -976,7 +977,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, PerekamAksiActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Perekam Aksi: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Perekam Aksi: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -987,7 +988,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, KeamananActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Keamanan Otomatis: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Keamanan Otomatis: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -998,7 +999,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, AiOfflineActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka AI Offline: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka AI Offline: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -1009,7 +1010,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, WidgetActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Widget & Wallpaper: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Widget & Wallpaper: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -1020,7 +1021,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, MediaSosialActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Media Sosial: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Media Sosial: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -1031,7 +1032,7 @@ public class JavaHomeActivity extends Activity {
         try {
             startActivity(new Intent(this, DariGambarActivity.class));
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal membuka Aplikasi dari Gambar: " + t.getMessage(),
+            Toast.makeText(this, t("Gagal membuka Aplikasi dari Gambar: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }

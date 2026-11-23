@@ -96,7 +96,7 @@ public class BangunLokal {
                     String pesan = e.getMessage();
                     if (pesan == null && e.getCause() != null) pesan = e.getCause().toString();
                     if (pesan == null) pesan = e.toString();
-                    b.kirim(FAILED, "Gagal: " + pesan + "\n\nRincian: " + new File(bin, "log-build.txt"));
+                    b.kirim(FAILED, TeksUI.t("Gagal: ") + pesan + "\n\nRincian: " + new File(bin, "log-build.txt"));
                 }
             }
         }, "BangunLokal").start();
@@ -127,9 +127,9 @@ public class BangunLokal {
     private static void tulisRantaiPenyebab(StringBuilder log, Throwable e) {
         Set<Throwable> sudah = new HashSet<Throwable>();
         for (Throwable c = e.getCause(); c != null && sudah.add(c); c = c.getCause()) {
-            log.append("Disebabkan oleh: ").append(c).append('\n');
+            log.append(TeksUI.t("Disebabkan oleh: ")).append(c).append('\n');
             for (StackTraceElement s : c.getStackTrace()) {
-                log.append("    di ").append(s).append('\n');
+                log.append(TeksUI.t("    di ")).append(s).append('\n');
             }
         }
     }
@@ -168,7 +168,7 @@ public class BangunLokal {
 
     private Info bacaInit() throws IOException {
         File f = new File(projectDir, "init.lua");
-        if (!f.isFile()) throw new IOException("Berkas data proyek tidak ditemukan di " + projectDir);
+        if (!f.isFile()) throw new IOException(TeksUI.t("Berkas data proyek tidak ditemukan di ") + projectDir);
         String s = new String(baca(f), "UTF-8").replaceAll("--[^\\n]*", "");
         Info i = new Info();
         i.appname = luaStr(s, "appname", projectDir.getName());
@@ -258,7 +258,7 @@ public class BangunLokal {
             }
         }
         if (!i.pkg.matches("[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+"))
-            throw new IOException("Nama paket tidak valid: \"" + i.pkg + "\" (contoh: com.contoh.aplikasi)");
+            throw new IOException(TeksUI.t("Nama paket tidak valid: \"") + i.pkg + TeksUI.t("\" (contoh: com.contoh.aplikasi)"));
         if (i.min < 21) i.min = 21;
         // Python (Chaquopy): SDK minimum 24 (syarat runtime Chaquopy).
         // Bila init.lua proyek Python masih 21-23, naikkan diam-diam ke 24
@@ -343,15 +343,15 @@ public class BangunLokal {
     // ------------------------------------------------------------------ alur utama
 
     private String jalankan() throws Exception {
-        kirim(PROGRESS, "Membaca data proyek...");
+        kirim(PROGRESS, TeksUI.t("Membaca data proyek..."));
         Info info = bacaInit();
-        log.append("Aplikasi ").append(info.appname).append(" | ").append(info.pkg).append(" | SDK ")
-                .append(info.min).append('/').append(info.target).append(" | izin ").append(info.perms).append('\n');
+        log.append(TeksUI.t("Aplikasi ")).append(info.appname).append(" | ").append(info.pkg).append(" | SDK ")
+                .append(info.min).append('/').append(info.target).append(TeksUI.t(" | izin ")).append(info.perms).append('\n');
 
         File lib = new File(ctx.getApplicationInfo().nativeLibraryDir);
         File aapt2 = new File(lib, "libaapt2.so");
         if (!aapt2.isFile())
-            throw new IOException("aapt2 tidak ada di aplikasi (" + aapt2 + "). Alat bangun tersedia untuk arm64-v8a dan armeabi-v7a (HP ARM 64-bit dan 32-bit).");
+            throw new IOException(TeksUI.t("aapt2 tidak ada di aplikasi (") + aapt2 + TeksUI.t("). Alat bangun tersedia untuk arm64-v8a dan armeabi-v7a (HP ARM 64-bit dan 32-bit)."));
 
         File work = new File(ctx.getCacheDir(), "bangun-lokal");
         hapus(work);
@@ -380,7 +380,7 @@ public class BangunLokal {
         int iconId = 0;
         for (String[] d : ids) {
             int id = ctx.getResources().getIdentifier(d[1], d[0], ctx.getPackageName());
-            if (id == 0) throw new IOException("Resource " + d[0] + "/" + d[1] + " tidak ditemukan di aplikasi");
+            if (id == 0) throw new IOException("Resource " + d[0] + "/" + d[1] + TeksUI.t(" tidak ditemukan di aplikasi"));
             if (d[1].equals("icon")) iconId = id;
             idTxt.append(info.pkg).append(':').append(d[0]).append('/').append(d[1]).append(" = 0x")
                     .append(Integer.toHexString(id)).append('\n');
@@ -422,7 +422,7 @@ public class BangunLokal {
         byte[] manifest = bacaDariZip(base, "AndroidManifest.xml");
         if (manifest == null) throw new IOException("aapt2 tidak menghasilkan AndroidManifest.xml");
         if (!berisiInt(manifest, iconId))
-            throw new IOException("Id resource pada manifest tidak cocok (aapt2 mengabaikan --stable-ids)");
+            throw new IOException(TeksUI.t("Id resource pada manifest tidak cocok (aapt2 mengabaikan --stable-ids)"));
 
         // 2b) proyek Java/HTML/Situs Web/Kotlin/Python/Compose: kompilasi .java/.kt -> dex
         // (ECJ + D8 untuk Java; proyek HTML/Situs Web kini punya MainActivity.java
@@ -437,19 +437,19 @@ public class BangunLokal {
         // tipe lain. Diisi BangunPython.siapkanRuntime() lalu dibaca rakit().
         File dirPython = null;
         if ("java".equals(info.tipe) || "html".equals(info.tipe) || "situs".equals(info.tipe)) {
-            kirim(PROGRESS, "Mengompilasi proyek Java...");
+            kirim(PROGRESS, TeksUI.t("Mengompilasi proyek Java..."));
             List<File> rJava = new ArrayList<File>();
             kumpulBerakhiran(javaDir, ".java", rJava);
             dexProyek = java.util.Collections.singletonList(BangunJava.kompilasiUntukRakit(ctx, projectDir, rJava));
             log.append(BangunJava.ringkasanKompilasiTerakhir());
         } else if ("kotlin".equals(info.tipe)) {
-            kirim(PROGRESS, "Mengompilasi proyek Kotlin...");
+            kirim(PROGRESS, TeksUI.t("Mengompilasi proyek Kotlin..."));
             List<File> rJava = new ArrayList<File>();
             kumpulBerakhiran(javaDir, ".java", rJava);
             dexProyek = java.util.Collections.singletonList(BangunKotlin.kompilasiUntukRakit(ctx, projectDir, rJava));
             log.append(BangunKotlin.ringkasanKompilasiTerakhir());
         } else if ("python".equals(info.tipe)) {
-            kirim(PROGRESS, "Mengompilasi proyek Python (Chaquopy)...");
+            kirim(PROGRESS, TeksUI.t("Mengompilasi proyek Python (Chaquopy)..."));
             List<File> rJava = new ArrayList<File>();
             kumpulBerakhiran(javaDir, ".java", rJava);
             File kerjaPython = new File(work, "python");
@@ -460,9 +460,9 @@ public class BangunLokal {
             dirPython = BangunPython.siapkanRuntime(ctx, projectDir, kerjaPython);
             log.append("Runtime Python (Chaquopy ").append(BangunPython.CHAQUOPY_VERSION)
                     .append(" + Python ").append(BangunPython.PYTHON_VERSION)
-                    .append(") disiapkan di ").append(dirPython.getPath()).append('\n');
+                    .append(TeksUI.t(") disiapkan di ")).append(dirPython.getPath()).append('\n');
         } else if ("compose".equals(info.tipe)) {
-            kirim(PROGRESS, "Mengompilasi proyek Compose (kotlinc + plugin Compose)...");
+            kirim(PROGRESS, TeksUI.t("Mengompilasi proyek Compose (kotlinc + plugin Compose)..."));
             List<File> rJava = new ArrayList<File>();
             kumpulBerakhiran(javaDir, ".java", rJava);
             dexProyek = BangunCompose.kompilasiUntukRakit(ctx, projectDir, rJava);
@@ -475,7 +475,7 @@ public class BangunLokal {
         rakit(new File(ctx.getPackageCodePath()), manifest, unsigned, lib, dexProyek, aktivitasUtama(info.tipe, info.pkg), base, dirPython);
 
         // 4) simpan APK yang belum ditandatangani (tanda tangan dilakukan terpisah: lihat Penandatangan)
-        kirim(PROGRESS, "Menyimpan APK...");
+        kirim(PROGRESS, TeksUI.t("Menyimpan APK..."));
         File bin = new File(projectDir, "bin");
         bin.mkdirs();
         File out = new File(bin, info.pkg + "-belum-ditandatangani.apk");
@@ -503,13 +503,13 @@ public class BangunLokal {
         String line;
         while ((line = r.readLine()) != null) o.append(line).append('\n');
         int code = p.waitFor();
-        log.append(o).append("keluar: ").append(code).append('\n');
+        log.append(o).append(TeksUI.t("keluar: ")).append(code).append('\n');
         // Output mentah lengkap sudah dicatat di log (log-build.txt); pesan
         // yang dilempar ke pengguna hanya SATU baris pertama yang relevan,
         // diterjemahkan ke Bahasa Indonesia (lihat terjemahkanAapt2), supaya
         // dialog "Build gagal" tidak menampilkan seluruh log mentah aapt2.
         if (code != 0)
-            throw new IOException("aapt2 " + cmd.get(1) + " gagal (kode " + code + "). "
+            throw new IOException("aapt2 " + cmd.get(1) + TeksUI.t(" gagal (kode ") + code + "). "
                     + terjemahkanAapt2(o.toString(), cmd.get(1)));
     }
 
@@ -521,7 +521,7 @@ public class BangunLokal {
      *  apa adanya (dipotong); output mentah lengkap tetap ada di log. */
     private static String terjemahkanAapt2(String mentah, String sub) {
         if (mentah == null || mentah.trim().length() == 0)
-            return "Tidak ada rincian dari aapt2. Lihat log-build.txt.";
+            return TeksUI.t("Tidak ada rincian dari aapt2. Lihat log-build.txt.");
         String[] baris = mentah.split("\n");
         for (String b : baris) {
             String kecil = b.toLowerCase(java.util.Locale.ROOT);
@@ -529,24 +529,24 @@ public class BangunLokal {
                     && kecil.indexOf("failed") < 0) continue;
             String berkas = ambilBerkasAapt2(b);
             String barisNo = ambilNomorBaris(b);
-            String di = berkas == null ? "" : " di " + berkas + barisNo;
+            String di = berkas == null ? "" : TeksUI.t(" di ") + berkas + barisNo;
             if (kecil.contains("invalid file name"))
-                return "Nama berkas resource tidak valid" + di
-                        + ". Nama berkas di folder res hanya boleh huruf kecil (a-z), angka, garis bawah (_), dan titik. Ganti nama berkasnya, mis. \"IconKu.png\" menjadi \"icon_ku.png\".";
+                return TeksUI.t("Nama berkas resource tidak valid") + di
+                        + TeksUI.t(". Nama berkas di folder res hanya boleh huruf kecil (a-z), angka, garis bawah (_), dan titik. Ganti nama berkasnya, mis. \"IconKu.png\" menjadi \"icon_ku.png\".");
             if (kecil.contains("failed to crunch") || kecil.contains("libpng error")
                     || kecil.contains("not a png") || kecil.contains("failed to read png"))
-                return "Gambar rusak atau bukan PNG yang valid" + di
-                        + ". Simpan ulang gambar itu sebagai PNG yang benar (atau hapus bila tidak dipakai).";
+                return TeksUI.t("Gambar rusak atau bukan PNG yang valid") + di
+                        + TeksUI.t(". Simpan ulang gambar itu sebagai PNG yang benar (atau hapus bila tidak dipakai).");
             if (kecil.contains("duplicate resource"))
                 return "Resource duplikat" + di
                         + ". Ada dua resource dengan nama yang sama; hapus salah satunya.";
             if (kecil.contains("not found") || kecil.contains("no resource found"))
-                return "Resource tidak ditemukan" + di
+                return TeksUI.t("Resource tidak ditemukan") + di
                         + ". Periksa rujukan @drawable/@layout/@string/@color di berkas itu - nama resource yang dirujuk harus ada di folder res.";
             if (kecil.contains("failed to parse") || kecil.contains("failed parsing")
                     || kecil.contains("not well-formed") || kecil.contains("error parsing xml"))
-                return "Berkas XML rusak" + di
-                        + ". Periksa tanda kurung/tag yang belum ditutup di berkas itu.";
+                return TeksUI.t("Berkas XML rusak") + di
+                        + TeksUI.t(". Periksa tanda kurung/tag yang belum ditutup di berkas itu.");
             // Pola tidak dikenal: pakai baris error ini apa adanya (dipotong).
             return potongPesan("aapt2 " + sub + ": " + b.trim());
         }
@@ -554,7 +554,7 @@ public class BangunLokal {
         for (int i = baris.length - 1; i >= 0; i--) {
             if (baris[i].trim().length() > 0) return potongPesan("aapt2 " + sub + ": " + baris[i].trim());
         }
-        return "aapt2 " + sub + " gagal tanpa rincian. Lihat log-build.txt.";
+        return "aapt2 " + sub + TeksUI.t(" gagal tanpa rincian. Lihat log-build.txt.");
     }
 
     /** Ambil jalur res/... dari satu baris error aapt2 (bila ada), mis.

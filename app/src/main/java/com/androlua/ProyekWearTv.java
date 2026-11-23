@@ -75,7 +75,7 @@ public class ProyekWearTv {
     public static String terapkan(File dirProyek, String target) {
         if (!targetValid(target)) return "Target tidak dikenal: " + target;
         if (dirProyek == null || !dirProyek.isDirectory()) {
-            return "Folder proyek tidak ditemukan.";
+            return TeksUI.t("Folder proyek tidak ditemukan.");
         }
         File manifes = new File(dirProyek, JALUR_MANIFEST);
         if (!manifes.isFile()) {
@@ -165,7 +165,7 @@ public class ProyekWearTv {
 
     /** Layout activity_main.xml untuk Wear OS (layar kecil). */
     public static String layoutWear(String namaAplikasi) {
-        String nama = namaAplikasi == null ? "Aplikasi" : namaAplikasi;
+        String nama = namaAplikasi == null ? TeksUI.t("Aplikasi") : namaAplikasi;
         return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
                 + "<!-- Layout Wear OS (Tahap 3I): layar kecil, teks besar, tombol di tengah.\n"
                 + "     Ramah layar bundar maupun persegi. -->\n"
@@ -198,7 +198,7 @@ public class ProyekWearTv {
 
     /** Layout activity_main.xml untuk Android TV (layar besar, D-pad). */
     public static String layoutTv(String namaAplikasi) {
-        String nama = namaAplikasi == null ? "Aplikasi" : namaAplikasi;
+        String nama = namaAplikasi == null ? TeksUI.t("Aplikasi") : namaAplikasi;
         return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
                 + "<!-- Layout Android TV (Tahap 3I): teks besar, tombol bisa difokus,\n"
                 + "     ramah navigasi D-pad (tombol arah remote). -->\n"
@@ -239,9 +239,9 @@ public class ProyekWearTv {
 
     /** Isi berkas panduan wear-tv.txt di akar proyek. */
     public static String panduan(String target, String namaAplikasi) {
-        String nama = namaAplikasi == null ? "Aplikasi" : namaAplikasi;
+        String nama = namaAplikasi == null ? TeksUI.t("Aplikasi") : namaAplikasi;
         StringBuilder sb = new StringBuilder();
-        sb.append("Proyek ").append(nama).append(" — target: ")
+        sb.append(TeksUI.t("Proyek ")).append(nama).append(" — target: ")
                 .append(namaTarget(target)).append("\n\n");
         sb.append("Yang sudah diubah IDE:\n");
         if (TARGET_WEAR.equals(target) || TARGET_KEDUA.equals(target)) {

@@ -41,19 +41,19 @@ public class TemaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Desainer Tema");
+        setTitle(TeksUI.t("Desainer Tema"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Desainer Tema", 20);
-        label(r, "Pilih proyek dan tema warna — IDE menulis tema sungguhan "
+        heading(r, TeksUI.t("Desainer Tema"), 20);
+        label(r, TeksUI.t("Pilih proyek dan tema warna — IDE menulis tema sungguhan ")
                 + "(colors.xml + styles.xml) ke proyekmu. Pratinjau di bawah "
-                + "menunjukkan enam warna tema yang dipilih.", false);
+                + TeksUI.t("menunjukkan enam warna tema yang dipilih."), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -62,7 +62,7 @@ public class TemaActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Pilih tema:", false);
+        label(r, TeksUI.t("Pilih tema:"), false);
         spTema = new Spinner(this);
         String[] tema = new String[DesainerTema.SEMUA.length];
         for (int i = 0; i < tema.length; i++) tema[i] = DesainerTema.SEMUA[i].nama;
@@ -83,20 +83,20 @@ public class TemaActivity extends Activity {
         r.addView(spTema, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Pratinjau tema:", false);
+        label(r, TeksUI.t("Pratinjau tema:"), false);
         kotakPratinjau = new LinearLayout(this);
         kotakPratinjau.setOrientation(LinearLayout.HORIZONTAL);
         r.addView(kotakPratinjau, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         tvPratinjau = label(r, "", false);
 
-        button(r, "Terapkan Tema", new View.OnClickListener() {
+        button(r, TeksUI.t("Terapkan Tema"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 terapkanTema();
             }
         });
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -105,7 +105,7 @@ public class TemaActivity extends Activity {
 
         muatDaftar();
         perbaruiPratinjau();
-        announce("Desainer Tema. Pilih proyek dan tema, lalu tekan Terapkan Tema.");
+        announce(TeksUI.t("Desainer Tema. Pilih proyek dan tema, lalu tekan Terapkan Tema."));
     }
 
     @Override
@@ -131,8 +131,8 @@ public class TemaActivity extends Activity {
         kotakPratinjau.removeAllViews();
         DesainerTema.Tema t = temaTerpilih();
         String[] warna = {t.primer, t.primerGelap, t.aksen, t.latar, t.teks, t.teksSekunder};
-        String[] nama = {"Primer", "Primer gelap", "Aksen", "Latar", "Teks", "Teks sekunder"};
-        StringBuilder deskripsi = new StringBuilder("Tema " + t.nama + ": ");
+        String[] nama = {TeksUI.t("Primer"), TeksUI.t("Primer gelap"), TeksUI.t("Aksen"), TeksUI.t("Latar"), TeksUI.t("Teks"), TeksUI.t("Teks sekunder")};
+        StringBuilder deskripsi = new StringBuilder(TeksUI.t("Tema ") + t.nama + ": ");
         for (int i = 0; i < warna.length; i++) {
             View kotak = new View(this);
             try {
@@ -159,7 +159,7 @@ public class TemaActivity extends Activity {
         DesainerTema.Tema t = temaTerpilih();
         String galat = DesainerTema.terapkanTema(new File(ROOT + "/" + nama), t.id);
         if (galat == null) {
-            String ok = "Tema " + t.nama + " diterapkan ke proyek " + nama
+            String ok = TeksUI.t("Tema ") + t.nama + TeksUI.t(" diterapkan ke proyek ") + nama
                     + " (colors.xml + styles.xml).";
             toast(ok);
             announce(ok);

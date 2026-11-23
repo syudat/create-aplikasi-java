@@ -45,13 +45,13 @@ public class BackendOtomatis {
 
     public static final Jenis[] SEMUA = {
         new Jenis("catatan", "Catatan",
-                "Simpan catatan singkat (judul + isi) dan baca lagi kapan saja.",
+                TeksUI.t("Simpan catatan singkat (judul + isi) dan baca lagi kapan saja."),
                 "ca_backend_catatan"),
-        new Jenis("tugas", "Daftar Tugas",
-                "Daftar tugas yang bisa dicentang selesai dan dihapus.",
+        new Jenis("tugas", TeksUI.t("Daftar Tugas"),
+                TeksUI.t("Daftar tugas yang bisa dicentang selesai dan dihapus."),
                 "ca_backend_tugas"),
         new Jenis("pesan", "Papan Pesan",
-                "Papan pesan sederhana: tulis nama dan pesan, semua pesan tampil berurutan.",
+                TeksUI.t("Papan pesan sederhana: tulis nama dan pesan, semua pesan tampil berurutan."),
                 "ca_backend_pesan"),
     };
 
@@ -70,9 +70,9 @@ public class BackendOtomatis {
      */
     public static String terapkanBackend(File dirProyek, String jenisId) {
         Jenis j = cari(jenisId);
-        if (j == null) return "Jenis backend tidak dikenal: " + jenisId;
+        if (j == null) return TeksUI.t("Jenis backend tidak dikenal: ") + jenisId;
         if (dirProyek == null || !dirProyek.isDirectory()) {
-            return "Folder proyek tidak ditemukan.";
+            return TeksUI.t("Folder proyek tidak ditemukan.");
         }
         File assets = new File(dirProyek, "app/src/main/assets");
         assets.mkdirs();
@@ -80,7 +80,7 @@ public class BackendOtomatis {
         if (galat != null) return galat;
         galat = tulisBerkas(new File(assets, "backend-klien.js"), klienJsUntuk(j));
         if (galat != null) return galat;
-        galat = tulisBerkas(new File(dirProyek, "BACA-SAYA.txt"), bacaSayaUntuk(j));
+        galat = tulisBerkas(new File(dirProyek, TeksUI.t("BACA-SAYA.txt")), bacaSayaUntuk(j));
         if (galat != null) return galat;
         return null;
     }
@@ -177,7 +177,7 @@ public class BackendOtomatis {
         sb.append(j.penjelasan).append("\n\n");
         sb.append("CARA KERJA\n");
         sb.append("Halaman index.html adalah backend-nya: formulir menyimpan data, daftar menampilkan data.\n");
-        sb.append("Data disimpan di localStorage WebView dengan kunci '").append(j.kunci).append("'.\n");
+        sb.append(TeksUI.t("Data disimpan di localStorage WebView dengan kunci '")).append(j.kunci).append("'.\n");
         sb.append("Data tersimpan di HP yang menjalankan aplikasi dan bisa dibaca kembali setelah aplikasi ditutup.\n\n");
         sb.append("FUNGSI KLIEN (di backend-klien.js, sertakan berkas ini di halaman lain):\n");
         if ("catatan".equals(j.id)) {
@@ -204,7 +204,7 @@ public class BackendOtomatis {
             }
             return null;
         } catch (Exception e) {
-            return "Gagal menulis " + f.getAbsolutePath() + ": " + e.getMessage();
+            return TeksUI.t("Gagal menulis ") + f.getAbsolutePath() + ": " + e.getMessage();
         }
     }
 }

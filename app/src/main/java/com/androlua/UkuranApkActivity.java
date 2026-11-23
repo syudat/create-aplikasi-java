@@ -40,22 +40,22 @@ public class UkuranApkActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Kalkulator Ukuran APK");
+        setTitle(TeksUI.t("Kalkulator Ukuran APK"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Kalkulator Ukuran APK", 20);
-        label(r, "Perkirakan ukuran APK hasil build dari sebuah proyek: "
-                + "rincian per kategori, total perkiraan, 5 berkas "
-                + "terbesar, dan saran mengecilkan. Ini PERKIRAAN, bukan "
-                + "ukuran pasti — ukuran sungguhan bisa berbeda karena "
-                + "kompresi aapt2, penghapusan kode tak terpakai (R8), dan "
+        heading(r, TeksUI.t("Kalkulator Ukuran APK"), 20);
+        label(r, TeksUI.t("Perkirakan ukuran APK hasil build dari sebuah proyek: ")
+                + TeksUI.t("rincian per kategori, total perkiraan, 5 berkas ")
+                + TeksUI.t("terbesar, dan saran mengecilkan. Ini PERKIRAAN, bukan ")
+                + TeksUI.t("ukuran pasti — ukuran sungguhan bisa berbeda karena ")
+                + TeksUI.t("kompresi aapt2, penghapusan kode tak terpakai (R8), dan ")
                 + "resource hasil build.", false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -77,7 +77,7 @@ public class UkuranApkActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -85,7 +85,7 @@ public class UkuranApkActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Kalkulator Ukuran APK. Pilih proyek, lalu tekan Hitung Perkiraan.");
+        announce(TeksUI.t("Kalkulator Ukuran APK. Pilih proyek, lalu tekan Hitung Perkiraan."));
     }
 
     @Override
@@ -110,7 +110,7 @@ public class UkuranApkActivity extends Activity {
         if (tvHasil != null) tvHasil.setText(teks);
         KalkulatorUkuran.Hasil h = KalkulatorUkuran.perkirakan(dir);
         if (h != null) {
-            announce("Perkiraan ukuran APK proyek " + dir.getName() + ": "
+            announce(TeksUI.t("Perkiraan ukuran APK proyek ") + dir.getName() + ": "
                     + PetaProyek.formatUkuran(h.total) + ".");
         }
     }

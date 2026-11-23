@@ -29,10 +29,10 @@ public class InfoPengembang {
     public static String pesanSapa(String nama, String kota) {
         String n = nama == null ? "" : nama.trim();
         String k = kota == null ? "" : kota.trim();
-        return "Halo Al Kausar, perkenalkan nama saya " + n
-                + ". Saya berasal dari " + k
-                + ". Saya ingin mengapresiasi. Semangat ya Bang Al Kausar. "
-                + "Semoga karya-karyamu bermanfaat untuk semua orang.";
+        return TeksUI.t("Halo Al Kausar, perkenalkan nama saya ") + n
+                + TeksUI.t(". Saya berasal dari ") + k
+                + TeksUI.t(". Saya ingin mengapresiasi. Semangat ya Bang Al Kausar. ")
+                + TeksUI.t("Semoga karya-karyamu bermanfaat untuk semua orang.");
     }
 
     /** Nama dan kota wajib diisi sebelum membuka WhatsApp. */

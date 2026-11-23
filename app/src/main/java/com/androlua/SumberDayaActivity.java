@@ -40,20 +40,20 @@ public class SumberDayaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pengelola Sumber Daya");
+        setTitle(TeksUI.t("Pengelola Sumber Daya"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pengelola Sumber Daya", 20);
-        label(r, "Lihat semua sumber daya proyek dalam satu tempat: berkas "
-                + "gambar, layout, string, warna, dan gaya, lengkap dengan "
-                + "ukurannya. Di sini juga bisa menambah string dan warna "
-                + "baru tanpa menyunting XML dengan tangan.", false);
+        heading(r, TeksUI.t("Pengelola Sumber Daya"), 20);
+        label(r, TeksUI.t("Lihat semua sumber daya proyek dalam satu tempat: berkas ")
+                + TeksUI.t("gambar, layout, string, warna, dan gaya, lengkap dengan ")
+                + TeksUI.t("ukurannya. Di sini juga bisa menambah string dan warna ")
+                + TeksUI.t("baru tanpa menyunting XML dengan tangan."), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -62,15 +62,15 @@ public class SumberDayaActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Lihat Sumber Daya", new View.OnClickListener() {
+        button(r, TeksUI.t("Lihat Sumber Daya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 lihat();
             }
         });
 
-        heading(r, "Tambah String Baru", 16);
-        eNamaString = field(r, "Nama string (huruf kecil, contoh: judul_utama)");
+        heading(r, TeksUI.t("Tambah String Baru"), 16);
+        eNamaString = field(r, TeksUI.t("Nama string (huruf kecil, contoh: judul_utama)"));
         eNilaiString = field(r, "Isi string");
         button(r, "Tambah String ke strings.xml", new View.OnClickListener() {
             @Override
@@ -79,9 +79,9 @@ public class SumberDayaActivity extends Activity {
             }
         });
 
-        heading(r, "Tambah Warna Baru", 16);
-        eNamaWarna = field(r, "Nama warna (huruf kecil, contoh: warna_aksen)");
-        eNilaiWarna = field(r, "Nilai warna (contoh: #FF5722)");
+        heading(r, TeksUI.t("Tambah Warna Baru"), 16);
+        eNamaWarna = field(r, TeksUI.t("Nama warna (huruf kecil, contoh: warna_aksen)"));
+        eNilaiWarna = field(r, TeksUI.t("Nilai warna (contoh: #FF5722)"));
         button(r, "Tambah Warna ke colors.xml", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,7 +95,7 @@ public class SumberDayaActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -103,7 +103,7 @@ public class SumberDayaActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Pengelola Sumber Daya. Pilih proyek, lalu tekan Lihat Sumber Daya.");
+        announce(TeksUI.t("Pengelola Sumber Daya. Pilih proyek, lalu tekan Lihat Sumber Daya."));
     }
 
     @Override
@@ -132,8 +132,8 @@ public class SumberDayaActivity extends Activity {
         SumberDaya.Ringkasan h = SumberDaya.baca(dir);
         tvHasil.setText(SumberDaya.laporan(h, dir.getName()));
         if (h.galat == null) {
-            announce("Selesai. " + h.jumlahBerkas + " berkas sumber daya, "
-                    + h.strings.size() + " string, " + h.colors.size() + " warna, "
+            announce(TeksUI.t("Selesai. ") + h.jumlahBerkas + TeksUI.t(" berkas sumber daya, ")
+                    + h.strings.size() + " string, " + h.colors.size() + TeksUI.t(" warna, ")
                     + h.styles.size() + " gaya.");
         } else {
             announce(h.galat);
@@ -178,7 +178,7 @@ public class SumberDayaActivity extends Activity {
                 return;
             }
             toast("Warna ditambahkan.");
-            announce("Warna " + eNamaWarna.getText().toString().trim() + " ditambahkan ke colors.xml.");
+            announce(TeksUI.t("Warna ") + eNamaWarna.getText().toString().trim() + " ditambahkan ke colors.xml.");
             eNamaWarna.setText("");
             eNilaiWarna.setText("");
             lihat();

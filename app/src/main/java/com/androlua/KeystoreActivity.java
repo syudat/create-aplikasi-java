@@ -50,45 +50,45 @@ public class KeystoreActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Buat Keystore");
+        setTitle(TeksUI.t("Buat Keystore"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Buat Keystore", 20);
-        label(r, "Keystore adalah kunci tanda tangan pribadi untuk aplikasi Anda. Simpan kata sandinya baik-baik: "
-                + "tanpa kunci dan kata sandi yang sama, aplikasi yang sudah terpasang tidak dapat diperbarui.", true);
+        heading(r, TeksUI.t("Buat Keystore"), 20);
+        label(r, TeksUI.t("Keystore adalah kunci tanda tangan pribadi untuk aplikasi Anda. Simpan kata sandinya baik-baik: ")
+                + TeksUI.t("tanpa kunci dan kata sandi yang sama, aplikasi yang sudah terpasang tidak dapat diperbarui."), true);
 
-        eName = field(r, "Nama tanda tangan", "Masukkan nama tanda tangan di sini, contoh: Al Kautsar");
-        ePass = field(r, "Kata sandi", "Masukkan kata sandi di sini, minimal 6 karakter, contoh: rahasia123");
-        ePass2 = field(r, "Ulangi kata sandi", "Masukkan kata sandi yang sama sekali lagi");
-        eAlias = field(r, "Nama samaran (alias)", "Masukkan nama samaran di sini, tanpa spasi, contoh: alkautsar");
-        eCN = field(r, "Nama lengkap (CN)", "Masukkan nama lengkap di sini, contoh: Al Kautsar");
-        eOU = field(r, "Unit organisasi (OU)", "Masukkan unit organisasi di sini, contoh: Pengembangan Aplikasi");
-        eO = field(r, "Organisasi (O)", "Masukkan nama organisasi di sini, contoh: Suara Tekno Indonesia");
-        eL = field(r, "Kota (L)", "Masukkan nama kota di sini, contoh: Makassar");
-        eST = field(r, "Provinsi (ST)", "Masukkan nama provinsi di sini, contoh: Sulawesi Selatan");
-        eC = field(r, "Kode negara (C), kosong = ID", "Masukkan kode negara 2 huruf di sini, contoh: ID");
-        eYears = field(r, "Masa berlaku dalam tahun (kosong = 25)", "Masukkan masa berlaku di sini, contoh: 25", true);
+        eName = field(r, TeksUI.t("Nama tanda tangan"), TeksUI.t("Masukkan nama tanda tangan di sini, contoh: Al Kautsar"));
+        ePass = field(r, TeksUI.t("Kata sandi"), TeksUI.t("Masukkan kata sandi di sini, minimal 6 karakter, contoh: rahasia123"));
+        ePass2 = field(r, TeksUI.t("Ulangi kata sandi"), TeksUI.t("Masukkan kata sandi yang sama sekali lagi"));
+        eAlias = field(r, TeksUI.t("Nama samaran (alias)"), TeksUI.t("Masukkan nama samaran di sini, tanpa spasi, contoh: alkautsar"));
+        eCN = field(r, TeksUI.t("Nama lengkap (CN)"), TeksUI.t("Masukkan nama lengkap di sini, contoh: Al Kautsar"));
+        eOU = field(r, "Unit organisasi (OU)", TeksUI.t("Masukkan unit organisasi di sini, contoh: Pengembangan Aplikasi"));
+        eO = field(r, "Organisasi (O)", TeksUI.t("Masukkan nama organisasi di sini, contoh: Suara Tekno Indonesia"));
+        eL = field(r, "Kota (L)", TeksUI.t("Masukkan nama kota di sini, contoh: Makassar"));
+        eST = field(r, "Provinsi (ST)", TeksUI.t("Masukkan nama provinsi di sini, contoh: Sulawesi Selatan"));
+        eC = field(r, TeksUI.t("Kode negara (C), kosong = ID"), TeksUI.t("Masukkan kode negara 2 huruf di sini, contoh: ID"));
+        eYears = field(r, TeksUI.t("Masa berlaku dalam tahun (kosong = 25)"), TeksUI.t("Masukkan masa berlaku di sini, contoh: 25"), true);
         ePass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         ePass2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
-        button(r, "Buat Keystore", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Keystore"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatKeystore();
             }
         });
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Buat Keystore");
+        announce(TeksUI.t("Buat Keystore"));
     }
 
     @Override
@@ -296,10 +296,10 @@ public class KeystoreActivity extends Activity {
         }
 
         final AlertDialog dlg = new AlertDialog.Builder(this)
-                .setTitle("Membuat keystore")
+                .setTitle(TeksUI.t("Membuat keystore"))
                 .setMessage("Menyiapkan...")
                 .setCancelable(false)
-                .setPositiveButton("Tutup", null)
+                .setPositiveButton(TeksUI.t("Tutup"), null)
                 .create();
         dlg.show();
         dlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
@@ -317,12 +317,12 @@ public class KeystoreActivity extends Activity {
                         }
                         dlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
                         if (kind == BangunLokal.SUCCESS) {
-                            dlg.setTitle("Keystore berhasil dibuat");
+                            dlg.setTitle(TeksUI.t("Keystore berhasil dibuat"));
                             dlg.setMessage("Tersimpan di:\n" + msg + "\n\nSaat membangun, centang "
-                                    + "\"Gunakan tanda tangan pribadi\" pada project, lalu pilih "
-                                    + "tanda tangan ini dan masukkan kata sandinya.");
+                                    + TeksUI.t("\"Gunakan tanda tangan pribadi\" pada project, lalu pilih ")
+                                    + TeksUI.t("tanda tangan ini dan masukkan kata sandinya."));
                         } else {
-                            dlg.setTitle("Gagal");
+                            dlg.setTitle(TeksUI.t("Gagal"));
                             dlg.setMessage(msg);
                         }
                     }

@@ -95,7 +95,7 @@ public class BangunKotlin {
 
     private byte[] jalankan() throws Exception {
         if (!new File(ctx.getApplicationInfo().nativeLibraryDir).isDirectory())
-            throw new IOException("Direktori native tidak ditemukan");
+            throw new IOException(TeksUI.t("Direktori native tidak ditemukan"));
 
         kirim(PROGRESS, "Menyiapkan compiler Kotlin (kotlinc 1.9.24 + ECJ + D8)...");
         File cache = new File(ctx.getCacheDir(), "bangun-kotlin");
@@ -110,13 +110,13 @@ public class BangunKotlin {
         } catch (IOException e) {
             // FileNotFoundException dari AssetManager hanya berisi nama aset,
             // sehingga pengguna tidak tahu maksudnya; jelaskan langsung.
-            throw new IOException("Compiler Kotlin tidak ditemukan di aplikasi (alat/kotlin-compiler-dex.jar hilang). Coba pasang ulang aplikasi Create Aplikasi.", e);
+            throw new IOException(TeksUI.t("Compiler Kotlin tidak ditemukan di aplikasi (alat/kotlin-compiler-dex.jar hilang). Coba pasang ulang aplikasi Create Aplikasi."), e);
         }
         // Berkas compiler seharusnya ~56 MB; bila jauh lebih kecil, hasil
         // ekstraknya terpotong/rusak dan DexClassLoader akan gagal samar.
         if (kotlinDexJar.length() < 10L * 1024 * 1024)
-            throw new IOException("Compiler Kotlin rusak (alat/kotlin-compiler-dex.jar hanya "
-                    + kotlinDexJar.length() + " bita, seharusnya sekitar 56 MB). Coba pasang ulang aplikasi Create Aplikasi.");
+            throw new IOException(TeksUI.t("Compiler Kotlin rusak (alat/kotlin-compiler-dex.jar hanya ")
+                    + kotlinDexJar.length() + TeksUI.t(" bita, seharusnya sekitar 56 MB). Coba pasang ulang aplikasi Create Aplikasi."));
         File stdlibJar = ekstrakAset("alat/kotlin-stdlib-1.9.24.jar", new File(cache, "kotlin-stdlib-1.9.24.jar"));
         File scriptJar = ekstrakAset("alat/kotlin-script-runtime-1.9.24.jar", new File(cache, "kotlin-script-runtime-1.9.24.jar"));
         File ecjJar = ekstrakAset("alat/ecj-dex.jar", new File(cache, "ecj-dex.jar"));
@@ -131,7 +131,7 @@ public class BangunKotlin {
             // melempar IOException berbahasa Inggris yang samar bagi pengguna.
             kotlinCl = buatDexClassLoader(kotlinDexJar.getPath(), odex, induk);
         } catch (Exception e) {
-            throw new IOException("Compiler Kotlin rusak/tidak bisa dimuat (kotlin-compiler-dex.jar mungkin rusak). Coba pasang ulang aplikasi Create Aplikasi.", e);
+            throw new IOException(TeksUI.t("Compiler Kotlin rusak/tidak bisa dimuat (kotlin-compiler-dex.jar mungkin rusak). Coba pasang ulang aplikasi Create Aplikasi."), e);
         }
         Object eclCl = buatDexClassLoader(ecjJar.getPath() + File.pathSeparator + stubJar.getPath(), odex, induk);
         Object r8Cl = buatDexClassLoader(r8Jar, odex, induk);
@@ -149,7 +149,7 @@ public class BangunKotlin {
         List<File> ktFiles = new ArrayList<File>();
         kumpulBerakhiran(projectDir, ".kt", ktFiles);
         if (ktFiles.isEmpty())
-            throw new IOException("Tidak ada berkas .kt di proyek ini");
+            throw new IOException(TeksUI.t("Tidak ada berkas .kt di proyek ini"));
 
         // Berkas .java proyek (dipakai ECJ; R.java hasil aapt2 ditambah dari sumberTambahan)
         List<File> javaFiles = new ArrayList<File>();
@@ -158,7 +158,7 @@ public class BangunKotlin {
         if (sumberTambahan != null) javaFiles.addAll(sumberTambahan);
 
         StringBuilder ringkasan = new StringBuilder();
-        ringkasan.append("Berkas .kt proyek yang dikompilasi kotlinc (").append(ktFiles.size()).append("):\n");
+        ringkasan.append(TeksUI.t("Berkas .kt proyek yang dikompilasi kotlinc (")).append(ktFiles.size()).append("):\n");
         String akar = projectDir.getAbsolutePath();
         for (File f : ktFiles) {
             String p = f.getAbsolutePath();
@@ -182,7 +182,7 @@ public class BangunKotlin {
         }
 
         // 3) kotlinc untuk .kt -> kotlinOut
-        kirim(PROGRESS, "Mengompilasi " + ktFiles.size() + " berkas .kt (kotlinc)...");
+        kirim(PROGRESS, "Mengompilasi " + ktFiles.size() + TeksUI.t(" berkas .kt (kotlinc)..."));
         kompilasiKotlin(kotlinCl, ktFiles, androidJar, stdlibJar, javaOut, kotlinHome, kotlinOut);
 
         // 4) dex hasil kompilasi (ECJ + kotlinc + stdlib) dengan D8 (R8 dalam mode dexer saja)
@@ -193,7 +193,7 @@ public class BangunKotlin {
         // Kelas R hasil aapt2 jangan ikut di-dex (lihat BangunJava.buangKelasR):
         // dex kerangka sudah berisi com.androlua.R yang sama.
         BangunJava.buangKelasR(classFiles);
-        if (classFiles.isEmpty()) throw new IOException("kotlinc/ECJ tidak menghasilkan berkas .class");
+        if (classFiles.isEmpty()) throw new IOException(TeksUI.t("kotlinc/ECJ tidak menghasilkan berkas .class"));
 
         // Proyek Kotlin WAJIB punya kelas MainActivity (peluncur di manifest).
         // Tanpa pemeriksaan ini, build "berhasil" tetapi APK hasil langsung
@@ -205,9 +205,9 @@ public class BangunKotlin {
             if (f.getName().equals("MainActivity.class")) { adaMainActivity = true; break; }
         }
         if (!adaMainActivity)
-            throw new IOException("Proyek Kotlin tidak punya MainActivity: buat MainActivity.kt "
+            throw new IOException(TeksUI.t("Proyek Kotlin tidak punya MainActivity: buat MainActivity.kt ")
                     + "(atau MainActivity.java) berisi kelas MainActivity turunan android.app.Activity "
-                    + "di paket proyek, lalu bangun lagi.");
+                    + TeksUI.t("di paket proyek, lalu bangun lagi."));
 
         List<Path> programPaths = new ArrayList<Path>();
         for (File f : classFiles) programPaths.add(f.toPath());
@@ -218,9 +218,9 @@ public class BangunKotlin {
         jalankanD8(r8Cl, programPaths, androidJar.toPath(), dexOut);
 
         File hasil = new File(dexOut, "classes.dex");
-        if (!hasil.isFile()) throw new IOException("D8 tidak menghasilkan classes.dex");
+        if (!hasil.isFile()) throw new IOException(TeksUI.t("D8 tidak menghasilkan classes.dex"));
         byte[] data = BangunLokal.baca(hasil);
-        kirim(PROGRESS, "Kompilasi Kotlin selesai (" + data.length + " bita dex).");
+        kirim(PROGRESS, TeksUI.t("Kompilasi Kotlin selesai (") + data.length + " bita dex).");
         return data;
     }
 
@@ -253,9 +253,9 @@ public class BangunKotlin {
         } catch (java.lang.reflect.InvocationTargetException ite) {
             Throwable penyebab = ite.getCause();
             if (penyebab != null) {
-                log.append("Disebabkan oleh: ").append(penyebab).append('\n');
+                log.append(TeksUI.t("Disebabkan oleh: ")).append(penyebab).append('\n');
                 for (StackTraceElement s : penyebab.getStackTrace()) {
-                    log.append("    di ").append(s).append('\n');
+                    log.append(TeksUI.t("    di ")).append(s).append('\n');
                 }
                 if (penyebab instanceof Exception) throw (Exception) penyebab;
                 if (penyebab instanceof Error) throw (Error) penyebab;
@@ -282,7 +282,7 @@ public class BangunKotlin {
         try {
             cCompiler = loadClass(kotlinCl, "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler");
         } catch (Exception e) {
-            throw new IOException("Compiler Kotlin rusak (kelas K2JVMCompiler tidak ditemukan di kotlin-compiler-dex.jar). Coba pasang ulang aplikasi Create Aplikasi.", e);
+            throw new IOException(TeksUI.t("Compiler Kotlin rusak (kelas K2JVMCompiler tidak ditemukan di kotlin-compiler-dex.jar). Coba pasang ulang aplikasi Create Aplikasi."), e);
         }
         Object compiler = cCompiler.getDeclaredConstructor().newInstance();
 
@@ -315,7 +315,7 @@ public class BangunKotlin {
         } catch (java.lang.reflect.InvocationTargetException ite) {
             Throwable penyebab = ite.getCause();
             if (penyebab != null) {
-                log.append("Disebabkan oleh: ").append(penyebab).append('\n');
+                log.append(TeksUI.t("Disebabkan oleh: ")).append(penyebab).append('\n');
                 if (penyebab instanceof Exception) throw (Exception) penyebab;
                 if (penyebab instanceof Error) throw (Error) penyebab;
             }
@@ -330,7 +330,7 @@ public class BangunKotlin {
         if (!"OK".equals(String.valueOf(exitCode))) {
             String rincian = errText.trim().length() > 0 ? errText
                     : "(compiler tidak menulis rincian; lihat log-build.txt)";
-            throw new IOException("Kompilasi Kotlin gagal (" + exitCode + "):\n" + rincian);
+            throw new IOException(TeksUI.t("Kompilasi Kotlin gagal (") + exitCode + "):\n" + rincian);
         }
     }
 
@@ -351,7 +351,7 @@ public class BangunKotlin {
         for (Object c : cOutputMode.getEnumConstants()) {
             if (c.toString().equals("DexIndexed")) dexIndexed = c;
         }
-        if (dexIndexed == null) throw new IOException("OutputMode.DexIndexed tidak ditemukan");
+        if (dexIndexed == null) throw new IOException(TeksUI.t("OutputMode.DexIndexed tidak ditemukan"));
         cBuilder.getMethod("setOutput", Path.class, cOutputMode).invoke(builder, dexOut.toPath(), dexIndexed);
         Object command = cBuilder.getMethod("build").invoke(builder);
         Method mRun = cD8.getMethod("run", cD8Command);

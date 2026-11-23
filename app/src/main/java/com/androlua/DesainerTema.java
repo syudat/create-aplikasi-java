@@ -58,13 +58,13 @@ public class DesainerTema {
                 "#2196F3", "#1976D2", "#FF9800", "#FFFFFF", "#212121", "#757575"),
         new Tema("gelap", "Gelap",
                 "#212121", "#000000", "#BB86FC", "#121212", "#FFFFFF", "#B0B0B0"),
-        new Tema("biru", "Biru",
+        new Tema("biru", TeksUI.t("Biru"),
                 "#0D47A1", "#002171", "#40C4FF", "#E3F2FD", "#0D47A1", "#546E7A"),
-        new Tema("hijau", "Hijau",
+        new Tema("hijau", TeksUI.t("Hijau"),
                 "#2E7D32", "#1B5E20", "#69F0AE", "#E8F5E9", "#1B5E20", "#558B2F"),
-        new Tema("merah", "Merah",
+        new Tema("merah", TeksUI.t("Merah"),
                 "#C62828", "#8E0000", "#FF8A80", "#FFEBEE", "#B71C1C", "#795548"),
-        new Tema("ungu", "Ungu",
+        new Tema("ungu", TeksUI.t("Ungu"),
                 "#6A1B9A", "#38006B", "#EA80FC", "#F3E5F5", "#4A148C", "#7B1FA2"),
     };
 
@@ -89,9 +89,9 @@ public class DesainerTema {
      */
     public static String terapkanTema(File dirProyek, String idTema) {
         Tema t = cari(idTema);
-        if (t == null) return "Tema tidak dikenal: " + idTema;
+        if (t == null) return TeksUI.t("Tema tidak dikenal: ") + idTema;
         if (dirProyek == null || !dirProyek.isDirectory()) {
-            return "Folder proyek tidak ditemukan.";
+            return TeksUI.t("Folder proyek tidak ditemukan.");
         }
         File values = new File(dirProyek, "app/src/main/res/values");
         values.mkdirs();
@@ -106,14 +106,14 @@ public class DesainerTema {
     public static String colorsXml(Tema t) {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-        sb.append("<!-- Tema ").append(t.nama).append(" (dibuat oleh Desainer Tema Otomatis) -->\n");
+        sb.append(TeksUI.t("<!-- Tema ")).append(t.nama).append(" (dibuat oleh Desainer Tema Otomatis) -->\n");
         sb.append("<resources>\n");
-        sb.append("    <color name=\"warna_primer\">").append(t.primer).append("</color>\n");
-        sb.append("    <color name=\"warna_primer_gelap\">").append(t.primerGelap).append("</color>\n");
-        sb.append("    <color name=\"warna_aksen\">").append(t.aksen).append("</color>\n");
-        sb.append("    <color name=\"warna_latar\">").append(t.latar).append("</color>\n");
-        sb.append("    <color name=\"warna_teks\">").append(t.teks).append("</color>\n");
-        sb.append("    <color name=\"warna_teks_sekunder\">").append(t.teksSekunder).append("</color>\n");
+        sb.append(TeksUI.t("    <color name=\"warna_primer\">")).append(t.primer).append("</color>\n");
+        sb.append(TeksUI.t("    <color name=\"warna_primer_gelap\">")).append(t.primerGelap).append("</color>\n");
+        sb.append(TeksUI.t("    <color name=\"warna_aksen\">")).append(t.aksen).append("</color>\n");
+        sb.append(TeksUI.t("    <color name=\"warna_latar\">")).append(t.latar).append("</color>\n");
+        sb.append(TeksUI.t("    <color name=\"warna_teks\">")).append(t.teks).append("</color>\n");
+        sb.append(TeksUI.t("    <color name=\"warna_teks_sekunder\">")).append(t.teksSekunder).append("</color>\n");
         sb.append("</resources>\n");
         return sb.toString();
     }
@@ -122,7 +122,7 @@ public class DesainerTema {
     public static String stylesXml(Tema t) {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-        sb.append("<!-- Tema ").append(t.nama).append(" (dibuat oleh Desainer Tema Otomatis) -->\n");
+        sb.append(TeksUI.t("<!-- Tema ")).append(t.nama).append(" (dibuat oleh Desainer Tema Otomatis) -->\n");
         sb.append("<resources>\n");
         sb.append("    <style name=\"app_theme\" parent=\"@android:style/Theme.DeviceDefault.Light\">\n");
         sb.append("        <item name=\"android:colorPrimary\">@color/warna_primer</item>\n");
@@ -149,7 +149,7 @@ public class DesainerTema {
             }
             return null;
         } catch (Exception e) {
-            return "Gagal menulis " + f.getAbsolutePath() + ": " + e.getMessage();
+            return TeksUI.t("Gagal menulis ") + f.getAbsolutePath() + ": " + e.getMessage();
         }
     }
 }

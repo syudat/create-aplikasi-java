@@ -47,10 +47,10 @@ public class PerintahBangun {
         }
         return new Hasil(cd,
                 false,
-                "Proyek ini tidak punya berkas Gradle (gradlew/settings.gradle), "
-                        + "jadi perintah bangun Gradle tidak bisa dijalankan di sini. "
-                        + "Bangun proyek lewat menu \"Bangun proyek\" di Kelola Project, "
-                        + "atau lewat GitHub Actions.");
+                TeksUI.t("Proyek ini tidak punya berkas Gradle (gradlew/settings.gradle), ")
+                        + TeksUI.t("jadi perintah bangun Gradle tidak bisa dijalankan di sini. ")
+                        + TeksUI.t("Bangun proyek lewat menu \"Bangun proyek\" di Kelola Project, ")
+                        + TeksUI.t("atau lewat GitHub Actions."));
     }
 
     /** true bila folder proyek punya gradlew atau settings.gradle. */

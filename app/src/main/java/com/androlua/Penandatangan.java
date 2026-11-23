@@ -77,20 +77,20 @@ public class Penandatangan {
             @Override
             public void run() {
                 try {
-                    p.kirim(BangunLokal.PROGRESS, "Membuat kunci RSA 2048 bit, mohon tunggu...");
+                    p.kirim(BangunLokal.PROGRESS, TeksUI.t("Membuat kunci RSA 2048 bit, mohon tunggu..."));
                     File folder = new File(dir);
-                    if (new File(folder, "kunci.p12").exists()) throw new IOException("Tanda tangan ini sudah ada.");
+                    if (new File(folder, "kunci.p12").exists()) throw new IOException(TeksUI.t("Tanda tangan ini sudah ada."));
                     folder.mkdirs();
                     byte[] p12 = buatP12(alias, sandi, cn, ou, o, kota, provinsi, negara, tahun);
                     BangunLokal.tulis(new File(folder, "kunci.p12"), p12);
-                    String info = "Nama samaran (alias): " + alias + "\nNama lengkap (CN): " + cn
+                    String info = TeksUI.t("Nama samaran (alias): ") + alias + "\nNama lengkap (CN): " + cn
                             + "\nUnit organisasi (OU): " + ou + "\nOrganisasi (O): " + o + "\nKota (L): " + kota
                             + "\nProvinsi (ST): " + provinsi + "\nNegara (C): " + negara
                             + "\nMasa berlaku: " + tahun + " tahun\nKata sandi: (tidak disimpan di berkas ini)\n";
                     BangunLokal.tulis(new File(folder, "info.txt"), info.getBytes("UTF-8"));
                     p.kirim(BangunLokal.SUCCESS, new File(folder, "kunci.p12").getPath());
                 } catch (Throwable e) {
-                    p.kirim(BangunLokal.FAILED, "Gagal membuat keystore: " + e.getMessage());
+                    p.kirim(BangunLokal.FAILED, TeksUI.t("Gagal membuat keystore: ") + e.getMessage());
                 }
             }
         }, "BuatKeystore").start();
@@ -170,7 +170,7 @@ public class Penandatangan {
                     : tlv(0x0c, v.getBytes("UTF-8"));        // UTF8String
             rdn.add(tlv(0x31, tlv(0x30, oid(oids[i]), str)));
         }
-        if (rdn.isEmpty()) throw new IOException("Isi minimal satu data identitas (misalnya nama lengkap).");
+        if (rdn.isEmpty()) throw new IOException(TeksUI.t("Isi minimal satu data identitas (misalnya nama lengkap)."));
         return tlv(0x30, rdn.toArray(new byte[0][]));
     }
 
@@ -260,17 +260,17 @@ public class Penandatangan {
                                 sandiProyek = new String(BangunLokal.baca(berkasSandi), "UTF-8").trim();
                             } else {
                                 p.kirim(BangunLokal.PROGRESS,
-                                        "Membuat tanda tangan bawaan khusus proyek ini...");
+                                        TeksUI.t("Membuat tanda tangan bawaan khusus proyek ini..."));
                                 folder.mkdirs();
                                 sandiProyek = sandiAcak();
                                 BangunLokal.tulis(berkasP12, buatP12("bawaan", sandiProyek,
-                                        "Create Aplikasi", "", "", "", "", "", 25));
+                                        TeksUI.t("Create Aplikasi"), "", "", "", "", "", 25));
                                 BangunLokal.tulis(berkasSandi, sandiProyek.getBytes("UTF-8"));
                                 BangunLokal.tulis(new File(folder, "info.txt"),
                                         ("Tanda tangan bawaan khusus proyek ini.\n"
-                                                + "Dibuat otomatis oleh Create Aplikasi supaya tanda tangan "
+                                                + TeksUI.t("Dibuat otomatis oleh Create Aplikasi supaya tanda tangan ")
                                                 + "bawaan proyek ini berbeda dari proyek lain.\n"
-                                                + "Jangan hapus folder ini: tanpa kunci ini, APK baru "
+                                                + TeksUI.t("Jangan hapus folder ini: tanpa kunci ini, APK baru ")
                                                 + "tidak bisa menimpa APK lama proyek yang sama.\n")
                                                 .getBytes("UTF-8"));
                             }
@@ -282,12 +282,12 @@ public class Penandatangan {
                                 inP.close();
                             }
                             Enumeration<String> enP = ksP.aliases();
-                            if (!enP.hasMoreElements()) throw new IOException("Kunci bawaan proyek kosong.");
+                            if (!enP.hasMoreElements()) throw new IOException(TeksUI.t("Kunci bawaan proyek kosong."));
                             String aliasP = enP.nextElement();
                             key = (PrivateKey) ksP.getKey(aliasP, sandiProyek.toCharArray());
                             cert = (X509Certificate) ksP.getCertificate(aliasP);
                             if (key == null || cert == null)
-                                throw new IOException("Kunci bawaan proyek tidak bisa dibaca.");
+                                throw new IOException(TeksUI.t("Kunci bawaan proyek tidak bisa dibaca."));
                         } else {
                             key = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(p.aset("alat/debug.pk8")));
                             cert = (X509Certificate) CertificateFactory.getInstance("X.509")
@@ -299,19 +299,19 @@ public class Penandatangan {
                         try {
                             ks.load(in, sandi.toCharArray());
                         } catch (IOException e) {
-                            throw new IOException("Kata sandi salah atau berkas keystore rusak.");
+                            throw new IOException(TeksUI.t("Kata sandi salah atau berkas keystore rusak."));
                         } finally {
                             in.close();
                         }
                         Enumeration<String> en = ks.aliases();
-                        if (!en.hasMoreElements()) throw new IOException("Keystore kosong.");
+                        if (!en.hasMoreElements()) throw new IOException(TeksUI.t("Keystore kosong."));
                         String alias = en.nextElement();
                         key = (PrivateKey) ks.getKey(alias, sandi.toCharArray());
                         cert = (X509Certificate) ks.getCertificate(alias);
-                        if (key == null || cert == null) throw new IOException("Kunci tidak ditemukan di keystore.");
+                        if (key == null || cert == null) throw new IOException(TeksUI.t("Kunci tidak ditemukan di keystore."));
                     }
                     File in = new File(mentah);
-                    if (!in.isFile()) throw new IOException("APK mentah tidak ditemukan: " + mentah);
+                    if (!in.isFile()) throw new IOException(TeksUI.t("APK mentah tidak ditemukan: ") + mentah);
                     File out = new File(outDir);
                     out.mkdirs();
                     List<String> hasil = new ArrayList<String>();
@@ -329,7 +329,7 @@ public class Penandatangan {
                     for (String h : hasil) sb.append(sb.length() > 0 ? "\n" : "").append(h);
                     p.kirim(BangunLokal.SUCCESS, sb.toString());
                 } catch (Throwable e) {
-                    p.kirim(BangunLokal.FAILED, "Gagal menandatangani: " + e.getMessage());
+                    p.kirim(BangunLokal.FAILED, TeksUI.t("Gagal menandatangani: ") + e.getMessage());
                 }
             }
         }, "Penandatangan").start();

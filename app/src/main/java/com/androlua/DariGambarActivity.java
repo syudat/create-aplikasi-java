@@ -44,21 +44,21 @@ public class DariGambarActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Aplikasi dari Gambar");
+        setTitle(TeksUI.t("Aplikasi dari Gambar"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Aplikasi dari Gambar", 20);
-        label(r, "Pilih gambar dari galerimu. IDE akan menganalisis warna "
-                + "dominannya lalu membuat aplikasi galeri dari gambar itu: "
-                + "gambar ditampilkan memenuhi layar, warna tema diambil "
-                + "dari warna dominan gambar, dan nama aplikasi diambil dari "
-                + "nama berkas gambar.", false);
+        heading(r, TeksUI.t("Aplikasi dari Gambar"), 20);
+        label(r, TeksUI.t("Pilih gambar dari galerimu. IDE akan menganalisis warna ")
+                + TeksUI.t("dominannya lalu membuat aplikasi galeri dari gambar itu: ")
+                + TeksUI.t("gambar ditampilkan memenuhi layar, warna tema diambil ")
+                + TeksUI.t("dari warna dominan gambar, dan nama aplikasi diambil dari ")
+                + TeksUI.t("nama berkas gambar."), false);
 
-        button(r, "Pilih Gambar dari Galeri", new View.OnClickListener() {
+        button(r, TeksUI.t("Pilih Gambar dari Galeri"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pilihGambar();
@@ -66,18 +66,18 @@ public class DariGambarActivity extends Activity {
         });
 
         pratinjauView = new ImageView(this);
-        pratinjauView.setContentDescription("Pratinjau gambar yang dipilih.");
+        pratinjauView.setContentDescription(TeksUI.t("Pratinjau gambar yang dipilih."));
         r.addView(pratinjauView, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(240)));
 
-        label(r, "Nama aplikasi (bawaan dari nama berkas gambar):", false);
+        label(r, TeksUI.t("Nama aplikasi (bawaan dari nama berkas gambar):"), false);
         namaEdit = new EditText(this);
         GayaStudio.edit(namaEdit);
         namaEdit.setHint("Contoh: Pantai Sore");
         r.addView(namaEdit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        buatButton = button(r, "Buat Aplikasi Galeri", new View.OnClickListener() {
+        buatButton = button(r, TeksUI.t("Buat Aplikasi Galeri"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatAplikasi();
@@ -93,24 +93,24 @@ public class DariGambarActivity extends Activity {
         hasilView.setPadding(dp(4), dp(4), dp(4), dp(4));
         r.addView(hasilView);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Aplikasi dari Gambar. Tekan Pilih Gambar dari Galeri dulu.");
+        announce(TeksUI.t("Aplikasi dari Gambar. Tekan Pilih Gambar dari Galeri dulu."));
     }
 
     private void pilihGambar() {
         try {
             Intent ambil = new Intent(Intent.ACTION_GET_CONTENT);
             ambil.setType("image/*");
-            startActivityForResult(Intent.createChooser(ambil, "Pilih Gambar"),
+            startActivityForResult(Intent.createChooser(ambil, TeksUI.t("Pilih Gambar")),
                     MINTA_GAMBAR);
         } catch (Throwable t) {
-            Toast.makeText(this, "Tidak bisa membuka pemilih gambar: " + t.getMessage(),
+            Toast.makeText(this, TeksUI.t("Tidak bisa membuka pemilih gambar: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -127,7 +127,7 @@ public class DariGambarActivity extends Activity {
             File salinan = new File(getCacheDir(), "gambar-pilihan.jpg");
             InputStream masuk = getContentResolver().openInputStream(uri);
             if (masuk == null) {
-                Toast.makeText(this, "Tidak bisa membaca gambar itu.",
+                Toast.makeText(this, TeksUI.t("Tidak bisa membaca gambar itu."),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -143,7 +143,7 @@ public class DariGambarActivity extends Activity {
             gambarPilihan = salinan;
             analisisGambar();
         } catch (Throwable t) {
-            Toast.makeText(this, "Gagal memproses gambar: " + t.getMessage(),
+            Toast.makeText(this, TeksUI.t("Gagal memproses gambar: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -151,7 +151,7 @@ public class DariGambarActivity extends Activity {
     private void analisisGambar() {
         Bitmap bmp = BitmapFactory.decodeFile(gambarPilihan.getPath());
         if (bmp == null) {
-            Toast.makeText(this, "Berkas itu bukan gambar yang bisa dibaca.",
+            Toast.makeText(this, TeksUI.t("Berkas itu bukan gambar yang bisa dibaca."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -166,31 +166,31 @@ public class DariGambarActivity extends Activity {
             namaEdit.setText(namaSaran);
         }
         pratinjauView.setImageBitmap(bmp);
-        pratinjauView.setContentDescription("Gambar yang dipilih, ukuran "
-                + lebarGambar + " kali " + tinggiGambar + " piksel, warna dominan "
+        pratinjauView.setContentDescription(TeksUI.t("Gambar yang dipilih, ukuran ")
+                + lebarGambar + " kali " + tinggiGambar + TeksUI.t(" piksel, warna dominan ")
                 + heksa + ".");
         String lap = "Gambar dianalisis:\n- Ukuran: " + lebarGambar + " x " + tinggiGambar
                 + " piksel.\n- Warna dominan: " + heksa + ".\n- Nama aplikasi yang "
                 + "disarankan: " + namaSaran + ".\nTekan Buat Aplikasi Galeri.";
         hasilView.setText(lap);
         buatButton.setEnabled(true);
-        announce("Gambar dianalisis. Ukuran " + lebarGambar + " kali " + tinggiGambar
-                + " piksel, warna dominan " + heksa + ". Tekan Buat Aplikasi Galeri.");
+        announce(TeksUI.t("Gambar dianalisis. Ukuran ") + lebarGambar + " kali " + tinggiGambar
+                + TeksUI.t(" piksel, warna dominan ") + heksa + TeksUI.t(". Tekan Buat Aplikasi Galeri."));
     }
 
     private void buatAplikasi() {
         if (gambarPilihan == null || !gambarPilihan.isFile()) {
-            Toast.makeText(this, "Pilih gambar dulu.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TeksUI.t("Pilih gambar dulu."), Toast.LENGTH_SHORT).show();
             return;
         }
         String nama = namaEdit.getText().toString().trim();
-        if (nama.length() == 0) nama = "Galeri Saya";
+        if (nama.length() == 0) nama = TeksUI.t("Galeri Saya");
         // Ronde 3: Lua dihapus — aplikasi dari gambar kini membuat proyek Java
         // (keputusan pengguna 2026-11-17 00:22). AplikasiDariGambar menulis
         // MainActivity.java, bukan main.lua lagi.
         String dir = BuatProyekHelper.buat(this, nama, "java", "kosong");
         if (dir == null) {
-            Toast.makeText(this, "Gagal membuat proyek galeri.",
+            Toast.makeText(this, TeksUI.t("Gagal membuat proyek galeri."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -200,13 +200,13 @@ public class DariGambarActivity extends Activity {
             Toast.makeText(this, galat, Toast.LENGTH_SHORT).show();
             return;
         }
-        String lap = "Aplikasi galeri \"" + nama + "\" berhasil dibuat dari gambar.\n"
-                + "- Ukuran gambar: " + lebarGambar + " x " + tinggiGambar + " piksel.\n"
-                + "- Warna tema: " + AnalisisGambar.heksa(warnaDominan) + ".\n"
-                + "Buka Kelola Project untuk menjalankan atau membangunnya.";
+        String lap = TeksUI.t("Aplikasi galeri \"") + nama + "\" berhasil dibuat dari gambar.\n"
+                + TeksUI.t("- Ukuran gambar: ") + lebarGambar + " x " + tinggiGambar + " piksel.\n"
+                + TeksUI.t("- Warna tema: ") + AnalisisGambar.heksa(warnaDominan) + ".\n"
+                + TeksUI.t("Buka Kelola Project untuk menjalankan atau membangunnya.");
         hasilView.setText(lap);
-        Toast.makeText(this, "Aplikasi galeri berhasil dibuat.", Toast.LENGTH_SHORT).show();
-        announce("Aplikasi galeri " + nama + " berhasil dibuat dari gambar.");
+        Toast.makeText(this, TeksUI.t("Aplikasi galeri berhasil dibuat."), Toast.LENGTH_SHORT).show();
+        announce(TeksUI.t("Aplikasi galeri ") + nama + TeksUI.t(" berhasil dibuat dari gambar."));
     }
 
     // ------------------------------------------------------------------ UI

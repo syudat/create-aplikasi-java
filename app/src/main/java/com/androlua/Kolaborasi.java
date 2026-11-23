@@ -44,13 +44,13 @@ public class Kolaborasi {
         String tanggal = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
                 .format(new Date());
         StringBuilder sb = new StringBuilder();
-        sb.append("Catatan perubahan proyek \"").append(namaProyek).append("\"\n");
+        sb.append(TeksUI.t("Catatan perubahan proyek \"")).append(namaProyek).append("\"\n");
         sb.append("Tanggal: ").append(tanggal).append("\n");
-        sb.append("Dari: ").append(pengirim == null || pengirim.isEmpty()
+        sb.append(TeksUI.t("Dari: ")).append(pengirim == null || pengirim.isEmpty()
                 ? "-" : pengirim).append("\n");
         sb.append("\n");
         sb.append(catatan == null || catatan.isEmpty()
-                ? "(tidak ada catatan perubahan)" : catatan);
+                ? TeksUI.t("(tidak ada catatan perubahan)") : catatan);
         sb.append("\n");
         return sb.toString();
     }

@@ -40,16 +40,16 @@ public class AiActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("AI Pembuat Aplikasi");
+        setTitle(TeksUI.t("AI Pembuat Aplikasi"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "AI Pembuat Aplikasi", 20);
-        label(r, "Tulis atau diktekan aplikasi yang kamu mau, saya buatkan "
-                + "proyeknya dari template yang paling cocok.", false);
+        heading(r, TeksUI.t("AI Pembuat Aplikasi"), 20);
+        label(r, TeksUI.t("Tulis atau diktekan aplikasi yang kamu mau, saya buatkan ")
+                + TeksUI.t("proyeknya dari template yang paling cocok."), false);
 
         eDeskripsi = new EditText(this);
 
@@ -67,7 +67,7 @@ public class AiActivity extends Activity {
             }
         });
 
-        button(r, "Buat dengan AI", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat dengan AI"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatDariDeskripsi();
@@ -80,7 +80,7 @@ public class AiActivity extends Activity {
         tvHasil.setTextSize(14);
         r.addView(tvHasil);
 
-        label(r, "Contoh deskripsi yang bisa dicoba:", false);
+        label(r, TeksUI.t("Contoh deskripsi yang bisa dicoba:"), false);
         StringBuilder contoh = new StringBuilder();
         for (int i = 0; i < AiPembuat.CONTOH.length; i++) {
             if (i > 0) contoh.append("\n");
@@ -88,7 +88,7 @@ public class AiActivity extends Activity {
         }
         label(r, contoh.toString(), true);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -113,7 +113,7 @@ public class AiActivity extends Activity {
             tts = null;
             ttsSiap = false;
         }
-        announce("AI Pembuat Aplikasi. Tulis atau diktekan deskripsi aplikasimu.");
+        announce(TeksUI.t("AI Pembuat Aplikasi. Tulis atau diktekan deskripsi aplikasimu."));
     }
 
     @Override
@@ -138,7 +138,7 @@ public class AiActivity extends Activity {
                 RecognizerIntent.EXTRA_RESULTS);
         if (hasil == null || hasil.isEmpty()) return;
         eDeskripsi.setText(hasil.get(0));
-        tampilkan("Deskripsi dari dikte: " + hasil.get(0));
+        tampilkan(TeksUI.t("Deskripsi dari dikte: ") + hasil.get(0));
     }
 
     private void dikte() {
@@ -152,7 +152,7 @@ public class AiActivity extends Activity {
             startActivityForResult(it, MINTA_DIKTE);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this,
-                    "Tidak ada aplikasi pengenal suara di HP ini. Tulis deskripsinya di kotak teks.",
+                    TeksUI.t("Tidak ada aplikasi pengenal suara di HP ini. Tulis deskripsinya di kotak teks."),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -160,18 +160,18 @@ public class AiActivity extends Activity {
     private void buatDariDeskripsi() {
         String deskripsi = eDeskripsi.getText().toString().trim();
         if (deskripsi.isEmpty()) {
-            tampilkan("Deskripsi masih kosong. Tulis atau diktekan dulu aplikasimu.");
+            tampilkan(TeksUI.t("Deskripsi masih kosong. Tulis atau diktekan dulu aplikasimu."));
             return;
         }
         AiPembuat.Hasil hasil = AiPembuat.analisis(deskripsi);
         String dir = BuatProyekHelper.buat(this, hasil.namaProyek, hasil.tipe,
                 hasil.templateId);
         if (dir == null) {
-            tampilkan("Proyek gagal dibuat. Coba lagi dengan deskripsi lain.");
+            tampilkan(TeksUI.t("Proyek gagal dibuat. Coba lagi dengan deskripsi lain."));
             return;
         }
         String teks = hasil.penjelasan + "\n\nProyek \"" + hasil.namaProyek
-                + "\" sudah dibuat dan bisa dibuka di Kelola Project.";
+                + TeksUI.t("\" sudah dibuat dan bisa dibuka di Kelola Project.");
         tampilkan(teks);
     }
 

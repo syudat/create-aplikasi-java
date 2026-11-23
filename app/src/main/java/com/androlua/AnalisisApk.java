@@ -43,7 +43,7 @@ public class AnalisisApk {
     public static Hasil analisis(File apk) {
         Hasil h = new Hasil();
         if (apk == null || !apk.isFile()) {
-            h.galat = "Berkas APK tidak ditemukan.";
+            h.galat = TeksUI.t("Berkas APK tidak ditemukan.");
             return h;
         }
         h.ukuranBerkas = apk.length();
@@ -83,7 +83,7 @@ public class AnalisisApk {
             for (int i = 0; i < semua.size() && i < 10; i++) h.terbesar.add(semua.get(i));
             if (manifest != null) uraiManifest(manifest, h);
         } catch (Throwable t) {
-            h.galat = "Gagal membaca APK: " + t.getMessage();
+            h.galat = TeksUI.t("Gagal membaca APK: ") + t.getMessage();
         } finally {
             if (zf != null) {
                 try { zf.close(); } catch (Throwable ignored) { }
@@ -94,12 +94,12 @@ public class AnalisisApk {
 
     /** Kategori satu entri APK untuk rincian ukuran. */
     public static String kategori(String nama) {
-        if (Perisai.namaDex(nama)) return "Kode program (dex)";
+        if (Perisai.namaDex(nama)) return TeksUI.t("Kode program (dex)");
         if (nama.equals("resources.arsc")) return "Tabel resource (resources.arsc)";
         if (nama.startsWith("res/")) return "Resource (res)";
         if (nama.startsWith("assets/")) return "Aset (assets)";
         if (nama.startsWith("lib/")) return "Pustaka native (lib)";
-        if (nama.startsWith("META-INF/")) return "Tanda tangan dan meta (META-INF)";
+        if (nama.startsWith("META-INF/")) return TeksUI.t("Tanda tangan dan meta (META-INF)");
         if (nama.equals("AndroidManifest.xml")) return "Manifest";
         return "Lainnya";
     }
@@ -124,19 +124,19 @@ public class AnalisisApk {
         if (h.galat != null) return h.galat;
         StringBuilder b = new StringBuilder();
         b.append("Analisis APK: ").append(namaTampil).append('\n');
-        b.append("Nama paket: ").append(h.namaPaket.length() == 0 ? "(tidak terbaca)" : h.namaPaket).append('\n');
-        b.append("Versi: ").append(h.versiNama.length() == 0 ? "-" : h.versiNama);
-        if (h.versiKode >= 0) b.append(" (kode ").append(h.versiKode).append(')');
+        b.append(TeksUI.t("Nama paket: ")).append(h.namaPaket.length() == 0 ? TeksUI.t("(tidak terbaca)") : h.namaPaket).append('\n');
+        b.append(TeksUI.t("Versi: ")).append(h.versiNama.length() == 0 ? "-" : h.versiNama);
+        if (h.versiKode >= 0) b.append(TeksUI.t(" (kode ")).append(h.versiKode).append(')');
         b.append('\n');
         if (h.minSdk >= 0) b.append("SDK minimum: ").append(h.minSdk).append('\n');
         if (h.targetSdk >= 0) b.append("SDK target: ").append(h.targetSdk).append('\n');
-        b.append("Ukuran berkas: ").append(formatUkuran(h.ukuranBerkas)).append('\n');
-        b.append("Jumlah berkas dex: ").append(h.jumlahDex).append('\n');
+        b.append(TeksUI.t("Ukuran berkas: ")).append(formatUkuran(h.ukuranBerkas)).append('\n');
+        b.append(TeksUI.t("Jumlah berkas dex: ")).append(h.jumlahDex).append('\n');
         b.append('\n').append("Rincian ukuran per bagian (terkompresi):\n");
         for (Map.Entry<String, Long> e : h.perBagian.entrySet()) {
             b.append("- ").append(e.getKey()).append(": ").append(formatUkuran(e.getValue())).append('\n');
         }
-        b.append('\n').append("Izin yang dipakai (").append(h.izin.size()).append("):\n");
+        b.append('\n').append(TeksUI.t("Izin yang dipakai (")).append(h.izin.size()).append("):\n");
         if (h.izin.isEmpty()) {
             b.append("- (tidak ada izin terbaca)\n");
         } else {

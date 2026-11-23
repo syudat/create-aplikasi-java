@@ -53,7 +53,7 @@ public class SumberDaya {
         Ringkasan h = new Ringkasan();
         File res = folderRes(dirProyek);
         if (res == null) {
-            h.galat = "Folder res tidak ditemukan di proyek ini.";
+            h.galat = TeksUI.t("Folder res tidak ditemukan di proyek ini.");
             return h;
         }
         File[] subs = res.listFiles();
@@ -83,7 +83,7 @@ public class SumberDaya {
             }
         }
         if (h.jumlahBerkas == 0 && h.galat == null) {
-            h.galat = "Folder res proyek ini masih kosong.";
+            h.galat = TeksUI.t("Folder res proyek ini masih kosong.");
         }
         return h;
     }
@@ -132,9 +132,9 @@ public class SumberDaya {
      * harus mulai huruf. Mengembalikan pesan galat atau null bila sah.
      */
     public static String galatNama(String nama) {
-        if (nama == null || nama.length() == 0) return "Nama tidak boleh kosong.";
+        if (nama == null || nama.length() == 0) return TeksUI.t("Nama tidak boleh kosong.");
         if (!nama.matches("[a-z][a-z0-9_.]*"))
-            return "Nama hanya boleh huruf kecil, angka, garis bawah, dan titik, diawali huruf.";
+            return TeksUI.t("Nama hanya boleh huruf kecil, angka, garis bawah, dan titik, diawali huruf.");
         return null;
     }
 
@@ -155,7 +155,7 @@ public class SumberDaya {
         if (nilai == null) nilai = "";
         for (String[] s : daftarString(isiXml)) {
             if (s[0].equals(nama))
-                throw new IllegalArgumentException("String bernama \"" + nama + "\" sudah ada.");
+                throw new IllegalArgumentException("String bernama \"" + nama + TeksUI.t("\" sudah ada."));
         }
         String baris = "    <string name=\"" + nama + "\">" + lolosXml(nilai) + "</string>\n";
         return sisipkan(isiXml, baris);
@@ -163,10 +163,10 @@ public class SumberDaya {
 
     /** Memeriksa nilai warna #RRGGBB atau #AARRGGBB; pesan galat atau null. */
     public static String galatWarna(String hex) {
-        if (hex == null) return "Nilai warna kosong.";
+        if (hex == null) return TeksUI.t("Nilai warna kosong.");
         String t = hex.trim();
         if (!t.matches("#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?") && !t.matches("#[0-9a-fA-F]{8}"))
-            return "Nilai warna harus seperti #FF5722 (6 atau 8 angka hex sesudah #).";
+            return TeksUI.t("Nilai warna harus seperti #FF5722 (6 atau 8 angka hex sesudah #).");
         return null;
     }
 
@@ -178,7 +178,7 @@ public class SumberDaya {
         if (gw != null) throw new IllegalArgumentException(gw);
         for (String[] s : daftarWarna(isiXml)) {
             if (s[0].equals(nama))
-                throw new IllegalArgumentException("Warna bernama \"" + nama + "\" sudah ada.");
+                throw new IllegalArgumentException(TeksUI.t("Warna bernama \"") + nama + TeksUI.t("\" sudah ada."));
         }
         String baris = "    <color name=\"" + nama + "\">" + hex.trim().toUpperCase() + "</color>\n";
         return sisipkan(isiXml, baris);
@@ -232,15 +232,15 @@ public class SumberDaya {
     /** Laporan teks bahasa Indonesia untuk dibacakan / ditampilkan. */
     public static String laporan(Ringkasan h, String namaProyek) {
         StringBuilder b = new StringBuilder();
-        b.append("Sumber daya proyek ").append(namaProyek).append(":\n");
+        b.append(TeksUI.t("Sumber daya proyek ")).append(namaProyek).append(":\n");
         if (h.galat != null) {
             b.append(h.galat).append('\n');
             return b.toString();
         }
-        b.append(h.jumlahBerkas).append(" berkas, total ").append(ukuran(h.totalBita)).append(".\n");
+        b.append(h.jumlahBerkas).append(TeksUI.t(" berkas, total ")).append(ukuran(h.totalBita)).append(".\n");
         for (Map.Entry<String, List<String>> e : h.perKategori.entrySet()) {
             b.append("\nKategori ").append(e.getKey()).append(" (")
-             .append(e.getValue().size()).append(" berkas, ")
+             .append(e.getValue().size()).append(TeksUI.t(" berkas, "))
              .append(ukuran(h.ukuranKategori.get(e.getKey()))).append("):\n");
             for (String s : e.getValue()) b.append("- ").append(s).append('\n');
         }

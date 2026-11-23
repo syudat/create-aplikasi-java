@@ -49,20 +49,20 @@ public class AiOfflineActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("AI Offline");
+        setTitle(TeksUI.t("AI Offline"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "AI Offline", 20);
-        label(r, "Alat bantu teks dan kode yang berjalan di dalam HP "
-                + "(tanpa internet). Ini aturan sederhana, bukan model AI "
-                + "sungguhan — hasilnya jujur dan bisa diperiksa sendiri.",
+        heading(r, TeksUI.t("AI Offline"), 20);
+        label(r, TeksUI.t("Alat bantu teks dan kode yang berjalan di dalam HP ")
+                + TeksUI.t("(tanpa internet). Ini aturan sederhana, bukan model AI ")
+                + TeksUI.t("sungguhan — hasilnya jujur dan bisa diperiksa sendiri."),
                 false);
 
-        label(r, "Teks atau deskripsi:", false);
+        label(r, TeksUI.t("Teks atau deskripsi:"), false);
         teksEdit = new EditText(this);
         GayaStudio.edit(teksEdit);
         teksEdit.setHint("Tulis teks, kalimat panjang, atau deskripsi aplikasi di sini.");
@@ -70,49 +70,49 @@ public class AiOfflineActivity extends Activity {
         r.addView(teksEdit, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Perbaiki Teks", new View.OnClickListener() {
+        button(r, TeksUI.t("Perbaiki Teks"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String t = teksEdit.getText().toString();
                 if (t.trim().length() == 0) {
-                    Toast.makeText(AiOfflineActivity.this, "Tulis teks dulu.",
+                    Toast.makeText(AiOfflineActivity.this, TeksUI.t("Tulis teks dulu."),
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 teksTerakhir = AiOffline.perbaikiTeks(t);
                 tampilkan("Teks yang diperbaiki:\n" + teksTerakhir,
-                        "Teks diperbaiki.");
+                        TeksUI.t("Teks diperbaiki."));
             }
         });
 
-        button(r, "Ringkas Teks (3 kalimat)", new View.OnClickListener() {
+        button(r, TeksUI.t("Ringkas Teks (3 kalimat)"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String t = teksEdit.getText().toString();
                 if (t.trim().length() == 0) {
-                    Toast.makeText(AiOfflineActivity.this, "Tulis teks dulu.",
+                    Toast.makeText(AiOfflineActivity.this, TeksUI.t("Tulis teks dulu."),
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 teksTerakhir = AiOffline.ringkas(t, 3);
-                tampilkan("Ringkasan:\n" + teksTerakhir, "Teks diringkas.");
+                tampilkan("Ringkasan:\n" + teksTerakhir, TeksUI.t("Teks diringkas."));
             }
         });
 
-        button(r, "Buat Nama Aplikasi", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Nama Aplikasi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String t = teksEdit.getText().toString();
                 if (t.trim().length() == 0) {
-                    Toast.makeText(AiOfflineActivity.this, "Tulis deskripsi dulu.",
+                    Toast.makeText(AiOfflineActivity.this, TeksUI.t("Tulis deskripsi dulu."),
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 List<String> nama = AiOffline.buatNama(t);
                 if (nama.isEmpty()) {
-                    tampilkan("Tidak ada kata kunci yang bisa dipakai dari deskripsi itu. "
-                            + "Coba tulis deskripsi yang lebih jelas, misalnya "
-                            + "\"aplikasi catatan harian\".", "Tidak ada nama yang dibuat.");
+                    tampilkan(TeksUI.t("Tidak ada kata kunci yang bisa dipakai dari deskripsi itu. ")
+                            + TeksUI.t("Coba tulis deskripsi yang lebih jelas, misalnya ")
+                            + TeksUI.t("\"aplikasi catatan harian\"."), TeksUI.t("Tidak ada nama yang dibuat."));
                     return;
                 }
                 StringBuilder sb = new StringBuilder("Saran nama aplikasi:\n");
@@ -120,11 +120,11 @@ public class AiOfflineActivity extends Activity {
                     sb.append((i + 1)).append(". ").append(nama.get(i)).append("\n");
                 }
                 teksTerakhir = nama.get(0);
-                tampilkan(sb.toString(), "Nama aplikasi dibuat: " + nama.get(0) + ".");
+                tampilkan(sb.toString(), TeksUI.t("Nama aplikasi dibuat: ") + nama.get(0) + ".");
             }
         });
 
-        label(r, "Pilih proyek (untuk saran nama variabel dan terapkan):", false);
+        label(r, TeksUI.t("Pilih proyek (untuk saran nama variabel dan terapkan):"), false);
         muatDaftarProyek();
         spinnerProyek = new Spinner(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -134,7 +134,7 @@ public class AiOfflineActivity extends Activity {
         r.addView(spinnerProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Saran Nama Variabel di Proyek", new View.OnClickListener() {
+        button(r, TeksUI.t("Saran Nama Variabel di Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saranVariabel();
@@ -156,34 +156,34 @@ public class AiOfflineActivity extends Activity {
         hasilView.setPadding(dp(4), dp(4), dp(4), dp(4));
         r.addView(hasilView);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("AI Offline. Tulis teks, lalu pilih alat: perbaiki teks, ringkas, "
-                + "buat nama aplikasi, atau saran nama variabel.");
+        announce(TeksUI.t("AI Offline. Tulis teks, lalu pilih alat: perbaiki teks, ringkas, ")
+                + TeksUI.t("buat nama aplikasi, atau saran nama variabel."));
     }
 
     private void muatDaftarProyek() {
         daftarProyek.clear();
         daftarProyek.addAll(InfoProyek.daftarNama(new File(ROOT)));
-        if (daftarProyek.isEmpty()) daftarProyek.add("(belum ada proyek)");
+        if (daftarProyek.isEmpty()) daftarProyek.add(TeksUI.t("(belum ada proyek)"));
     }
 
     private String proyekTerpilih() {
         if (spinnerProyek.getSelectedItem() == null) return null;
         String nama = String.valueOf(spinnerProyek.getSelectedItem());
-        if ("(belum ada proyek)".equals(nama)) return null;
+        if ((TeksUI.t("(belum ada proyek)").equals(nama) || TeksUI.t("(belum ada proyek)").equals(nama))) return null;
         return nama;
     }
 
     private void saranVariabel() {
         String nama = proyekTerpilih();
         if (nama == null) {
-            Toast.makeText(this, "Belum ada proyek. Buat proyek dulu.",
+            Toast.makeText(this, TeksUI.t("Belum ada proyek. Buat proyek dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -192,18 +192,18 @@ public class AiOfflineActivity extends Activity {
         List<AiOffline.SaranNama> semua = new ArrayList<AiOffline.SaranNama>();
         kumpulKode(dir, semua, "lua".equals(tipe));
         if (semua.isEmpty()) {
-            tampilkan("Tidak ada nama variabel 1-2 huruf di proyek " + nama + ".",
-                    "Tidak ada saran nama variabel.");
+            tampilkan(TeksUI.t("Tidak ada nama variabel 1-2 huruf di proyek ") + nama + ".",
+                    TeksUI.t("Tidak ada saran nama variabel."));
             return;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("Saran nama variabel (").append(semua.size()).append("):\n");
+        sb.append(TeksUI.t("Saran nama variabel (")).append(semua.size()).append("):\n");
         for (int i = 0; i < semua.size(); i++) {
             AiOffline.SaranNama s = semua.get(i);
             sb.append(s.berkas).append(":").append(s.baris)
                     .append(" — ").append(s.saran).append("\n");
         }
-        tampilkan(sb.toString(), semua.size() + " saran nama variabel ditemukan.");
+        tampilkan(sb.toString(), semua.size() + TeksUI.t(" saran nama variabel ditemukan."));
     }
 
     private void kumpulKode(File dir, List<AiOffline.SaranNama> keluar, boolean lua) {
@@ -242,12 +242,12 @@ public class AiOfflineActivity extends Activity {
     private void terapkan() {
         String nama = proyekTerpilih();
         if (nama == null) {
-            Toast.makeText(this, "Belum ada proyek. Buat proyek dulu.",
+            Toast.makeText(this, TeksUI.t("Belum ada proyek. Buat proyek dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
         if (teksTerakhir.length() == 0) {
-            Toast.makeText(this, "Belum ada teks yang diperbaiki. Tekan Perbaiki Teks dulu.",
+            Toast.makeText(this, TeksUI.t("Belum ada teks yang diperbaiki. Tekan Perbaiki Teks dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -264,7 +264,7 @@ public class AiOfflineActivity extends Activity {
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        String entri = "    <string name=\"teks_perbaikan\">"
+        String entri = TeksUI.t("    <string name=\"teks_perbaikan\">")
                 + lolosXml(teksTerakhir) + "</string>\n";
         String baru;
         if (isi.contains("name=\"teks_perbaikan\"")) {
@@ -277,8 +277,8 @@ public class AiOfflineActivity extends Activity {
         }
         if (tulis(strings, baru) == null) {
             tampilkan("Teks yang diperbaiki sudah ditulis ke strings.xml proyek "
-                    + nama + " sebagai entri teks_perbaikan.",
-                    "Teks diterapkan ke proyek " + nama + ".");
+                    + nama + TeksUI.t(" sebagai entri teks_perbaikan."),
+                    TeksUI.t("Teks diterapkan ke proyek ") + nama + ".");
         } else {
             Toast.makeText(this, "Gagal menulis strings.xml.",
                     Toast.LENGTH_SHORT).show();
@@ -293,7 +293,7 @@ public class AiOfflineActivity extends Activity {
     private void tampilkan(String teks, String umumkan) {
         hasilView.setText(teks);
         Toast.makeText(this, umumkan, Toast.LENGTH_SHORT).show();
-        announce(umumkan + " Hasil lengkap ada di layar.");
+        announce(umumkan + TeksUI.t(" Hasil lengkap ada di layar."));
     }
 
     private String baca(File f) {
@@ -325,7 +325,7 @@ public class AiOfflineActivity extends Activity {
             }
             return null;
         } catch (Exception e) {
-            return "Tidak bisa menulis " + target.getName() + ": " + e.getMessage();
+            return TeksUI.t("Tidak bisa menulis ") + target.getName() + ": " + e.getMessage();
         }
     }
 

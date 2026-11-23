@@ -26,16 +26,16 @@ public class EksporProyekJava {
         if (activity == null || dirProyek == null) return;
         final String hasil = EksporProyek.ekspor(dirProyek.getAbsolutePath());
         if (hasil == null || hasil.isEmpty()) {
-            Toast.makeText(activity, "Ekspor gagal. Periksa izin penyimpanan.",
+            Toast.makeText(activity, TeksUI.t("Ekspor gagal. Periksa izin penyimpanan."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
         long ukuran = new File(hasil).length();
-        new AlertDialog.Builder(activity).setTitle("Ekspor ZIP selesai")
+        new AlertDialog.Builder(activity).setTitle(TeksUI.t("Ekspor ZIP selesai"))
                 .setMessage("Proyek tersimpan sebagai:\n" + hasil
                         + "\nUkuran: " + ukuran + " byte."
                         + "\n\nFolder bin/ (APK hasil build) tidak ikut, supaya file tetap kecil dan mudah dibagikan.")
-                .setPositiveButton("Bagikan", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Bagikan"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -45,13 +45,13 @@ public class EksporProyekJava {
                                     activity, activity.getPackageName(), new File(hasil)));
                             it.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             activity.startActivity(Intent.createChooser(it,
-                                    "Bagikan " + dirProyek.getName() + ".zip"));
+                                    TeksUI.t("Bagikan ") + dirProyek.getName() + ".zip"));
                         } catch (Throwable t) {
-                            Toast.makeText(activity, "Gagal membagikan: " + t.getMessage(),
+                            Toast.makeText(activity, TeksUI.t("Gagal membagikan: ") + t.getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-                .setNegativeButton("Tutup", null).show();
+                .setNegativeButton(TeksUI.t("Tutup"), null).show();
     }
 }

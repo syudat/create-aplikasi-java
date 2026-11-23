@@ -41,18 +41,18 @@ public class BelajarActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Belajar");
+        setTitle(TeksUI.t("Belajar"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Belajar", 20);
-        label(r, "Belajar membuat aplikasi langkah demi langkah. Ketuk satu "
-                + "pelajaran untuk membaca penjelasannya, kerjakan tugasnya, "
-                + "lalu tekan Periksa tugas — saya memeriksa sungguhan apakah "
-                + "tugasnya sudah dikerjakan.", false);
+        heading(r, TeksUI.t("Belajar"), 20);
+        label(r, TeksUI.t("Belajar membuat aplikasi langkah demi langkah. Ketuk satu ")
+                + TeksUI.t("pelajaran untuk membaca penjelasannya, kerjakan tugasnya, ")
+                + TeksUI.t("lalu tekan Periksa tugas — saya memeriksa sungguhan apakah ")
+                + TeksUI.t("tugasnya sudah dikerjakan."), false);
 
         lv = new ListView(this);
         adapter = new ArrayAdapter<String>(this,
@@ -69,7 +69,7 @@ public class BelajarActivity extends Activity {
         r.addView(lv, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(280)));
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -78,7 +78,7 @@ public class BelajarActivity extends Activity {
 
         muatDaftar();
         announce("Belajar. " + Belajar.SEMUA.length + " pelajaran tersedia, "
-                + Belajar.jumlahSelesai(berkasProgres()) + " sudah selesai.");
+                + Belajar.jumlahSelesai(berkasProgres()) + TeksUI.t(" sudah selesai."));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class BelajarActivity extends Activity {
         baris.clear();
         for (int i = 0; i < Belajar.SEMUA.length; i++) {
             Belajar.Pelajaran p = Belajar.SEMUA[i];
-            baris.add((selesai.contains(p.id) ? "✓ Selesai — " : "Belum — ") + p.judul);
+            baris.add((selesai.contains(p.id) ? TeksUI.t("✓ Selesai — ") : TeksUI.t("Belum — ")) + p.judul);
         }
         if (adapter != null) adapter.notifyDataSetChanged();
     }
@@ -104,17 +104,17 @@ public class BelajarActivity extends Activity {
     private void tampilkanPelajaran(final Belajar.Pelajaran p) {
         boolean sudah = Belajar.bacaProgres(berkasProgres()).contains(p.id);
         String isi = p.penjelasan + "\n\nTugas: " + p.tugas
-                + "\n\nStatus: " + (sudah ? "Selesai." : "Belum selesai.");
+                + "\n\nStatus: " + (sudah ? TeksUI.t("Selesai.") : TeksUI.t("Belum selesai."));
         new AlertDialog.Builder(this)
                 .setTitle(p.judul)
                 .setMessage(isi)
-                .setPositiveButton("Periksa tugas", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Periksa tugas"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         periksaTugas(p);
                     }
                 })
-                .setNegativeButton("Tutup", null)
+                .setNegativeButton(TeksUI.t("Tutup"), null)
                 .show();
         announce(p.judul + ". " + p.tugas);
     }
@@ -125,11 +125,11 @@ public class BelajarActivity extends Activity {
         if (h.lulus) {
             Belajar.tandaiSelesai(berkasProgres(), p.id);
             muatDaftar();
-            String ok = "Tugas selesai! " + h.bukti;
+            String ok = TeksUI.t("Tugas selesai! ") + h.bukti;
             Toast.makeText(this, ok, Toast.LENGTH_SHORT).show();
-            announce("Tugas selesai. " + h.bukti);
+            announce(TeksUI.t("Tugas selesai. ") + h.bukti);
         } else {
-            String belum = "Belum selesai: " + h.bukti;
+            String belum = TeksUI.t("Belum selesai: ") + h.bukti;
             Toast.makeText(this, belum, Toast.LENGTH_SHORT).show();
             announce(belum);
         }

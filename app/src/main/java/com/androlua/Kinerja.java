@@ -95,14 +95,14 @@ public class Kinerja {
                                        long ramTotalKB, long ramBebasKB) {
         StringBuilder b = new StringBuilder();
         b.append("Memantau ").append(paket).append(" (pid ").append(pid).append(")\n");
-        b.append("Contoh ke-").append(c.contoh).append('\n');
+        b.append(TeksUI.t("Contoh ke-")).append(c.contoh).append('\n');
         if (c.pssTerakhirKB >= 0) {
-            b.append("RAM aplikasi (PSS): ").append(formatKB(c.pssTerakhirKB)).append('\n');
+            b.append(TeksUI.t("RAM aplikasi (PSS): ")).append(formatKB(c.pssTerakhirKB)).append('\n');
         } else {
             b.append("RAM aplikasi: tidak terbaca\n");
         }
         if (c.cpuTerakhir >= 0) {
-            b.append("CPU aplikasi: ").append(String.format("%.1f", c.cpuTerakhir)).append("%\n");
+            b.append(TeksUI.t("CPU aplikasi: ")).append(String.format("%.1f", c.cpuTerakhir)).append("%\n");
         } else {
             b.append("CPU aplikasi: tidak terbaca di Android versi ini\n");
         }

@@ -110,11 +110,11 @@ public class ProjectsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Kelola Project");
+        setTitle(TeksUI.t("Kelola Project"));
 
         root = newRoot();
         setContentView(root);
-        heading(root, "Kelola Project", 20);
+        heading(root, TeksUI.t("Kelola Project"), 20);
 
         // Tahap 3C (Pencarian & Filter): kotak pencarian + penyaring jenis.
         cariEdit = new EditText(this);
@@ -180,9 +180,9 @@ public class ProjectsActivity extends Activity {
         });
         root.addView(lv, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
-        label(root, "Ketuk project untuk membuka. Tahan lama untuk Jalankan, Bangun, Ekspor ZIP, Ganti Ikon, Cadangkan, Bagikan, Pratinjau ke HP Teman, Uji Otomatis, atau Hapus.", true);
+        label(root, TeksUI.t("Ketuk project untuk membuka. Tahan lama untuk Jalankan, Bangun, Ekspor ZIP, Ganti Ikon, Cadangkan, Bagikan, Pratinjau ke HP Teman, Uji Otomatis, atau Hapus."), true);
 
-        button(root, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(root, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -198,7 +198,7 @@ public class ProjectsActivity extends Activity {
             cariEdit.setText(cariAwal);
             terapkanFilter();
         }
-        announce("Kelola Project");
+        announce(TeksUI.t("Kelola Project"));
     }
 
     @Override
@@ -215,15 +215,15 @@ public class ProjectsActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Sama seperti onCreateOptionsMenu di main.lua (layar home/projects).
-        menu.add("Buat proyek");
+        menu.add(TeksUI.t("Buat proyek"));
         menu.add("Muat ulang");
-        menu.add("Pengaturan GitHub");
-        menu.add("Izin penyimpanan");
-        menu.add("Izin pasang APK");
-        menu.add("Tentang");
+        menu.add(TeksUI.t("Pengaturan GitHub"));
+        menu.add(TeksUI.t("Izin penyimpanan"));
+        menu.add(TeksUI.t("Izin pasang APK"));
+        menu.add(TeksUI.t("Tentang"));
         // Tahap 3C: Pulihkan cadangan + Impor proyek.
         menu.add("Pulihkan cadangan");
-        menu.add("Impor proyek");
+        menu.add(TeksUI.t("Impor proyek"));
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -231,7 +231,7 @@ public class ProjectsActivity extends Activity {
     public boolean onOptionsItemSelected(android.view.MenuItem item) {
         // Sama seperti onOptionsItemSelected di main.lua (layar projects).
         String t = String.valueOf(item.getTitle());
-        if ("Buat proyek".equals(t)) {
+        if ((TeksUI.t("Buat proyek").equals(t) || TeksUI.t("Buat proyek").equals(t))) {
             try {
                 startActivity(new Intent(this, CreateProjectActivity.class));
             } catch (Throwable e) {
@@ -239,13 +239,13 @@ public class ProjectsActivity extends Activity {
             }
         } else if ("Muat ulang".equals(t)) {
             muatDaftar();
-        } else if ("Pengaturan GitHub".equals(t)) {
+        } else if ((TeksUI.t("Pengaturan GitHub").equals(t) || TeksUI.t("Pengaturan GitHub").equals(t))) {
             GithubSettings.tampilkan(this, null);
-        } else if ("Izin penyimpanan".equals(t)) {
+        } else if ((TeksUI.t("Izin penyimpanan").equals(t) || TeksUI.t("Izin penyimpanan").equals(t))) {
             requestAccess();
-        } else if ("Izin pasang APK".equals(t)) {
+        } else if ((TeksUI.t("Izin pasang APK").equals(t) || TeksUI.t("Izin pasang APK").equals(t))) {
             PasangHelper.mintaIzinPasang(this);
-        } else if ("Tentang".equals(t)) {
+        } else if ((TeksUI.t("Tentang").equals(t) || TeksUI.t("Tentang").equals(t))) {
             try {
                 startActivity(new Intent(this, AboutActivity.class));
             } catch (Throwable e) {
@@ -253,7 +253,7 @@ public class ProjectsActivity extends Activity {
             }
         } else if ("Pulihkan cadangan".equals(t)) {
             pulihkanCadangan();
-        } else if ("Impor proyek".equals(t)) {
+        } else if ((TeksUI.t("Impor proyek").equals(t) || TeksUI.t("Impor proyek").equals(t))) {
             imporProyek();
         } else {
             return super.onOptionsItemSelected(item);
@@ -456,21 +456,27 @@ public class ProjectsActivity extends Activity {
         }
     }
 
+    private String[] menuProyekTampil() {
+        String[] tampil = new String[MENU_PROYEK.length];
+        for (int i = 0; i < MENU_PROYEK.length; i++) tampil[i] = TeksUI.t(MENU_PROYEK[i]);
+        return tampil;
+    }
+
     private void tampilkanMenuProyek(final String name) {
-        announce("Menu proyek " + name
-                + ". Pilihan: Buka, Jalankan, Bangun proyek, Ekspor ZIP, Ganti Ikon, Cadangkan, Bagikan, Pratinjau ke HP Teman, Uji Otomatis, Hapus, Bangun di Terminal.");
+        announce(TeksUI.t("Menu proyek ") + name
+                + TeksUI.t(". Pilihan: Buka, Jalankan, Bangun proyek, Ekspor ZIP, Ganti Ikon, Cadangkan, Bagikan, Pratinjau ke HP Teman, Uji Otomatis, Hapus, Bangun di Terminal."));
         new AlertDialog.Builder(this)
                 .setTitle(name)
-                .setItems(MENU_PROYEK, new DialogInterface.OnClickListener() {
+                .setItems(menuProyekTampil(), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which < 0 || which >= MENU_PROYEK.length) return;
                         String dir = ROOT + "/" + name;
-                        if ("Buka".equals(MENU_PROYEK[which])) {
+                        if ((TeksUI.t("Buka").equals(MENU_PROYEK[which]) || TeksUI.t("Buka").equals(MENU_PROYEK[which]))) {
                             bukaEditor(name);
                         } else if ("Jalankan".equals(MENU_PROYEK[which])) {
                             jalankanProyek(dir);
-                        } else if ("Bangun proyek".equals(MENU_PROYEK[which])) {
+                        } else if ((TeksUI.t("Bangun proyek").equals(MENU_PROYEK[which]) || TeksUI.t("Bangun proyek").equals(MENU_PROYEK[which]))) {
                             bangunProyek(dir);
                         } else if ("Ekspor ZIP".equals(MENU_PROYEK[which])) {
                             eksporProyek(dir);
@@ -478,20 +484,20 @@ public class ProjectsActivity extends Activity {
                             gantiIkon(dir);
                         } else if ("Cadangkan".equals(MENU_PROYEK[which])) {
                             cadangkanProyek(name);
-                        } else if ("Bagikan".equals(MENU_PROYEK[which])) {
+                        } else if ((TeksUI.t("Bagikan").equals(MENU_PROYEK[which]) || TeksUI.t("Bagikan").equals(MENU_PROYEK[which]))) {
                             bagikanProyek(name);
-                        } else if ("Pratinjau ke HP Teman".equals(MENU_PROYEK[which])) {
+                        } else if ((TeksUI.t("Pratinjau ke HP Teman").equals(MENU_PROYEK[which]) || TeksUI.t("Pratinjau ke HP Teman").equals(MENU_PROYEK[which]))) {
                             pratinjauProyek(name);
                         } else if ("Uji Otomatis".equals(MENU_PROYEK[which])) {
                             ujiOtomatis(name);
-                        } else if ("Hapus".equals(MENU_PROYEK[which])) {
+                        } else if ((TeksUI.t("Hapus").equals(MENU_PROYEK[which]) || TeksUI.t("Hapus").equals(MENU_PROYEK[which]))) {
                             konfirmasiHapus(name);
-                        } else if ("Bangun di Terminal".equals(MENU_PROYEK[which])) {
+                        } else if ((TeksUI.t("Bangun di Terminal").equals(MENU_PROYEK[which]) || TeksUI.t("Bangun di Terminal").equals(MENU_PROYEK[which]))) {
                             bangunDiTerminal(dir);
                         }
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -587,13 +593,13 @@ public class ProjectsActivity extends Activity {
             Intent it = new Intent(Intent.ACTION_SEND);
             it.setType("application/zip");
             it.putExtra(Intent.EXTRA_STREAM, uri);
-            it.putExtra(Intent.EXTRA_SUBJECT, "Pratinjau proyek " + name);
-            it.putExtra(Intent.EXTRA_TEXT, "Pratinjau proyek \"" + name
-                    + "\" dari Create Aplikasi. Buka BACA-SAYA.txt di dalam ZIP "
-                    + "untuk petunjuk membukanya.");
+            it.putExtra(Intent.EXTRA_SUBJECT, TeksUI.t("Pratinjau proyek ") + name);
+            it.putExtra(Intent.EXTRA_TEXT, TeksUI.t("Pratinjau proyek \"") + name
+                    + TeksUI.t("\" dari Create Aplikasi. Buka BACA-SAYA.txt di dalam ZIP ")
+                    + TeksUI.t("untuk petunjuk membukanya."));
             it.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(it, "Pratinjau " + name + " ke HP teman"));
-            announce("Paket pratinjau proyek " + name + " siap dibagikan ke HP teman.");
+            startActivity(Intent.createChooser(it, "Pratinjau " + name + TeksUI.t(" ke HP teman")));
+            announce(TeksUI.t("Paket pratinjau proyek ") + name + TeksUI.t(" siap dibagikan ke HP teman."));
         } catch (Throwable t) {
             toast("Gagal membagikan pratinjau: " + t.getMessage());
         }
@@ -616,9 +622,9 @@ public class ProjectsActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setTitle("Uji Otomatis — " + name)
                 .setView(sv)
-                .setPositiveButton("Tutup", null)
+                .setPositiveButton(TeksUI.t("Tutup"), null)
                 .show();
-        announce("Uji otomatis proyek " + name + ": " + UjiOtomatis.ringkasan(hasil) + ".");
+        announce(TeksUI.t("Uji otomatis proyek ") + name + ": " + UjiOtomatis.ringkasan(hasil) + ".");
     }
 
     // ------------------------------------------- Tahap 3C: arsip proyek
@@ -630,7 +636,7 @@ public class ProjectsActivity extends Activity {
                 new File(DIR_BACKUP));
         if (hasil != null) {
             toast("Cadangan tersimpan: " + hasil.getAbsolutePath());
-            announce("Cadangan proyek " + name + " tersimpan di "
+            announce(TeksUI.t("Cadangan proyek ") + name + TeksUI.t(" tersimpan di ")
                     + hasil.getAbsolutePath());
             // Tahap 3F (Perekam Aksi): catat cadangkan proyek (untuk putar ulang).
             PerekamAksi.catat(new File(getFilesDir(), PerekamAksi.NAMA_BERKAS),
@@ -655,7 +661,7 @@ public class ProjectsActivity extends Activity {
             it.setType("application/zip");
             it.putExtra(Intent.EXTRA_STREAM, uri);
             it.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(it, "Bagikan " + name + ".zip"));
+            startActivity(Intent.createChooser(it, TeksUI.t("Bagikan ") + name + ".zip"));
         } catch (Throwable t) {
             toast("Gagal membagikan: " + t.getMessage());
         }
@@ -681,19 +687,19 @@ public class ProjectsActivity extends Activity {
                         pulihkanDariZip(cadangan.get(which));
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
     private void pulihkanDariZip(File zip) {
         if (!ArsipProyek.zipBerisiInitLua(zip)) {
             new AlertDialog.Builder(this)
-                    .setTitle("Bukan cadangan proyek")
-                    .setMessage("Berkas " + zip.getName()
-                            + " bukan proyek Create Aplikasi (tidak ada berkas data proyek di dalamnya).")
+                    .setTitle(TeksUI.t("Bukan cadangan proyek"))
+                    .setMessage(TeksUI.t("Berkas ") + zip.getName()
+                            + TeksUI.t(" bukan proyek Create Aplikasi (tidak ada berkas data proyek di dalamnya)."))
                     .setPositiveButton("OK", null)
                     .show();
-            announce("Berkas ini bukan proyek Create Aplikasi, tidak ada berkas data proyek di dalamnya.");
+            announce(TeksUI.t("Berkas ini bukan proyek Create Aplikasi, tidak ada berkas data proyek di dalamnya."));
             return;
         }
         String nama = ArsipProyek.namaProyekDariIsi(zip);
@@ -710,7 +716,7 @@ public class ProjectsActivity extends Activity {
             Intent it = new Intent(Intent.ACTION_GET_CONTENT);
             it.setType("application/zip");
             it.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(Intent.createChooser(it, "Pilih ZIP proyek"),
+            startActivityForResult(Intent.createChooser(it, TeksUI.t("Pilih ZIP proyek")),
                     MINTA_IMPOR);
         } catch (Throwable t) {
             toast("Gagal membuka pemilih berkas: " + t.getMessage());
@@ -725,7 +731,7 @@ public class ProjectsActivity extends Activity {
             masuk = getContentResolver().openInputStream(uri);
             galatSalin = ArsipProyek.salinAliran(masuk, sementara);
         } catch (Throwable t) {
-            galatSalin = "Gagal membaca berkas: " + t.getMessage();
+            galatSalin = TeksUI.t("Gagal membaca berkas: ") + t.getMessage();
         }
         if (galatSalin != null) {
             toast(galatSalin);
@@ -733,12 +739,12 @@ public class ProjectsActivity extends Activity {
         }
         if (!ArsipProyek.zipBerisiInitLua(sementara)) {
             new AlertDialog.Builder(this)
-                    .setTitle("Bukan proyek Create Aplikasi")
-                    .setMessage("Berkas yang dipilih bukan proyek Create Aplikasi "
-                            + "(tidak ada berkas data proyek di dalamnya).")
+                    .setTitle(TeksUI.t("Bukan proyek Create Aplikasi"))
+                    .setMessage(TeksUI.t("Berkas yang dipilih bukan proyek Create Aplikasi ")
+                            + TeksUI.t("(tidak ada berkas data proyek di dalamnya)."))
                     .setPositiveButton("OK", null)
                     .show();
-            announce("Berkas yang dipilih bukan proyek Create Aplikasi, tidak ada berkas data proyek di dalamnya.");
+            announce(TeksUI.t("Berkas yang dipilih bukan proyek Create Aplikasi, tidak ada berkas data proyek di dalamnya."));
             sementara.delete();
             return;
         }
@@ -746,7 +752,7 @@ public class ProjectsActivity extends Activity {
         if (nama == null || nama.isEmpty()) {
             nama = namaDariUri(uri);
         }
-        if (nama == null || nama.isEmpty()) nama = "Proyek";
+        if (nama == null || nama.isEmpty()) nama = TeksUI.t("Proyek");
         imporZipKeProyek(sementara, nama, "diimpor");
         sementara.delete();
     }
@@ -785,9 +791,9 @@ public class ProjectsActivity extends Activity {
             return;
         }
         new AlertDialog.Builder(this)
-                .setTitle("Proyek sudah ada")
-                .setMessage("Proyek \"" + nama + "\" sudah ada. Timpa proyek lama, "
-                        + "atau simpan dengan nama baru?")
+                .setTitle(TeksUI.t("Proyek sudah ada"))
+                .setMessage(TeksUI.t("Proyek \"") + nama + TeksUI.t("\" sudah ada. Timpa proyek lama, ")
+                        + TeksUI.t("atau simpan dengan nama baru?"))
                 .setPositiveButton("Timpa", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -795,15 +801,15 @@ public class ProjectsActivity extends Activity {
                         selesaikanImpor(zip, tujuan, kataKerja);
                     }
                 })
-                .setNeutralButton("Nama baru", new DialogInterface.OnClickListener() {
+                .setNeutralButton(TeksUI.t("Nama baru"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mintaNamaBaru(zip, nama, kataKerja);
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
-        announce("Proyek " + nama + " sudah ada. Timpa proyek lama, atau simpan dengan nama baru?");
+        announce(TeksUI.t("Proyek ") + nama + TeksUI.t(" sudah ada. Timpa proyek lama, atau simpan dengan nama baru?"));
     }
 
     private void mintaNamaBaru(final File zip, String namaLama, final String kataKerja) {
@@ -812,8 +818,8 @@ public class ProjectsActivity extends Activity {
         eNama.setText(namaLama);
         eNama.setSingleLine(true);
         new AlertDialog.Builder(this)
-                .setTitle("Nama baru")
-                .setMessage("Tulis nama baru untuk proyek ini:")
+                .setTitle(TeksUI.t("Nama baru"))
+                .setMessage(TeksUI.t("Tulis nama baru untuk proyek ini:"))
                 .setView(eNama)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -825,13 +831,13 @@ public class ProjectsActivity extends Activity {
                         }
                         File tujuan = new File(ROOT + "/" + baru);
                         if (tujuan.exists()) {
-                            toast("Proyek \"" + baru + "\" sudah ada.");
+                            toast("Proyek \"" + baru + TeksUI.t("\" sudah ada."));
                             return;
                         }
                         selesaikanImpor(zip, tujuan, kataKerja);
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -841,17 +847,17 @@ public class ProjectsActivity extends Activity {
             toast(galat);
             return;
         }
-        toast("Proyek \"" + tujuan.getName() + "\" berhasil " + kataKerja);
-        announce("Proyek " + tujuan.getName() + " berhasil " + kataKerja + ".");
+        toast("Proyek \"" + tujuan.getName() + TeksUI.t("\" berhasil ") + kataKerja);
+        announce(TeksUI.t("Proyek ") + tujuan.getName() + TeksUI.t(" berhasil ") + kataKerja + ".");
         muatDaftar();
     }
 
     private void konfirmasiHapus(final String name) {
         new AlertDialog.Builder(this)
-                .setTitle("Hapus proyek")
-                .setMessage("Hapus proyek \"" + name
-                        + "\" beserta semua filenya? Tindakan ini tidak bisa dibatalkan.")
-                .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
+                .setTitle(TeksUI.t("Hapus proyek"))
+                .setMessage(TeksUI.t("Hapus proyek \"") + name
+                        + TeksUI.t("\" beserta semua filenya? Tindakan ini tidak bisa dibatalkan."))
+                .setPositiveButton(TeksUI.t("Hapus"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         hapusRekursif(new File(ROOT + "/" + name));
@@ -859,10 +865,10 @@ public class ProjectsActivity extends Activity {
                         muatDaftar();
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
-        announce("Hapus proyek " + name
-                + ". Hapus proyek beserta semua filenya? Tindakan ini tidak bisa dibatalkan.");
+        announce(TeksUI.t("Hapus proyek ") + name
+                + TeksUI.t(". Hapus proyek beserta semua filenya? Tindakan ini tidak bisa dibatalkan."));
     }
 
     private boolean hapusRekursif(File f) {

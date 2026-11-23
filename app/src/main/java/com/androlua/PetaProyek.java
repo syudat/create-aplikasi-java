@@ -143,7 +143,7 @@ public class PetaProyek {
         if (dirProyek == null || !dirProyek.isDirectory()) return hasil;
         String utama = Pratinjau.jalurBerkasUtama(dirProyek);
         if (utama != null && new File(dirProyek, utama).isFile()) {
-            hasil.add(new String[]{"Berkas utama", utama});
+            hasil.add(new String[]{TeksUI.t("Berkas utama"), utama});
         }
         String[][] peran = {
             {"Manifest", "app/src/main/AndroidManifest.xml"},
@@ -165,9 +165,9 @@ public class PetaProyek {
     public static String teks(File dirProyek) {
         Peta p = peta(dirProyek);
         StringBuilder sb = new StringBuilder();
-        sb.append("Peta Proyek: ").append(dirProyek == null ? "" : dirProyek.getName()).append("\n");
-        sb.append("Jumlah berkas: ").append(p.jumlahBerkas)
-                .append(" | Total ukuran: ").append(formatUkuran(p.totalUkuran)).append("\n");
+        sb.append(TeksUI.t("Peta Proyek: ")).append(dirProyek == null ? "" : dirProyek.getName()).append("\n");
+        sb.append(TeksUI.t("Jumlah berkas: ")).append(p.jumlahBerkas)
+                .append(TeksUI.t(" | Total ukuran: ")).append(formatUkuran(p.totalUkuran)).append("\n");
         sb.append("(Folder bin/ dan .git/ tidak ikut dipetakan.)\n\n");
         sb.append("== Struktur ==\n");
         String folderSebelumnya = "";
@@ -190,7 +190,7 @@ public class PetaProyek {
         sb.append("\n== Ukuran per jenis ==\n");
         for (Map.Entry<String, Jumlah> e : p.perJenis.entrySet()) {
             sb.append(e.getKey()).append(": ").append(e.getValue().jumlah)
-                    .append(" berkas, ").append(formatUkuran(e.getValue().ukuran)).append("\n");
+                    .append(TeksUI.t(" berkas, ")).append(formatUkuran(e.getValue().ukuran)).append("\n");
         }
         sb.append("\n== Berkas penting ==\n");
         List<String[]> utama = berkasUtama(dirProyek);

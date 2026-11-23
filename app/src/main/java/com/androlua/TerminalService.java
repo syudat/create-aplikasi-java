@@ -264,9 +264,9 @@ public class TerminalService extends Service {
             NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             if (nm == null) return;
             NotificationChannel ch = new NotificationChannel(
-                    CHANNEL_ID, "Terminal tetap hidup",
+                    CHANNEL_ID, TeksUI.t("Terminal tetap hidup"),
                     NotificationManager.IMPORTANCE_LOW);
-            ch.setDescription("Menampilkan bahwa shell Terminal Create Aplikasi masih berjalan.");
+            ch.setDescription(TeksUI.t("Menampilkan bahwa shell Terminal Create Aplikasi masih berjalan."));
             nm.createNotificationChannel(ch);
         } catch (Throwable ignored) {
         }
@@ -283,7 +283,7 @@ public class TerminalService extends Service {
         } else {
             b = new Notification.Builder(this);
         }
-        return b.setContentTitle("Terminal Create Aplikasi")
+        return b.setContentTitle(TeksUI.t("Terminal Create Aplikasi"))
                 .setContentText("Shell tetap berjalan. Ketuk untuk kembali ke Terminal.")
                 .setSmallIcon(android.R.drawable.ic_menu_info_details)
                 .setContentIntent(pi)

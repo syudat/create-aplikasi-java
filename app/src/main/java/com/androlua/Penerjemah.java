@@ -434,7 +434,7 @@ public class Penerjemah {
         StringBuilder lap = new StringBuilder();
         lap.append("Laporan terjemahan — bahasa ").append(namaBahasa(bahasa))
                 .append(" (").append(bahasa).append(")\n");
-        lap.append("Proyek: ").append(dirProyek.getName()).append("\n\n");
+        lap.append(TeksUI.t("Proyek: ")).append(dirProyek.getName()).append("\n\n");
 
         // 1) strings.xml
         File stringsXml = new File(dirProyek,
@@ -536,8 +536,8 @@ public class Penerjemah {
             if (galat == null) berkasDitulis.add(tabel.getAbsolutePath());
         }
 
-        lap.append("Ringkasan: ").append(jumlahTeks).append(" teks, ")
-                .append(kataDiterjemahkan).append(" kata diterjemahkan, ")
+        lap.append("Ringkasan: ").append(jumlahTeks).append(TeksUI.t(" teks, "))
+                .append(kataDiterjemahkan).append(TeksUI.t(" kata diterjemahkan, "))
                 .append(kataBelum).append(" kata belum diterjemahkan.\n");
         if (!belumUnik.isEmpty()) {
             lap.append("Kata yang belum ada di kamus: ");
@@ -649,7 +649,7 @@ public class Penerjemah {
             }
             return null;
         } catch (Exception e) {
-            return "Gagal menulis " + f.getAbsolutePath() + ": " + e.getMessage();
+            return TeksUI.t("Gagal menulis ") + f.getAbsolutePath() + ": " + e.getMessage();
         }
     }
 

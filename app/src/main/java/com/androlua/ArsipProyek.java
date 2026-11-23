@@ -59,13 +59,13 @@ public class ArsipProyek {
      * kembalikan "Proyek".
      */
     public static String namaProyekDariBerkas(String namaBerkas) {
-        if (namaBerkas == null) return "Proyek";
+        if (namaBerkas == null) return TeksUI.t("Proyek");
         String nama = namaBerkas;
         if (nama.toLowerCase(Locale.US).endsWith(".zip")) {
             nama = nama.substring(0, nama.length() - 4);
         }
         nama = nama.replaceAll("-\\d{4}-\\d{2}-\\d{2}-\\d{6}$", "");
-        if (nama.isEmpty()) return "Proyek";
+        if (nama.isEmpty()) return TeksUI.t("Proyek");
         return nama;
     }
 
@@ -231,7 +231,7 @@ public class ArsipProyek {
      * Aman dari zip-slip: entri yang keluar dari folder tujuan ditolak.
      */
     public static String ekstrakZip(File zip, File dirTujuan) {
-        if (zip == null || !zip.isFile()) return "Berkas ZIP tidak ditemukan.";
+        if (zip == null || !zip.isFile()) return TeksUI.t("Berkas ZIP tidak ditemukan.");
         if (dirTujuan == null) return "Folder tujuan tidak ditentukan.";
         if (!zipBerisiInitLua(zip)) {
             return "Berkas ini bukan proyek Create Aplikasi (tidak ada berkas data proyek di dalamnya).";

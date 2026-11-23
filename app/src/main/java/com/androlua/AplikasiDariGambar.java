@@ -32,7 +32,7 @@ public class AplikasiDariGambar {
      */
     public static String namaDariBerkas(String namaBerkas) {
         if (namaBerkas == null || namaBerkas.trim().length() == 0) {
-            return "Galeri Saya";
+            return TeksUI.t("Galeri Saya");
         }
         String nama = namaBerkas.trim();
         int titik = nama.lastIndexOf('.');
@@ -46,7 +46,7 @@ public class AplikasiDariGambar {
             sb.append(Character.toUpperCase(kata[i].charAt(0)));
             if (kata[i].length() > 1) sb.append(kata[i].substring(1));
         }
-        if (sb.length() == 0) return "Galeri Saya";
+        if (sb.length() == 0) return TeksUI.t("Galeri Saya");
         return sb.toString();
     }
 
@@ -63,21 +63,21 @@ public class AplikasiDariGambar {
     public static String buatGaleri(File dirProyek, File gambar,
                                     String namaAplikasi, int warnaDominan) {
         if (dirProyek == null || !dirProyek.isDirectory()) {
-            return "Folder proyek tidak ditemukan.";
+            return TeksUI.t("Folder proyek tidak ditemukan.");
         }
         if (gambar == null || !gambar.isFile()) {
-            return "Berkas gambar tidak ditemukan.";
+            return TeksUI.t("Berkas gambar tidak ditemukan.");
         }
         if (namaAplikasi == null || namaAplikasi.trim().length() == 0) {
-            namaAplikasi = "Galeri Saya";
+            namaAplikasi = TeksUI.t("Galeri Saya");
         }
         String paket = InfoProyek.namaPaket(dirProyek);
         if (paket == null || paket.isEmpty()) {
-            return "Nama paket proyek tidak terbaca dari berkas data proyek.";
+            return TeksUI.t("Nama paket proyek tidak terbaca dari berkas data proyek.");
         }
         File dirAssets = new File(dirProyek, "app/src/main/assets");
         if (!dirAssets.mkdirs() && !dirAssets.isDirectory()) {
-            return "Tidak bisa membuat folder assets proyek.";
+            return TeksUI.t("Tidak bisa membuat folder assets proyek.");
         }
         String galat = salin(gambar, new File(dirAssets, NAMA_GAMBAR));
         if (galat != null) return galat;
@@ -177,7 +177,7 @@ public class AplikasiDariGambar {
             }
             return null;
         } catch (Exception e) {
-            return "Tidak bisa menyalin gambar: " + e.getMessage();
+            return TeksUI.t("Tidak bisa menyalin gambar: ") + e.getMessage();
         }
     }
 
@@ -192,7 +192,7 @@ public class AplikasiDariGambar {
             }
             return null;
         } catch (Exception e) {
-            return "Tidak bisa menulis " + target.getName() + ": " + e.getMessage();
+            return TeksUI.t("Tidak bisa menulis ") + target.getName() + ": " + e.getMessage();
         }
     }
 }

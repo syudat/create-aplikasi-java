@@ -56,27 +56,27 @@ public class PenerjemahKodeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Penerjemah Kode");
+        setTitle(TeksUI.t("Penerjemah Kode"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Penerjemah Kode", 20);
-        label(r, "Terjemahkan kode antar bahasa di HP ini, tanpa internet. "
-                + "Hasil disimpan sebagai berkas baru, berkas asli tidak diubah.", false);
+        heading(r, TeksUI.t("Penerjemah Kode"), 20);
+        label(r, TeksUI.t("Terjemahkan kode antar bahasa di HP ini, tanpa internet. ")
+                + TeksUI.t("Hasil disimpan sebagai berkas baru, berkas asli tidak diubah."), false);
 
-        tvProyek = label(r, "Proyek: belum dipilih.", false);
-        button(r, "Pilih proyek", new View.OnClickListener() {
+        tvProyek = label(r, TeksUI.t("Proyek: belum dipilih."), false);
+        button(r, TeksUI.t("Pilih proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pilihProyek();
             }
         });
 
-        tvBerkas = label(r, "Berkas: belum dipilih.", false);
-        button(r, "Pilih berkas sumber", new View.OnClickListener() {
+        tvBerkas = label(r, TeksUI.t("Berkas: belum dipilih."), false);
+        button(r, TeksUI.t("Pilih berkas sumber"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pilihBerkas();
@@ -84,7 +84,7 @@ public class PenerjemahKodeActivity extends Activity {
         });
 
         tvArah = label(r, "Arah: " + PenerjemahKode.labelArah(arah), false);
-        button(r, "Pilih arah terjemahan", new View.OnClickListener() {
+        button(r, TeksUI.t("Pilih arah terjemahan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pilihArah();
@@ -98,7 +98,7 @@ public class PenerjemahKodeActivity extends Activity {
             }
         });
 
-        label(r, "Kode sumber:", false);
+        label(r, TeksUI.t("Kode sumber:"), false);
         tvSumber = new TextView(this);
         tvSumber.setText("Belum ada berkas yang dipilih.");
         tvSumber.setTextSize(13);
@@ -116,7 +116,7 @@ public class PenerjemahKodeActivity extends Activity {
         tvHasil.setMovementMethod(new ScrollingMovementMethod());
         r.addView(tvHasil);
 
-        btnSimpan = button(r, "Simpan hasil sebagai berkas baru", new View.OnClickListener() {
+        btnSimpan = button(r, TeksUI.t("Simpan hasil sebagai berkas baru"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 simpanHasil();
@@ -124,7 +124,7 @@ public class PenerjemahKodeActivity extends Activity {
         });
         btnSimpan.setEnabled(false);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -141,19 +141,19 @@ public class PenerjemahKodeActivity extends Activity {
             }
         }
         perbaruiArah();
-        announce("Penerjemah Kode. Pilih proyek, berkas sumber, dan arah terjemahan.");
+        announce(TeksUI.t("Penerjemah Kode. Pilih proyek, berkas sumber, dan arah terjemahan."));
     }
 
     private void pilihProyek() {
         final List<String> nama = InfoProyek.daftarNama(new File(BuatProyekHelper.root()));
         if (nama.isEmpty()) {
-            Toast.makeText(this, "Belum ada proyek.", Toast.LENGTH_SHORT).show();
-            announce("Belum ada proyek. Buat dulu lewat Buat Project.");
+            Toast.makeText(this, TeksUI.t("Belum ada proyek."), Toast.LENGTH_SHORT).show();
+            announce(TeksUI.t("Belum ada proyek. Buat dulu lewat Buat Project."));
             return;
         }
         final String[] item = nama.toArray(new String[0]);
         new AlertDialog.Builder(this)
-                .setTitle("Pilih proyek")
+                .setTitle(TeksUI.t("Pilih proyek"))
                 .setItems(item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
@@ -166,24 +166,24 @@ public class PenerjemahKodeActivity extends Activity {
                         tvSumber.setText("Belum ada berkas yang dipilih.");
                         tvHasil.setText("Belum ada hasil.");
                         btnSimpan.setEnabled(false);
-                        announce("Proyek dipilih: " + item[which]);
+                        announce(TeksUI.t("Proyek dipilih: ") + item[which]);
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
     private void pilihBerkas() {
         if (dirProyek == null) {
-            Toast.makeText(this, "Pilih proyek dulu.", Toast.LENGTH_SHORT).show();
-            announce("Pilih proyek dulu.");
+            Toast.makeText(this, TeksUI.t("Pilih proyek dulu."), Toast.LENGTH_SHORT).show();
+            announce(TeksUI.t("Pilih proyek dulu."));
             return;
         }
         final List<File> berkas = cariBerkasKode(dirProyek);
         if (berkas.isEmpty()) {
             Toast.makeText(this, "Tidak ada berkas .lua/.java/.kt di proyek ini.",
                     Toast.LENGTH_SHORT).show();
-            announce("Tidak ada berkas kode di proyek ini.");
+            announce(TeksUI.t("Tidak ada berkas kode di proyek ini."));
             return;
         }
         final String[] item = new String[berkas.size()];
@@ -191,7 +191,7 @@ public class PenerjemahKodeActivity extends Activity {
             item[i] = jalanRelatif(dirProyek, berkas.get(i));
         }
         new AlertDialog.Builder(this)
-                .setTitle("Pilih berkas sumber")
+                .setTitle(TeksUI.t("Pilih berkas sumber"))
                 .setItems(item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
@@ -200,7 +200,7 @@ public class PenerjemahKodeActivity extends Activity {
                         hasilTerjemah = null;
                         tvBerkas.setText("Berkas: " + item[which]);
                         tvSumber.setText(kodeSumber.isEmpty()
-                                ? "(berkas kosong atau gagal dibaca)"
+                                ? TeksUI.t("(berkas kosong atau gagal dibaca)")
                                 : kodeSumber);
                         tvHasil.setText("Belum ada hasil.");
                         btnSimpan.setEnabled(false);
@@ -214,10 +214,10 @@ public class PenerjemahKodeActivity extends Activity {
                             arah = PenerjemahKode.JAVA_LUA;
                         }
                         perbaruiArah();
-                        announce("Berkas dipilih: " + item[which]);
+                        announce(TeksUI.t("Berkas dipilih: ") + item[which]);
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -225,7 +225,7 @@ public class PenerjemahKodeActivity extends Activity {
         final String[] item = new String[PenerjemahKode.ARAH.length];
         for (int i = 0; i < item.length; i++) item[i] = PenerjemahKode.labelArah(PenerjemahKode.ARAH[i]);
         new AlertDialog.Builder(this)
-                .setTitle("Pilih arah terjemahan")
+                .setTitle(TeksUI.t("Pilih arah terjemahan"))
                 .setItems(item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
@@ -234,7 +234,7 @@ public class PenerjemahKodeActivity extends Activity {
                         announce("Arah dipilih: " + item[which]);
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -244,8 +244,8 @@ public class PenerjemahKodeActivity extends Activity {
 
     private void terjemahkan() {
         if (berkasSumber == null || kodeSumber == null || kodeSumber.isEmpty()) {
-            Toast.makeText(this, "Pilih berkas sumber dulu.", Toast.LENGTH_SHORT).show();
-            announce("Pilih berkas sumber dulu.");
+            Toast.makeText(this, TeksUI.t("Pilih berkas sumber dulu."), Toast.LENGTH_SHORT).show();
+            announce(TeksUI.t("Pilih berkas sumber dulu."));
             return;
         }
         hasilTerjemah = PenerjemahKode.terjemah(kodeSumber, arah);
@@ -261,16 +261,16 @@ public class PenerjemahKodeActivity extends Activity {
         }
         tvHasil.setText(sb.toString());
         btnSimpan.setEnabled(true);
-        String ringkas = "Terjemahan selesai. " + hasilTerjemah.barisMasuk
-                + " baris masuk, " + hasilTerjemah.tidakDiterjemahkan.size()
-                + " baris tidak bisa diterjemahkan.";
+        String ringkas = TeksUI.t("Terjemahan selesai. ") + hasilTerjemah.barisMasuk
+                + TeksUI.t(" baris masuk, ") + hasilTerjemah.tidakDiterjemahkan.size()
+                + TeksUI.t(" baris tidak bisa diterjemahkan.");
         announce(ringkas);
         Toast.makeText(this, ringkas, Toast.LENGTH_SHORT).show();
     }
 
     private void simpanHasil() {
         if (hasilTerjemah == null || berkasSumber == null) {
-            announce("Belum ada hasil untuk disimpan.");
+            announce(TeksUI.t("Belum ada hasil untuk disimpan."));
             return;
         }
         String namaBaru = PenerjemahKode.namaBerkasHasil(berkasSumber.getName(), arah);
@@ -280,12 +280,12 @@ public class PenerjemahKodeActivity extends Activity {
                     new FileOutputStream(tujuan, false), "UTF-8");
             w.write(hasilTerjemah.kode);
             w.close();
-            String pesan = "Hasil disimpan sebagai " + namaBaru
-                    + " di folder " + berkasSumber.getParentFile().getName() + ".";
+            String pesan = TeksUI.t("Hasil disimpan sebagai ") + namaBaru
+                    + TeksUI.t(" di folder ") + berkasSumber.getParentFile().getName() + ".";
             announce(pesan);
             Toast.makeText(this, pesan, Toast.LENGTH_LONG).show();
         } catch (Throwable t) {
-            String pesan = "Gagal menyimpan hasil: " + t.getMessage();
+            String pesan = TeksUI.t("Gagal menyimpan hasil: ") + t.getMessage();
             announce(pesan);
             Toast.makeText(this, pesan, Toast.LENGTH_LONG).show();
         }

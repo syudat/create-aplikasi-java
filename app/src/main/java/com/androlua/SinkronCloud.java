@@ -79,7 +79,7 @@ public class SinkronCloud {
                 c.setConnectTimeout(30000);
                 c.setReadTimeout(60000);
                 c.setRequestProperty("Accept", "application/vnd.github+json");
-                c.setRequestProperty("User-Agent", "Create-Aplikasi");
+                c.setRequestProperty("User-Agent", TeksUI.t("Create-Aplikasi"));
                 if (token != null && !token.isEmpty()) {
                     c.setRequestProperty("Authorization", "token " + token);
                 }
@@ -132,7 +132,7 @@ public class SinkronCloud {
 
     /** Nama tujuan yang belum dipakai di Download/project ("Nama", "Nama 2", "Nama 3", ...). */
     public static String namaTujuanUnik(File dirRoot, String nama) {
-        if (dirRoot == null || nama == null || nama.isEmpty()) return "Proyek";
+        if (dirRoot == null || nama == null || nama.isEmpty()) return TeksUI.t("Proyek");
         if (!new File(dirRoot, nama).exists()) return nama;
         int i = 2;
         while (new File(dirRoot, nama + " " + i).exists()) i++;
@@ -146,8 +146,8 @@ public class SinkronCloud {
      * bila berhasil, atau pesan galat.
      */
     public static String pulihkan(File zip, File dirRoot) {
-        if (zip == null || !zip.isFile()) return "Berkas cadangan tidak ditemukan.";
-        if (dirRoot == null) return "Folder proyek tidak ditentukan.";
+        if (zip == null || !zip.isFile()) return TeksUI.t("Berkas cadangan tidak ditemukan.");
+        if (dirRoot == null) return TeksUI.t("Folder proyek tidak ditentukan.");
         String nama = ArsipProyek.namaProyekDariIsi(zip);
         if (nama == null || nama.isEmpty()) {
             nama = ArsipProyek.namaProyekDariBerkas(zip.getName());
@@ -177,15 +177,15 @@ public class SinkronCloud {
      */
     public static String unggah(String token, String apiDasar, String pemilik, String repo,
                                 String jalurRepo, File zip, String pesan, PengirimHttp http) {
-        if (token == null || token.isEmpty()) return "Token GitHub belum diisi.";
-        if (pemilik == null || pemilik.isEmpty()) return "Nama pengguna GitHub tidak diketahui.";
-        if (zip == null || !zip.isFile()) return "Berkas ZIP tidak ditemukan.";
-        if (http == null) return "Pengirim HTTP tidak ada.";
+        if (token == null || token.isEmpty()) return TeksUI.t("Token GitHub belum diisi.");
+        if (pemilik == null || pemilik.isEmpty()) return TeksUI.t("Nama pengguna GitHub tidak diketahui.");
+        if (zip == null || !zip.isFile()) return TeksUI.t("Berkas ZIP tidak ditemukan.");
+        if (http == null) return TeksUI.t("Pengirim HTTP tidak ada.");
         String isi64 = bacaBase64(zip);
-        if (isi64 == null) return "Gagal membaca berkas ZIP.";
+        if (isi64 == null) return TeksUI.t("Gagal membaca berkas ZIP.");
         String url = apiDasar + "/repos/" + pemilik + "/" + repo + "/contents/" + jalurRepo;
         try {
-            String tubuh = "{\"message\":" + jsonKutip(pesan == null ? "Cadangan proyek" : pesan)
+            String tubuh = "{\"message\":" + jsonKutip(pesan == null ? TeksUI.t("Cadangan proyek") : pesan)
                     + ",\"content\":" + jsonKutip(isi64) + "}";
             Respon r = http.kirim("PUT", url, token, tubuh);
             if (r.kode == 200 || r.kode == 201) return null;
@@ -193,20 +193,20 @@ public class SinkronCloud {
                 // Berkas sudah ada: ambil sha lalu unggah ulang sebagai pembaruan.
                 String sha = shaBerkas(token, apiDasar, pemilik, repo, jalurRepo, http);
                 if (sha == null || sha.isEmpty()) {
-                    return "Gagal mengunggah (HTTP 422) dan sha lama tidak bisa dibaca.";
+                    return TeksUI.t("Gagal mengunggah (HTTP 422) dan sha lama tidak bisa dibaca.");
                 }
-                String tubuh2 = "{\"message\":" + jsonKutip(pesan == null ? "Cadangan proyek" : pesan)
+                String tubuh2 = "{\"message\":" + jsonKutip(pesan == null ? TeksUI.t("Cadangan proyek") : pesan)
                         + ",\"content\":" + jsonKutip(isi64)
                         + ",\"sha\":" + jsonKutip(sha) + "}";
                 Respon r2 = http.kirim("PUT", url, token, tubuh2);
                 if (r2.kode == 200 || r2.kode == 201) return null;
-                return "Gagal mengunggah ke GitHub (HTTP " + r2.kode + ").";
+                return TeksUI.t("Gagal mengunggah ke GitHub (HTTP ") + r2.kode + ").";
             }
-            if (r.kode == 401) return "Token GitHub tidak valid (HTTP 401). Periksa token di Pengaturan GitHub.";
-            if (r.kode == 404) return "Repo \"" + repo + "\" tidak ditemukan (HTTP 404). Buat dulu repo privat itu di GitHub.";
-            return "Gagal mengunggah ke GitHub (HTTP " + r.kode + ").";
+            if (r.kode == 401) return TeksUI.t("Token GitHub tidak valid (HTTP 401). Periksa token di Pengaturan GitHub.");
+            if (r.kode == 404) return "Repo \"" + repo + TeksUI.t("\" tidak ditemukan (HTTP 404). Buat dulu repo privat itu di GitHub.");
+            return TeksUI.t("Gagal mengunggah ke GitHub (HTTP ") + r.kode + ").";
         } catch (Exception e) {
-            return "Gagal mengunggah ke GitHub: " + e.getMessage();
+            return TeksUI.t("Gagal mengunggah ke GitHub: ") + e.getMessage();
         }
     }
 

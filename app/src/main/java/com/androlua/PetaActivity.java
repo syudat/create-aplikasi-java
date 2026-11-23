@@ -39,20 +39,20 @@ public class PetaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Peta Proyek");
+        setTitle(TeksUI.t("Peta Proyek"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Peta Proyek", 20);
-        label(r, "Lihat struktur proyek: daftar folder dan berkas beserta "
-                + "ukurannya, total ukuran, ukuran per jenis berkas, dan "
-                + "berkas penting (berkas utama, manifest, layout, strings, "
+        heading(r, TeksUI.t("Peta Proyek"), 20);
+        label(r, TeksUI.t("Lihat struktur proyek: daftar folder dan berkas beserta ")
+                + TeksUI.t("ukurannya, total ukuran, ukuran per jenis berkas, dan ")
+                + TeksUI.t("berkas penting (berkas utama, manifest, layout, strings, ")
                 + "ikon). Folder bin/ dan .git/ tidak ikut dipetakan.", false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -67,7 +67,7 @@ public class PetaActivity extends Activity {
                 tampilkanPeta();
             }
         });
-        button(r, "Simpan peta-proyek.txt", new View.OnClickListener() {
+        button(r, TeksUI.t("Simpan peta-proyek.txt"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 simpanPeta();
@@ -80,7 +80,7 @@ public class PetaActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -88,7 +88,7 @@ public class PetaActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Peta Proyek. Pilih proyek, lalu tekan Tampilkan Peta.");
+        announce(TeksUI.t("Peta Proyek. Pilih proyek, lalu tekan Tampilkan Peta."));
     }
 
     @Override
@@ -117,8 +117,8 @@ public class PetaActivity extends Activity {
         String teks = PetaProyek.teks(dir);
         if (tvHasil != null) tvHasil.setText(teks);
         PetaProyek.Peta p = PetaProyek.peta(dir);
-        announce("Peta proyek " + dir.getName() + ": " + p.jumlahBerkas
-                + " berkas, total " + PetaProyek.formatUkuran(p.totalUkuran) + ".");
+        announce(TeksUI.t("Peta proyek ") + dir.getName() + ": " + p.jumlahBerkas
+                + TeksUI.t(" berkas, total ") + PetaProyek.formatUkuran(p.totalUkuran) + ".");
     }
 
     private void simpanPeta() {
@@ -132,7 +132,7 @@ public class PetaActivity extends Activity {
             toast("Gagal menyimpan peta proyek.");
             return;
         }
-        String ok = "Peta disimpan ke peta-proyek.txt di proyek " + dir.getName() + ".";
+        String ok = TeksUI.t("Peta disimpan ke peta-proyek.txt di proyek ") + dir.getName() + ".";
         toast(ok);
         announce(ok);
         if (tvHasil != null) tvHasil.setText(PetaProyek.teks(dir));

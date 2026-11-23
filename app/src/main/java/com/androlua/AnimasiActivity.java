@@ -43,20 +43,20 @@ public class AnimasiActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pembuat Animasi");
+        setTitle(TeksUI.t("Pembuat Animasi"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pembuat Animasi", 20);
-        label(r, "Buat animasi untuk proyekmu tanpa menulis kode animasi. "
-                + "Pilih proyek, jenis animasi, durasi (100 sampai 10000 milidetik), "
-                + "dan targetnya — IDE menulis berkas animasi dan contoh kodenya.",
+        heading(r, TeksUI.t("Pembuat Animasi"), 20);
+        label(r, TeksUI.t("Buat animasi untuk proyekmu tanpa menulis kode animasi. ")
+                + TeksUI.t("Pilih proyek, jenis animasi, durasi (100 sampai 10000 milidetik), ")
+                + TeksUI.t("dan targetnya — IDE menulis berkas animasi dan contoh kodenya."),
                 false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -95,7 +95,7 @@ public class AnimasiActivity extends Activity {
         r.addView(spTarget, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Contoh kode pemakaian:", false);
+        label(r, TeksUI.t("Contoh kode pemakaian:"), false);
         tvContoh = new TextView(this);
         tvContoh.setTextSize(13);
         tvContoh.setTextIsSelectable(true);
@@ -103,13 +103,13 @@ public class AnimasiActivity extends Activity {
         tvContoh.setText("Contoh kode muncul di sini setelah animasi dibuat.");
         r.addView(tvContoh);
 
-        button(r, "Buat Animasi", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Animasi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatAnimasi();
             }
         });
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -117,7 +117,7 @@ public class AnimasiActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Pembuat Animasi. Pilih proyek dan jenis animasi, lalu tekan Buat Animasi.");
+        announce(TeksUI.t("Pembuat Animasi. Pilih proyek dan jenis animasi, lalu tekan Buat Animasi."));
     }
 
     @Override
@@ -163,12 +163,12 @@ public class AnimasiActivity extends Activity {
         String berkas = ("html".equals(tipe) || "situs".equals(tipe))
                 ? "app/src/main/assets/animasi.css"
                 : "app/src/main/res/anim/" + PembuatAnimasi.namaBerkas(jenis.id);
-        String ok = "Animasi " + jenis.nama + " dibuat di " + berkas
-                + " (durasi " + durasi + " ms). Contoh kode pemakaian ditampilkan di bawah.";
+        String ok = "Animasi " + jenis.nama + TeksUI.t(" dibuat di ") + berkas
+                + " (durasi " + durasi + TeksUI.t(" ms). Contoh kode pemakaian ditampilkan di bawah.");
         toast(ok);
         announce(ok);
         new AlertDialog.Builder(this)
-                .setTitle("Animasi berhasil dibuat")
+                .setTitle(TeksUI.t("Animasi berhasil dibuat"))
                 .setMessage(ok + "\n\nContoh kode:\n" + contoh)
                 .setPositiveButton("OK", null)
                 .show();

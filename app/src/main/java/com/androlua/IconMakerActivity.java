@@ -99,13 +99,13 @@ public class IconMakerActivity extends Activity {
         setContentView(sv);
 
         heading(r, "Pembuat Ikon Otomatis", 20);
-        label(r, "Buat ikon aplikasi dari tulisan dan warna. Ikon berukuran "
-                + "512x512 dan menggantikan icon.png 1x1 transparan di proyek "
+        label(r, TeksUI.t("Buat ikon aplikasi dari tulisan dan warna. Ikon berukuran ")
+                + TeksUI.t("512x512 dan menggantikan icon.png 1x1 transparan di proyek ")
                 + "(manifest memakai @drawable/icon).", false);
 
         labelProyek = label(r, labelProyekTeks(), false);
 
-        label(r, "Tulisan ikon (1-2 huruf, contoh: GD untuk Garuda Decode)");
+        label(r, TeksUI.t("Tulisan ikon (1-2 huruf, contoh: GD untuk Garuda Decode)"));
         eTeks = new EditText(this);
         GayaStudio.edit(eTeks);
         eTeks.setHint("Contoh: GD");
@@ -119,7 +119,7 @@ public class IconMakerActivity extends Activity {
         r.addView(eTeks, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Warna latar (kode hex, contoh: #2196F3)");
+        label(r, TeksUI.t("Warna latar (kode hex, contoh: #2196F3)"));
         eBgHex = new EditText(this);
         GayaStudio.edit(eBgHex);
         eBgHex.setHint("#2196F3");
@@ -128,14 +128,14 @@ public class IconMakerActivity extends Activity {
         eBgHex.setSingleLine(true);
         r.addView(eBgHex, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button(r, "Pilih warna latar", new View.OnClickListener() {
+        button(r, TeksUI.t("Pilih warna latar"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pilihWarna("Pilih warna latar", BG_NAMA, BG_HEX, eBgHex);
+                pilihWarna(TeksUI.t("Pilih warna latar"), BG_NAMA, BG_HEX, eBgHex);
             }
         });
 
-        label(r, "Warna tulisan (kode hex, contoh: #FFFFFF)");
+        label(r, TeksUI.t("Warna tulisan (kode hex, contoh: #FFFFFF)"));
         eFgHex = new EditText(this);
         GayaStudio.edit(eFgHex);
         eFgHex.setHint("#FFFFFF");
@@ -144,14 +144,14 @@ public class IconMakerActivity extends Activity {
         eFgHex.setSingleLine(true);
         r.addView(eFgHex, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button(r, "Pilih warna tulisan", new View.OnClickListener() {
+        button(r, TeksUI.t("Pilih warna tulisan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pilihWarna("Pilih warna tulisan", FG_NAMA, FG_HEX, eFgHex);
+                pilihWarna(TeksUI.t("Pilih warna tulisan"), FG_NAMA, FG_HEX, eFgHex);
             }
         });
 
-        button(r, "Buat Ikon", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Ikon"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatPratinjau();
@@ -160,32 +160,32 @@ public class IconMakerActivity extends Activity {
 
         label(r, "Pratinjau ikon");
         pratinjau = new ImageView(this);
-        pratinjau.setContentDescription("Belum ada pratinjau ikon.");
+        pratinjau.setContentDescription(TeksUI.t("Belum ada pratinjau ikon."));
         LinearLayout.LayoutParams lpPratinjau = new LinearLayout.LayoutParams(
                 dp(192), dp(192));
         lpPratinjau.gravity = Gravity.CENTER_HORIZONTAL;
         lpPratinjau.topMargin = dp(8);
         r.addView(pratinjau, lpPratinjau);
 
-        btnSimpanProyek = button(r, "Simpan ke Proyek", new View.OnClickListener() {
+        btnSimpanProyek = button(r, TeksUI.t("Simpan ke Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 simpanKeProyek();
             }
         });
-        btnPilihProyek = button(r, "Pilih Proyek", new View.OnClickListener() {
+        btnPilihProyek = button(r, TeksUI.t("Pilih Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pilihProyek();
             }
         });
-        button(r, "Simpan ke Download", new View.OnClickListener() {
+        button(r, TeksUI.t("Simpan ke Download"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 simpanKeDownload();
             }
         });
-        button(r, "Kembali", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -274,8 +274,8 @@ public class IconMakerActivity extends Activity {
     }
 
     private String labelProyekTeks() {
-        if (dirProyek == null) return "Proyek: belum dipilih.";
-        return "Proyek: " + new File(dirProyek).getName();
+        if (dirProyek == null) return TeksUI.t("Proyek: belum dipilih.");
+        return TeksUI.t("Proyek: ") + new File(dirProyek).getName();
     }
 
     private void perbaruiTombolProyek() {
@@ -292,19 +292,21 @@ public class IconMakerActivity extends Activity {
 
     private void pilihWarna(String judul, final String[] nama, final String[] hex,
                             final EditText target) {
+        final String[] tampil = new String[nama.length];
+        for (int i = 0; i < nama.length; i++) tampil[i] = TeksUI.t(nama[i]);
         announce(judul + ". " + nama.length + " pilihan.");
         new AlertDialog.Builder(this)
                 .setTitle(judul)
-                .setItems(nama, new DialogInterface.OnClickListener() {
+                .setItems(tampil, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which >= 0 && which < hex.length) {
                             target.setText(hex[which]);
-                            toast("Warna dipilih: " + nama[which] + " (" + hex[which] + ")");
+                            toast(TeksUI.t("Warna dipilih: ") + tampil[which] + " (" + hex[which] + ")");
                         }
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -317,9 +319,9 @@ public class IconMakerActivity extends Activity {
             return;
         }
         final String[] items = namaProyek.toArray(new String[namaProyek.size()]);
-        announce("Pilih Proyek. " + items.length + " proyek tersedia.");
+        announce(TeksUI.t("Pilih Proyek. ") + items.length + TeksUI.t(" proyek tersedia."));
         new AlertDialog.Builder(this)
-                .setTitle("Pilih Proyek")
+                .setTitle(TeksUI.t("Pilih Proyek"))
                 .setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -333,7 +335,7 @@ public class IconMakerActivity extends Activity {
                         }
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -413,7 +415,7 @@ public class IconMakerActivity extends Activity {
         }
         File target = new File(dirProyek + "/app/src/main/res/drawable/icon.png");
         if (simpanPng(bmp, target)) {
-            String pesan = "Ikon disimpan ke proyek " + new File(dirProyek).getName()
+            String pesan = TeksUI.t("Ikon disimpan ke proyek ") + new File(dirProyek).getName()
                     + " (res/drawable/icon.png, 512x512).";
             toast(pesan);
             announce(pesan);
@@ -435,7 +437,7 @@ public class IconMakerActivity extends Activity {
         File target = new File(Environment.getExternalStorageDirectory().getPath()
                 + "/Download/icon-" + teks + ".png");
         if (simpanPng(bmp, target)) {
-            String pesan = "Ikon disimpan ke Download/icon-" + teks + ".png.";
+            String pesan = TeksUI.t("Ikon disimpan ke Download/icon-") + teks + ".png.";
             toast(pesan);
             announce(pesan);
         } else {

@@ -103,17 +103,17 @@ public class GithubSettings {
         r.addView(p3);
 
         new AlertDialog.Builder(activity)
-                .setTitle("Pengaturan GitHub")
+                .setTitle(TeksUI.t("Pengaturan GitHub"))
                 .setView(r)
-                .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Simpan"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         simpanToken(activity, eToken.getText().toString().trim());
-                        Toast.makeText(activity, "Token tersimpan", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, TeksUI.t("Token tersimpan"), Toast.LENGTH_SHORT).show();
                         if (setelahSimpan != null) setelahSimpan.run();
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 

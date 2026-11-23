@@ -132,7 +132,7 @@ public class BangunCompose {
 
     private List<byte[]> jalankan() throws Exception {
         if (!new File(ctx.getApplicationInfo().nativeLibraryDir).isDirectory())
-            throw new IOException("Direktori native tidak ditemukan");
+            throw new IOException(TeksUI.t("Direktori native tidak ditemukan"));
 
         kirim(PROGRESS, "Menyiapkan compiler Kotlin + plugin Compose (kotlinc 1.9.24 + Compose 1.5.14)...");
         File cache = new File(ctx.getCacheDir(), "bangun-compose");
@@ -145,11 +145,11 @@ public class BangunCompose {
         try {
             kotlinDexJar = ekstrakAset("alat/kotlin-compiler-dex.jar", new File(cache, "kotlin-compiler-dex.jar"));
         } catch (IOException e) {
-            throw new IOException("Compiler Kotlin tidak ditemukan di aplikasi (alat/kotlin-compiler-dex.jar hilang). Coba pasang ulang aplikasi Create Aplikasi.", e);
+            throw new IOException(TeksUI.t("Compiler Kotlin tidak ditemukan di aplikasi (alat/kotlin-compiler-dex.jar hilang). Coba pasang ulang aplikasi Create Aplikasi."), e);
         }
         if (kotlinDexJar.length() < 10L * 1024 * 1024)
-            throw new IOException("Compiler Kotlin rusak (alat/kotlin-compiler-dex.jar hanya "
-                    + kotlinDexJar.length() + " bita, seharusnya sekitar 56 MB). Coba pasang ulang aplikasi Create Aplikasi.");
+            throw new IOException(TeksUI.t("Compiler Kotlin rusak (alat/kotlin-compiler-dex.jar hanya ")
+                    + kotlinDexJar.length() + TeksUI.t(" bita, seharusnya sekitar 56 MB). Coba pasang ulang aplikasi Create Aplikasi."));
         File pluginDexJar;
         try {
             pluginDexJar = ekstrakAset("alat/compose/compose-compiler-dex.jar", new File(cache, "compose-compiler-dex.jar"));
@@ -158,7 +158,7 @@ public class BangunCompose {
         }
         if (pluginDexJar.length() < 100L * 1024)
             throw new IOException("Plugin compiler Compose rusak (alat/compose/compose-compiler-dex.jar hanya "
-                    + pluginDexJar.length() + " bita, seharusnya sekitar 400 KB). Coba pasang ulang aplikasi Create Aplikasi.");
+                    + pluginDexJar.length() + TeksUI.t(" bita, seharusnya sekitar 400 KB). Coba pasang ulang aplikasi Create Aplikasi."));
         File runtimeJar;
         try {
             runtimeJar = ekstrakAset("alat/compose/compose-runtime.jar", new File(cache, "compose-runtime.jar"));
@@ -167,7 +167,7 @@ public class BangunCompose {
         }
         if (runtimeJar.length() < 10L * 1024 * 1024)
             throw new IOException("Runtime Compose rusak (alat/compose/compose-runtime.jar hanya "
-                    + runtimeJar.length() + " bita, seharusnya sekitar 16 MB). Coba pasang ulang aplikasi Create Aplikasi.");
+                    + runtimeJar.length() + TeksUI.t(" bita, seharusnya sekitar 16 MB). Coba pasang ulang aplikasi Create Aplikasi."));
         File stdlibJar = ekstrakAset("alat/kotlin-stdlib-1.9.24.jar", new File(cache, "kotlin-stdlib-1.9.24.jar"));
         File scriptJar = ekstrakAset("alat/kotlin-script-runtime-1.9.24.jar", new File(cache, "kotlin-script-runtime-1.9.24.jar"));
         File ecjJar = ekstrakAset("alat/ecj-dex.jar", new File(cache, "ecj-dex.jar"));
@@ -187,7 +187,7 @@ public class BangunCompose {
             kotlinCl = buatDexClassLoader(
                     kotlinDexJar.getPath() + File.pathSeparator + pluginDexJar.getPath(), odex, induk);
         } catch (Exception e) {
-            throw new IOException("Compiler Kotlin / plugin Compose rusak atau tidak bisa dimuat. Coba pasang ulang aplikasi Create Aplikasi.", e);
+            throw new IOException(TeksUI.t("Compiler Kotlin / plugin Compose rusak atau tidak bisa dimuat. Coba pasang ulang aplikasi Create Aplikasi."), e);
         }
         Object eclCl = buatDexClassLoader(ecjJar.getPath() + File.pathSeparator + stubJar.getPath(), odex, induk);
         Object r8Cl = buatDexClassLoader(r8Jar, odex, induk);
@@ -204,7 +204,7 @@ public class BangunCompose {
         List<File> ktFiles = new ArrayList<File>();
         kumpulBerakhiran(projectDir, ".kt", ktFiles);
         if (ktFiles.isEmpty())
-            throw new IOException("Tidak ada berkas .kt di proyek ini");
+            throw new IOException(TeksUI.t("Tidak ada berkas .kt di proyek ini"));
 
         // Berkas .java proyek (dipakai ECJ; R.java hasil aapt2 ditambah dari sumberTambahan)
         List<File> javaFiles = new ArrayList<File>();
@@ -213,7 +213,7 @@ public class BangunCompose {
         if (sumberTambahan != null) javaFiles.addAll(sumberTambahan);
 
         StringBuilder ringkasan = new StringBuilder();
-        ringkasan.append("Berkas .kt proyek yang dikompilasi kotlinc + plugin Compose 1.5.14 (").append(ktFiles.size()).append("):\n");
+        ringkasan.append(TeksUI.t("Berkas .kt proyek yang dikompilasi kotlinc + plugin Compose 1.5.14 (")).append(ktFiles.size()).append("):\n");
         String akar = projectDir.getAbsolutePath();
         for (File f : ktFiles) {
             String p = f.getAbsolutePath();
@@ -237,7 +237,7 @@ public class BangunCompose {
         }
 
         // 3) kotlinc + plugin Compose untuk .kt -> kotlinOut
-        kirim(PROGRESS, "Mengompilasi " + ktFiles.size() + " berkas .kt (kotlinc + plugin Compose)...");
+        kirim(PROGRESS, "Mengompilasi " + ktFiles.size() + TeksUI.t(" berkas .kt (kotlinc + plugin Compose)..."));
         kompilasiKotlin(kotlinCl, ktFiles, androidJar, stdlibJar, runtimeJar, pluginDexJar, javaOut, kotlinHome, kotlinOut);
 
         // 4) dex hasil kompilasi (ECJ + kotlinc + runtime Compose + stdlib) dengan D8.
@@ -250,7 +250,7 @@ public class BangunCompose {
         // Kelas R hasil aapt2 jangan ikut di-dex (lihat BangunJava.buangKelasR):
         // dex kerangka sudah berisi com.androlua.R yang sama.
         BangunJava.buangKelasR(classFiles);
-        if (classFiles.isEmpty()) throw new IOException("kotlinc/ECJ tidak menghasilkan berkas .class");
+        if (classFiles.isEmpty()) throw new IOException(TeksUI.t("kotlinc/ECJ tidak menghasilkan berkas .class"));
 
         // Proyek Compose WAJIB punya kelas MainActivity (peluncur di manifest).
         // Tanpa pemeriksaan ini, build "berhasil" tetapi APK hasil langsung
@@ -260,9 +260,9 @@ public class BangunCompose {
             if (f.getName().equals("MainActivity.class")) { adaMainActivity = true; break; }
         }
         if (!adaMainActivity)
-            throw new IOException("Proyek Compose tidak punya MainActivity: buat MainActivity.kt "
+            throw new IOException(TeksUI.t("Proyek Compose tidak punya MainActivity: buat MainActivity.kt ")
                     + "berisi kelas MainActivity turunan androidx.activity.ComponentActivity "
-                    + "di paket proyek, lalu bangun lagi.");
+                    + TeksUI.t("di paket proyek, lalu bangun lagi."));
 
         List<Path> programPaths = new ArrayList<Path>();
         for (File f : classFiles) programPaths.add(f.toPath());
@@ -281,10 +281,10 @@ public class BangunCompose {
                 if (f.getName().endsWith(".dex")) hasil.add(BangunLokal.baca(f));
             }
         }
-        if (hasil.isEmpty()) throw new IOException("D8 tidak menghasilkan classes.dex");
+        if (hasil.isEmpty()) throw new IOException(TeksUI.t("D8 tidak menghasilkan classes.dex"));
         long total = 0;
         for (byte[] d : hasil) total += d.length;
-        kirim(PROGRESS, "Kompilasi Compose selesai (" + hasil.size() + " dex, " + total + " bita).");
+        kirim(PROGRESS, TeksUI.t("Kompilasi Compose selesai (") + hasil.size() + " dex, " + total + " bita).");
         return hasil;
     }
 
@@ -316,9 +316,9 @@ public class BangunCompose {
         } catch (java.lang.reflect.InvocationTargetException ite) {
             Throwable penyebab = ite.getCause();
             if (penyebab != null) {
-                log.append("Disebabkan oleh: ").append(penyebab).append('\n');
+                log.append(TeksUI.t("Disebabkan oleh: ")).append(penyebab).append('\n');
                 for (StackTraceElement s : penyebab.getStackTrace()) {
-                    log.append("    di ").append(s).append('\n');
+                    log.append(TeksUI.t("    di ")).append(s).append('\n');
                 }
                 if (penyebab instanceof Exception) throw (Exception) penyebab;
                 if (penyebab instanceof Error) throw (Error) penyebab;
@@ -354,7 +354,7 @@ public class BangunCompose {
         try {
             cCompiler = loadClass(kotlinCl, "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler");
         } catch (Exception e) {
-            throw new IOException("Compiler Kotlin rusak (kelas K2JVMCompiler tidak ditemukan di kotlin-compiler-dex.jar). Coba pasang ulang aplikasi Create Aplikasi.", e);
+            throw new IOException(TeksUI.t("Compiler Kotlin rusak (kelas K2JVMCompiler tidak ditemukan di kotlin-compiler-dex.jar). Coba pasang ulang aplikasi Create Aplikasi."), e);
         }
         Object compiler = cCompiler.getDeclaredConstructor().newInstance();
 
@@ -390,7 +390,7 @@ public class BangunCompose {
         } catch (java.lang.reflect.InvocationTargetException ite) {
             Throwable penyebab = ite.getCause();
             if (penyebab != null) {
-                log.append("Disebabkan oleh: ").append(penyebab).append('\n');
+                log.append(TeksUI.t("Disebabkan oleh: ")).append(penyebab).append('\n');
                 if (penyebab instanceof Exception) throw (Exception) penyebab;
                 if (penyebab instanceof Error) throw (Error) penyebab;
             }
@@ -405,7 +405,7 @@ public class BangunCompose {
         if (!"OK".equals(String.valueOf(exitCode))) {
             String rincian = errText.trim().length() > 0 ? errText
                     : "(compiler tidak menulis rincian; lihat log-build.txt)";
-            throw new IOException("Kompilasi Compose gagal (" + exitCode + "):\n" + rincian);
+            throw new IOException(TeksUI.t("Kompilasi Compose gagal (") + exitCode + "):\n" + rincian);
         }
     }
 
@@ -426,7 +426,7 @@ public class BangunCompose {
         for (Object c : cOutputMode.getEnumConstants()) {
             if (c.toString().equals("DexIndexed")) dexIndexed = c;
         }
-        if (dexIndexed == null) throw new IOException("OutputMode.DexIndexed tidak ditemukan");
+        if (dexIndexed == null) throw new IOException(TeksUI.t("OutputMode.DexIndexed tidak ditemukan"));
         cBuilder.getMethod("setOutput", Path.class, cOutputMode).invoke(builder, dexOut.toPath(), dexIndexed);
         Object command = cBuilder.getMethod("build").invoke(builder);
         Method mRun = cD8.getMethod("run", cD8Command);

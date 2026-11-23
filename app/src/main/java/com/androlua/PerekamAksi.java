@@ -142,14 +142,14 @@ public class PerekamAksi {
 
     /** Nama jenis aksi dalam bahasa Indonesia. */
     public static String namaJenis(String jenis) {
-        if ("buka".equals(jenis)) return "Buka proyek";
-        if ("jalankan".equals(jenis)) return "Jalankan proyek";
-        if ("bangun".equals(jenis)) return "Bangun proyek";
-        if ("ekspor".equals(jenis)) return "Ekspor ZIP proyek";
-        if ("cadangkan".equals(jenis)) return "Cadangkan proyek";
-        if ("buat".equals(jenis)) return "Buat proyek";
-        if ("simpan".equals(jenis)) return "Simpan berkas";
-        if ("hapus".equals(jenis)) return "Hapus proyek";
+        if ("buka".equals(jenis)) return TeksUI.t("Buka proyek");
+        if ("jalankan".equals(jenis)) return TeksUI.t("Jalankan proyek");
+        if ("bangun".equals(jenis)) return TeksUI.t("Bangun proyek");
+        if ("ekspor".equals(jenis)) return TeksUI.t("Ekspor ZIP proyek");
+        if ("cadangkan".equals(jenis)) return TeksUI.t("Cadangkan proyek");
+        if ("buat".equals(jenis)) return TeksUI.t("Buat proyek");
+        if ("simpan".equals(jenis)) return TeksUI.t("Simpan berkas");
+        if ("hapus".equals(jenis)) return TeksUI.t("Hapus proyek");
         return jenis;
     }
 
@@ -158,31 +158,31 @@ public class PerekamAksi {
      * Activity saat memutar ulang (atau kenapa tidak bisa otomatis).
      */
     public static String rencana(Aksi a) {
-        if (a == null) return "Aksi kosong.";
+        if (a == null) return TeksUI.t("Aksi kosong.");
         if ("buka".equals(a.jenis)) {
-            return "Dapat diputar: membuka editor proyek " + a.target + ".";
+            return TeksUI.t("Dapat diputar: membuka editor proyek ") + a.target + ".";
         }
         if ("jalankan".equals(a.jenis)) {
-            return "Dapat diputar: menjalankan proyek " + a.target + ".";
+            return TeksUI.t("Dapat diputar: menjalankan proyek ") + a.target + ".";
         }
         if ("bangun".equals(a.jenis)) {
-            return "Dapat diputar: membangun proyek " + a.target + ".";
+            return TeksUI.t("Dapat diputar: membangun proyek ") + a.target + ".";
         }
         if ("ekspor".equals(a.jenis)) {
-            return "Dapat diputar: mengekspor ZIP proyek " + a.target + ".";
+            return TeksUI.t("Dapat diputar: mengekspor ZIP proyek ") + a.target + ".";
         }
         if ("cadangkan".equals(a.jenis)) {
-            return "Dapat diputar: mencadangkan proyek " + a.target + ".";
+            return TeksUI.t("Dapat diputar: mencadangkan proyek ") + a.target + ".";
         }
         if ("buat".equals(a.jenis)) {
-            return "Dapat diputar: membuat proyek " + a.target
+            return TeksUI.t("Dapat diputar: membuat proyek ") + a.target
                     + " (jenis " + (a.detail.isEmpty() ? "lua" : a.detail) + ").";
         }
         if ("simpan".equals(a.jenis)) {
-            return "Manual: membuka editor proyek " + a.target
-                    + " (berkas " + a.detail + " tidak bisa ditulis ulang otomatis).";
+            return TeksUI.t("Manual: membuka editor proyek ") + a.target
+                    + TeksUI.t(" (berkas ") + a.detail + TeksUI.t(" tidak bisa ditulis ulang otomatis).");
         }
-        return "Manual: aksi \"" + a.jenis + "\" tidak bisa diputar ulang otomatis.";
+        return "Manual: aksi \"" + a.jenis + TeksUI.t("\" tidak bisa diputar ulang otomatis.");
     }
 
     /** Amankan isi (buang '|' dan baris baru) supaya satu aksi tetap satu baris. */

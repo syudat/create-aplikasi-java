@@ -103,9 +103,9 @@ public class PemeriksaKode {
     /** Laporan lengkap untuk ditampilkan/dibacakan. */
     public static String laporan(File dirProyek, List<Masalah> masalah) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Hasil periksa kode: ").append(masalah.size())
+        sb.append(TeksUI.t("Hasil periksa kode: ")).append(masalah.size())
                 .append(masalah.size() == 1 ? " temuan" : " temuan")
-                .append(" di proyek ").append(dirProyek.getName()).append(".\n");
+                .append(TeksUI.t(" di proyek ")).append(dirProyek.getName()).append(".\n");
         if (masalah.isEmpty()) {
             sb.append("Kode bersih — tidak ada pola bermasalah yang ditemukan.\n");
             sb.append("Catatan: pemeriksa ini berbasis pola (bukan AI sungguhan); ")
@@ -151,8 +151,8 @@ public class PemeriksaKode {
                 }
                 if (hitung <= 1) {
                     hasil.add(new Masalah(rel, i + 1, NAMA_JENIS[0],
-                            "Variabel lokal \"" + nama + "\" dideklarasikan tapi tidak dipakai.",
-                            "Hapus deklarasinya bila memang tidak dibutuhkan."));
+                            "Variabel lokal \"" + nama + TeksUI.t("\" dideklarasikan tapi tidak dipakai."),
+                            TeksUI.t("Hapus deklarasinya bila memang tidak dibutuhkan.")));
                 }
             }
         }
@@ -176,8 +176,8 @@ public class PemeriksaKode {
                 String u = baris[j].trim();
                 if ("end".equals(u) || "}".equals(u)) {
                     hasil.add(new Masalah(rel, i + 1, NAMA_JENIS[1],
-                            "Fungsi/metode kosong (tidak ada isi).",
-                            "Isi fungsinya, atau hapus bila memang tidak dibutuhkan."));
+                            TeksUI.t("Fungsi/metode kosong (tidak ada isi)."),
+                            TeksUI.t("Isi fungsinya, atau hapus bila memang tidak dibutuhkan.")));
                 }
             }
         }
@@ -194,8 +194,8 @@ public class PemeriksaKode {
             }
             if (!adaBreak) {
                 hasil.add(new Masalah(rel, i + 1, NAMA_JENIS[2],
-                        "Perulangan \"while true\" tanpa break di sisa berkas — berisiko jalan tanpa henti.",
-                        "Tambahkan kondisi berhenti dan break, atau ubah jadi perulangan berbatas."));
+                        TeksUI.t("Perulangan \"while true\" tanpa break di sisa berkas — berisiko jalan tanpa henti."),
+                        TeksUI.t("Tambahkan kondisi berhenti dan break, atau ubah jadi perulangan berbatas.")));
             }
         }
 
@@ -205,16 +205,16 @@ public class PemeriksaKode {
             // (4) Teks hardcoded di setText("...").
             if (t.contains("setText(\"")) {
                 hasil.add(new Masalah(rel, i + 1, NAMA_JENIS[3],
-                        "Teks ditulis langsung di setText(\"...\").",
+                        TeksUI.t("Teks ditulis langsung di setText(\"...\")."),
                         "Pindahkan ke strings.xml (proyek Java) atau tabel terjemahan, supaya bisa diterjemahkan."));
             }
             // (5) Izin/API berbahaya.
             for (int k = 0; k < API_BERBAHAYA.length; k++) {
                 if (t.contains(API_BERBAHAYA[k][0])) {
                     hasil.add(new Masalah(rel, i + 1, NAMA_JENIS[4],
-                            "Memakai \"" + API_BERBAHAYA[k][0] + "\" (izin "
+                            "Memakai \"" + API_BERBAHAYA[k][0] + TeksUI.t("\" (izin ")
                                     + API_BERBAHAYA[k][1] + ").",
-                            "Pastikan izin itu memang dibutuhkan dan sudah diminta ke pengguna."));
+                            TeksUI.t("Pastikan izin itu memang dibutuhkan dan sudah diminta ke pengguna.")));
                     break;
                 }
             }
@@ -222,13 +222,13 @@ public class PemeriksaKode {
             if (t.contains("TODO") || t.contains("FIXME") || t.contains("XXX")) {
                 hasil.add(new Masalah(rel, i + 1, NAMA_JENIS[5],
                         "Ada penanda TODO/FIXME/XXX — pekerjaan yang belum selesai.",
-                        "Selesaikan dulu sebelum membagikan aplikasi."));
+                        TeksUI.t("Selesaikan dulu sebelum membagikan aplikasi.")));
             }
             // (7) Eksekusi dinamis/perintah shell.
             for (int k = 0; k < POLA_SHELL.length; k++) {
                 if (t.contains(POLA_SHELL[k])) {
                     hasil.add(new Masalah(rel, i + 1, NAMA_JENIS[6],
-                            "Memakai \"" + POLA_SHELL[k] + "\" — kode/perintah dari luar.",
+                            "Memakai \"" + POLA_SHELL[k] + TeksUI.t("\" — kode/perintah dari luar."),
                             "Hindari menjalankan perintah dari teks yang bisa diubah pengguna; bisa membahayakan."));
                     break;
                 }

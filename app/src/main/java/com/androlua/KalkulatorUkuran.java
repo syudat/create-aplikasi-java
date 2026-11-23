@@ -120,19 +120,19 @@ public class KalkulatorUkuran {
         long overhead = 7168;
         long total = dex + res + aset + lib + lainnya + manifesArsc + overhead;
         List<Rincian> rincian = new ArrayList<Rincian>();
-        rincian.add(new Rincian("Kode (DEX)", dex,
-                berkasKode + " berkas kode, " + barisKode + " baris "
+        rincian.add(new Rincian(TeksUI.t("Kode (DEX)"), dex,
+                berkasKode + TeksUI.t(" berkas kode, ") + barisKode + " baris "
                         + "(12 byte/baris + 300 byte/berkas; Lua 1,0x sumber)"));
         rincian.add(new Rincian("Resource", res,
                 "0,6x ukuran res/ (aapt2 memadatkan XML/gambar)"));
         rincian.add(new Rincian("Aset", aset,
-                "0,9x ukuran assets/ (sebagian besar disimpan apa adanya)"));
+                TeksUI.t("0,9x ukuran assets/ (sebagian besar disimpan apa adanya)")));
         rincian.add(new Rincian("Library native", lib,
-                "1,0x ukuran .so/.jar (tidak dikompres)"));
+                TeksUI.t("1,0x ukuran .so/.jar (tidak dikompres)")));
         rincian.add(new Rincian("Lainnya", lainnya,
                 "1,0x ukuran berkas lain (teks/json/dll)"));
         rincian.add(new Rincian("Manifest + resources.arsc", manifesArsc,
-                "10 KB + 0,1x ukuran resource"));
+                TeksUI.t("10 KB + 0,1x ukuran resource")));
         rincian.add(new Rincian("Overhead APK", overhead,
                 "header ZIP + tanda tangan (7 KB)"));
         Collections.sort(semua, new Comparator<Terbesar>() {
@@ -143,20 +143,20 @@ public class KalkulatorUkuran {
         });
         List<Terbesar> terbesar = new ArrayList<Terbesar>();
         for (int i = 0; i < semua.size() && i < 5; i++) terbesar.add(semua.get(i));
-        String catatan = "PERKIRAAN, bukan ukuran pasti hasil build. Ukuran APK "
-                + "sungguhan bisa berbeda karena kompresi aapt2, penghapusan "
-                + "kode tak terpakai (R8), dan resource hasil build. "
-                + "Gunakan angka ini untuk membandingkan dan mencari berkas "
-                + "yang membengkakkan APK.";
+        String catatan = TeksUI.t("PERKIRAAN, bukan ukuran pasti hasil build. Ukuran APK ")
+                + TeksUI.t("sungguhan bisa berbeda karena kompresi aapt2, penghapusan ")
+                + TeksUI.t("kode tak terpakai (R8), dan resource hasil build. ")
+                + TeksUI.t("Gunakan angka ini untuk membandingkan dan mencari berkas ")
+                + TeksUI.t("yang membengkakkan APK.");
         return new Hasil(total, rincian, terbesar, catatan);
     }
 
     /** Teks laporan lengkap (rincian + total + berkas terbesar + saran). */
     public static String laporan(File dirProyek) {
         Hasil h = perkirakan(dirProyek);
-        if (h == null) return "Folder proyek tidak ditemukan.";
+        if (h == null) return TeksUI.t("Folder proyek tidak ditemukan.");
         StringBuilder sb = new StringBuilder();
-        sb.append("Perkiraan Ukuran APK: ").append(dirProyek.getName()).append("\n");
+        sb.append(TeksUI.t("Perkiraan Ukuran APK: ")).append(dirProyek.getName()).append("\n");
         sb.append("Total perkiraan: ").append(PetaProyek.formatUkuran(h.total)).append("\n\n");
         sb.append("== Rincian ==\n");
         for (int i = 0; i < h.rincian.size(); i++) {
@@ -183,7 +183,7 @@ public class KalkulatorUkuran {
     /** Saran mengecilkan berdasarkan berkas terbesar. */
     public static String saran(Hasil h) {
         if (h == null || h.terbesar.isEmpty()) {
-            return "Proyek masih kosong — belum ada yang bisa dikecilkan.";
+            return TeksUI.t("Proyek masih kosong — belum ada yang bisa dikecilkan.");
         }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < h.terbesar.size(); i++) {

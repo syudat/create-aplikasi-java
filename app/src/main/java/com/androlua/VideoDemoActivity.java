@@ -43,22 +43,22 @@ public class VideoDemoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pembuat Video Demo");
+        setTitle(TeksUI.t("Pembuat Video Demo"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pembuat Video Demo", 20);
-        label(r, "Buat skrip video demo (urutan adegan + narasi + durasi, "
-                + "5 adegan baku) dan slideshow HTML dari gambar-gambar "
-                + "proyek. Ini BUKAN video .mp4 — untuk video sungguhan, "
-                + "buka video-demo.html di browser HP lalu rekam layar, "
-                + "atau baca narasi di video-demo.txt sambil merekam "
-                + "aplikasi yang sedang berjalan.", false);
+        heading(r, TeksUI.t("Pembuat Video Demo"), 20);
+        label(r, TeksUI.t("Buat skrip video demo (urutan adegan + narasi + durasi, ")
+                + TeksUI.t("5 adegan baku) dan slideshow HTML dari gambar-gambar ")
+                + TeksUI.t("proyek. Ini BUKAN video .mp4 — untuk video sungguhan, ")
+                + TeksUI.t("buka video-demo.html di browser HP lalu rekam layar, ")
+                + TeksUI.t("atau baca narasi di video-demo.txt sambil merekam ")
+                + TeksUI.t("aplikasi yang sedang berjalan."), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -74,13 +74,13 @@ public class VideoDemoActivity extends Activity {
         r.addView(eJudul, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Buat Skrip Video Demo", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Skrip Video Demo"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatSkrip();
             }
         });
-        button(r, "Buat Slideshow HTML", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Slideshow HTML"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatSlideshow();
@@ -93,7 +93,7 @@ public class VideoDemoActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -101,7 +101,7 @@ public class VideoDemoActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Pembuat Video Demo. Pilih proyek dan isi judul, lalu buat skrip atau slideshow.");
+        announce(TeksUI.t("Pembuat Video Demo. Pilih proyek dan isi judul, lalu buat skrip atau slideshow."));
     }
 
     @Override
@@ -142,9 +142,9 @@ public class VideoDemoActivity extends Activity {
             toast("Gagal menulis skrip video demo.");
             return;
         }
-        String ok = "Skrip video demo disimpan ke video-demo.txt di proyek "
+        String ok = TeksUI.t("Skrip video demo disimpan ke video-demo.txt di proyek ")
                 + dir.getName() + " (total "
-                + VideoDemo.durasiTotal(VideoDemo.adeganBaku(dir.getName())) + " detik, 5 adegan).";
+                + VideoDemo.durasiTotal(VideoDemo.adeganBaku(dir.getName())) + TeksUI.t(" detik, 5 adegan).");
         toast(ok);
         announce(ok);
         if (tvHasil != null) tvHasil.setText(VideoDemo.teksSkrip(judul,
@@ -167,9 +167,9 @@ public class VideoDemoActivity extends Activity {
             toast("Gagal menulis slideshow HTML.");
             return;
         }
-        String ok = "Slideshow HTML disimpan ke video-demo.html di proyek "
+        String ok = TeksUI.t("Slideshow HTML disimpan ke video-demo.html di proyek ")
                 + dir.getName() + " (" + gambar.size()
-                + " gambar, berganti tiap 5 detik). Buka di browser HP lalu rekam layar.";
+                + TeksUI.t(" gambar, berganti tiap 5 detik). Buka di browser HP lalu rekam layar.");
         toast(ok);
         announce(ok);
         if (tvHasil != null) {

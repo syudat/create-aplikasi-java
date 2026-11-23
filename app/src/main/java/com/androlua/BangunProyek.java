@@ -90,7 +90,7 @@ public class BangunProyek {
                 android.R.layout.simple_list_item_1, pilihan));
         final AlertDialog dlg = new AlertDialog.Builder(activity)
                 .setTitle(judul).setView(lv)
-                .setNegativeButton("Batal", null).show();
+                .setNegativeButton(TeksUI.t("Batal"), null).show();
         try {
             activity.getWindow().getDecorView().announceForAccessibility(
                     judul + ". " + pilihan.size() + " pilihan.");
@@ -162,9 +162,9 @@ public class BangunProyek {
                 : PengaturanActivity.antiTamperBawaan(activity);
         // 4) pilih cara membangun.
         List<String> pilihan = new ArrayList<String>();
-        pilihan.add("Bangun di perangkat (offline)");
+        pilihan.add(TeksUI.t("Bangun di perangkat (offline)"));
         pilihan.add("Bangun online (GitHub Actions)");
-        pilihan.add("Jalankan dulu");
+        pilihan.add(TeksUI.t("Jalankan dulu"));
         pilih(activity, "Bangun APK - " + appname, pilihan, new PilihListener() {
             @Override
             public void padaPilih(int pos) {
@@ -181,7 +181,7 @@ public class BangunProyek {
 
     /** Membangun APK langsung di perangkat (tanpa internet, tanpa Termux). */
     private void bangunOffline() {
-        tampilkanProgress("Bangun di perangkat: " + appname);
+        tampilkanProgress(TeksUI.t("Bangun di perangkat: ") + appname);
         buildGithub = false;
         BangunLokal.bangun(activity, dir.getAbsolutePath(), pendengarBangunLokal);
     }
@@ -200,15 +200,15 @@ public class BangunProyek {
         }
         new AlertDialog.Builder(activity)
                 .setTitle("Bangun online")
-                .setMessage("Proyek diunggah ke repo privat \"pembuat-aplikasi-build\" di akun GitHub Anda "
-                        + "(dibuat otomatis bila belum ada), lalu dibangun di GitHub Actions. Hanya file yang berubah yang diunggah.")
+                .setMessage(TeksUI.t("Proyek diunggah ke repo privat \"pembuat-aplikasi-build\" di akun GitHub Anda ")
+                        + TeksUI.t("(dibuat otomatis bila belum ada), lalu dibangun di GitHub Actions. Hanya file yang berubah yang diunggah."))
                 .setPositiveButton("Bangun", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mulaiBangunOnline();
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
     }
 
@@ -266,7 +266,7 @@ public class BangunProyek {
                 progressDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
             } catch (Throwable ignored) {
             }
-            progressDlg.setTitle("Build gagal");
+            progressDlg.setTitle(TeksUI.t("Build gagal"));
             progressDlg.setMessage(String.valueOf(msg));
         }
     }
@@ -294,16 +294,16 @@ public class BangunProyek {
             }
         });
         if (daftar.isEmpty()) {
-            new AlertDialog.Builder(activity).setTitle("Belum ada tanda tangan pribadi")
+            new AlertDialog.Builder(activity).setTitle(TeksUI.t("Belum ada tanda tangan pribadi"))
                     .setMessage("Project ini memakai tanda tangan pribadi, tetapi belum ada keystore di Download/project/signing. "
                             + "Buat dulu lewat menu utama, Buat Keystore, lalu bangun lagi.\n\nAPK yang belum ditandatangani ada di:\n" + raw)
-                    .setPositiveButton("Pakai kunci bawaan", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(TeksUI.t("Pakai kunci bawaan"), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             tandatangani(raw, "", "");
                         }
                     })
-                    .setNegativeButton("Tutup", null).show();
+                    .setNegativeButton(TeksUI.t("Tutup"), null).show();
             return;
         }
         if (daftar.size() == 1) {
@@ -311,7 +311,7 @@ public class BangunProyek {
             return;
         }
         final List<String> pilihan = daftar;
-        pilih(activity, "Pilih tanda tangan", pilihan, new PilihListener() {
+        pilih(activity, TeksUI.t("Pilih tanda tangan"), pilihan, new PilihListener() {
             @Override
             public void padaPilih(int pos) {
                 tanyaKataSandi(raw, pilihan.get(pos));
@@ -342,7 +342,7 @@ public class BangunProyek {
         box.addView(pass, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
-        new AlertDialog.Builder(activity).setTitle("Kata sandi: " + nama).setView(box)
+        new AlertDialog.Builder(activity).setTitle(TeksUI.t("Kata sandi: ") + nama).setView(box)
                 .setPositiveButton("Tandatangani", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -358,7 +358,7 @@ public class BangunProyek {
                                 sandi);
                     }
                 })
-                .setNegativeButton("Batal", null).show();
+                .setNegativeButton(TeksUI.t("Batal"), null).show();
     }
 
     /** Catat build yang berhasil ke history (bila centang history aktif). */
@@ -431,7 +431,7 @@ public class BangunProyek {
                             new AlertDialog.Builder(activity).setTitle("APK siap dipasang")
                                     .setMessage("APK sudah ditandatangani dan tersimpan di:\n"
                                             + labelArsitektur(teks))
-                                    .setPositiveButton("Pasang", new DialogInterface.OnClickListener() {
+                                    .setPositiveButton(TeksUI.t("Pasang"), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             if (daftarApk.size() > 1) {
@@ -439,7 +439,7 @@ public class BangunProyek {
                                                 for (int i = 0; i < daftarApk.size(); i++) {
                                                     pilihan.add(new File(daftarApk.get(i)).getName());
                                                 }
-                                                pilih(activity, "Pilih APK untuk dipasang", pilihan,
+                                                pilih(activity, TeksUI.t("Pilih APK untuk dipasang"), pilihan,
                                                         new PilihListener() {
                                                             @Override
                                                             public void padaPilih(int pos) {
@@ -451,11 +451,11 @@ public class BangunProyek {
                                             }
                                         }
                                     })
-                                    .setNegativeButton("Tutup", null).show();
-                            umumkan("APK siap dipasang. APK sudah ditandatangani dan tersimpan. Tekan Pasang untuk memasang.");
+                                    .setNegativeButton(TeksUI.t("Tutup"), null).show();
+                            umumkan(TeksUI.t("APK siap dipasang. APK sudah ditandatangani dan tersimpan. Tekan Pasang untuk memasang."));
                             return;
                         }
-                        progressDlg.setTitle("Gagal menandatangani");
+                        progressDlg.setTitle(TeksUI.t("Gagal menandatangani"));
                         progressDlg.setMessage(String.valueOf(msg)
                                 + "\n\nAPK yang belum ditandatangani tetap tersimpan di:\n" + raw);
                     }
@@ -486,11 +486,11 @@ public class BangunProyek {
 
     /** Minta izin "Pasang aplikasi" lewat Pengaturan (pengganti mintaIzinPasangDialog di Lua). */
     private void mintaIzinPasangDialog() {
-        new AlertDialog.Builder(activity).setTitle("Izin pasang belum aktif")
-                .setMessage("Android 8 ke atas meminta izin \"Pasang aplikasi\" untuk aplikasi ini dulu. "
-                        + "Tekan \"Buka Pengaturan\", aktifkan \"Izinkan dari sumber ini\", lalu kembali ke sini. "
-                        + "Pemasangan akan lanjut otomatis tanpa perlu menekan \"Pasang\" lagi.")
-                .setPositiveButton("Buka Pengaturan", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(activity).setTitle(TeksUI.t("Izin pasang belum aktif"))
+                .setMessage(TeksUI.t("Android 8 ke atas meminta izin \"Pasang aplikasi\" untuk aplikasi ini dulu. ")
+                        + TeksUI.t("Tekan \"Buka Pengaturan\", aktifkan \"Izinkan dari sumber ini\", lalu kembali ke sini. ")
+                        + TeksUI.t("Pemasangan akan lanjut otomatis tanpa perlu menekan \"Pasang\" lagi."))
+                .setPositiveButton(TeksUI.t("Buka Pengaturan"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -499,8 +499,8 @@ public class BangunProyek {
                         }
                     }
                 })
-                .setNegativeButton("Batal", null).show();
-        umumkan("Izin pasang belum aktif. Tekan Buka Pengaturan, aktifkan Izinkan dari sumber ini, lalu kembali ke sini. Pemasangan akan lanjut otomatis.");
+                .setNegativeButton(TeksUI.t("Batal"), null).show();
+        umumkan(TeksUI.t("Izin pasang belum aktif. Tekan Buka Pengaturan, aktifkan Izinkan dari sumber ini, lalu kembali ke sini. Pemasangan akan lanjut otomatis."));
     }
 
     /** Dialog kemajuan (pengganti showProgress di Lua): tidak bisa dibatalkan, tombol "Tutup" mati dulu. */
@@ -509,7 +509,7 @@ public class BangunProyek {
                 .setTitle(judul)
                 .setMessage("Menyiapkan...")
                 .setCancelable(false)
-                .setPositiveButton("Tutup", null);
+                .setPositiveButton(TeksUI.t("Tutup"), null);
         progressDlg = b.create();
         progressDlg.show();
         try {

@@ -74,9 +74,9 @@ public class PeriksaResource {
                 String induk = e.rel.substring(0, e.rel.indexOf('/'));
                 String tipe = awalHuruf(induk);
                 if (TANPA_SUB.contains(tipe)) {
-                    return "Folder res/" + e.rel + " tidak boleh ada: di dalam res/" + induk
-                            + " tidak boleh ada subfolder. Pindahkan berkasnya langsung ke res/" + induk
-                            + "/, lalu bangun lagi.";
+                    return "Folder res/" + e.rel + TeksUI.t(" tidak boleh ada: di dalam res/") + induk
+                            + TeksUI.t(" tidak boleh ada subfolder. Pindahkan berkasnya langsung ke res/") + induk
+                            + TeksUI.t("/, lalu bangun lagi.");
                 }
             }
         }
@@ -89,9 +89,9 @@ public class PeriksaResource {
             String folder = garis < 0 ? "" : rel.substring(0, garis);
             String nama = garis < 0 ? rel : rel.substring(garis + 1);
             if (folder.length() == 0) {
-                return "Berkas res/" + nama + " berada langsung di folder res/. Berkas resource harus "
+                return TeksUI.t("Berkas res/") + nama + TeksUI.t(" berada langsung di folder res/. Berkas resource harus ")
                         + "berada di dalam folder jenisnya (mis. res/drawable/ untuk gambar atau res/layout/ "
-                        + "untuk layout). Pindahkan berkasnya ke folder yang sesuai, lalu bangun lagi.";
+                        + TeksUI.t("untuk layout). Pindahkan berkasnya ke folder yang sesuai, lalu bangun lagi.");
             }
             String tipeFolder = awalHuruf(folder);
             String dasar = dasarNama(nama);
@@ -106,17 +106,17 @@ public class PeriksaResource {
                 if (nama.indexOf('-') >= 0) sebab.add("memakai tanda hubung");
                 if (nama.length() > 0 && Character.isDigit(nama.charAt(0))) sebab.add("diawali angka");
                 if (ekst != null && !ekst.equals(ekstKecil)) sebab.add("ekstensinya memakai huruf besar");
-                if (sebab.isEmpty()) sebab.add("memakai karakter yang tidak diizinkan");
+                if (sebab.isEmpty()) sebab.add(TeksUI.t("memakai karakter yang tidak diizinkan"));
                 String saran = saranNama(nama, ekstKecil);
-                return "Berkas res/" + rel + " " + gabung(sebab, ", ") + ". Nama berkas "
-                        + "resource hanya boleh huruf kecil, angka, garis bawah, dan titik, diawali huruf "
-                        + "atau garis bawah. Ganti namanya menjadi " + saran + ", lalu bangun lagi.";
+                return TeksUI.t("Berkas res/") + rel + " " + gabung(sebab, ", ") + TeksUI.t(". Nama berkas ")
+                        + TeksUI.t("resource hanya boleh huruf kecil, angka, garis bawah, dan titik, diawali huruf ")
+                        + TeksUI.t("atau garis bawah. Ganti namanya menjadi ") + saran + TeksUI.t(", lalu bangun lagi.");
             }
             // (f) nama berkas tidak boleh kata kunci Java.
             if (KATA_KUNCI_JAVA.contains(dasar)) {
-                return "Berkas res/" + rel + " memakai nama \"" + dasar + "\" yang merupakan kata "
+                return TeksUI.t("Berkas res/") + rel + TeksUI.t(" memakai nama \"") + dasar + TeksUI.t("\" yang merupakan kata ")
                         + "kunci Java, sehingga tidak bisa menjadi nama resource di R.java. Ganti namanya, "
-                        + "lalu bangun lagi.";
+                        + TeksUI.t("lalu bangun lagi.");
             }
             // (b) di drawable/ dan mipmap/ hanya format gambar yang didukung aapt.
             if ("drawable".equals(tipeFolder) || "mipmap".equals(tipeFolder)) {
@@ -124,25 +124,25 @@ public class PeriksaResource {
                         || (ekstKecil != null && GAMBAR_OK.contains(ekstKecil));
                 if (!boleh) {
                     if (ekst == null) {
-                        return "Berkas res/" + rel + " tidak punya ekstensi. Gambar di res/" + tipeFolder
+                        return TeksUI.t("Berkas res/") + rel + TeksUI.t(" tidak punya ekstensi. Gambar di res/") + tipeFolder
                                 + "/ harus berekstensi .png, .webp, .jpg, .jpeg, .gif, .9.png, atau .xml. "
-                                + "Tambahkan ekstensi yang sesuai, lalu bangun lagi.";
+                                + TeksUI.t("Tambahkan ekstensi yang sesuai, lalu bangun lagi.");
                     }
-                    return "Berkas res/" + rel + " berekstensi ." + ekstKecil + ", yang tidak didukung "
-                            + "sebagai resource Android. Gambar di res/" + tipeFolder + "/ hanya boleh .png, .webp, "
+                    return TeksUI.t("Berkas res/") + rel + " berekstensi ." + ekstKecil + TeksUI.t(", yang tidak didukung ")
+                            + TeksUI.t("sebagai resource Android. Gambar di res/") + tipeFolder + TeksUI.t("/ hanya boleh .png, .webp, ")
                             + ".jpg, .jpeg, .gif, .9.png, atau .xml (bukan .svg, .bmp, .ico, atau .tiff). "
-                            + "Ubah berkasnya ke PNG atau WebP, lalu bangun lagi.";
+                            + TeksUI.t("Ubah berkasnya ke PNG atau WebP, lalu bangun lagi.");
                 }
                 // (c) gambar bukan 0 byte dan magic bytes cocok dengan ekstensinya.
                 if (ekstKecil != null && GAMBAR_OK.contains(ekstKecil)) {
                     byte[] data = bacaBerkas(new File(res, rel));
                     if (data == null || data.length == 0) {
-                        return "Berkas res/" + rel + " kosong atau tidak bisa dibaca. Hapus berkasnya atau "
-                                + "ganti dengan gambar yang utuh, lalu bangun lagi.";
+                        return TeksUI.t("Berkas res/") + rel + TeksUI.t(" kosong atau tidak bisa dibaca. Hapus berkasnya atau ")
+                                + TeksUI.t("ganti dengan gambar yang utuh, lalu bangun lagi.");
                     }
                     if (!cocokMagic(data, ekstKecil)) {
-                        return "Berkas res/" + rel + " tampaknya rusak: isinya bukan gambar "
-                                + ekstKecil.toUpperCase() + " yang valid. Ganti dengan berkas gambar yang utuh, lalu bangun lagi.";
+                        return TeksUI.t("Berkas res/") + rel + " tampaknya rusak: isinya bukan gambar "
+                                + ekstKecil.toUpperCase() + TeksUI.t(" yang valid. Ganti dengan berkas gambar yang utuh, lalu bangun lagi.");
                     }
                 }
             }
@@ -150,9 +150,9 @@ public class PeriksaResource {
             // SATU folder yang sama ditolak; nama sama di folder berbeda boleh.
             String kunci = folder + "\0" + dasar;
             if (lihat.containsKey(kunci)) {
-                return "Berkas res/" + rel + " dan res/" + lihat.get(kunci) + " memakai nama dasar yang sama "
-                        + "(\"" + dasar + "\") dengan ekstensi berbeda di folder res/" + folder + "/ yang sama. "
-                        + "Hapus atau ganti nama salah satunya, lalu bangun lagi.";
+                return TeksUI.t("Berkas res/") + rel + TeksUI.t(" dan res/") + lihat.get(kunci) + TeksUI.t(" memakai nama dasar yang sama ")
+                        + "(\"" + dasar + TeksUI.t("\") dengan ekstensi berbeda di folder res/") + folder + TeksUI.t("/ yang sama. ")
+                        + TeksUI.t("Hapus atau ganti nama salah satunya, lalu bangun lagi.");
             }
             lihat.put(kunci, rel);
         }

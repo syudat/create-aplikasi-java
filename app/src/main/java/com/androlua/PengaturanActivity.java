@@ -243,6 +243,7 @@ public class PengaturanActivity extends Activity {
                 getSharedPreferences(NAMA_PREF, MODE_PRIVATE).getString(
                         KUNCI_BAHASA, Bahasa.SISTEM),
                 java.util.Locale.getDefault().getLanguage());
+        TeksUI.kodeAktif = kodeBahasa;
         setTitle(t("Pengaturan"));
         pref = getSharedPreferences(NAMA_PREF, MODE_PRIVATE);
         // Terapkan tema aplikasi yang tersimpan (reorganisasi pengaturan 2026-11-17).
@@ -286,32 +287,32 @@ public class PengaturanActivity extends Activity {
         setContentView(sv);
 
         judul(t("Pengaturan"));
-        labelKecil("Pilih kategori pengaturan. Setiap kategori punya tombol "
-                + "\"Kembali ke Sebelumnya\" untuk kembali ke menu ini.");
+        labelKecil(t("Pilih kategori pengaturan. Setiap kategori punya tombol ")
+                + t("\"Kembali ke Sebelumnya\" untuk kembali ke menu ini."));
         tombolKategori(t("Pengaturan GitHub"), "github",
-                "Keamanan, tanda tangan pribadi, history, dan token GitHub.");
+                t("Keamanan, tanda tangan pribadi, history, dan token GitHub."));
         tombolKategori(t("Pengaturan Bangun APK Perangkat"), "bangun",
-                "Simpan kata sandi keystore dan history build di perangkat.");
+                t("Simpan kata sandi keystore dan history build di perangkat."));
         tombolKategori(t("Tema"), "tema",
-                "Warna aplikasi (aksen tombol).");
+                t("Warna aplikasi (aksen tombol)."));
         tombolKategori(t("Tanda Tangan"), "tandatangan",
-                "Buat keystore untuk tanda tangan pribadi.");
+                t("Buat keystore untuk tanda tangan pribadi."));
         tombolKategori(t("Folder Proyek"), "folder",
-                "Lokasi folder proyek.");
+                t("Lokasi folder proyek."));
         tombolKategori(t("Bahasa dan Suara"), "bahasa",
-                "Bahasa antarmuka dan kecepatan suara Mode Suara.");
+                t("Bahasa antarmuka dan kecepatan suara Mode Suara."));
         tombolKategori(t("Ukuran Teks dan Tampilan"), "font",
-                "Ukuran font editor kode.");
+                t("Ukuran font editor kode."));
         tombolKategori(t("Build"), "build",
-                "SDK target bawaan dan pisah arsitektur bawaan.");
+                t("SDK target bawaan dan pisah arsitektur bawaan."));
         tombolKategori(t("Notifikasi"), "notifikasi",
-                "Bunyi saat build selesai.");
+                t("Bunyi saat build selesai."));
         tombolKategori(t("Cadangan Otomatis"), "cadangan",
-                "Jadwal cadangan proyek.");
+                t("Jadwal cadangan proyek."));
         tombolKategori(t("Profil Pengembang"), "profil",
-                "Nama, nomor WhatsApp, dan rekening di layar Donasi.");
+                t("Nama, nomor WhatsApp, dan rekening di layar Donasi."));
         tombolKategori(t("Privasi dan Data"), "privasi",
-                "Reset pengaturan dan hapus data aplikasi.");
+                t("Reset pengaturan dan hapus data aplikasi."));
 
         // Bahasa Aplikasi di PALING BAWAH Pengaturan (perintah al kautsar
         // 2026-11-23): 50 bahasa + pencarian, bawaan mengikuti sistem.
@@ -319,9 +320,9 @@ public class PengaturanActivity extends Activity {
         label(t("Bahasa saat ini:") + " " + Bahasa.labelPilihan(
                 pref.getString(KUNCI_BAHASA, Bahasa.SISTEM),
                 java.util.Locale.getDefault().getLanguage()));
-        labelKecil("Bawaan mengikuti sistem Android. Bahasa terpilih dipakai "
-                + "di Tentang Alat dan menjadi bahasa aplikasi. Tersedia 50 "
-                + "bahasa dengan pencarian.");
+        labelKecil(t("Bawaan mengikuti sistem Android. Bahasa terpilih dipakai ")
+                + t("di Tentang Alat dan menjadi bahasa aplikasi. Tersedia 50 ")
+                + t("bahasa dengan pencarian."));
         button(t("Pilih Bahasa Aplikasi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -339,7 +340,7 @@ public class PengaturanActivity extends Activity {
                 finish();
             }
         });
-        announce(t("Pengaturan") + ". Pilih kategori.");
+        announce(t("Pengaturan") + t(". Pilih kategori."));
     }
 
     /** Satu baris kategori di menu: tombol + keterangan kecil. */
@@ -560,24 +561,24 @@ public class PengaturanActivity extends Activity {
     }
 
     private static String labelSuara(float v) {
-        if (v <= 0.5f) return "0,5x (lambat)";
+        if (v <= 0.5f) return TeksUI.t("0,5x (lambat)");
         if (v <= 0.75f) return "0,75x";
-        if (v <= 1.0f) return "1x (normal)";
+        if (v <= 1.0f) return TeksUI.t("1x (normal)");
         if (v <= 1.25f) return "1,25x";
         if (v <= 1.5f) return "1,5x";
-        return "2x (cepat)";
+        return TeksUI.t("2x (cepat)");
     }
 
     private static String labelFont(String v) {
-        if ("kecil".equals(v)) return "Kecil";
-        if ("besar".equals(v)) return "Besar";
-        return "Sedang";
+        if ("kecil".equals(v)) return TeksUI.t("Kecil");
+        if ("besar".equals(v)) return TeksUI.t("Besar");
+        return TeksUI.t("Sedang");
     }
 
     private static String labelCadangan(String v) {
-        if ("harian".equals(v)) return "Harian";
-        if ("mingguan".equals(v)) return "Mingguan";
-        return "Mati";
+        if ("harian".equals(v)) return TeksUI.t("Harian");
+        if ("mingguan".equals(v)) return TeksUI.t("Mingguan");
+        return TeksUI.t("Mati");
     }
 
     // ------------------------------------------------------------- bagian 1
@@ -604,32 +605,32 @@ public class PengaturanActivity extends Activity {
 
     private void bagianGithub() {
         judul(t("Pengaturan GitHub"));
-        labelKecil("Pengaturan build lewat GitHub Actions. Token yang sama "
-                + "dipakai menu Bangun Proyek (online).");
+        labelKecil(t("Pengaturan build lewat GitHub Actions. Token yang sama ")
+                + t("dipakai menu Bangun Proyek (online)."));
 
         // 1) Keamanan — enkripsi keamanan aplikasi.
         kotakCentang(t("Keamanan (enkripsi keamanan aplikasi)"),
                 pref.getBoolean(KUNCI_GITHUB_KEAMANAN, true),
                 KUNCI_GITHUB_KEAMANAN);
-        labelKecil("Dicentang: skrip Lua aplikasi hasil build dienkripsi "
-                + "sehingga tidak langsung bisa dibaca orang lain. "
-                + "Bila dimatikan, skrip Lua aplikasi hasil build tidak "
-                + "dienkripsi dan bisa dibaca dari APK.");
+        labelKecil(t("Dicentang: skrip Lua aplikasi hasil build dienkripsi ")
+                + t("sehingga tidak langsung bisa dibaca orang lain. ")
+                + t("Bila dimatikan, skrip Lua aplikasi hasil build tidak ")
+                + t("dienkripsi dan bisa dibaca dari APK."));
 
         // 2) Tanda tangan pribadi (bawaan proyek baru).
         kotakCentang(t("Gunakan tanda tangan pribadi"),
                 pref.getBoolean(KUNCI_GITHUB_TANDA_TANGAN, false),
                 KUNCI_GITHUB_TANDA_TANGAN);
-        labelKecil("Dicentang: centang \"Gunakan tanda tangan pribadi\" di "
-                + "layar Buat Proyek sudah aktif sejak awal. Buat keystore "
-                + "dulu di kategori Tanda Tangan bila belum ada.");
+        labelKecil(t("Dicentang: centang \"Gunakan tanda tangan pribadi\" di ")
+                + t("layar Buat Proyek sudah aktif sejak awal. Buat keystore ")
+                + t("dulu di kategori Tanda Tangan bila belum ada."));
 
         // 3) Buat ke history.
         kotakCentang(t("Simpan build ke history"),
                 pref.getBoolean(KUNCI_GITHUB_HISTORY, true),
                 KUNCI_GITHUB_HISTORY);
-        labelKecil("Dicentang: setiap build GitHub yang berhasil dicatat "
-                + "ke history build.");
+        labelKecil(t("Dicentang: setiap build GitHub yang berhasil dicatat ")
+                + t("ke history build."));
         button(t("Lihat History Build"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -678,13 +679,13 @@ public class PengaturanActivity extends Activity {
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         root.addView(barisToken, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        labelKecil("Cukup token. Repo privat \"pembuat-aplikasi-build\" dibuat "
-                + "otomatis di akun GitHub Anda, lalu workflow dan mesin build "
+        labelKecil(t("Cukup token. Repo privat \"pembuat-aplikasi-build\" dibuat ")
+                + t("otomatis di akun GitHub Anda, lalu workflow dan mesin build ")
                 + "diunggah sendiri.");
-        labelKecil("Cara membuat token: GitHub > Settings > Developer settings "
+        labelKecil(t("Cara membuat token: GitHub > Settings > Developer settings ")
                 + "> Personal access tokens > Tokens (classic) > Generate new "
-                + "token. Centang izin \"repo\" dan \"workflow\".");
-        labelKecil("Token disimpan hanya di penyimpanan privat aplikasi ini.");
+                + t("token. Centang izin \"repo\" dan \"workflow\"."));
+        labelKecil(t("Token disimpan hanya di penyimpanan privat aplikasi ini."));
     }
 
     /** Tempel token dari papan klip ke kotak token. */
@@ -736,10 +737,10 @@ public class PengaturanActivity extends Activity {
             java.util.List<String> entri = RiwayatBuild.muat(this, jenis);
             String isi;
             if (entri.isEmpty()) {
-                isi = "Belum ada history build"
+                isi = t("Belum ada history build")
                         + ("github".equals(jenis) ? " GitHub" : " perangkat")
-                        + ". History tercatat setiap build berhasil bila "
-                        + "centang \"Simpan build ke history\" aktif.";
+                        + t(". History tercatat setiap build berhasil bila ")
+                        + t("centang \"Simpan build ke history\" aktif.");
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int i = entri.size() - 1; i >= 0; i--) {
@@ -769,23 +770,23 @@ public class PengaturanActivity extends Activity {
 
     private void bagianBangunPerangkat() {
         judul(t("Pengaturan Bangun APK Perangkat"));
-        labelKecil("Pengaturan build di perangkat (tanpa internet). "
-                + "Keystore dibuat di kategori Tanda Tangan (menu Buat Keystore).");
+        labelKecil(t("Pengaturan build di perangkat (tanpa internet). ")
+                + t("Keystore dibuat di kategori Tanda Tangan (menu Buat Keystore)."));
 
         kotakCentang(t("Simpan kata sandi"),
                 pref.getBoolean(KUNCI_BANGUN_SIMPAN_SANDI, false),
                 KUNCI_BANGUN_SIMPAN_SANDI);
-        labelKecil("Dicentang: kata sandi keystore tersimpan otomatis "
-                + "sehingga saat menandatangani APK tidak perlu memasukkan "
-                + "kata sandi lagi. Kata sandi hanya tersimpan di penyimpanan "
+        labelKecil(t("Dicentang: kata sandi keystore tersimpan otomatis ")
+                + t("sehingga saat menandatangani APK tidak perlu memasukkan ")
+                + t("kata sandi lagi. Kata sandi hanya tersimpan di penyimpanan ")
                 + "privat aplikasi ini; matikan centang ini bila HP dipakai "
-                + "bersama orang lain.");
+                + t("bersama orang lain."));
 
         kotakCentang(t("Simpan build ke history"),
                 pref.getBoolean(KUNCI_BANGUN_HISTORY, true),
                 KUNCI_BANGUN_HISTORY);
-        labelKecil("Dicentang: setiap build di perangkat yang berhasil "
-                + "dicatat ke history build.");
+        labelKecil(t("Dicentang: setiap build di perangkat yang berhasil ")
+                + t("dicatat ke history build."));
         button(t("Lihat History Build"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -798,9 +799,9 @@ public class PengaturanActivity extends Activity {
 
     private void bagianTema() {
         judul(t("Tema"));
-        labelKecil("Warna aplikasi (aksen tombol). Latar tetap terang supaya "
-                + "semua teks sistem tetap terbaca. Tema tersimpan dan berlaku "
-                + "mulai layar berikutnya dibuka.");
+        labelKecil(t("Warna aplikasi (aksen tombol). Latar tetap terang supaya ")
+                + t("semua teks sistem tetap terbaca. Tema tersimpan dan berlaku ")
+                + t("mulai layar berikutnya dibuka."));
         label(t("Tema saat ini:") + " " + PaletStudio.namaTema(temaAplikasi(this)));
         for (int i = 0; i < PaletStudio.SEMUA_TEMA.length; i++) {
             final PaletStudio.TemaAksen t = PaletStudio.SEMUA_TEMA[i];
@@ -819,8 +820,8 @@ public class PengaturanActivity extends Activity {
             simpan(KUNCI_TEMA, idTema);
             PaletStudio.terapkanTema(idTema);
             toast("Tema tersimpan: " + PaletStudio.namaTema(idTema)
-                    + ". Berlaku mulai layar berikutnya dibuka.");
-            announce("Tema tersimpan: " + PaletStudio.namaTema(idTema) + ".");
+                    + t(". Berlaku mulai layar berikutnya dibuka."));
+            announce(t("Tema tersimpan: ") + PaletStudio.namaTema(idTema) + ".");
             tampilkanKategori("tema");
         } catch (Throwable t) {
             toast("Gagal menyimpan tema: " + t.getMessage());
@@ -831,19 +832,19 @@ public class PengaturanActivity extends Activity {
 
     private void bagianTandaTangan() {
         judul(t("Tanda Tangan"));
-        labelKecil("Keystore untuk tanda tangan pribadi saat build. "
-                + "Bila belum ada keystore, buat dulu di sini.");
+        labelKecil(t("Keystore untuk tanda tangan pribadi saat build. ")
+                + t("Bila belum ada keystore, buat dulu di sini."));
         kotakCentang(t("Anti tamper aplikasi hasil build"),
                 pref.getBoolean(KUNCI_ANTI_TAMPER, false),
                 KUNCI_ANTI_TAMPER);
-        labelKecil("Dicentang: aplikasi hasil build di perangkat menjaga "
-                + "dirinya sendiri. Saat dibuka, aplikasi memeriksa tanda "
+        labelKecil(t("Dicentang: aplikasi hasil build di perangkat menjaga ")
+                + t("dirinya sendiri. Saat dibuka, aplikasi memeriksa tanda ")
                 + "tangannya dan isi berkas dex-nya; bila ada orang lain "
-                + "yang menandatangani ulang atau mengubah isinya, aplikasi "
-                + "menolak berjalan. Debugger dan alat injeksi seperti "
-                + "Frida/Xposed juga dideteksi, dan jendela aplikasi "
-                + "dikunci dari rekaman layar. Setelan ini tersimpan juga "
-                + "di berkas settings.gradle tiap proyek yang dibangun.");
+                + t("yang menandatangani ulang atau mengubah isinya, aplikasi ")
+                + t("menolak berjalan. Debugger dan alat injeksi seperti ")
+                + t("Frida/Xposed juga dideteksi, dan jendela aplikasi ")
+                + t("dikunci dari rekaman layar. Setelan ini tersimpan juga ")
+                + t("di berkas settings.gradle tiap proyek yang dibangun."));
         button(t("Buka Buat Keystore"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -862,9 +863,9 @@ public class PengaturanActivity extends Activity {
     private void bagianFolder() {
         judul(t("Folder Proyek"));
         nilaiFolder = label(t("Folder saat ini:") + " " + folderProyek());
-        labelKecil("Tersimpan. Folder proyek di aplikasi ini masih tetap "
-                + "Download/project di versi ini — pengaturan disimpan untuk "
-                + "pembaruan berikutnya. Pemilihan folder lewat penjelajah "
+        labelKecil(t("Tersimpan. Folder proyek di aplikasi ini masih tetap ")
+                + t("Download/project di versi ini — pengaturan disimpan untuk ")
+                + t("pembaruan berikutnya. Pemilihan folder lewat penjelajah ")
                 + "berkas belum tersedia; tulis jalur secara manual bila mau.");
         button(t("Ubah Folder Proyek"), new View.OnClickListener() {
             @Override
@@ -907,10 +908,10 @@ public class PengaturanActivity extends Activity {
         judul(t("Bahasa dan Suara"));
         nilaiBahasa = label(t("Bahasa saat ini:") + " " + labelBahasa(
                 pref.getString(KUNCI_BAHASA, Bahasa.SISTEM)));
-        labelKecil("Bahasa aplikasi kini dipilih dari pemilih bahasa berisi "
-                + "50 bahasa dengan pencarian (juga ada di paling bawah menu "
-                + "Pengaturan). Bawaan mengikuti sistem Android. Bahasa "
-                + "terpilih dipakai di Tentang Alat dan menjadi bahasa "
+        labelKecil(t("Bahasa aplikasi kini dipilih dari pemilih bahasa berisi ")
+                + t("50 bahasa dengan pencarian (juga ada di paling bawah menu ")
+                + t("Pengaturan). Bawaan mengikuti sistem Android. Bahasa ")
+                + t("terpilih dipakai di Tentang Alat dan menjadi bahasa ")
                 + "aplikasi; pilihan berlaku penuh setelah aplikasi dibuka "
                 + "kembali.");
         button(t("Ubah Bahasa"), new View.OnClickListener() {
@@ -925,13 +926,13 @@ public class PengaturanActivity extends Activity {
         });
         nilaiSuara = label(t("Kecepatan saat ini:") + " " + labelSuara(
                 pref.getFloat(KUNCI_KECEPATAN_SUARA, 1.0f)));
-        labelKecil("Berlaku di Mode Suara — kecepatan bicara jawaban suara.");
+        labelKecil(t("Berlaku di Mode Suara — kecepatan bicara jawaban suara."));
         button(t("Ubah Kecepatan Suara"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final float[] nilai = {0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f};
-                final String[] opsi = {"0,5x (lambat)", "0,75x", "1x (normal)",
-                        "1,25x", "1,5x", "2x (cepat)"};
+                final String[] opsi = {TeksUI.t("0,5x (lambat)"), "0,75x", TeksUI.t("1x (normal)"),
+                        "1,25x", "1,5x", TeksUI.t("2x (cepat)")};
                 float kini = pref.getFloat(KUNCI_KECEPATAN_SUARA, 1.0f);
                 int terpilih = 2;
                 for (int i = 0; i < nilai.length; i++) {
@@ -957,8 +958,8 @@ public class PengaturanActivity extends Activity {
         judul(t("Ukuran Teks dan Tampilan"));
         nilaiFont = label(t("Ukuran saat ini:") + " " + labelFont(
                 pref.getString(KUNCI_FONT_EDITOR, "sedang")));
-        labelKecil("Berlaku di editor kode (layar Edit Proyek) — berlaku "
-                + "mulai proyek berikutnya dibuka.");
+        labelKecil(t("Berlaku di editor kode (layar Edit Proyek) — berlaku ")
+                + t("mulai proyek berikutnya dibuka."));
         button(t("Ubah Ukuran Font Editor"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -993,14 +994,14 @@ public class PengaturanActivity extends Activity {
         eTarget.setText(String.valueOf(pref.getInt(KUNCI_BUILD_TARGET, 33)));
         root.addView(eTarget, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        labelKecil("Dipakai sebagai nilai awal kolom SDK target di layar "
-                + "Buat Proyek (masih bisa diubah tiap kali membuat proyek).");
+        labelKecil(t("Dipakai sebagai nilai awal kolom SDK target di layar ")
+                + t("Buat Proyek (masih bisa diubah tiap kali membuat proyek)."));
         final CheckBox cbPisah = new CheckBox(this);
         cbPisah.setText(t("Pisah arsitektur sebagai bawaan"));
         cbPisah.setChecked(pref.getBoolean(KUNCI_BUILD_PISAH, false));
         root.addView(cbPisah);
-        labelKecil("Dicentang: centang \"arsitektur terpisah\" di layar Buat "
-                + "Proyek sudah aktif sejak awal (dua APK: 64 bit dan 32 bit).");
+        labelKecil(t("Dicentang: centang \"arsitektur terpisah\" di layar Buat ")
+                + t("Proyek sudah aktif sejak awal (dua APK: 64 bit dan 32 bit)."));
         button(t("Simpan Pengaturan Build"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1032,8 +1033,8 @@ public class PengaturanActivity extends Activity {
         cbBunyi.setText(t("Bunyi saat build selesai"));
         cbBunyi.setChecked(pref.getBoolean(KUNCI_BUNYI_BUILD, true));
         root.addView(cbBunyi);
-        labelKecil("Tersimpan. Bunyi saat build selesai belum diterapkan di "
-                + "versi ini — pengaturan disimpan untuk pembaruan berikutnya.");
+        labelKecil(t("Tersimpan. Bunyi saat build selesai belum diterapkan di ")
+                + t("versi ini — pengaturan disimpan untuk pembaruan berikutnya."));
         cbBunyi.setOnCheckedChangeListener(
                 new android.widget.CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -1052,15 +1053,15 @@ public class PengaturanActivity extends Activity {
         judul(t("Cadangan Otomatis"));
         nilaiCadangan = label(t("Cadangan saat ini:") + " " + labelCadangan(
                 pref.getString(KUNCI_CADANGAN, "mati")));
-        labelKecil("Tersimpan. Penjadwalan cadangan otomatis belum aktif di "
-                + "versi ini — jalankan cadangan manual dari menu Kelola "
-                + "Project (Cadangkan). Pengaturan disimpan untuk pembaruan "
+        labelKecil(t("Tersimpan. Penjadwalan cadangan otomatis belum aktif di ")
+                + t("versi ini — jalankan cadangan manual dari menu Kelola ")
+                + t("Project (Cadangkan). Pengaturan disimpan untuk pembaruan ")
                 + "berikutnya.");
         button(t("Ubah Cadangan Otomatis"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String[] nilai = {"mati", "harian", "mingguan"};
-                final String[] opsi = {"Mati", "Harian", "Mingguan"};
+                final String[] opsi = {TeksUI.t("Mati"), TeksUI.t("Harian"), TeksUI.t("Mingguan")};
                 pilihNilai(t("Cadangan Otomatis"), opsi,
                         indeks(nilai, pref.getString(KUNCI_CADANGAN, "mati"), 0),
                         new DialogInterface.OnClickListener() {
@@ -1068,7 +1069,7 @@ public class PengaturanActivity extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 simpan(KUNCI_CADANGAN, nilai[which]);
                                 muatUlangNilai();
-                                toast("Cadangan otomatis tersimpan: " + opsi[which]);
+                                toast(TeksUI.t("Cadangan otomatis tersimpan: ") + opsi[which]);
                                 dialog.dismiss();
                             }
                         });
@@ -1080,10 +1081,10 @@ public class PengaturanActivity extends Activity {
 
     private void bagianProfil() {
         judul(t("Profil Pengembang"));
-        labelKecil("Nama, nomor WhatsApp, dan rekening yang tampil di layar "
-                + "Donasi ke Pengembang. Bila diisi di sini, data ini yang "
+        labelKecil(t("Nama, nomor WhatsApp, dan rekening yang tampil di layar ")
+                + t("Donasi ke Pengembang. Bila diisi di sini, data ini yang ")
                 + "dipakai (menggantikan data bawaan).");
-        label("Nama pengembang");
+        label(t("Nama pengembang"));
         eNamaProfil = new EditText(this);
         GayaStudio.edit(eNamaProfil);
         eNamaProfil.setHint("Contoh: Al Kautsar");
@@ -1092,7 +1093,7 @@ public class PengaturanActivity extends Activity {
         eNamaProfil.setText(pref.getString(KUNCI_PROFIL_NAMA, ""));
         root.addView(eNamaProfil, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        label("Nomor WhatsApp pengembang");
+        label(t("Nomor WhatsApp pengembang"));
         eWaProfil = new EditText(this);
         GayaStudio.edit(eWaProfil);
         eWaProfil.setHint("Diawali kode negara tanpa +, contoh: 628123456789");
@@ -1102,7 +1103,7 @@ public class PengaturanActivity extends Activity {
         eWaProfil.setText(pref.getString(KUNCI_PROFIL_WA, ""));
         root.addView(eWaProfil, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        label("Rekening BRI pengembang");
+        label(t("Rekening BRI pengembang"));
         eRekeningProfil = new EditText(this);
         GayaStudio.edit(eRekeningProfil);
         eRekeningProfil.setHint("Nomor rekening BRI, hanya angka");
@@ -1130,15 +1131,15 @@ public class PengaturanActivity extends Activity {
 
     private void bagianPrivasi() {
         judul(t("Privasi dan Data"));
-        labelKecil("Reset hanya menghapus pengaturan di layar ini. Hapus data "
-                + "juga menghapus token GitHub dan keadaan Mode Suara. "
-                + "Proyek di folder Download TIDAK ikut dihapus.");
+        labelKecil(t("Reset hanya menghapus pengaturan di layar ini. Hapus data ")
+                + t("juga menghapus token GitHub dan keadaan Mode Suara. ")
+                + t("Proyek di folder Download TIDAK ikut dihapus."));
         button(t("Reset Pengaturan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(PengaturanActivity.this)
                         .setTitle(t("Reset Pengaturan"))
-                        .setMessage("Semua pengaturan di layar ini kembali ke bawaan. Lanjutkan?")
+                        .setMessage(t("Semua pengaturan di layar ini kembali ke bawaan. Lanjutkan?"))
                         .setPositiveButton(t("Reset"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -1161,8 +1162,8 @@ public class PengaturanActivity extends Activity {
             public void onClick(View v) {
                 new AlertDialog.Builder(PengaturanActivity.this)
                         .setTitle(t("Hapus Data Aplikasi"))
-                        .setMessage("Pengaturan, token GitHub, dan keadaan Mode Suara "
-                                + "akan dihapus. Proyek di folder Download tidak ikut "
+                        .setMessage(t("Pengaturan, token GitHub, dan keadaan Mode Suara ")
+                                + t("akan dihapus. Proyek di folder Download tidak ikut ")
                                 + "dihapus. Lanjutkan?")
                         .setPositiveButton(t("Hapus"), new DialogInterface.OnClickListener() {
                             @Override
@@ -1190,6 +1191,6 @@ public class PengaturanActivity extends Activity {
         if (eRekeningProfil != null) eRekeningProfil.setText("");
         muatUlangNilai();
         toast("Data aplikasi sudah dihapus (proyek tidak ikut dihapus)");
-        announce("Data aplikasi sudah dihapus.");
+        announce(t("Data aplikasi sudah dihapus."));
     }
 }

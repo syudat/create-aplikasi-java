@@ -37,21 +37,21 @@ public class AnalisisApkActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Penganalisis APK");
+        setTitle(TeksUI.t("Penganalisis APK"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Penganalisis APK", 20);
-        label(r, "Baca isi APK hasil build sebuah proyek: nama paket, versi, "
-                + "SDK, daftar izin, jumlah berkas dex, rincian ukuran per "
-                + "bagian (kode, resource, aset, pustaka native), dan entri "
-                + "terbesar. Berguna untuk tahu bagian mana yang membuat "
+        heading(r, TeksUI.t("Penganalisis APK"), 20);
+        label(r, TeksUI.t("Baca isi APK hasil build sebuah proyek: nama paket, versi, ")
+                + TeksUI.t("SDK, daftar izin, jumlah berkas dex, rincian ukuran per ")
+                + TeksUI.t("bagian (kode, resource, aset, pustaka native), dan entri ")
+                + TeksUI.t("terbesar. Berguna untuk tahu bagian mana yang membuat ")
                 + "APK besar.", false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
         adapterProyek = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarProyek);
@@ -73,7 +73,7 @@ public class AnalisisApkActivity extends Activity {
         tvHasil.setTextIsSelectable(true);
         tvHasil.setPadding(0, dp(4), 0, dp(4));
         r.addView(tvHasil);
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -81,7 +81,7 @@ public class AnalisisApkActivity extends Activity {
         });
 
         muatDaftar();
-        announce("Penganalisis APK. Pilih proyek, lalu tekan Analisis APK Hasil Build.");
+        announce(TeksUI.t("Penganalisis APK. Pilih proyek, lalu tekan Analisis APK Hasil Build."));
     }
 
     @Override
@@ -122,8 +122,8 @@ public class AnalisisApkActivity extends Activity {
         final File apk = apkTerbaru(dir);
         if (apk == null) {
             tvHasil.setText("Belum ada APK hasil build di folder bin proyek ini. "
-                    + "Bangun dulu proyeknya sampai APK-nya jadi.");
-            announce("Belum ada APK hasil build di proyek ini.");
+                    + TeksUI.t("Bangun dulu proyeknya sampai APK-nya jadi."));
+            announce(TeksUI.t("Belum ada APK hasil build di proyek ini."));
             return;
         }
         tvHasil.setText("Menganalisis " + apk.getName() + "...");
@@ -137,11 +137,11 @@ public class AnalisisApkActivity extends Activity {
                     public void run() {
                         tvHasil.setText(teks);
                         if (h.galat == null) {
-                            announce("Analisis selesai. Paket " + h.namaPaket
-                                    + ", versi " + h.versiNama
-                                    + ", ukuran " + AnalisisApk.formatUkuran(h.ukuranBerkas)
-                                    + ", " + h.jumlahDex + " berkas dex, "
-                                    + h.izin.size() + " izin.");
+                            announce(TeksUI.t("Analisis selesai. Paket ") + h.namaPaket
+                                    + TeksUI.t(", versi ") + h.versiNama
+                                    + TeksUI.t(", ukuran ") + AnalisisApk.formatUkuran(h.ukuranBerkas)
+                                    + ", " + h.jumlahDex + TeksUI.t(" berkas dex, ")
+                                    + h.izin.size() + TeksUI.t(" izin."));
                         } else {
                             announce(h.galat);
                         }

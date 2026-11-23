@@ -49,6 +49,7 @@ public class BahasaActivity extends Activity {
                 PengaturanActivity.baca(this).getString(
                         PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
                 java.util.Locale.getDefault().getLanguage());
+        TeksUI.kodeAktif = kodeBahasa;
         setTitle(t("Bahasa Aplikasi"));
 
         LinearLayout r = new LinearLayout(this);
@@ -150,9 +151,11 @@ public class BahasaActivity extends Activity {
         SharedPreferences.Editor ed = PengaturanActivity.baca(this).edit();
         ed.putString(PengaturanActivity.KUNCI_BAHASA, kode);
         ed.apply();
+        TeksUI.kodeAktif = Bahasa.kodeEfektif(kode,
+                Locale.getDefault().getLanguage());
         String label = Bahasa.labelPilihan(kode, Locale.getDefault().getLanguage());
         Toast.makeText(this, t("Bahasa dipilih:") + " " + label, Toast.LENGTH_SHORT).show();
-        announce(t("Bahasa dipilih:") + " " + label + ". Bahasa dipakai di Tentang Alat dan menjadi bahasa aplikasi.");
+        announce(t("Bahasa dipilih:") + " " + label + t(". Bahasa dipakai di Tentang Alat dan menjadi bahasa aplikasi."));
         perbaruiLabelSaatIni();
         finish();
     }

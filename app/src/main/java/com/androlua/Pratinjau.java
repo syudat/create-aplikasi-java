@@ -115,7 +115,7 @@ public class Pratinjau {
             zos = new ZipOutputStream(new BufferedOutputStream(
                     new FileOutputStream(keluar)));
             tambahBerkas(zos, utama, nama + "/" + utama.getName());
-            tambahTeks(zos, nama + "/BACA-SAYA.txt", isiBacaSaya(nama, tipe, utama.getName()));
+            tambahTeks(zos, nama + TeksUI.t("/BACA-SAYA.txt"), isiBacaSaya(nama, tipe, utama.getName()));
             tambahTeks(zos, nama + "/info.txt", isiInfo(dirProyek, nama, tipe));
             zos.finish();
             return keluar;
@@ -135,19 +135,19 @@ public class Pratinjau {
     /** Isi BACA-SAYA.txt: petunjuk membuka pratinjau di HP teman. */
     static String isiBacaSaya(String nama, String tipe, String namaBerkasUtama) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Pratinjau proyek \"").append(nama).append("\" dari Create Aplikasi.\n\n");
+        sb.append(TeksUI.t("Pratinjau proyek \"")).append(nama).append("\" dari Create Aplikasi.\n\n");
         if ("html".equals(tipe) || "situs".equals(tipe)) {
-            sb.append("Cara membuka: ketuk berkas ").append(namaBerkasUtama)
+            sb.append(TeksUI.t("Cara membuka: ketuk berkas ")).append(namaBerkasUtama)
                     .append(" — halaman akan terbuka di browser HP Anda.\n");
         } else if ("lua".equals(tipe)) {
-            sb.append("Cara membuka: berkas ").append(namaBerkasUtama)
-                    .append(" adalah kode Lua — buka sebagai teks untuk membacanya. ")
-                    .append("Untuk menjalankannya, buka proyek ini di aplikasi ")
+            sb.append(TeksUI.t("Cara membuka: berkas ")).append(namaBerkasUtama)
+                    .append(TeksUI.t(" adalah kode Lua — buka sebagai teks untuk membacanya. "))
+                    .append(TeksUI.t("Untuk menjalankannya, buka proyek ini di aplikasi "))
                     .append("Create Aplikasi.\n");
         } else {
-            sb.append("Cara membuka: berkas ").append(namaBerkasUtama)
-                    .append(" adalah kode sumber ").append(labelTipe(tipe))
-                    .append(" — buka sebagai teks untuk membacanya. Untuk membangun ")
+            sb.append(TeksUI.t("Cara membuka: berkas ")).append(namaBerkasUtama)
+                    .append(TeksUI.t(" adalah kode sumber ")).append(labelTipe(tipe))
+                    .append(TeksUI.t(" — buka sebagai teks untuk membacanya. Untuk membangun "))
                     .append("aplikasinya, buka proyek ini di aplikasi Create Aplikasi.\n");
         }
         sb.append("\nDikirim dari Create Aplikasi by Al Kautsar.\n");
@@ -161,10 +161,10 @@ public class Pratinjau {
         String tanggal = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
                 .format(new Date());
         StringBuilder sb = new StringBuilder();
-        sb.append("Nama: ").append(nama).append("\n");
+        sb.append(TeksUI.t("Nama: ")).append(nama).append("\n");
         sb.append("Jenis: ").append(labelTipe(tipe)).append("\n");
         sb.append("Paket: ").append(paket == null ? "-" : paket).append("\n");
-        sb.append("Versi: ").append(ver == null ? "-" : ver).append("\n");
+        sb.append(TeksUI.t("Versi: ")).append(ver == null ? "-" : ver).append("\n");
         sb.append("Dibuat: ").append(tanggal).append("\n");
         return sb.toString();
     }

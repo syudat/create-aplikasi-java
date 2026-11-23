@@ -133,10 +133,10 @@ public class GitLokal {
      */
     public static String init(File dirProyek) {
         if (dirProyek == null || !dirProyek.isDirectory()) {
-            return "Folder proyek tidak ditemukan.";
+            return TeksUI.t("Folder proyek tidak ditemukan.");
         }
         if (adaGit(dirProyek)) {
-            return "Proyek ini sudah punya repo Git.";
+            return TeksUI.t("Proyek ini sudah punya repo Git.");
         }
         File git = new File(dirProyek, DIR_GIT);
         try {
@@ -150,7 +150,7 @@ public class GitLokal {
             tulisTeks(new File(git, "index.txt"), "");
             return null;
         } catch (Exception e) {
-            return "Gagal membuat repo Git: " + e.getMessage();
+            return TeksUI.t("Gagal membuat repo Git: ") + e.getMessage();
         }
     }
 
@@ -202,14 +202,14 @@ public class GitLokal {
      */
     public static HasilCommit commit(File dirProyek, String pesan) {
         if (!adaGit(dirProyek)) {
-            return new HasilCommit(null, "Proyek ini belum punya repo Git. Buat repo dulu.");
+            return new HasilCommit(null, TeksUI.t("Proyek ini belum punya repo Git. Buat repo dulu."));
         }
         List<StatusItem> st = status(dirProyek);
         if (st == null) {
-            return new HasilCommit(null, "Gagal membaca status proyek.");
+            return new HasilCommit(null, TeksUI.t("Gagal membaca status proyek."));
         }
         if (st.isEmpty()) {
-            return new HasilCommit(null, "Tidak ada perubahan untuk di-commit.");
+            return new HasilCommit(null, TeksUI.t("Tidak ada perubahan untuk di-commit."));
         }
         String pesanBersih = pesan == null ? "" : pesan.trim();
         if (pesanBersih.isEmpty()) pesanBersih = "Commit tanpa pesan";
@@ -231,19 +231,19 @@ public class GitLokal {
         String id = sha1Teks(waktu + "|" + pesanBersih + "|" + hashPohon + "|" + induk);
         File zip = new File(dirProyek, DIR_GIT + "/snapshots/" + id + ".zip");
         if (!tulisSnapshot(dirProyek, zip)) {
-            return new HasilCommit(null, "Gagal menulis snapshot commit.");
+            return new HasilCommit(null, TeksUI.t("Gagal menulis snapshot commit."));
         }
         String meta = "waktu=" + waktu + "\n"
                 + "pesan=" + pesanBersih.replace("|", "/") + "\n"
                 + "induk=" + induk + "\n"
-                + "berkas=" + kerja.size() + "\n";
+                + TeksUI.t("berkas=") + kerja.size() + "\n";
         try {
             tulisTeks(new File(dirProyek, DIR_GIT + "/commits/" + id + ".txt"), meta);
             tulisTeks(new File(dirProyek,
                     DIR_GIT + "/refs/heads/" + CABANG_BAWAAN), id + "\n");
             tulisIndeks(dirProyek, kerja);
         } catch (Exception e) {
-            return new HasilCommit(null, "Gagal menyimpan commit: " + e.getMessage());
+            return new HasilCommit(null, TeksUI.t("Gagal menyimpan commit: ") + e.getMessage());
         }
         return new HasilCommit(id, null);
     }
@@ -352,7 +352,7 @@ public class GitLokal {
             while (proses.isAlive()) {
                 if (System.currentTimeMillis() > batas) {
                     proses.destroy();
-                    return new HasilPerintah(-1, "Perintah git kehabisan waktu (120 detik).");
+                    return new HasilPerintah(-1, TeksUI.t("Perintah git kehabisan waktu (120 detik)."));
                 }
                 Thread.sleep(100);
             }
@@ -360,7 +360,7 @@ public class GitLokal {
             return new HasilPerintah(proses.exitValue(), keluar.toString());
         } catch (Exception e) {
             if (proses != null) proses.destroy();
-            return new HasilPerintah(-1, "Gagal menjalankan git: " + e.getMessage());
+            return new HasilPerintah(-1, TeksUI.t("Gagal menjalankan git: ") + e.getMessage());
         }
     }
 
@@ -371,51 +371,51 @@ public class GitLokal {
      */
     public static String clone(String url, File dirInduk, String nama) {
         if (url == null || url.trim().isEmpty()) {
-            return "URL repo Git kosong.";
+            return TeksUI.t("URL repo Git kosong.");
         }
         if (dirInduk == null || !dirInduk.isDirectory()) {
-            return "Folder tujuan clone tidak ditemukan.";
+            return TeksUI.t("Folder tujuan clone tidak ditemukan.");
         }
         if (nama == null || nama.trim().isEmpty()) {
-            return "Nama folder hasil clone kosong.";
+            return TeksUI.t("Nama folder hasil clone kosong.");
         }
         if (new File(dirInduk, nama).exists()) {
-            return "Folder \"" + nama + "\" sudah ada.";
+            return "Folder \"" + nama + TeksUI.t("\" sudah ada.");
         }
         if (!adaGitSistem()) {
-            return "Biner git tidak tersedia di HP ini, jadi clone tidak bisa "
-                    + "dijalankan. Pasang Termux lalu \"pkg install git\", atau "
-                    + "unduh ZIP repo dari GitHub dan impor lewat menu Impor proyek.";
+            return TeksUI.t("Biner git tidak tersedia di HP ini, jadi clone tidak bisa ")
+                    + TeksUI.t("dijalankan. Pasang Termux lalu \"pkg install git\", atau ")
+                    + TeksUI.t("unduh ZIP repo dari GitHub dan impor lewat menu Impor proyek.");
         }
         HasilPerintah r = jalankanGit(dirInduk, "clone", url.trim(), nama);
         if (r.berhasil()) return null;
-        return "Clone gagal: " + r.keluar.trim();
+        return TeksUI.t("Clone gagal: ") + r.keluar.trim();
     }
 
     /** Tarik perubahan dari remote (git pull) memakai git sistem. */
     public static String pullSistem(File dirProyek) {
-        if (!adaGit(dirProyek)) return "Proyek ini belum punya repo Git.";
+        if (!adaGit(dirProyek)) return TeksUI.t("Proyek ini belum punya repo Git.");
         if (!adaGitSistem()) {
-            return "Biner git tidak tersedia di HP ini, jadi pull tidak bisa "
-                    + "dijalankan. Pakai \"Pull dari GitHub\" (snapshot) bila "
-                    + "proyek ini pernah di-push ke GitHub lewat IDE.";
+            return TeksUI.t("Biner git tidak tersedia di HP ini, jadi pull tidak bisa ")
+                    + TeksUI.t("dijalankan. Pakai \"Pull dari GitHub\" (snapshot) bila ")
+                    + TeksUI.t("proyek ini pernah di-push ke GitHub lewat IDE.");
         }
         HasilPerintah r = jalankanGit(dirProyek, "pull");
         if (r.berhasil()) return null;
-        return "Pull gagal: " + r.keluar.trim();
+        return TeksUI.t("Pull gagal: ") + r.keluar.trim();
     }
 
     /** Dorong perubahan ke remote (git push) memakai git sistem. */
     public static String pushSistem(File dirProyek) {
-        if (!adaGit(dirProyek)) return "Proyek ini belum punya repo Git.";
+        if (!adaGit(dirProyek)) return TeksUI.t("Proyek ini belum punya repo Git.");
         if (!adaGitSistem()) {
-            return "Biner git tidak tersedia di HP ini, jadi push tidak bisa "
-                    + "dijalankan. Pakai \"Push ke GitHub\" (snapshot) untuk "
-                    + "menyimpan commit ke GitHub lewat IDE.";
+            return TeksUI.t("Biner git tidak tersedia di HP ini, jadi push tidak bisa ")
+                    + TeksUI.t("dijalankan. Pakai \"Push ke GitHub\" (snapshot) untuk ")
+                    + TeksUI.t("menyimpan commit ke GitHub lewat IDE.");
         }
         HasilPerintah r = jalankanGit(dirProyek, "push");
         if (r.berhasil()) return null;
-        return "Push gagal: " + r.keluar.trim();
+        return TeksUI.t("Push gagal: ") + r.keluar.trim();
     }
 
     // ------------------------------------------------------- GitHub (snapshot)
@@ -428,18 +428,18 @@ public class GitLokal {
     public static String pushGithub(String token, String apiDasar, String pemilik,
                                     String repo, File dirProyek,
                                     SinkronCloud.PengirimHttp http) {
-        if (token == null || token.isEmpty()) return "Token GitHub belum diisi.";
+        if (token == null || token.isEmpty()) return TeksUI.t("Token GitHub belum diisi.");
         if (pemilik == null || pemilik.isEmpty()) {
-            return "Nama pengguna GitHub tidak diketahui.";
+            return TeksUI.t("Nama pengguna GitHub tidak diketahui.");
         }
-        if (http == null) return "Pengirim HTTP tidak ada.";
-        if (!adaGit(dirProyek)) return "Proyek ini belum punya repo Git.";
+        if (http == null) return TeksUI.t("Pengirim HTTP tidak ada.");
+        if (!adaGit(dirProyek)) return TeksUI.t("Proyek ini belum punya repo Git.");
         String id = kepala(dirProyek);
-        if (id.isEmpty()) return "Belum ada commit. Buat commit dulu sebelum push.";
+        if (id.isEmpty()) return TeksUI.t("Belum ada commit. Buat commit dulu sebelum push.");
         String nama = dirProyek.getName();
         String idPendek = id.length() > 7 ? id.substring(0, 7) : id;
         File zip = new File(dirProyek, DIR_GIT + "/snapshots/" + id + ".zip");
-        if (!zip.isFile()) return "Snapshot commit tidak ditemukan.";
+        if (!zip.isFile()) return TeksUI.t("Snapshot commit tidak ditemukan.");
         String galat = SinkronCloud.unggah(token, apiDasar, pemilik, repo,
                 JALUR_GIT_REPO + "/" + namaBerkasSnapshot(nama, idPendek),
                 zip, "Git: " + nama + " commit " + idPendek, http);
@@ -453,7 +453,7 @@ public class GitLokal {
                     JALUR_GIT_REPO + "/" + namaBerkasHead(nama),
                     head, "Git: " + nama + " HEAD " + idPendek, http);
         } catch (Exception e) {
-            return "Gagal mengunggah HEAD: " + e.getMessage();
+            return TeksUI.t("Gagal mengunggah HEAD: ") + e.getMessage();
         } finally {
             if (head != null) head.delete();
         }
@@ -469,28 +469,28 @@ public class GitLokal {
     public static String pullGithub(String token, String apiDasar, String pemilik,
                                     String repo, File dirProyek,
                                     SinkronCloud.PengirimHttp http, File dirCache) {
-        if (token == null || token.isEmpty()) return "Token GitHub belum diisi.";
+        if (token == null || token.isEmpty()) return TeksUI.t("Token GitHub belum diisi.");
         if (pemilik == null || pemilik.isEmpty()) {
-            return "Nama pengguna GitHub tidak diketahui.";
+            return TeksUI.t("Nama pengguna GitHub tidak diketahui.");
         }
-        if (http == null) return "Pengirim HTTP tidak ada.";
-        if (!adaGit(dirProyek)) return "Proyek ini belum punya repo Git.";
-        if (dirCache == null) return "Folder cache tidak ditentukan.";
+        if (http == null) return TeksUI.t("Pengirim HTTP tidak ada.");
+        if (!adaGit(dirProyek)) return TeksUI.t("Proyek ini belum punya repo Git.");
+        if (dirCache == null) return TeksUI.t("Folder cache tidak ditentukan.");
         dirCache.mkdirs();
         String nama = dirProyek.getName();
         File headLokal = new File(dirCache, nama + "-HEAD.txt");
         File headUnduh = SinkronCloud.unduh(token, apiDasar, pemilik, repo,
                 JALUR_GIT_REPO + "/" + namaBerkasHead(nama), headLokal, http);
         if (headUnduh == null) {
-            return "Tidak ada push GitHub untuk proyek ini (berkas HEAD tidak ditemukan).";
+            return TeksUI.t("Tidak ada push GitHub untuk proyek ini (berkas HEAD tidak ditemukan).");
         }
         String id = bacaTeks(headUnduh);
-        if (id == null) return "Berkas HEAD dari GitHub tidak bisa dibaca.";
+        if (id == null) return TeksUI.t("Berkas HEAD dari GitHub tidak bisa dibaca.");
         id = id.trim();
-        if (id.isEmpty()) return "Berkas HEAD dari GitHub kosong.";
+        if (id.isEmpty()) return TeksUI.t("Berkas HEAD dari GitHub kosong.");
         if (id.equals(kepala(dirProyek))) {
-            return "Sudah terbaru (commit " + id.substring(0, Math.min(7, id.length()))
-                    + " sudah ada di HP ini).";
+            return TeksUI.t("Sudah terbaru (commit ") + id.substring(0, Math.min(7, id.length()))
+                    + TeksUI.t(" sudah ada di HP ini).");
         }
         String idPendek = id.length() > 7 ? id.substring(0, 7) : id;
         File zipTujuan = new File(dirCache, namaBerkasSnapshot(nama, idPendek));
@@ -498,7 +498,7 @@ public class GitLokal {
                 JALUR_GIT_REPO + "/" + namaBerkasSnapshot(nama, idPendek),
                 zipTujuan, http);
         if (zip == null) {
-            return "Snapshot commit " + idPendek + " tidak ditemukan di GitHub.";
+            return "Snapshot commit " + idPendek + TeksUI.t(" tidak ditemukan di GitHub.");
         }
         String galat = ArsipProyek.ekstrakZip(zip, dirProyek);
         if (galat != null) return galat;
@@ -513,15 +513,15 @@ public class GitLokal {
             File snap = new File(dirProyek, DIR_GIT + "/snapshots/" + id + ".zip");
             salinBerkas(zip, snap);
             String meta = "waktu=" + waktu + "\n"
-                    + "pesan=Ditarik dari GitHub (commit " + idPendek + ")\n"
+                    + TeksUI.t("pesan=Ditarik dari GitHub (commit ") + idPendek + ")\n"
                     + "induk=" + indukLama + "\n"
-                    + "berkas=" + kerja.size() + "\n";
+                    + TeksUI.t("berkas=") + kerja.size() + "\n";
             tulisTeks(new File(dirProyek, DIR_GIT + "/commits/" + id + ".txt"), meta);
             tulisTeks(new File(dirProyek,
                     DIR_GIT + "/refs/heads/" + CABANG_BAWAAN), id + "\n");
             tulisIndeks(dirProyek, kerja);
         } catch (Exception e) {
-            return "Snapshot ditarik tetapi gagal dicatat di repo lokal: " + e.getMessage();
+            return TeksUI.t("Snapshot ditarik tetapi gagal dicatat di repo lokal: ") + e.getMessage();
         }
         return null;
     }

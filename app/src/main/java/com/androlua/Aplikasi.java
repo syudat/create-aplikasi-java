@@ -39,6 +39,7 @@ public class Aplikasi extends Application {
             String pilihan = PengaturanActivity.baca(base)
                     .getString(PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM);
             String kode = Bahasa.kodeEfektif(pilihan, Locale.getDefault().getLanguage());
+            TeksUI.kodeAktif = kode;
             Locale lokal = new Locale(kode);
             Configuration cfg = new Configuration(base.getResources().getConfiguration());
             cfg.setLocale(lokal);
@@ -63,7 +64,7 @@ public class Aplikasi extends Application {
             // Ditandatangani ulang oleh pihak lain: tolak berjalan.
             try {
                 android.widget.Toast.makeText(this,
-                        "Aplikasi ini telah diubah atau ditandatangani ulang oleh pihak lain, sehingga tidak dapat dijalankan.",
+                        TeksUI.t("Aplikasi ini telah diubah atau ditandatangani ulang oleh pihak lain, sehingga tidak dapat dijalankan."),
                         android.widget.Toast.LENGTH_LONG).show();
             } catch (Throwable t) {
                 // abaikan: tetap berhenti di bawah
@@ -76,7 +77,7 @@ public class Aplikasi extends Application {
             // String/panduan diubah oleh pihak lain: tolak berjalan.
             try {
                 android.widget.Toast.makeText(this,
-                        "Aplikasi ini telah diubah sehingga tidak dapat dijalankan.",
+                        TeksUI.t("Aplikasi ini telah diubah sehingga tidak dapat dijalankan."),
                         android.widget.Toast.LENGTH_LONG).show();
             } catch (Throwable t) {
                 // abaikan: tetap berhenti di bawah

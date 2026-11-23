@@ -152,7 +152,7 @@ public class BangunPython {
         File mainPy = new File(dirPython, "main.py");
         if (!mainPy.isFile()) {
             throw new IOException("main.py tidak ditemukan di app/src/main/python/ "
-                    + "(proyek Python harus punya main.py)");
+                    + TeksUI.t("(proyek Python harus punya main.py)"));
         }
         zipFolder(dirPython, new File(dirChaquopy, "app.imy"));
 

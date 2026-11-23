@@ -38,16 +38,16 @@ public class MarketActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pasar Proyek");
+        setTitle(TeksUI.t("Pasar Proyek"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pasar Proyek", 20);
-        label(r, "Proyek contoh bawaan aplikasi — ketuk satu untuk memasangnya "
-                + "ke folder proyekmu. Pasar online (unduh dari internet) belum "
+        heading(r, TeksUI.t("Pasar Proyek"), 20);
+        label(r, TeksUI.t("Proyek contoh bawaan aplikasi — ketuk satu untuk memasangnya ")
+                + TeksUI.t("ke folder proyekmu. Pasar online (unduh dari internet) belum ")
                 + "tersedia; pasar ini berisi contoh yang sudah ada di aplikasi.",
                 false);
 
@@ -71,40 +71,40 @@ public class MarketActivity extends Activity {
         r.addView(lv, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(320)));
 
-        label(r, "Ketuk proyek contoh untuk memasangnya. Proyek yang sudah "
-                + "dipasang bisa dibuka di Kelola Project.", true);
+        label(r, TeksUI.t("Ketuk proyek contoh untuk memasangnya. Proyek yang sudah ")
+                + TeksUI.t("dipasang bisa dibuka di Kelola Project."), true);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Pasar Proyek. " + PasarProyek.SEMUA.length
-                + " proyek contoh tersedia.");
+        announce(TeksUI.t("Pasar Proyek. ") + PasarProyek.SEMUA.length
+                + TeksUI.t(" proyek contoh tersedia."));
     }
 
     private void tanyaPasang(final PasarProyek.Item item) {
         new AlertDialog.Builder(this)
-                .setTitle("Pasang " + item.nama + "?")
+                .setTitle(TeksUI.t("Pasang ") + item.nama + "?")
                 .setMessage(item.deskripsi + "\n\nProyek akan dibuat di folder "
-                        + "Download/project dengan nama \"" + item.nama + "\".")
-                .setPositiveButton("Pasang", new DialogInterface.OnClickListener() {
+                        + TeksUI.t("Download/project dengan nama \"") + item.nama + "\".")
+                .setPositiveButton(TeksUI.t("Pasang"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         pasang(item);
                     }
                 })
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(TeksUI.t("Batal"), null)
                 .show();
-        announce("Pasang proyek contoh " + item.nama + "?");
+        announce(TeksUI.t("Pasang proyek contoh ") + item.nama + "?");
     }
 
     private void pasang(PasarProyek.Item item) {
         String dir = BuatProyekHelper.buat(this, item.nama, item.tipe, item.templateId);
         if (dir == null) {
-            Toast.makeText(this, "Gagal memasang " + item.nama,
+            Toast.makeText(this, TeksUI.t("Gagal memasang ") + item.nama,
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -114,15 +114,15 @@ public class MarketActivity extends Activity {
             String galat = PasarProyek.terapkanPasar(new File(dir), item.id,
                     paket, new File(dir).getName());
             if (galat != null) {
-                Toast.makeText(this, "Item pasar gagal diterapkan: " + galat,
+                Toast.makeText(this, TeksUI.t("Item pasar gagal diterapkan: ") + galat,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
         }
-        Toast.makeText(this, "Proyek \"" + new File(dir).getName()
-                + "\" berhasil dipasang dari pasar", Toast.LENGTH_SHORT).show();
-        announce("Proyek " + new File(dir).getName()
-                + " berhasil dipasang dari pasar. Buka di Kelola Project.");
+        Toast.makeText(this, TeksUI.t("Proyek \"") + new File(dir).getName()
+                + TeksUI.t("\" berhasil dipasang dari pasar"), Toast.LENGTH_SHORT).show();
+        announce(TeksUI.t("Proyek ") + new File(dir).getName()
+                + TeksUI.t(" berhasil dipasang dari pasar. Buka di Kelola Project."));
     }
 
     // ------------------------------------------------------------------ UI

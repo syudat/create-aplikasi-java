@@ -55,7 +55,7 @@ public class BuatProyek {
         File f = new File(dasar, rel);
         File induk = f.getParentFile();
         if (induk != null && !induk.exists() && !induk.mkdirs()) {
-            galat.append("gagal membuat folder ").append(induk.getAbsolutePath());
+            galat.append(TeksUI.t("gagal membuat folder ")).append(induk.getAbsolutePath());
             return false;
         }
         Writer w = null;
@@ -79,7 +79,7 @@ public class BuatProyek {
         File f = new File(dasar, rel);
         File induk = f.getParentFile();
         if (induk != null && !induk.exists() && !induk.mkdirs()) {
-            galat.append("gagal membuat folder ").append(induk.getAbsolutePath());
+            galat.append(TeksUI.t("gagal membuat folder ")).append(induk.getAbsolutePath());
             return false;
         }
         FileOutputStream out = null;
@@ -114,10 +114,10 @@ public class BuatProyek {
     public static String buat(Param p, File akar) {
         File dir = new File(akar, p.name);
         if (dir.exists()) {
-            return "GAGAL:Proyek dengan nama \"" + p.name + "\" sudah ada.";
+            return TeksUI.t("GAGAL:Proyek dengan nama \"") + p.name + TeksUI.t("\" sudah ada.");
         }
         if (!dir.mkdirs()) {
-            return "GAGAL:Gagal membuat folder. Pastikan izin penyimpanan sudah aktif.";
+            return TeksUI.t("GAGAL:Gagal membuat folder. Pastikan izin penyimpanan sudah aktif.");
         }
         // Lisensi: buat kata sandi proyek acak SEBELUM templateInit dipanggil.
         if (p.lisensi) {
@@ -190,7 +190,7 @@ public class BuatProyek {
             files.add(new Berkas("app/src/main/AndroidManifest.xml", manifest));
             files.addAll(resFiles);
             if (p.lisensi) {
-                files.add(new Berkas("app/src/main/java/" + pkgPath + "/Lisensi.kt",
+                files.add(new Berkas("app/src/main/java/" + pkgPath + TeksUI.t("/Lisensi.kt"),
                         TemplateDasar.templateLisensiKotlin(p)));
             }
             files.add(new Berkas("app/src/main/java/" + pkgPath + "/MainActivity.kt",
@@ -199,7 +199,7 @@ public class BuatProyek {
             files.add(new Berkas("app/src/main/AndroidManifest.xml", manifest));
             files.addAll(resFiles);
             if (p.lisensi) {
-                files.add(new Berkas("app/src/main/java/" + pkgPath + "/Lisensi.kt",
+                files.add(new Berkas("app/src/main/java/" + pkgPath + TeksUI.t("/Lisensi.kt"),
                         TemplateDasar.templateLisensiKotlin(p)));
             }
             files.add(new Berkas("app/src/main/java/" + pkgPath + "/MainActivity.kt",
@@ -221,7 +221,7 @@ public class BuatProyek {
             files.add(new Berkas("app/src/main/python/main.py",
                     TemplateDasar.templatePythonPy(p)));
         } else {
-            return "GAGAL:Jenis proyek tidak dikenal: " + tipe;
+            return TeksUI.t("GAGAL:Jenis proyek tidak dikenal: ") + tipe;
         }
         for (Berkas f : files) {
             StringBuilder galat = new StringBuilder();
@@ -232,7 +232,7 @@ public class BuatProyek {
                 ok = tulisTeks(dir, f.rel, f.teks, galat);
             }
             if (!ok) {
-                return "GAGAL:Gagal menulis " + f.rel + ": " + galat.toString();
+                return TeksUI.t("GAGAL:Gagal menulis ") + f.rel + ": " + galat.toString();
             }
         }
         // Setelan proyek tersimpan di dalam proyek itu sendiri

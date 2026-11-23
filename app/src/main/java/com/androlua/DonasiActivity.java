@@ -51,7 +51,7 @@ public class DonasiActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Donasi ke Pengembang");
+        setTitle(TeksUI.t("Donasi ke Pengembang"));
 
         SharedPreferences pref = PengaturanActivity.baca(this);
         nomorWa = InfoPengembang.pakaiProfil(
@@ -74,15 +74,15 @@ public class DonasiActivity extends Activity {
 
         TextView teks = new TextView(this);
         teks.setText("Halo kakak, terima kasih sudah memakai Create Aplikasi. "
-                + "Donasi dari kakak membantu pengembang terus memperbaiki "
-                + "aplikasi ini supaya makin bermanfaat untuk semua orang. "
-                + "Jika kakak ingin berdonasi ke pengembang dan mengapresiasi "
-                + "pengembang, tekan tombol Salin Rekening BRI di bawah ini.");
+                + TeksUI.t("Donasi dari kakak membantu pengembang terus memperbaiki ")
+                + TeksUI.t("aplikasi ini supaya makin bermanfaat untuk semua orang. ")
+                + TeksUI.t("Jika kakak ingin berdonasi ke pengembang dan mengapresiasi ")
+                + TeksUI.t("pengembang, tekan tombol Salin Rekening BRI di bawah ini."));
         GayaStudio.label(teks, 14);
         teks.setPadding(0, dp(4), 0, dp(8));
         r.addView(teks);
 
-        label(r, "Rekening BRI pengembang");
+        label(r, TeksUI.t("Rekening BRI pengembang"));
         TextView tvRekening = new TextView(this);
         tvRekening.setText(rekeningBri);
         GayaStudio.label(tvRekening, 16);
@@ -90,14 +90,14 @@ public class DonasiActivity extends Activity {
         tvRekening.setContentDescription("Rekening BRI: " + rekeningBri);
         r.addView(tvRekening);
 
-        button(r, "Salin Rekening BRI", new View.OnClickListener() {
+        button(r, TeksUI.t("Salin Rekening BRI"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 salinRekening();
             }
         });
 
-        label(r, "Sapa Pengembang di WhatsApp");
+        label(r, TeksUI.t("Sapa Pengembang di WhatsApp"));
         eNama = new EditText(this);
         GayaStudio.edit(eNama);
         eNama.setHint("Masukkan nama kamu di sini");
@@ -113,26 +113,26 @@ public class DonasiActivity extends Activity {
         r.addView(eKota, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Kirim di WhatsApp", new View.OnClickListener() {
+        button(r, TeksUI.t("Kirim di WhatsApp"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 kirimWhatsapp();
             }
         });
 
-        labelKecil(r, "Catatan: WhatsApp tidak mengizinkan aplikasi lain "
-                + "mengirim pesan secara otomatis. Pesanmu sudah terisi "
-                + "otomatis di WhatsApp — tinggal tekan Kirim di WhatsApp, "
-                + "lalu tekan tombol Kembali untuk pulang ke aplikasi.");
+        labelKecil(r, TeksUI.t("Catatan: WhatsApp tidak mengizinkan aplikasi lain ")
+                + TeksUI.t("mengirim pesan secara otomatis. Pesanmu sudah terisi ")
+                + TeksUI.t("otomatis di WhatsApp — tinggal tekan Kirim di WhatsApp, ")
+                + TeksUI.t("lalu tekan tombol Kembali untuk pulang ke aplikasi."));
 
-        button(r, "Kembali", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Donasi ke Pengembang");
+        announce(TeksUI.t("Donasi ke Pengembang"));
     }
 
     @Override
@@ -213,7 +213,7 @@ public class DonasiActivity extends Activity {
         String kota = eKota.getText().toString().trim();
         if (!InfoPengembang.namaKotaValid(nama, kota)) {
             toast("Isi nama dan kota asal dulu");
-            announce("Isi nama dan kota asal dulu sebelum mengirim.");
+            announce(TeksUI.t("Isi nama dan kota asal dulu sebelum mengirim."));
             return;
         }
         String tautan = InfoPengembang.tautanWa(nomorWa, nama, kota);
@@ -221,9 +221,9 @@ public class DonasiActivity extends Activity {
             Intent it = new Intent(Intent.ACTION_VIEW, Uri.parse(tautan));
             startActivity(it);
             toast("Pesan sudah terisi di WhatsApp — tekan Kirim di sana, "
-                    + "lalu kembali ke aplikasi");
-            announce("WhatsApp dibuka dengan pesan sudah terisi. "
-                    + "Tekan Kirim di WhatsApp, lalu kembali ke aplikasi.");
+                    + TeksUI.t("lalu kembali ke aplikasi"));
+            announce(TeksUI.t("WhatsApp dibuka dengan pesan sudah terisi. ")
+                    + TeksUI.t("Tekan Kirim di WhatsApp, lalu kembali ke aplikasi."));
         } catch (Throwable t) {
             toast("Gagal membuka WhatsApp: " + t.getMessage());
         }

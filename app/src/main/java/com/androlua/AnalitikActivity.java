@@ -49,8 +49,8 @@ public class AnalitikActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Analitik & Kualitas");
-        catatLayar(this, "Analitik & Kualitas");
+        setTitle(TeksUI.t("Analitik & Kualitas"));
+        catatLayar(this, TeksUI.t("Analitik & Kualitas"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
@@ -63,32 +63,32 @@ public class AnalitikActivity extends Activity {
         judul.setPadding(0, dp(4), 0, dp(8));
         r.addView(judul);
 
-        labelKecil(r, "Data ini hanya tersimpan di HP kamu dan tidak "
-                + "dikirim ke mana pun. Layar terakhir hanya tercatat "
-                + "untuk layar utama dan layar ini.");
+        labelKecil(r, TeksUI.t("Data ini hanya tersimpan di HP kamu dan tidak ")
+                + TeksUI.t("dikirim ke mana pun. Layar terakhir hanya tercatat ")
+                + TeksUI.t("untuk layar utama dan layar ini."));
 
         tvLaporan = new TextView(this);
         tvLaporan.setText("Memuat data analitik...");
         GayaStudio.label(tvLaporan, 14);
         tvLaporan.setPadding(0, dp(8), 0, dp(8));
-        tvLaporan.setContentDescription("Laporan analitik dan kualitas");
+        tvLaporan.setContentDescription(TeksUI.t("Laporan analitik dan kualitas"));
         r.addView(tvLaporan);
 
-        button(r, "Hapus Data Analitik", new View.OnClickListener() {
+        button(r, TeksUI.t("Hapus Data Analitik"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tanyaHapus();
             }
         });
 
-        button(r, "Kembali", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Analitik dan Kualitas");
+        announce(TeksUI.t("Analitik dan Kualitas"));
         muatUlang();
     }
 
@@ -256,7 +256,7 @@ public class AnalitikActivity extends Activity {
                 int tampil = Math.min(crash.size(), AnalitikAplikasi.TAMPIL_CRASH);
                 for (int i = 0; i < tampil; i++) {
                     AnalitikAplikasi.Crash c = crash.get(i);
-                    sb.append("- ").append(c.tanggal).append(", layar ")
+                    sb.append("- ").append(c.tanggal).append(TeksUI.t(", layar "))
                             .append(c.layar).append(".\n  Pesan: ")
                             .append(c.pesan).append("\n  ")
                             .append(c.saran()).append("\n");
@@ -271,17 +271,17 @@ public class AnalitikActivity extends Activity {
     /** Dialog konfirmasi sebelum menghapus semua data analitik. */
     private void tanyaHapus() {
         new AlertDialog.Builder(this)
-                .setTitle("Hapus Data Analitik?")
-                .setMessage("Semua data analitik di HP ini akan dihapus: "
-                        + "jumlah pembukaan, kunjungan layar, dan laporan "
-                        + "crash. Tindakan ini tidak bisa dibatalkan.")
-                .setPositiveButton("Ya, hapus", new DialogInterface.OnClickListener() {
+                .setTitle(TeksUI.t("Hapus Data Analitik?"))
+                .setMessage(TeksUI.t("Semua data analitik di HP ini akan dihapus: ")
+                        + TeksUI.t("jumlah pembukaan, kunjungan layar, dan laporan ")
+                        + TeksUI.t("crash. Tindakan ini tidak bisa dibatalkan."))
+                .setPositiveButton(TeksUI.t("Ya, hapus"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
                         hapusSemua();
                     }
                 })
-                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                .setNegativeButton(TeksUI.t("Batal"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
                         d.dismiss();

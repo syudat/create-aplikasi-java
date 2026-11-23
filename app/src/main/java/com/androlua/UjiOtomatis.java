@@ -64,7 +64,7 @@ public class UjiOtomatis {
         List<Hasil> hasil = new ArrayList<Hasil>();
         if (dirProyek == null || !dirProyek.isDirectory()) {
             for (int i = 0; i < JUMLAH_UJI; i++) {
-                hasil.add(new Hasil(namaUji(i), false, "Folder proyek tidak ditemukan."));
+                hasil.add(new Hasil(namaUji(i), false, TeksUI.t("Folder proyek tidak ditemukan.")));
             }
             return hasil;
         }
@@ -74,9 +74,9 @@ public class UjiOtomatis {
 
         // 1) init.lua ada
         File initLua = new File(dirProyek, "init.lua");
-        hasil.add(new Hasil("berkas data proyek ada", initLua.isFile(),
-                initLua.isFile() ? "Berkas data proyek ditemukan."
-                        : "Berkas data proyek tidak ada — proyek bukan proyek Create Aplikasi."));
+        hasil.add(new Hasil(TeksUI.t("berkas data proyek ada"), initLua.isFile(),
+                initLua.isFile() ? TeksUI.t("Berkas data proyek ditemukan.")
+                        : TeksUI.t("Berkas data proyek tidak ada — proyek bukan proyek Create Aplikasi.")));
 
         // 2) AndroidManifest.xml ada
         File manifest = new File(dirProyek, "app/src/main/AndroidManifest.xml");
@@ -86,15 +86,15 @@ public class UjiOtomatis {
 
         // 3) berkas utama ada
         File utama = berkasUtama(dirProyek, tipe);
-        hasil.add(new Hasil("Berkas utama ada", utama != null && utama.isFile(),
+        hasil.add(new Hasil(TeksUI.t("Berkas utama ada"), utama != null && utama.isFile(),
                 utama != null && utama.isFile()
-                        ? "Berkas utama ditemukan: " + namaRelatif(dirProyek, utama) + "."
-                        : "Berkas utama proyek tipe " + tipe + " tidak ditemukan."));
+                        ? TeksUI.t("Berkas utama ditemukan: ") + namaRelatif(dirProyek, utama) + "."
+                        : TeksUI.t("Berkas utama proyek tipe ") + tipe + TeksUI.t(" tidak ditemukan.")));
 
         // 4) layout activity_main.xml ada (bukan Lua)
         if (lua) {
             hasil.add(new Hasil("Layout activity_main.xml ada", true,
-                    "Proyek Lua tidak memakai layout XML (dilewati)."));
+                    TeksUI.t("Proyek Lua tidak memakai layout XML (dilewati).")));
         } else {
             File layout = new File(dirProyek,
                     "app/src/main/res/layout/activity_main.xml");
@@ -126,10 +126,10 @@ public class UjiOtomatis {
         }
         boolean paketOk = paket != null && POLA_PAKET.matcher(paket).matches()
                 && paket.indexOf("..") < 0;
-        hasil.add(new Hasil("Nama paket valid", paketOk,
-                paketOk ? "Nama paket \"" + paket + "\" valid."
-                        : "Nama paket \"" + (paket == null ? "" : paket)
-                        + "\" tidak valid (harus huruf kecil, ada titik, contoh: com.buat.aplikasiku)."));
+        hasil.add(new Hasil(TeksUI.t("Nama paket valid"), paketOk,
+                paketOk ? TeksUI.t("Nama paket \"") + paket + "\" valid."
+                        : TeksUI.t("Nama paket \"") + (paket == null ? "" : paket)
+                        + TeksUI.t("\" tidak valid (harus huruf kecil, ada titik, contoh: com.buat.aplikasiku).")));
 
         // 8) versi lengkap
         String versi = bacaKunci(initLua, "appver");
@@ -145,9 +145,9 @@ public class UjiOtomatis {
             }
         }
         boolean versiOk = versi != null && versi.trim().length() > 0 && kodeOk;
-        hasil.add(new Hasil("Versi lengkap", versiOk,
-                versiOk ? "Versi \"" + versi + "\" kode " + kode + "."
-                        : "Versi tidak lengkap (butuh nama versi dan kode versi angka 1-2100000000)."));
+        hasil.add(new Hasil(TeksUI.t("Versi lengkap"), versiOk,
+                versiOk ? TeksUI.t("Versi \"") + versi + TeksUI.t("\" kode ") + kode + "."
+                        : TeksUI.t("Versi tidak lengkap (butuh nama versi dan kode versi angka 1-2100000000).")));
 
         // 9) izin dikenal
         hasil.add(ujiIzin(dirProyek, initLua, manifest, lua));
@@ -156,8 +156,8 @@ public class UjiOtomatis {
         if (utama != null && utama.isFile()) {
             hasil.add(ujiSintaks(utama, lua));
         } else {
-            hasil.add(new Hasil("Sintaks berkas utama seimbang", false,
-                    "Berkas utama tidak ada, sintaks tidak bisa diperiksa."));
+            hasil.add(new Hasil(TeksUI.t("Sintaks berkas utama seimbang"), false,
+                    TeksUI.t("Berkas utama tidak ada, sintaks tidak bisa diperiksa.")));
         }
         return hasil;
     }
@@ -165,16 +165,16 @@ public class UjiOtomatis {
     /** Nama pemeriksaan ke-i (0-9), dipakai juga bila folder tidak ada. */
     public static String namaUji(int i) {
         switch (i) {
-            case 0: return "berkas data proyek ada";
+            case 0: return TeksUI.t("berkas data proyek ada");
             case 1: return "AndroidManifest.xml ada";
-            case 2: return "Berkas utama ada";
+            case 2: return TeksUI.t("Berkas utama ada");
             case 3: return "Layout activity_main.xml ada";
             case 4: return "strings.xml ada";
-            case 5: return "Ikon tidak 1x1 transparan";
-            case 6: return "Nama paket valid";
-            case 7: return "Versi lengkap";
-            case 8: return "Izin dikenal";
-            case 9: return "Sintaks berkas utama seimbang";
+            case 5: return TeksUI.t("Ikon tidak 1x1 transparan");
+            case 6: return TeksUI.t("Nama paket valid");
+            case 7: return TeksUI.t("Versi lengkap");
+            case 8: return TeksUI.t("Izin dikenal");
+            case 9: return TeksUI.t("Sintaks berkas utama seimbang");
             default: return "Uji " + (i + 1);
         }
     }
@@ -190,7 +190,7 @@ public class UjiOtomatis {
 
     /** Ringkasan satu baris, contoh: "8 dari 10 lulus". */
     public static String ringkasan(List<Hasil> hasil) {
-        return jumlahLulus(hasil) + " dari " + hasil.size() + " lulus";
+        return jumlahLulus(hasil) + TeksUI.t(" dari ") + hasil.size() + " lulus";
     }
 
     /** Laporan lengkap (satu baris per pemeriksaan) untuk dibacakan/ditampilkan. */
@@ -199,7 +199,7 @@ public class UjiOtomatis {
         sb.append("Hasil uji otomatis: ").append(ringkasan(hasil)).append(".\n");
         for (int i = 0; i < hasil.size(); i++) {
             Hasil h = hasil.get(i);
-            sb.append(h.lulus ? "[LULUS] " : "[GAGAL] ").append(h.nama)
+            sb.append(h.lulus ? "[LULUS] " : TeksUI.t("[GAGAL] ")).append(h.nama)
                     .append(" — ").append(h.pesan).append("\n");
         }
         return sb.toString();
@@ -243,19 +243,19 @@ public class UjiOtomatis {
     /** Pemeriksaan ikon: ada, PNG, dan bukan 1x1 (ikon bawaan transparan). */
     static Hasil ujiIkon(File ikon) {
         if (ikon == null || !ikon.isFile()) {
-            return new Hasil("Ikon tidak 1x1 transparan", false,
+            return new Hasil(TeksUI.t("Ikon tidak 1x1 transparan"), false,
                     "app/src/main/res/drawable/icon.png tidak ada.");
         }
         int[] ukuran = bacaUkuranPng(ikon);
         if (ukuran == null) {
-            return new Hasil("Ikon tidak 1x1 transparan", false,
-                    "icon.png bukan berkas PNG yang valid.");
+            return new Hasil(TeksUI.t("Ikon tidak 1x1 transparan"), false,
+                    TeksUI.t("icon.png bukan berkas PNG yang valid."));
         }
         if (ukuran[0] <= 1 && ukuran[1] <= 1) {
-            return new Hasil("Ikon tidak 1x1 transparan", false,
-                    "Ikon masih 1x1 transparan bawaan — buat ikon di Pembuat Ikon.");
+            return new Hasil(TeksUI.t("Ikon tidak 1x1 transparan"), false,
+                    TeksUI.t("Ikon masih 1x1 transparan bawaan — buat ikon di Pembuat Ikon."));
         }
-        return new Hasil("Ikon tidak 1x1 transparan", true,
+        return new Hasil(TeksUI.t("Ikon tidak 1x1 transparan"), true,
                 "Ikon " + ukuran[0] + "x" + ukuran[1] + " piksel.");
     }
 
@@ -292,22 +292,22 @@ public class UjiOtomatis {
         }
         for (int i = 0; i < izin.size(); i++) {
             if (!POLA_IZIN.matcher(izin.get(i)).matches()) {
-                return new Hasil("Izin dikenal", false,
-                        "Izin tidak dikenal: \"" + izin.get(i)
+                return new Hasil(TeksUI.t("Izin dikenal"), false,
+                        TeksUI.t("Izin tidak dikenal: \"") + izin.get(i)
                                 + "\" (harus android.permission.NAMA_IZIN).");
             }
         }
-        return new Hasil("Izin dikenal", true,
-                izin.isEmpty() ? "Tidak ada izin tambahan yang dipakai."
-                        : izin.size() + " izin dipakai, semuanya dikenal.");
+        return new Hasil(TeksUI.t("Izin dikenal"), true,
+                izin.isEmpty() ? TeksUI.t("Tidak ada izin tambahan yang dipakai.")
+                        : izin.size() + TeksUI.t(" izin dipakai, semuanya dikenal."));
     }
 
     /** Pemeriksaan sintaks: kurung (), {}, [] dan tanda kutip harus seimbang. */
     static Hasil ujiSintaks(File utama, boolean lua) {
         String isi = bacaBerkas(utama);
         if (isi == null) {
-            return new Hasil("Sintaks berkas utama seimbang", false,
-                    "Berkas utama tidak bisa dibaca.");
+            return new Hasil(TeksUI.t("Sintaks berkas utama seimbang"), false,
+                    TeksUI.t("Berkas utama tidak bisa dibaca."));
         }
         String bersih = buangStringDanKomentar(isi, lua);
         int kurung = 0, kurawal = 0, siku = 0;
@@ -320,23 +320,23 @@ public class UjiOtomatis {
             else if (c == '[') siku++;
             else if (c == ']') siku--;
             if (kurung < 0 || kurawal < 0 || siku < 0) {
-                return new Hasil("Sintaks berkas utama seimbang", false,
-                        "Ada kurung tutup tanpa pasangan di " + utama.getName() + ".");
+                return new Hasil(TeksUI.t("Sintaks berkas utama seimbang"), false,
+                        TeksUI.t("Ada kurung tutup tanpa pasangan di ") + utama.getName() + ".");
             }
         }
         if (kurung != 0) {
-            return new Hasil("Sintaks berkas utama seimbang", false,
-                    "Kurung () tidak seimbang (selisih " + kurung + ").");
+            return new Hasil(TeksUI.t("Sintaks berkas utama seimbang"), false,
+                    TeksUI.t("Kurung () tidak seimbang (selisih ") + kurung + ").");
         }
         if (kurawal != 0) {
-            return new Hasil("Sintaks berkas utama seimbang", false,
+            return new Hasil(TeksUI.t("Sintaks berkas utama seimbang"), false,
                     "Kurung {} tidak seimbang (selisih " + kurawal + ").");
         }
         if (siku != 0) {
-            return new Hasil("Sintaks berkas utama seimbang", false,
-                    "Kurung [] tidak seimbang (selisih " + siku + ").");
+            return new Hasil(TeksUI.t("Sintaks berkas utama seimbang"), false,
+                    TeksUI.t("Kurung [] tidak seimbang (selisih ") + siku + ").");
         }
-        return new Hasil("Sintaks berkas utama seimbang", true,
+        return new Hasil(TeksUI.t("Sintaks berkas utama seimbang"), true,
                 "Kurung (), {}, [] seimbang di " + utama.getName() + ".");
     }
 

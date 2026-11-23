@@ -38,19 +38,19 @@ public class MediaSosialActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Media Sosial");
+        setTitle(TeksUI.t("Media Sosial"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Media Sosial", 20);
-        label(r, "Tambahkan tombol berbagi ke aplikasimu. IDE menulis kode "
-                + "berbagi sungguhan ke proyek (WhatsApp, Facebook, Telegram) "
-                + "dan kamu bisa mengujinya langsung dari sini.", false);
+        heading(r, TeksUI.t("Media Sosial"), 20);
+        label(r, TeksUI.t("Tambahkan tombol berbagi ke aplikasimu. IDE menulis kode ")
+                + TeksUI.t("berbagi sungguhan ke proyek (WhatsApp, Facebook, Telegram) ")
+                + TeksUI.t("dan kamu bisa mengujinya langsung dari sini."), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         muatDaftarProyek();
         spinnerProyek = new Spinner(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -60,35 +60,35 @@ public class MediaSosialActivity extends Activity {
         r.addView(spinnerProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Tambah Berbagi ke WhatsApp", new View.OnClickListener() {
+        button(r, TeksUI.t("Tambah Berbagi ke WhatsApp"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tambah("WhatsApp");
             }
         });
 
-        button(r, "Tambah Berbagi ke Facebook", new View.OnClickListener() {
+        button(r, TeksUI.t("Tambah Berbagi ke Facebook"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tambah("Facebook");
             }
         });
 
-        button(r, "Tambah Berbagi ke Telegram", new View.OnClickListener() {
+        button(r, TeksUI.t("Tambah Berbagi ke Telegram"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tambah("Telegram");
             }
         });
 
-        button(r, "Tambah Ketiganya Sekaligus", new View.OnClickListener() {
+        button(r, TeksUI.t("Tambah Ketiganya Sekaligus"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tambahSemua();
             }
         });
 
-        button(r, "Uji Berbagi dari IDE", new View.OnClickListener() {
+        button(r, TeksUI.t("Uji Berbagi dari IDE"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ujiBerbagi();
@@ -103,34 +103,34 @@ public class MediaSosialActivity extends Activity {
         hasilView.setPadding(dp(4), dp(4), dp(4), dp(4));
         r.addView(hasilView);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Media Sosial. Pilih proyek, lalu tambah berbagi ke WhatsApp, "
-                + "Facebook, atau Telegram.");
+        announce(TeksUI.t("Media Sosial. Pilih proyek, lalu tambah berbagi ke WhatsApp, ")
+                + TeksUI.t("Facebook, atau Telegram."));
     }
 
     private void muatDaftarProyek() {
         daftarProyek.clear();
         daftarProyek.addAll(InfoProyek.daftarNama(new File(ROOT)));
-        if (daftarProyek.isEmpty()) daftarProyek.add("(belum ada proyek)");
+        if (daftarProyek.isEmpty()) daftarProyek.add(TeksUI.t("(belum ada proyek)"));
     }
 
     private File dirTerpilih() {
         if (spinnerProyek.getSelectedItem() == null) return null;
         String nama = String.valueOf(spinnerProyek.getSelectedItem());
-        if ("(belum ada proyek)".equals(nama)) return null;
+        if ((TeksUI.t("(belum ada proyek)").equals(nama) || TeksUI.t("(belum ada proyek)").equals(nama))) return null;
         return new File(ROOT + "/" + nama);
     }
 
     private void tambah(String platform) {
         File dir = dirTerpilih();
         if (dir == null) {
-            Toast.makeText(this, "Belum ada proyek. Buat proyek dulu.",
+            Toast.makeText(this, TeksUI.t("Belum ada proyek. Buat proyek dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -139,9 +139,9 @@ public class MediaSosialActivity extends Activity {
         if (nama == null || nama.length() == 0) nama = dir.getName();
         String hasil = MediaSosial.tambahBagikan(dir, tipe, platform, nama);
         if (hasil == null) {
-            String lap = "Kode berbagi " + platform + " sudah ditambahkan ke proyek "
-                    + dir.getName() + ". Bangun proyek, lalu panggil fungsi bagikan"
-                    + platform + " dari tombol di aplikasimu.";
+            String lap = TeksUI.t("Kode berbagi ") + platform + TeksUI.t(" sudah ditambahkan ke proyek ")
+                    + dir.getName() + TeksUI.t(". Bangun proyek, lalu panggil fungsi bagikan")
+                    + platform + TeksUI.t(" dari tombol di aplikasimu.");
             hasilView.setText(lap);
             Toast.makeText(this, "Berbagi " + platform + " ditambahkan.",
                     Toast.LENGTH_SHORT).show();
@@ -158,7 +158,7 @@ public class MediaSosialActivity extends Activity {
     private void tambahSemua() {
         File dir = dirTerpilih();
         if (dir == null) {
-            Toast.makeText(this, "Belum ada proyek. Buat proyek dulu.",
+            Toast.makeText(this, TeksUI.t("Belum ada proyek. Buat proyek dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -178,22 +178,22 @@ public class MediaSosialActivity extends Activity {
             }
         }
         hasilView.setText("Hasil tambah berbagi di proyek " + dir.getName() + ":\n" + sb);
-        Toast.makeText(this, berhasil + " dari 3 platform ditambahkan.",
+        Toast.makeText(this, berhasil + TeksUI.t(" dari 3 platform ditambahkan."),
                 Toast.LENGTH_SHORT).show();
-        announce(berhasil + " dari 3 platform berbagi ditambahkan ke proyek "
+        announce(berhasil + TeksUI.t(" dari 3 platform berbagi ditambahkan ke proyek ")
                 + dir.getName() + ".");
     }
 
     private void ujiBerbagi() {
         File dir = dirTerpilih();
-        String nama = dir == null ? "aplikasi saya" : dir.getName();
+        String nama = dir == null ? TeksUI.t("aplikasi saya") : dir.getName();
         Intent kirim = new Intent(Intent.ACTION_SEND);
         kirim.setType("text/plain");
         kirim.putExtra(Intent.EXTRA_TEXT, MediaSosial.teksContoh(nama));
         try {
             startActivity(Intent.createChooser(kirim, "Uji Berbagi"));
         } catch (Throwable t) {
-            Toast.makeText(this, "Tidak ada aplikasi berbagi: " + t.getMessage(),
+            Toast.makeText(this, TeksUI.t("Tidak ada aplikasi berbagi: ") + t.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }

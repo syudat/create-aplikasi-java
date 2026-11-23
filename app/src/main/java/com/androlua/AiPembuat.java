@@ -55,8 +55,8 @@ public class AiPembuat {
     /** Satu pola: {frasa kunci, id template}. Urutan = prioritas. */
     private static final String[][] POLA = {
         {"kalkulator web", "kalkulator-web"},
-        {"kalkulator di web", "kalkulator-web"},
-        {"hitung di web", "kalkulator-web"},
+        {TeksUI.t("kalkulator di web"), "kalkulator-web"},
+        {TeksUI.t("hitung di web"), "kalkulator-web"},
         {"kalkulator", "kalkulator"},
         {"hitung", "kalkulator"},
         {"tambah", "kalkulator"},
@@ -71,13 +71,13 @@ public class AiPembuat {
         {"diari", "catatan"},
         {"tulis", "catatan"},
         {"simpan", "catatan"},
-        {"daftar tugas", "tugas"},
+        {TeksUI.t("daftar tugas"), "tugas"},
         {"tugas", "tugas"},
         {"todo", "tugas"},
         {"to do", "tugas"},
         {"jadwal", "tugas"},
         {"pengingat", "tugas"},
-        {"daftar belanja", "tugas"},
+        {TeksUI.t("daftar belanja"), "tugas"},
         {"belanja", "tugas"},
         {"penghitung", "penghitung"},
         {"counter", "penghitung"},
@@ -85,7 +85,7 @@ public class AiPembuat {
         {"profil", "profil"},
         {"portofolio", "profil"},
         {"biodata", "profil"},
-        {"tentang saya", "profil"},
+        {TeksUI.t("tentang saya"), "profil"},
         {"situs", "profil"},
         {"website", "profil"},
         {"halaman web", "profil"},
@@ -116,23 +116,23 @@ public class AiPembuat {
         }
         if (templateId == null) {
             String nama = ambilNama(asli, null);
-            if (nama.isEmpty()) nama = "Aplikasi Saya";
+            if (nama.isEmpty()) nama = TeksUI.t("Aplikasi Saya");
             return new Hasil("kosong", nama, "java",
-                    "Saya belum punya template untuk \"" + asli.trim()
-                    + "\", jadi saya buatkan proyek kosong. Kamu bisa mengisi "
-                    + "kodenya sendiri di editor.",
+                    TeksUI.t("Saya belum punya template untuk \"") + asli.trim()
+                    + TeksUI.t("\", jadi saya buatkan proyek kosong. Kamu bisa mengisi ")
+                    + TeksUI.t("kodenya sendiri di editor."),
                     true);
         }
         TemplateProyek.Info info = TemplateProyek.cari(templateId);
         String nama = ambilNama(asli, templateId);
         if (nama.isEmpty()) {
-            nama = info != null ? info.nama : "Aplikasi Saya";
+            nama = info != null ? info.nama : TeksUI.t("Aplikasi Saya");
         }
         String tipe = info != null && info.tipe != null ? info.tipe : "java";
-        String penjelasan = "Saya buatkan proyek "
+        String penjelasan = TeksUI.t("Saya buatkan proyek ")
                 + (info != null ? info.nama : templateId)
-                + " (" + labelTipe(tipe) + ") dari deskripsimu. Kode awalnya "
-                + "sudah jadi — tinggal dijalankan atau diubah di editor.";
+                + " (" + labelTipe(tipe) + TeksUI.t(") dari deskripsimu. Kode awalnya ")
+                + TeksUI.t("sudah jadi — tinggal dijalankan atau diubah di editor.");
         return new Hasil(templateId, nama, tipe, penjelasan, false);
     }
 

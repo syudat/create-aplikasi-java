@@ -36,17 +36,17 @@ public class GameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pembuat Game");
+        setTitle(TeksUI.t("Pembuat Game"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pembuat Game", 20);
-        label(r, "Buat game tanpa menulis kode: pilih jenis game, isi nama "
-                + "dan pengaturannya, lalu tekan Buat Game. Game dibuat "
-                + "sebagai proyek Lua dan bisa langsung dijalankan di "
+        heading(r, TeksUI.t("Pembuat Game"), 20);
+        label(r, TeksUI.t("Buat game tanpa menulis kode: pilih jenis game, isi nama ")
+                + TeksUI.t("dan pengaturannya, lalu tekan Buat Game. Game dibuat ")
+                + TeksUI.t("sebagai proyek Lua dan bisa langsung dijalankan di ")
                 + "Kelola Project.", false);
 
         label(r, "Jenis game:", false);
@@ -73,7 +73,7 @@ public class GameActivity extends Activity {
         r.addView(spinnerGame, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, "Nama game:", false);
+        label(r, TeksUI.t("Nama game:"), false);
         eNama = new EditText(this);
         GayaStudio.edit(eNama);
         eNama.setHint("Contoh: Tebak Angkaku");
@@ -98,14 +98,14 @@ public class GameActivity extends Activity {
         r.addView(ePesan, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Buat Game", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Game"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatGame();
             }
         });
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -113,7 +113,7 @@ public class GameActivity extends Activity {
         });
 
         perbaruiLabelJumlah();
-        announce("Pembuat Game. Pilih jenis game, isi nama dan pengaturannya, lalu tekan Buat Game.");
+        announce(TeksUI.t("Pembuat Game. Pilih jenis game, isi nama dan pengaturannya, lalu tekan Buat Game."));
     }
 
     private void perbaruiLabelJumlah() {
@@ -140,7 +140,7 @@ public class GameActivity extends Activity {
         if (jumlah < 1) jumlah = 1;
         if (jumlah > info.jumlahMaks) jumlah = info.jumlahMaks;
         String pesan = ePesan.getText().toString().trim();
-        if (pesan.length() == 0) pesan = "Selamat, kamu menang!";
+        if (pesan.length() == 0) pesan = TeksUI.t("Selamat, kamu menang!");
 
         // Ronde 3: Lua dihapus — game tanpa kode kini membuat proyek Java
         // (keputusan pengguna 2026-11-17 00:22). GameTanpaKode menulis
@@ -149,11 +149,11 @@ public class GameActivity extends Activity {
         if (dir == null) return;
         String galat = GameTanpaKode.terapkanGame(new File(dir), info.id, nama, jumlah, pesan);
         if (galat != null) {
-            Toast.makeText(this, "Game gagal dibuat: " + galat, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TeksUI.t("Game gagal dibuat: ") + galat, Toast.LENGTH_SHORT).show();
             return;
         }
         String ok = "Game \"" + new File(dir).getName()
-                + "\" berhasil dibuat. Buka di Kelola Project untuk memainkannya.";
+                + TeksUI.t("\" berhasil dibuat. Buka di Kelola Project untuk memainkannya.");
         Toast.makeText(this, ok, Toast.LENGTH_SHORT).show();
         announce(ok);
     }

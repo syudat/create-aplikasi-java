@@ -35,21 +35,21 @@ public class BackendActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Pembuat Backend");
+        setTitle(TeksUI.t("Pembuat Backend"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Pembuat Backend", 20);
-        label(r, "Buat backend untuk aplikasimu tanpa menulis kode server. "
-                + "Backend ini berjalan di HP (data tersimpan di localStorage) — "
-                + "cocok untuk catatan, daftar tugas, dan papan pesan di satu HP. "
-                + "Dua HP belum bisa berbagi data yang sama karena tidak ada server internet.",
+        heading(r, TeksUI.t("Pembuat Backend"), 20);
+        label(r, TeksUI.t("Buat backend untuk aplikasimu tanpa menulis kode server. ")
+                + TeksUI.t("Backend ini berjalan di HP (data tersimpan di localStorage) — ")
+                + TeksUI.t("cocok untuk catatan, daftar tugas, dan papan pesan di satu HP. ")
+                + TeksUI.t("Dua HP belum bisa berbagi data yang sama karena tidak ada server internet."),
                 false);
 
-        label(r, "Nama proyek backend:", false);
+        label(r, TeksUI.t("Nama proyek backend:"), false);
         eNama = new EditText(this);
         GayaStudio.edit(eNama);
         eNama.setHint("Contoh: Catatan Saya");
@@ -69,20 +69,20 @@ public class BackendActivity extends Activity {
         r.addView(spJenis, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Buat Backend", new View.OnClickListener() {
+        button(r, TeksUI.t("Buat Backend"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buatBackend();
             }
         });
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Pembuat Backend. Pilih jenis backend dan nama proyek, lalu tekan Buat Backend.");
+        announce(TeksUI.t("Pembuat Backend. Pilih jenis backend dan nama proyek, lalu tekan Buat Backend."));
     }
 
     private void buatBackend() {
@@ -104,15 +104,15 @@ public class BackendActivity extends Activity {
             toast(galat);
             return;
         }
-        String ok = "Backend " + jenis.nama + " berhasil dibuat: " + nama
-                + ". Buka di Kelola Project untuk menjalankannya.";
+        String ok = "Backend " + jenis.nama + TeksUI.t(" berhasil dibuat: ") + nama
+                + TeksUI.t(". Buka di Kelola Project untuk menjalankannya.");
         toast(ok);
         announce(ok);
         final String dirAkhir = dir;
         new AlertDialog.Builder(this)
-                .setTitle("Backend berhasil dibuat")
+                .setTitle(TeksUI.t("Backend berhasil dibuat"))
                 .setMessage(ok + "\n\n" + BackendOtomatis.bacaSayaUntuk(jenis))
-                .setPositiveButton("Buka di Editor", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Buka di Editor"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -124,7 +124,7 @@ public class BackendActivity extends Activity {
                         }
                     }
                 })
-                .setNegativeButton("Tutup", null)
+                .setNegativeButton(TeksUI.t("Tutup"), null)
                 .show();
     }
 

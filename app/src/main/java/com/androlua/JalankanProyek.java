@@ -38,17 +38,17 @@ public class JalankanProyek {
                         new File(dirProyek, berkasHtml).getAbsolutePath());
                 activity.startActivity(it);
             } catch (Throwable t) {
-                toast(activity, "Gagal menjalankan pratinjau: " + t.getMessage());
+                toast(activity, TeksUI.t("Gagal menjalankan pratinjau: ") + t.getMessage());
             }
         } else if ("java".equals(tipe) || "kotlin".equals(tipe) || "compose".equals(tipe)
                 || "python".equals(tipe)) {
-            toast(activity, "Proyek " + tipe + " belum bisa dipratinjau langsung. "
-                    + "Tekan \"Bangun\" untuk membuat APK, lalu pasang untuk mencoba.");
+            toast(activity, TeksUI.t("Proyek ") + tipe + TeksUI.t(" belum bisa dipratinjau langsung. ")
+                    + TeksUI.t("Tekan \"Bangun\" untuk membuat APK, lalu pasang untuk mencoba."));
         } else {
             // Ronde 3: mesin Lua dihapus — proyek Lua lama dibuka lewat
             // aplikasi Create Aplikasi Lua Manager, bukan dari sini.
-            toast(activity, "Proyek Lua dibuka lewat aplikasi "
-                    + "Create Aplikasi Lua Manager.");
+            toast(activity, TeksUI.t("Proyek Lua dibuka lewat aplikasi ")
+                    + TeksUI.t("Create Aplikasi Lua Manager."));
         }
     }
 

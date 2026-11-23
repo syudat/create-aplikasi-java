@@ -40,21 +40,21 @@ public class KeamananActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Keamanan Otomatis");
+        setTitle(TeksUI.t("Keamanan Otomatis"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Keamanan Otomatis", 20);
-        label(r, "Periksa keamanan proyekmu secara otomatis. IDE memeriksa "
-                + "izin berbahaya, data yang dikirim keluar, kata sandi yang "
-                + "tertulis di kode, WebView tanpa perlindungan, komponen "
-                + "yang diekspor, dan alamat http tanpa enkripsi. Semua "
-                + "berjalan di dalam HP (tanpa internet).", false);
+        heading(r, TeksUI.t("Keamanan Otomatis"), 20);
+        label(r, TeksUI.t("Periksa keamanan proyekmu secara otomatis. IDE memeriksa ")
+                + TeksUI.t("izin berbahaya, data yang dikirim keluar, kata sandi yang ")
+                + TeksUI.t("tertulis di kode, WebView tanpa perlindungan, komponen ")
+                + TeksUI.t("yang diekspor, dan alamat http tanpa enkripsi. Semua ")
+                + TeksUI.t("berjalan di dalam HP (tanpa internet)."), false);
 
-        label(r, "Pilih proyek:", false);
+        label(r, TeksUI.t("Pilih proyek:"), false);
         muatDaftarProyek();
         spinnerProyek = new Spinner(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -64,7 +64,7 @@ public class KeamananActivity extends Activity {
         r.addView(spinnerProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Periksa Keamanan", new View.OnClickListener() {
+        button(r, TeksUI.t("Periksa Keamanan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 periksa();
@@ -79,27 +79,27 @@ public class KeamananActivity extends Activity {
         hasilView.setPadding(dp(4), dp(4), dp(4), dp(4));
         r.addView(hasilView);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        announce("Keamanan Otomatis. Pilih proyek, lalu tekan Periksa Keamanan.");
+        announce(TeksUI.t("Keamanan Otomatis. Pilih proyek, lalu tekan Periksa Keamanan."));
     }
 
     private void muatDaftarProyek() {
         daftarProyek.clear();
         daftarProyek.addAll(InfoProyek.daftarNama(new File(ROOT)));
-        if (daftarProyek.isEmpty()) daftarProyek.add("(belum ada proyek)");
+        if (daftarProyek.isEmpty()) daftarProyek.add(TeksUI.t("(belum ada proyek)"));
     }
 
     private void periksa() {
         if (spinnerProyek.getSelectedItem() == null) return;
         String nama = String.valueOf(spinnerProyek.getSelectedItem());
-        if ("(belum ada proyek)".equals(nama)) {
-            Toast.makeText(this, "Belum ada proyek. Buat proyek dulu.",
+        if ((TeksUI.t("(belum ada proyek)").equals(nama) || TeksUI.t("(belum ada proyek)").equals(nama))) {
+            Toast.makeText(this, TeksUI.t("Belum ada proyek. Buat proyek dulu."),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -113,10 +113,10 @@ public class KeamananActivity extends Activity {
             if ("BAHAYA".equals(temuan.get(i).level)) bahaya++;
             else if ("PERINGATAN".equals(temuan.get(i).level)) peringatan++;
         }
-        String ringkas = "Periksa keamanan selesai: " + bahaya + " BAHAYA, "
-                + peringatan + " PERINGATAN di proyek " + nama + ".";
+        String ringkas = TeksUI.t("Periksa keamanan selesai: ") + bahaya + " BAHAYA, "
+                + peringatan + TeksUI.t(" PERINGATAN di proyek ") + nama + ".";
         Toast.makeText(this, ringkas, Toast.LENGTH_SHORT).show();
-        announce(ringkas + " Laporan lengkap ada di layar.");
+        announce(ringkas + TeksUI.t(" Laporan lengkap ada di layar."));
     }
 
     // ------------------------------------------------------------------ UI

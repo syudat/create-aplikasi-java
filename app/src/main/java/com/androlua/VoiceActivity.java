@@ -45,16 +45,16 @@ public class VoiceActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Bangun dengan Suara");
+        setTitle(TeksUI.t("Bangun dengan Suara"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Bangun dengan Suara", 20);
-        label(r, "Tekan Dengarkan, lalu ucapkan perintah. Saya menjawab "
-                + "dengan suara dan teks.", false);
+        heading(r, TeksUI.t("Bangun dengan Suara"), 20);
+        label(r, TeksUI.t("Tekan Dengarkan, lalu ucapkan perintah. Saya menjawab ")
+                + TeksUI.t("dengan suara dan teks."), false);
 
         button(r, "Dengarkan", new View.OnClickListener() {
             @Override
@@ -63,7 +63,7 @@ public class VoiceActivity extends Activity {
             }
         });
 
-        label(r, "Atau tulis perintah di sini:", false);
+        label(r, TeksUI.t("Atau tulis perintah di sini:"), false);
         ePerintah = new EditText(this);
         GayaStudio.edit(ePerintah);
         ePerintah.setHint("Contoh: buat proyek kalkulator");
@@ -84,7 +84,7 @@ public class VoiceActivity extends Activity {
         tvHasil.setTextSize(14);
         r.addView(tvHasil);
 
-        label(r, "Perintah yang bisa diucapkan:", false);
+        label(r, TeksUI.t("Perintah yang bisa diucapkan:"), false);
         StringBuilder daftar = new StringBuilder();
         for (int i = 0; i < PerintahSuara.DAFTAR_PERINTAH.length; i++) {
             if (i > 0) daftar.append("\n");
@@ -92,7 +92,7 @@ public class VoiceActivity extends Activity {
         }
         label(r, daftar.toString(), true);
 
-        button(r, "Kembali ke menu sebelumnya", new View.OnClickListener() {
+        button(r, TeksUI.t("Kembali ke menu sebelumnya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -118,7 +118,7 @@ public class VoiceActivity extends Activity {
             tts = null;
             ttsSiap = false;
         }
-        announce("Bangun dengan Suara. Tekan Dengarkan, lalu ucapkan perintah.");
+        announce(TeksUI.t("Bangun dengan Suara. Tekan Dengarkan, lalu ucapkan perintah."));
     }
 
     @Override
@@ -139,13 +139,13 @@ public class VoiceActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != MINTA_SUARA) return;
         if (resultCode != RESULT_OK || data == null) {
-            tampilkan("Tidak ada ucapan yang dikenali. Coba lagi.");
+            tampilkan(TeksUI.t("Tidak ada ucapan yang dikenali. Coba lagi."));
             return;
         }
         ArrayList<String> hasil = data.getStringArrayListExtra(
                 RecognizerIntent.EXTRA_RESULTS);
         if (hasil == null || hasil.isEmpty()) {
-            tampilkan("Tidak ada ucapan yang dikenali. Coba lagi.");
+            tampilkan(TeksUI.t("Tidak ada ucapan yang dikenali. Coba lagi."));
             return;
         }
         jalankanUcapan(hasil.get(0));
@@ -162,7 +162,7 @@ public class VoiceActivity extends Activity {
             startActivityForResult(it, MINTA_SUARA);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this,
-                    "Tidak ada aplikasi pengenal suara di HP ini. Tulis perintah di kotak teks.",
+                    TeksUI.t("Tidak ada aplikasi pengenal suara di HP ini. Tulis perintah di kotak teks."),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -172,7 +172,7 @@ public class VoiceActivity extends Activity {
         if (ucapan == null) ucapan = "";
         String teks = ucapan.trim();
         if (teks.isEmpty()) {
-            tampilkan("Perintah masih kosong. Ucapkan atau tulis perintah dulu.");
+            tampilkan(TeksUI.t("Perintah masih kosong. Ucapkan atau tulis perintah dulu."));
             return;
         }
         ePerintah.setText(teks);
@@ -185,11 +185,11 @@ public class VoiceActivity extends Activity {
             }
             tampilkan(sb.toString());
         } else if ("BUAT_FORM".equals(aksi)) {
-            tampilkan("Membuka form Buat Proyek.");
+            tampilkan(TeksUI.t("Membuka form Buat Proyek."));
             try {
                 startActivity(new Intent(this, CreateProjectActivity.class));
             } catch (Throwable t) {
-                tampilkan("Gagal membuka Buat Proyek: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal membuka Buat Proyek: ") + t.getMessage());
             }
         } else if ("BUAT".equals(aksi)) {
             String tipe = "lua";
@@ -199,59 +199,59 @@ public class VoiceActivity extends Activity {
             }
             String dir = BuatProyekHelper.buat(this, p.argumen, tipe, p.templateId);
             if (dir != null) {
-                tampilkan("Proyek " + p.argumen + " berhasil dibuat.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" berhasil dibuat."));
             } else {
-                tampilkan("Proyek " + p.argumen + " gagal dibuat.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" gagal dibuat."));
             }
         } else if ("BANGUN".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             bangunProyek(dir);
         } else if ("BUKA".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             try {
                 Intent it = new Intent(this, EditorActivity.class);
                 it.putExtra(EditorActivity.EXTRA_DIR, dir.getAbsolutePath());
                 startActivity(it);
-                tampilkan("Membuka proyek " + p.argumen + " di editor.");
+                tampilkan(TeksUI.t("Membuka proyek ") + p.argumen + TeksUI.t(" di editor."));
             } catch (Throwable t) {
-                tampilkan("Gagal membuka proyek: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal membuka proyek: ") + t.getMessage());
             }
         } else if ("JALANKAN".equals(aksi)) {
             File dir = cariFolderProyek(p.argumen);
             if (dir == null) {
-                tampilkan("Proyek " + p.argumen + " tidak ditemukan.");
+                tampilkan(TeksUI.t("Proyek ") + p.argumen + TeksUI.t(" tidak ditemukan."));
                 return;
             }
             // Jalankan kini Java murni (Tahap 3I).
             try {
                 JalankanProyek.jalankan(this, dir);
             } catch (Throwable t) {
-                tampilkan("Gagal menjalankan: " + t.getMessage());
+                tampilkan(TeksUI.t("Gagal menjalankan: ") + t.getMessage());
                 return;
             }
-            tampilkan("Menjalankan proyek " + p.argumen + ".");
+            tampilkan(TeksUI.t("Menjalankan proyek ") + p.argumen + ".");
             finish();
         } else if ("DAFTAR".equals(aksi)) {
             daftarProyek();
         } else if ("LAYAR".equals(aksi)) {
             bukaLayar(p.argumen);
         } else if ("KEMBALI".equals(aksi)) {
-            tampilkan("Kembali ke menu sebelumnya.");
+            tampilkan(TeksUI.t("Kembali ke menu sebelumnya."));
             finish();
         } else if ("TUTUP".equals(aksi)) {
-            tampilkan("Menutup aplikasi.");
+            tampilkan(TeksUI.t("Menutup aplikasi."));
             finishAffinity();
         } else {
-            tampilkan("Perintah \"" + teks + "\" tidak saya kenali. Ucapkan "
-                    + "\"bantuan\" untuk mendengar daftar perintah.");
+            tampilkan("Perintah \"" + teks + TeksUI.t("\" tidak saya kenali. Ucapkan ")
+                    + TeksUI.t("\"bantuan\" untuk mendengar daftar perintah."));
         }
     }
 
@@ -262,10 +262,10 @@ public class VoiceActivity extends Activity {
         try {
             BangunProyek.bangun(this, dir);
         } catch (Throwable t) {
-            tampilkan("Gagal membangun: " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal membangun: ") + t.getMessage());
             return;
         }
-        tampilkan("Membangun proyek " + dir.getName() + ".");
+        tampilkan(TeksUI.t("Membangun proyek ") + dir.getName() + ".");
     }
 
     // Daftar proyek kini Java murni (Tahap 3I): InfoProyek.daftar membaca
@@ -276,11 +276,11 @@ public class VoiceActivity extends Activity {
         try {
             hasil = InfoProyek.daftar(new File(BuatProyekHelper.root()));
         } catch (Throwable t) {
-            tampilkan("Gagal memuat daftar proyek: " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal memuat daftar proyek: ") + t.getMessage());
             return;
         }
         if (hasil == null || hasil.isEmpty()) {
-            tampilkan("Belum ada proyek. Buat dulu dengan perintah \"buat proyek kalkulator\".");
+            tampilkan(TeksUI.t("Belum ada proyek. Buat dulu dengan perintah \"buat proyek kalkulator\"."));
             return;
         }
         StringBuilder sb = new StringBuilder("Proyek kamu:\n");
@@ -298,38 +298,38 @@ public class VoiceActivity extends Activity {
         String nama = "";
         if ("ikon".equals(layar)) {
             tujuan = IconMakerActivity.class;
-            nama = "Pembuat Ikon";
+            nama = TeksUI.t("Pembuat Ikon");
         } else if ("terminal".equals(layar)) {
             tujuan = TerminalActivity.class;
-            nama = "Terminal";
+            nama = TeksUI.t("Terminal");
         } else if ("pasar".equals(layar)) {
             tujuan = MarketActivity.class;
-            nama = "Pasar Proyek";
+            nama = TeksUI.t("Pasar Proyek");
         } else if ("ai".equals(layar)) {
             tujuan = AiActivity.class;
-            nama = "AI Pembuat Aplikasi";
+            nama = TeksUI.t("AI Pembuat Aplikasi");
         } else if ("kolaborasi".equals(layar)) {
             tujuan = KolaborasiActivity.class;
-            nama = "Kolaborasi";
+            nama = TeksUI.t("Kolaborasi");
         } else if ("keystore".equals(layar)) {
             tujuan = KeystoreActivity.class;
-            nama = "Buat Keystore";
+            nama = TeksUI.t("Buat Keystore");
         } else if ("tentang".equals(layar)) {
             tujuan = AboutActivity.class;
-            nama = "Tentang Alat";
+            nama = TeksUI.t("Tentang Alat");
         } else if ("kelola".equals(layar)) {
             tujuan = ProjectsActivity.class;
-            nama = "Kelola Project";
+            nama = TeksUI.t("Kelola Project");
         }
         if (tujuan == null) {
-            tampilkan("Layar tidak dikenal.");
+            tampilkan(TeksUI.t("Layar tidak dikenal."));
             return;
         }
         try {
             startActivity(new Intent(this, tujuan));
-            tampilkan("Membuka " + nama + ".");
+            tampilkan(TeksUI.t("Membuka ") + nama + ".");
         } catch (Throwable t) {
-            tampilkan("Gagal membuka " + nama + ": " + t.getMessage());
+            tampilkan(TeksUI.t("Gagal membuka ") + nama + ": " + t.getMessage());
         }
     }
 

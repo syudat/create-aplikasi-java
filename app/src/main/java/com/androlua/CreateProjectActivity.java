@@ -216,6 +216,7 @@ public class CreateProjectActivity extends Activity {
                 getSharedPreferences(PengaturanActivity.NAMA_PREF, MODE_PRIVATE)
                         .getString(PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
                 java.util.Locale.getDefault().getLanguage());
+        TeksUI.kodeAktif = kodeBahasa;
         setTitle(t("Buat Proyek Baru"));
         selectedPerms.add("INTERNET");
 
@@ -253,8 +254,8 @@ public class CreateProjectActivity extends Activity {
             }
         });
         label(r, "HTML/Situs Web/Java/Kotlin/Compose/Python dibangun langsung di HP (offline). "
-                + "Kotlin dan Compose juga bisa lewat menu \"Bangun proyek\" (GitHub Actions) kalau mau. "
-                + "Python memakai runtime Chaquopy (SDK minimum 24) dan juga bisa lewat GitHub Actions.", true);
+                + t("Kotlin dan Compose juga bisa lewat menu \"Bangun proyek\" (GitHub Actions) kalau mau. ")
+                + t("Python memakai runtime Chaquopy (SDK minimum 24) dan juga bisa lewat GitHub Actions."), true);
 
         // Tahap 3C (Template siap pakai): pilih template, jenis proyek
         // mengikuti template (mis. Kalkulator = Java). Memilih jenis lain
@@ -266,15 +267,15 @@ public class CreateProjectActivity extends Activity {
                 pilihTemplate();
             }
         });
-        label(r, "Template mengisi proyek dengan kode awal yang sudah jadi "
-                + "(bukan proyek kosong). Kosong berarti memakai kode contoh bawaan.", true);
+        label(r, t("Template mengisi proyek dengan kode awal yang sudah jadi ")
+                + t("(bukan proyek kosong). Kosong berarti memakai kode contoh bawaan."), true);
 
         eName = field(r, t("Nama aplikasi"),
-                "Masukkan nama aplikasi di sini, contoh: Garuda Decode", false);
+                t("Masukkan nama aplikasi di sini, contoh: Garuda Decode"), false);
         ePkg = field(r, t("Nama paket (package name)"),
                 "Masukkan nama paket di sini, diawali com.android, contoh: com.android.garudadecode", false);
         eVer = field(r, t("Versi aplikasi (kosong = 1.0)"),
-                "Masukkan versi aplikasi, contoh: 1.0", false);
+                t("Masukkan versi aplikasi, contoh: 1.0"), false);
 
         // Kode versi (tombol "Pilih Jenis Aplikasi" sudah pindah ke bagian
         // Jenis proyek di atas — Batch pasca-v2).
@@ -289,10 +290,10 @@ public class CreateProjectActivity extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         eMin = field(r, tArg("SDK minimum (kosong = {N})", String.valueOf(DEFAULT_MIN)),
-                "Android terendah yang didukung, contoh: 21 (21=Android 5.0, 26=8.0, 29=10, 31=12)", true);
+                t("Android terendah yang didukung, contoh: 21 (21=Android 5.0, 26=8.0, 29=10, 31=12)"), true);
         eTarget = field(r, tArg("SDK target (kosong = {N})", String.valueOf(defaultTarget)),
                 "Versi Android yang dituju, contoh: 36 (maksimum 36; 33=Android 13, 34=14, 35=15, 36=16). "
-                        + "Android 14-16 tetap bisa menjalankannya", true);
+                        + t("Android 14-16 tetap bisa menjalankannya"), true);
 
         // Kotak Skrip HTML (opsional): hanya untuk proyek HTML / Situs Web.
         wadahSkrip = new LinearLayout(this);
@@ -301,7 +302,7 @@ public class CreateProjectActivity extends Activity {
         eSkrip = new EditText(this);
         GayaStudio.edit(eSkrip);
         eSkrip.setHint("Tempel kode HTML lengkap di sini bila mau memakai halaman sendiri, "
-                + "contoh: <!DOCTYPE html> ... Kosongkan untuk memakai template bawaan.");
+                + t("contoh: <!DOCTYPE html> ... Kosongkan untuk memakai template bawaan."));
         eSkrip.setTextSize(14);
         eSkrip.setInputType(InputType.TYPE_CLASS_TEXT
                 | InputType.TYPE_TEXT_FLAG_MULTI_LINE
@@ -325,14 +326,14 @@ public class CreateProjectActivity extends Activity {
         cbSplit.setText(t("Gunakan arsitektur terpisah 64 bit dan 32 bit"));
         cbSplit.setChecked(defaultPisah);
         r.addView(cbSplit);
-        label(r, "Tidak dicentang: satu APK yang berjalan di perangkat 64 bit maupun 32 bit. "
-                + "Dicentang: dua APK terpisah yang lebih kecil.", true);
+        label(r, t("Tidak dicentang: satu APK yang berjalan di perangkat 64 bit maupun 32 bit. ")
+                + t("Dicentang: dua APK terpisah yang lebih kecil."), true);
         cbSign = new CheckBox(this);
         cbSign.setText(t("Gunakan tanda tangan pribadi"));
         cbSign.setChecked(defaultTandaTangan);
         r.addView(cbSign);
         label(r, "Dicentang: setelah build, Anda diminta memilih keystore buatan sendiri "
-                + "(menu Buat Keystore). Tidak dicentang: memakai kunci bawaan.", true);
+                + t("(menu Buat Keystore). Tidak dicentang: memakai kunci bawaan."), true);
 
         // Tahap 3B (Lisensi, versi berbayar): centang + kotak nomor WA.
         // Kotak nomor hanya tampil bila centang aktif (pola yang sama
@@ -340,12 +341,12 @@ public class CreateProjectActivity extends Activity {
         cbLisensi = new CheckBox(this);
         cbLisensi.setText(t("Aktifkan Lisensi (versi berbayar)"));
         r.addView(cbLisensi);
-        label(r, "Dicentang: aplikasi hasil build meminta kode lisensi saat pertama dibuka. "
-                + "Pengguna mengirim ID perangkat ke WhatsApp Anda, Anda membalas kode lisensinya.", true);
+        label(r, t("Dicentang: aplikasi hasil build meminta kode lisensi saat pertama dibuka. ")
+                + t("Pengguna mengirim ID perangkat ke WhatsApp Anda, Anda membalas kode lisensinya."), true);
         wadahWa = new LinearLayout(this);
         wadahWa.setOrientation(LinearLayout.VERTICAL);
         eWa = field(wadahWa, t("Nomor WhatsApp pengembang"),
-                "Nomor WA diawali kode negara tanpa +, contoh: 628123456789", false);
+                t("Nomor WA diawali kode negara tanpa +, contoh: 628123456789"), false);
         eWa.setInputType(InputType.TYPE_CLASS_PHONE);
         r.addView(wadahWa);
         wadahWa.setVisibility(View.GONE);
@@ -511,7 +512,7 @@ public class CreateProjectActivity extends Activity {
         String tipeTemplate = info.tipe;
         templateTerpilih = null;
         if (templateBtn != null) templateBtn.setText(templateLabel());
-        toast("Template \"" + namaTemplate + "\" hanya untuk proyek "
+        toast("Template \"" + namaTemplate + t("\" hanya untuk proyek ")
                 + tipeTemplate + "; template dibatalkan karena jenis diubah.");
     }
 
@@ -524,12 +525,12 @@ public class CreateProjectActivity extends Activity {
 
     private void pilihTemplate() {
         final String[] pilihan = new String[TemplateProyek.SEMUA.length + 1];
-        pilihan[0] = "Kosong (bawaan) — kode contoh bawaan";
+        pilihan[0] = t("Kosong (bawaan) — kode contoh bawaan");
         for (int i = 0; i < TemplateProyek.SEMUA.length; i++) {
             pilihan[i + 1] = TemplateProyek.SEMUA[i].nama + " — "
                     + TemplateProyek.SEMUA[i].deskripsi;
         }
-        announce("Pilih Template. " + pilihan.length + " pilihan.");
+        announce(t("Pilih Template. ") + pilihan.length + " pilihan.");
         new AlertDialog.Builder(this)
                 .setTitle(t("Pilih Template"))
                 .setItems(pilihan, new DialogInterface.OnClickListener() {
@@ -550,7 +551,7 @@ public class CreateProjectActivity extends Activity {
                         templateTerpilih = info.id;
                         templateBtn.setText(templateLabel());
                         perbaruiSkrip();
-                        announce("Template " + info.nama + " dipilih. Jenis proyek: "
+                        announce("Template " + info.nama + t(" dipilih. Jenis proyek: ")
                                 + info.tipe + ".");
                     }
                 })
@@ -608,9 +609,11 @@ public class CreateProjectActivity extends Activity {
         for (int i = 0; i < PERM_KEYS.length; i++) {
             kerja[i] = selectedPerms.contains(PERM_KEYS[i]);
         }
+        String[] labelIzin = new String[PERM_LABELS.length];
+        for (int i = 0; i < PERM_LABELS.length; i++) labelIzin[i] = t(PERM_LABELS[i]);
         new AlertDialog.Builder(this)
                 .setTitle(t("Pilih Izin"))
-                .setMultiChoiceItems(PERM_LABELS, kerja,
+                .setMultiChoiceItems(labelIzin, kerja,
                         new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which,
@@ -630,8 +633,8 @@ public class CreateProjectActivity extends Activity {
                 })
                 .setNegativeButton(t("Batal"), null)
                 .show();
-        announce("Pilih Izin. " + PERM_KEYS.length
-                + " izin tersedia. Centang hanya izin yang memang dibutuhkan aplikasi.");
+        announce(t("Pilih Izin. ") + PERM_KEYS.length
+                + t(" izin tersedia. Centang hanya izin yang memang dibutuhkan aplikasi."));
     }
 
     // ------------------------------------------------------- buat proyek
@@ -791,12 +794,12 @@ public class CreateProjectActivity extends Activity {
                         }
                     }
                 }
-                toast("Proyek \"" + name + "\" berhasil dibuat");
-                announce("Proyek " + name + " berhasil dibuat. Buat ikon untuk proyek ini?");
+                toast("Proyek \"" + name + t("\" berhasil dibuat"));
+                announce(t("Proyek ") + name + t(" berhasil dibuat. Buat ikon untuk proyek ini?"));
                 new AlertDialog.Builder(this)
                         .setTitle(t("Proyek berhasil dibuat"))
-                        .setMessage("Buat ikon untuk proyek \"" + name
-                                + "\" sekarang? Ikon bawaan masih transparan.")
+                        .setMessage(t("Buat ikon untuk proyek \"") + name
+                                + t("\" sekarang? Ikon bawaan masih transparan."))
                         .setPositiveButton(t("Buat Ikon"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -821,11 +824,11 @@ public class CreateProjectActivity extends Activity {
                 return;
             }
             if (s.startsWith("GAGAL:")) {
-                String msg = s.substring("GAGAL:".length());
+                String msg = s.substring(t("GAGAL:").length());
                 new AlertDialog.Builder(this)
                         .setTitle(t("Gagal")).setMessage(msg)
                         .setPositiveButton("OK", null).show();
-                announce("Gagal. " + msg);
+                announce(t("Gagal. ") + msg);
                 return;
             }
         }

@@ -75,7 +75,7 @@ public class TerjemahActivity extends Activity {
         r.addView(spinnerBahasa, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        button(r, "Terjemahkan", new View.OnClickListener() {
+        button(r, TeksUI.t("Terjemahkan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 terjemahkan();

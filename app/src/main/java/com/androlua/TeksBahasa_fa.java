@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "fa"
- * (2276 kunci, urutan sama dengan
+ * (2285 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2276 string (batas constant
+ * 50 bahasa x 2285 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_fa {
@@ -2288,5 +2288,14 @@ class TeksBahasa_fa {
             "resource حاصل ساخت.",
             "برخی دستگاه‌ها.",
             "نصب‌شده (",
+            "تاریخ: ",
+            "تغییر مسیر بدون مکان",
+            "اعمال",
+            "بازنویسی",
+            "ترجمه",
+            "پاک کردن",
+            "گوش دادن",
+            "ساختن",
+            "امضا",
     };
 }

@@ -4,7 +4,7 @@ package com.androlua;
  * Teks antarmuka dalam 50 bahasa (perintah al kautsar 2026-11-23):
  * pemetaan kunci Indonesia -> terjemahan per kode bahasa,
  * dibangkitkan dari berkas teks-<kode>.txt di folder
- * terjemahan-panduan (2276 kunci tahap A+B+C, urutan
+ * terjemahan-panduan (2285 kunci tahap A+B+C, urutan
  * sama dengan kunci-teks-ui.txt). Data setiap bahasa ada di
  * kelas TeksBahasa-<kode> (satu kelas tidak muat 50 bahasa).
  * Kelas murni tanpa Android, bisa diuji di JVM. Kunci yang
@@ -2296,6 +2296,15 @@ public class TeksUI {
             "resource hasil build.",
             "sebagian perangkat.",
             "terpasang (",
+            "Tanggal: ",
+            "Pengalihan tanpa lokasi",
+            "Terapkan",
+            "Timpa",
+            "Terjemahkan",
+            "Bersihkan",
+            "Dengarkan",
+            "Bangun",
+            "Tandatangani",
     };
 
     /** Kode bahasa, urutan sama dengan katalog Bahasa. */
@@ -2426,7 +2435,7 @@ public class TeksUI {
         return -1;
     }
 
-    /** Jumlah kunci teks antarmuka (2276 tahap A+B+C). */
+    /** Jumlah kunci teks antarmuka (2285 tahap A+B+C). */
     public static int jumlahKunci() {
         return KUNCI.length;
     }

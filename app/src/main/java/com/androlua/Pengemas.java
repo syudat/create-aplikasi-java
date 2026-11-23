@@ -394,7 +394,7 @@ public class Pengemas {
         if (code == 301 || code == 302 || code == 303 || code == 307 || code == 308) {
             String lokasi = c.getHeaderField("Location");
             c.disconnect();
-            if (lokasi == null) throw new IOException("Pengalihan tanpa lokasi");
+            if (lokasi == null) throw new IOException(TeksUI.t("Pengalihan tanpa lokasi"));
             c = (HttpURLConnection) new URL(lokasi).openConnection();
             c.setConnectTimeout(20000);
             c.setReadTimeout(120000);

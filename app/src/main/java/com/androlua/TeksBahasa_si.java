@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "si"
- * (2276 kunci, urutan sama dengan
+ * (2285 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2276 string (batas constant
+ * 50 bahasa x 2285 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_si {
@@ -2288,5 +2288,14 @@ class TeksBahasa_si {
             "ගොඩනැගීමේ ප්‍රතිඵල සම්පත.",
             "සමහර උපාංග.",
             "ස්ථාපනය කරන ලදී (",
+            "දිනය: ",
+            "ස්ථානයකින් තොරව යළි යොමු කිරීම",
+            "යොදන්න",
+            "උඩින් ලියන්න",
+            "පරිවර්තනය කරන්න",
+            "මකන්න",
+            "අසන්න",
+            "සාදන්න",
+            "අත්සන් කරන්න",
     };
 }

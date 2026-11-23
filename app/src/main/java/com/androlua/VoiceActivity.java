@@ -56,7 +56,7 @@ public class VoiceActivity extends Activity {
         label(r, TeksUI.t("Tekan Dengarkan, lalu ucapkan perintah. Saya menjawab ")
                 + TeksUI.t("dengan suara dan teks."), false);
 
-        button(r, "Dengarkan", new View.OnClickListener() {
+        button(r, TeksUI.t("Dengarkan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dengarkan();

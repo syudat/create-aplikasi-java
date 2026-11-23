@@ -91,7 +91,7 @@ public class PenerjemahKodeActivity extends Activity {
             }
         });
 
-        button(r, "Terjemahkan", new View.OnClickListener() {
+        button(r, TeksUI.t("Terjemahkan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 terjemahkan();

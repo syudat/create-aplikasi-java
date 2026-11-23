@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "zh"
- * (2276 kunci, urutan sama dengan
+ * (2285 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2276 string (batas constant
+ * 50 bahasa x 2285 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_zh {
@@ -2288,5 +2288,14 @@ class TeksBahasa_zh {
             "构建结果资源。",
             "部分设备。",
             "已安装 (",
+            "日期： ",
+            "重定向无位置",
+            "应用",
+            "覆盖",
+            "翻译",
+            "清除",
+            "收听",
+            "构建",
+            "签名",
     };
 }

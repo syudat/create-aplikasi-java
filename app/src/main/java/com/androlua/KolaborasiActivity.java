@@ -229,7 +229,7 @@ public class KolaborasiActivity extends Activity {
                 .setTitle(TeksUI.t("Balasan untuk proyek \"") + namaProyek + "\"")
                 .setMessage(TeksUI.t("Catatan perubahan dari teman:") + "\n" + "\n" + catatan
                         + "\n" + "\n" + TeksUI.t("Terapkan balasan ini ke proyek \"") + namaProyek + "\"?")
-                .setPositiveButton("Terapkan", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Terapkan"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         terapkanBalasan(zipBalasan, namaProyek);
@@ -252,7 +252,7 @@ public class KolaborasiActivity extends Activity {
                     .setTitle(TeksUI.t("Proyek sudah ada"))
                     .setMessage(TeksUI.t("Proyek \"") + nama + TeksUI.t("\" sudah ada. Timpa proyek ")
                             + TeksUI.t("lama dengan balasan ini?"))
-                    .setPositiveButton("Timpa", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(TeksUI.t("Timpa"), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ArsipProyek.hapusRekursif(tujuan);

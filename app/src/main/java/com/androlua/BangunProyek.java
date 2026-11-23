@@ -202,7 +202,7 @@ public class BangunProyek {
                 .setTitle(TeksUI.t("Bangun online"))
                 .setMessage(TeksUI.t("Proyek diunggah ke repo privat \"pembuat-aplikasi-build\" di akun GitHub Anda ")
                         + TeksUI.t("(dibuat otomatis bila belum ada), lalu dibangun di GitHub Actions. Hanya file yang berubah yang diunggah."))
-                .setPositiveButton("Bangun", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Bangun"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mulaiBangunOnline();
@@ -343,7 +343,7 @@ public class BangunProyek {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         new AlertDialog.Builder(activity).setTitle(TeksUI.t("Kata sandi: ") + nama).setView(box)
-                .setPositiveButton("Tandatangani", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Tandatangani"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String sandi = String.valueOf(pass.getText());

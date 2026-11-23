@@ -45,7 +45,7 @@ public class Kolaborasi {
                 .format(new Date());
         StringBuilder sb = new StringBuilder();
         sb.append(TeksUI.t("Catatan perubahan proyek \"")).append(namaProyek).append("\"\n");
-        sb.append("Tanggal: ").append(tanggal).append("\n");
+        sb.append(TeksUI.t("Tanggal: ")).append(tanggal).append("\n");
         sb.append(TeksUI.t("Dari: ")).append(pengirim == null || pengirim.isEmpty()
                 ? "-" : pengirim).append("\n");
         sb.append("\n");

@@ -805,7 +805,7 @@ public class ProjectsActivity extends Activity {
                 .setTitle(TeksUI.t("Proyek sudah ada"))
                 .setMessage(TeksUI.t("Proyek \"") + nama + TeksUI.t("\" sudah ada. Timpa proyek lama, ")
                         + TeksUI.t("atau simpan dengan nama baru?"))
-                .setPositiveButton("Timpa", new DialogInterface.OnClickListener() {
+                .setPositiveButton(TeksUI.t("Timpa"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ArsipProyek.hapusRekursif(tujuan);

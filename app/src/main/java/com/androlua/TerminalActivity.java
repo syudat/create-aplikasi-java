@@ -149,7 +149,7 @@ public class TerminalActivity extends Activity implements TerminalService.Penden
 
         root.addView(buatBarisTombol(new String[][]{
                 {TeksUI.t("Berhenti"), TeksUI.t("Berhenti, kirim Ctrl+C")},
-                {"Bersihkan", TeksUI.t("Bersihkan layar terminal")},
+                {TeksUI.t("Bersihkan"), TeksUI.t("Bersihkan layar terminal")},
                 {TeksUI.t("Bacakan layar"), TeksUI.t("Bacakan layar terminal")},
         }, new View.OnClickListener[]{
                 new View.OnClickListener() {

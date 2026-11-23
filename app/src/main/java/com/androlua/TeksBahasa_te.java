@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "te"
- * (2276 kunci, urutan sama dengan
+ * (2285 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2276 string (batas constant
+ * 50 bahasa x 2285 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_te {
@@ -2288,5 +2288,14 @@ class TeksBahasa_te {
             "బిల్డ్ ఫలిత resource.",
             "కొన్ని పరికరాలు.",
             "ఇన్‌స్టాల్ చేయబడింది (",
+            "తేదీ: ",
+            "స్థానం లేకుండా దారిమళ్లింపు",
+            "వర్తించు",
+            "ఓవర్‌రైట్ చేయి",
+            "అనువదించు",
+            "క్లియర్ చేయి",
+            "విను",
+            "నిర్మించు",
+            "సంతకం చేయి",
     };
 }

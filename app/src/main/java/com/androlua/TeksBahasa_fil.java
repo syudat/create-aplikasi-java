@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "fil"
- * (2276 kunci, urutan sama dengan
+ * (2285 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2276 string (batas constant
+ * 50 bahasa x 2285 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_fil {
@@ -2288,5 +2288,14 @@ class TeksBahasa_fil {
             "resource na resulta ng build.",
             "ilang device.",
             "na-install (",
+            "Petsa: ",
+            "Pag-redirect nang walang lokasyon",
+            "Ilapat",
+            "Patungan",
+            "Isalin",
+            "I-clear",
+            "Makinig",
+            "Buuin",
+            "Lagdaan",
     };
 }

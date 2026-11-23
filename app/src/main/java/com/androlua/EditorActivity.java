@@ -136,7 +136,7 @@ public class EditorActivity extends Activity {
         bottom.setOrientation(LinearLayout.HORIZONTAL);
         tambahAksi(bottom, TeksUI.t("Simpan"));
         tambahAksi(bottom, TeksUI.t("Jalankan"));
-        tambahAksi(bottom, "Bangun");
+        tambahAksi(bottom, TeksUI.t("Bangun"));
         r.addView(bottom, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -342,7 +342,7 @@ public class EditorActivity extends Activity {
                     if (simpanSaatIni()) toast(TeksUI.t("Tersimpan"));
                 } else if (TeksUI.t("Jalankan").equals(teksTombol)) {
                     jalankan();
-                } else if ("Bangun".equals(teksTombol)) {
+                } else if (TeksUI.t("Bangun").equals(teksTombol)) {
                     bangun();
                 }
             }

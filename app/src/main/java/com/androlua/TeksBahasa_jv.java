@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "jv"
- * (2276 kunci, urutan sama dengan
+ * (2285 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2276 string (batas constant
+ * 50 bahasa x 2285 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_jv {
@@ -2288,5 +2288,14 @@ class TeksBahasa_jv {
             "resource asil build.",
             "saperangan piranti.",
             "dipasang (",
+            "Tanggal: ",
+            "Pangalihan tanpa lokasi",
+            "Trepake",
+            "Tumpuk",
+            "Terjemahake",
+            "Resiki",
+            "Rungokake",
+            "Bangun",
+            "Tandatangani",
     };
 }

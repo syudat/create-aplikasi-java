@@ -30,6 +30,13 @@ import java.util.Locale;
 public class BahasaActivity extends Activity {
 
     private TextView tvSaatIni;
+    /** Kode bahasa efektif layar ini (tahap tampilan B, 2026-11-23). */
+    private String kodeBahasa = "id";
+
+    /** Teks antarmuka dalam bahasa efektif (TeksUI, fallback Indonesia). */
+    private String t(String kunci) {
+        return TeksUI.teks(kodeBahasa, kunci);
+    }
     private ListView lvBahasa;
     private ArrayAdapter<String> adapter;
     private final List<String> baris = new ArrayList<String>();
@@ -38,7 +45,11 @@ public class BahasaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Bahasa Aplikasi");
+        kodeBahasa = Bahasa.kodeEfektif(
+                PengaturanActivity.baca(this).getString(
+                        PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
+                java.util.Locale.getDefault().getLanguage());
+        setTitle(t("Bahasa Aplikasi"));
 
         LinearLayout r = new LinearLayout(this);
         r.setOrientation(LinearLayout.VERTICAL);
@@ -47,7 +58,7 @@ public class BahasaActivity extends Activity {
         setContentView(r);
 
         TextView judul = new TextView(this);
-        judul.setText("Bahasa Aplikasi");
+        judul.setText(t("Bahasa Aplikasi"));
         GayaStudio.judul(judul, 20);
         judul.setPadding(0, dp(8), 0, dp(4));
         r.addView(judul);
@@ -58,13 +69,13 @@ public class BahasaActivity extends Activity {
         perbaruiLabelSaatIni();
 
         TextView petunjuk = new TextView(this);
-        petunjuk.setText("Cari bahasa, lalu ketuk untuk memilih. Bawaan mengikuti sistem Android.");
+        petunjuk.setText(t("Cari bahasa, lalu ketuk untuk memilih. Bawaan mengikuti sistem Android."));
         GayaStudio.labelKecil(petunjuk, 12);
         petunjuk.setPadding(0, dp(6), 0, dp(2));
         r.addView(petunjuk);
 
         EditText cari = new EditText(this);
-        cari.setHint("Cari bahasa (contoh: spanyol, arab, english)");
+        cari.setHint(t("Cari bahasa (contoh: spanyol, arab, english)"));
         cari.setSingleLine(true);
         r.addView(cari, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -96,7 +107,7 @@ public class BahasaActivity extends Activity {
         });
 
         Button kembali = new Button(this);
-        kembali.setText("Kembali ke menu sebelumnya");
+        kembali.setText(t("Kembali ke menu sebelumnya"));
         GayaStudio.tombol(kembali);
         kembali.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,13 +121,13 @@ public class BahasaActivity extends Activity {
         r.addView(kembali, lp);
 
         muatDaftar("");
-        announce("Bahasa Aplikasi. Cari bahasa, lalu ketuk untuk memilih.");
+        announce(t("Bahasa Aplikasi") + ". " + t("Cari bahasa, lalu ketuk untuk memilih. Bawaan mengikuti sistem Android."));
     }
 
     private void perbaruiLabelSaatIni() {
         String pilihan = PengaturanActivity.baca(this)
                 .getString(PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM);
-        tvSaatIni.setText("Bahasa saat ini: " + Bahasa.labelPilihan(
+        tvSaatIni.setText(t("Bahasa saat ini:") + " " + Bahasa.labelPilihan(
                 pilihan, Locale.getDefault().getLanguage()));
     }
 
@@ -124,7 +135,7 @@ public class BahasaActivity extends Activity {
         baris.clear();
         kodeBaris.clear();
         if (kunci == null || kunci.trim().length() == 0) {
-            baris.add("Ikuti Sistem — " + Bahasa.labelPilihan(
+            baris.add(t("Ikuti Sistem") + " — " + Bahasa.labelPilihan(
                     Bahasa.SISTEM, Locale.getDefault().getLanguage()));
             kodeBaris.add(Bahasa.SISTEM);
         }
@@ -140,8 +151,8 @@ public class BahasaActivity extends Activity {
         ed.putString(PengaturanActivity.KUNCI_BAHASA, kode);
         ed.apply();
         String label = Bahasa.labelPilihan(kode, Locale.getDefault().getLanguage());
-        Toast.makeText(this, "Bahasa dipilih: " + label, Toast.LENGTH_SHORT).show();
-        announce("Bahasa dipilih: " + label + ". Bahasa dipakai di Tentang Alat dan menjadi bahasa aplikasi.");
+        Toast.makeText(this, t("Bahasa dipilih:") + " " + label, Toast.LENGTH_SHORT).show();
+        announce(t("Bahasa dipilih:") + " " + label + ". Bahasa dipakai di Tentang Alat dan menjadi bahasa aplikasi.");
         perbaruiLabelSaatIni();
         finish();
     }

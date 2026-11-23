@@ -1,0 +1,96 @@
+Create Aplikasi by Al Kautsar'a Hoş Geldiniz
+Create Aplikasi, dizüstü bilgisayara gerek kalmadan doğrudan telefonda çalışan bir Android uygulama oluşturma uygulamasıdır. Bu uygulama, uygulama yapmayı yeni öğrenen kullanıcılar ve ekran okuyucu kullanıcıları da dahil olmak üzere herkesin kendi Android uygulamasını yapmasına olanak tanır. Bu uygulamanın kullanımına dair eksiksiz kılavuz, bu Tentang Alat (Araç Hakkında) ekranında mevcuttur.
+
+Bu uygulama nedir ve kimin içindir
+Create Aplikasi, telefonda çalışan bir Android uygulama oluşturma aracıdır. Bu uygulama, yeni başlayanlar ve ekran okuyucu kullanıcıları da dahil olmak üzere kendi Android uygulamasını yapmak isteyen herkes içindir. Bu uygulama bir kod düzenleyici, projeyi denemek için Jalankan (Çalıştır) düğmesi, APK oluşturmak için Bangun (Derle) düğmesi ve ayrıca APK'yi imzalama ve kurma menüleri sunar.
+
+Bu uygulamanın amacı
+Bu uygulama, herkesin doğrudan telefonundan, kolayca kendi Android uygulamasını yapabilmesi için oluşturulmuştur. Görünümü olabildiğince sade yapılmıştır, böylece yeni kullanıcılar bile hemen deneyebilir.
+
+Adım adım yeni bir proje nasıl oluşturulur
+1. Ana menüde Buat Project (Proje Oluştur) öğesine basın.
+2. Proje türünü seçin: HTML, Situs Web (Web Sitesi), Java, Kotlin, Compose veya Python.
+3. Uygulama adını doldurun, örneğin: Garuda Decode.
+4. Paket adını (package name) doldurun, örneğin: com.android.garudadecode. Paket adı küçük harf kullanmalı ve noktayla ayrılmış en az iki bölümden oluşmalıdır.
+5. Uygulama sürümünü doldurun, örneğin: 1.0 ve sayı biçiminde sürüm kodunu doldurun, örneğin: 1. Boş bırakılırsa sürüm otomatik olarak 1.0, sürüm kodu 1 olarak doldurulur.
+6. Gerekirse minimum SDK ve hedef SDK değerlerini doldurun. Boş bırakılırsa varsayılan değer kullanılır. Minimum SDK, desteklenen en düşük Android sürümüdür, örneğin: 21, Android 5.0 demektir. Maksimum hedef SDK 36'dır (Android 16).
+7. Uygulama izinlerini seçmek için Pilih Izin (İzin Seç) düğmesine basın, örneğin: INTERNET. INTERNET izni varsayılan olarak zaten işaretlidir. Yalnızca uygulamanın gerçekten ihtiyaç duyduğu izinleri işaretleyin.
+8. İsterseniz APK boyutunun daha küçük olması için "Gunakan arsitektur terpisah 64 bit dan 32 bit" (64 bit ve 32 bit ayrı mimari kullan) seçeneğini işaretleyin ve kendi yaptığınız bir keystore kullanmak istiyorsanız "Gunakan tanda tangan pribadi" (Kişisel imza kullan) seçeneğini işaretleyin.
+9. Buat Proyek (Proje Oluştur) öğesine basın. Yeni proje Download/project klasörüne kaydedilir ve Kelola Project (Projeleri Yönet) içinde hemen görünür.
+
+Mevcut proje türleri
+• HTML: index.html, style.css ve script.js dosyalarından oluşan görünüm, WebView aracılığıyla çalışır. Doğrudan telefonda derlenir.
+• Situs Web: index.html, tentang.html, kontak.html, style.css ve script.js dosyalarından oluşan menülü (Beranda (Ana Sayfa), Tentang (Hakkında), Kontak (İletişim)) bir web sitesi, WebView aracılığıyla çalışır. Doğrudan telefonda derlenir.
+• Java: telefonda derlenir. MainActivity, app/src/main/java/<nama-paket>/MainActivity.java konumundadır. Görünüm app/src/main/res/layout/activity_main.xml dosyasından, metin app/src/main/res/values/strings.xml dosyasından ve tema app/src/main/res/values/styles.xml dosyasından gelir.
+• Kotlin: uygulamanın içinde bulunan Kotlin derleyicisi kullanılarak cihazda (çevrimdışı) derlenebilir ya da GitHub Actions aracılığıyla derlenebilir. MainActivity, app/src/main/java/<nama-paket>/MainActivity.kt konumundadır ve res dosyaları bir Java projesiyle aynıdır. İlk Kotlin derlemesi, derleyicinin büyük boyutu nedeniyle daha yavaştır ve Kotlin sınıflarına başvuran .java dosyaları henüz derlenemez (.java dosyaları .kt dosyalarından önce derlenir).
+• Compose: arayüzü Jetpack Compose ile (XML düzeniyle değil) oluşturulan modern bir Android uygulamasıdır. MainActivity, app/src/main/java/<nama-paket>/MainActivity.kt konumundadır. Compose projeleri, Compose'un cihazda bulunmayan Jetpack Compose kitaplıklarına ihtiyaç duyması nedeniyle GitHub Actions aracılığıyla (projenin Bangun menüsü, ardından Bangun online (Çevrimiçi derle)) ya da Gradle ile Termux içinde derlenir.
+• Python: uygulama mantığı app/src/main/python/main.py dosyasında Python (Chaquopy) diliyle yazılır ve app/src/main/java/<nama-paket>/MainActivity.java konumundaki ana bilgisayar MainActivity.java tarafından çalıştırılır. Python projeleri doğrudan telefonda derlenebilir (Chaquopy çalışma zamanı uygulamaya dahildir) ve GitHub Actions aracılığıyla da derlenebilir. Python projelerinin minimum SDK değeri 24'tür (Android 7.0).
+
+Java, HTML, Situs Web, Kotlin, Compose ve Python projelerinin dosya düzeni
+Java, HTML, Situs Web, Kotlin, Compose ve Python projeleri, genel olarak Android projeleri gibi düzenlenmiştir. app klasörünün içinde src klasörü, onun içinde de main klasörü bulunur. main klasörünün içinde java klasörünün yanında AndroidManifest.xml, layout/activity_main.xml ile values/strings.xml ve values/styles.xml dosyalarını içeren res klasörü ve HTML ile Situs Web için index.html dosyasını içeren assets klasörü bulunur (Situs Web'de ayrıca tentang.html ve kontak.html vardır). HTML ve Situs Web projelerinin de app/src/main/java/<nama-paket>/MainActivity.java konumunda kendi MainActivity dosyaları vardır; bu dosya index.html dosyasını WebView'e yükler ve AndroidManifest içinde başlatıcı olur. Python projelerinde Python kodu app/src/main/python/main.py konumunda ve ana bilgisayar MainActivity.java, app/src/main/java/<nama-paket>/MainActivity.java konumundadır. AndroidManifest.xml, layout, strings ve styles, MainActivity gibi düzenleyicide açılıp değiştirilebilir. Manifesti hâlâ app klasörünün yanında olan eski projeler de derlenebilir, çünkü derleme sırasında uygulama önce app/src/main/ içindeki AndroidManifest.xml dosyasını, sonra app klasörünün yanındakini ve son olarak proje veri dosyasını denetler.
+
+İzin kuralları (önemli)
+Proje oluştururken işaretlenen izinler, proje türüne göre yalnızca tek bir yere kaydedilir. Java, HTML, Situs Web, Kotlin, Compose ve Python projelerinde işaretlenen izinler YALNIZCA proje klasörünün içinde, java klasörünün yanında, app/src/main/ konumundaki AndroidManifest.xml dosyasına kaydedilir. Java, HTML, Situs Web, Kotlin, Compose ve Python projelerinin proje veri dosyası bir izin listesi içermez. Java'yı seçip INTERNET ve CAMERA seçeneklerini işaretlerseniz, AndroidManifest.xml dosyasına kaydedilenler yalnızca INTERNET ve CAMERA olur, başka hiçbir izin eklenmez. Derleme sırasında uygulama izinleri aynı yerden okur: Java, HTML, Situs Web, Kotlin, Compose ve Python projeleri için app/src/main/ içindeki AndroidManifest.xml dosyasından (yoksa eski projeler için app klasörünün yanındaki AndroidManifest.xml dosyasından) ve eski projeler için proje veri dosyasından.
+
+Düzenleyici nasıl kullanılır
+Kelola Project'i açın, düzenleyiciyi açmak için proje adına dokunun. Düzenleyicide dosyalar açılabilir, kod yazılabilir ve değişiklikler kaydedilebilir. Java, HTML, Situs Web, Kotlin, Compose ve Python projelerinde dosyalar app/src/main klasörünün içinde düzenlenmiştir. Bir projeyi paylaşmak için Ekspor ZIP (ZIP Dışa Aktar) özelliğini kullanın (aşağıdaki bölüme bakın).
+
+Proje nasıl çalıştırılır
+Düzenleyicide, projeyi denemek için Jalankan'a basın. HTML ve Situs Web projelerinde, WebView aracılığıyla index.html çalıştırılır. Bir hata oluşursa hata iletisini okuyun, kodu düzeltin ve yeniden çalıştırın.
+
+APK nasıl derlenir
+Düzenleyicide Bangun'a basın. İki derleme yolu vardır. Birincisi, Bangun di perangkat (Cihazda derle): internet olmadan doğrudan telefonda derler; HTML, Situs Web, Java, Kotlin ve Python projeleri içindir. İkincisi, GitHub Actions aracılığıyla Bangun online (Çevrimiçi derle): GitHub üzerinde internet aracılığıyla derler ve her tür proje için kullanılabilir. Compose projeleri, Compose'un cihazda bulunmayan Jetpack Compose kitaplıklarına ihtiyaç duyması nedeniyle yalnızca ikinci yolla (Çevrimiçi derle) ya da Gradle ile Termux içinde derlenebilir. İlk derlemenin sonucu henüz imzalanmamıştır. Bundan sonra uygulama onu imzalar: varsayılan anahtarla otomatik olarak ya da proje oluştururken "Gunakan tanda tangan pribadi" kutusu işaretlendiyse kişisel bir imzayla.
+
+APK nasıl kurulur
+APK hazır olduğunda, kurmak için Pasang (Kur) öğesine basın. Android 8 ve üzerinde, bu uygulama APK'leri Play Store dışından kurduğu için telefon önce "Izinkan dari sumber ini" (Bu kaynağa izin ver) isteğinde bulunur. Pengaturan (Ayarlar) içinde bu izni bir kez etkinleştirin, sonra uygulamaya dönün: Pasang'a yeniden basmanıza gerek kalmadan kurulum otomatik olarak devam eder. Pasang düğmesi görünmüyorsa derlemenin bittiğinden ve APK'nin oluşturulduğundan emin olun.
+
+Uygulama nasıl imzalanır
+Her APK'nin kurulabilmesi için imzalanması gerekir. İki seçenek mevcuttur. Birincisi, varsayılan anahtar: uygulama kendi kendine otomatik olarak imzalar, sizin hiçbir şey yapmanız gerekmez. İkincisi, kişisel imza: önce ana menüdeki Buat Keystore (Keystore Oluştur) menüsü aracılığıyla bir keystore oluşturun, parolasını iyi saklayın, sonra proje oluştururken "Gunakan tanda tangan pribadi" seçeneğini işaretleyin. Keystore, Download/project/signing içinde saklanır.
+
+Projeyi ZIP olarak dışa aktarma
+Ekspor ZIP, projenin arkadaşlarla paylaşılabilmesi için sunulmuştur. Şöyle yapılır: Kelola Project içinde proje adını basılı tutun, sonra Ekspor ZIP'i seçin. Sonuç, Download/project/<NamaProyek>.zip konumuna kaydedilir. bin klasörü dahil edilmez, bu yüzden boyutu küçüktür, yalnızca onlarca KB. Bu ZIP dosyası bir arkadaşa gönderilebilir ya da GitHub'a yüklenebilir.
+
+Ekstensi JAWS
+Ekstensi JAWS, Jieshuo'nun (CSR) uzantı motorunu kullanır, ekran okuyucusunu değil. Böylece, kullanıcı TalkBack kullansa bile tasarım çalışmaya devam edebilir. Şöyle yapılır: ana menüde Ekstensi JAWS'ı açın. Otomatik tıklama kendi kendine çalıştığı için, hizmetin önce Pengaturan Aksesibilitas (Erişilebilirlik Ayarları) içinde etkinleştirilmesi gerekir. Bundan sonra yeni bir tasarım oluşturulabilir: tasarım adını yazın, OK'ye basın, sonra kutularını doldurun.
+
+Düzenli olması için ayrılmış Daftar Klik
+Bir tasarımın içinde iki kutu vardır: komut dosyası kutusu ve Daftar Klik (Tıklama Listesi) kutusu. Düğme listesi, daftar_klik.txt dosyasında ayrı olarak saklanır, her satırda bir ad bulunur. İçerik örneği: tombolSimpan, tombolHapus, tombolBuka. Bir uygulamayı açmak için o listeye yalnızca >WhatsApp yazın. Henüz daftar_klik.txt dosyası olmayan eski tasarımlar o varsayılan örneği gösterir.
+
+Sunulan basit işlevler
+• klikTombol("tombolSimpan") — metnine göre tek bir düğmeyi tıklar.
+• klikDaftarTombol(daftar) — daftar_klik.txt içindeki listeyi tıklar, her satırda bir düğme, sırayla, sonra kaçının başarılı olduğunu ve kaçının bulunamadığını bildirir.
+• bukaAplikasi("WhatsApp") — bir uygulamayı adına göre açar ya da listeye ">WhatsApp" yazın.
+• klik(540, 1200) — ekran koordinatlarında tıklar.
+Tüm işlevler önce basit yapılmıştır. Alıştıkça, daha sonra ek işlevler eklenebilir.
+
+Ekran okuyucu hakkında
+Bu uygulama, ekran okuyucuya uygun olacak şekilde tasarlanmıştır. Her doldurma alanının bir etiketi ve doldurma örneği vardır ve tüm düğmelere karmaşık hareketler olmadan ulaşılabilir. Ekstensi JAWS, kullanılan şey onun ekran okuyucusu değil uzantı motoru olduğu için, kullanıcı TalkBack kullansa bile çalışmaya devam edecek şekilde yapılmıştır.
+
+Gizlilik ve güvenlik
+Projeler ve keystore'lar telefonunuzda saklanır. GitHub belirteci yalnızca çevrimiçi derleme için kullanılır ve bu uygulamanın içinde saklanır. Belirtecinizi ya da keystore parolanızı kimseyle paylaşmayın. Kişisel imza kullanıyorsanız, keystore'u ve parolasını güvenli bir yerde saklayın, çünkü kaybolurlarsa eski APK aynı imzayla güncellenemez.
+
+Gereksinimler
+Android 5.0 veya daha yenisi. Depolama izni: Android 11 ve üzerinde tüm dosyalara erişim izni kullanılır, Android 10 ve altında normal depolama izni (depolama okuma/yazma) kullanılır çünkü Android 10'da tüm dosyalara erişim izni yoktur. Cihazda derleme, ARM işlemcili (32 veya 64 bit) bir telefon gerektirir. GitHub Actions aracılığıyla çevrimiçi derleme, internet ve bir GitHub belirteci gerektirir. Kotlin projeleri cihazda derlenebilir, ancak Kotlin derleyicisinin büyük boyutu nedeniyle ilk derleme daha yavaştır ve daha fazla bellek kullanır. Compose projeleri GitHub Actions aracılığıyla ya da Gradle ile Termux içinde derlenir. Python projeleri Android 7.0 veya daha yenisini (minimum SDK 24) gerektirir ve sonuç APK, Python çalışma zamanını (Chaquopy) ve standart kitaplığını içerdiği için daha büyüktür.
+
+Terminal
+Ana ekrandaki Terminal menüsü, bu uygulamanın içinde bir terminal açar. ls gibi komutlar proje klasörünün içeriğini görmek için, cd klasörler arasında geçiş yapmak için ve git kodu yönetmek için kullanılabilir. Komut çıktısı, ekran okuyucunun okuyabileceği metin olarak görünür ve son sonucu dinlemek için Bacakan hasil (Sonucu sesli oku) düğmesi vardır. Bu terminal telefonun sistem kabuğunu kullanır, bu yüzden nano ve vim gibi etkileşimli programlar burada henüz kullanılamaz.
+
+Lisensi (ücretli sürüm)
+Bir uygulamayı satmak için, proje oluştururken "Aktifkan Lisensi" (Lisansı Etkinleştir) seçeneğini işaretleyin, sonra WhatsApp numaranızı doldurun. Derlenen uygulama ilk açıldığında bir lisans kodu isteyecektir: kullanıcı cihaz kimliğini görür, o kimliği sizin WhatsApp'ınıza göndermek için Kirim ID Perangkat (Cihaz Kimliğini Gönder) düğmesine basar, sonra siz lisans koduyla yanıt verirsiniz. Lisans kodu, cihaz kimliğinden ve proje parolasından (proje veri dosyasındaki lisensi_seed) hesaplanır — o parolayı iyi saklayın ve paylaşmayın. Doğru kod girildikten sonra uygulama açılır ve artık kod istemez.
+
+Pembuat Ikon Otomatis
+Yeni projelerin simgesi hâlâ şeffaftır, bu yüzden ana menüde Pembuat Ikon (Simge Oluşturucu) mevcuttur. Şöyle yapılır: Pembuat Ikon'a basın, bir ya da iki harf yazın (örneğin uygulama adının baş harfleri), arka plan rengini ve yazı rengini seçin, önizlemesine bakın, sonra o simgeyi seçilen projede kullanmak için Simpan ke Proyek (Projeye Kaydet) öğesine ya da PNG dosyasını başka yerde kullanmak için Simpan ke Download (Download'a Kaydet) öğesine basın. Proje oluşturulduktan sonra uygulama ayrıca bir simge oluşturmayı da önerir. Bir projenin eski simgesi, Kelola Project içindeki proje menüsünden her zaman değiştirilebilir (proje adını basılı tutun, sonra Ganti Ikon (Simgeyi Değiştir) öğesini seçin).
+
+Template Proyek Siap Pakai
+Boş bir projeden başlamak istemiyorsanız, proje oluştururken bir şablon seçin: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) ya da Penghitung (Compose). Bir şablon seçmek, proje türünü otomatik olarak o şablona uyacak şekilde değiştirir ve proje, zaten hazır bir başlangıç koduyla oluşturulur — yalnızca çalıştırın ya da değiştirin. Bir şablon seçtikten sonra proje türü yeniden elle değiştirilirse, şablon iptal edilir ve proje yeniden boş olur. HTML ve Situs Web şablonlarında, şablon, index.html dosyasının içeriğini değiştirir; buna forma yazılan HTML komut dosyası da dahildir.
+
+Cadangan dan Pulihkan Proyek
+Projelerin kaybolmaması için bir yedekleme özelliği mevcuttur. Şöyle yapılır: Kelola Project içinde proje adını basılı tutun, sonra Cadangkan (Yedekle) öğesini seçin. Yedek, Download/backup klasöründe proje adı ve tarihiyle birlikte ZIP olarak kaydedilir, örneğin: GarudaDecode-2026-11-14-123045.zip. İçeriği Ekspor ZIP ile aynıdır (projenin tüm içeriği, bin klasörü olmadan). Geri yüklemek için: Kelola Project içindeki menüyü açın, Pulihkan cadangan (Yedeği geri yükle) öğesini seçin, sonra yedek dosyasını seçin. Proje adı zaten varsa, uygulama soracaktır: Timpa proyek lama (Eski projenin üzerine yaz) ya da Nama baru (Yeni ad) ile kaydet.
+
+Bagikan dan Impor Proyek
+Bir projeyi bir arkadaşla paylaşmak için: Kelola Project içinde proje adını basılı tutun, sonra Bagikan (Paylaş) öğesini seçin. Proje, paylaşım uygulamaları (WhatsApp, Telegram ve diğerleri) aracılığıyla ZIP olarak gönderilir. Bir arkadaştan proje almak için: Kelola Project içindeki menüyü açın, Impor proyek (Projeyi içe aktar) öğesini seçin, sonra ZIP dosyasını seçin. O ZIP dosyası bir proje veri dosyası içermelidir — yoksa, o dosya bir Create Aplikasi projesi olmadığı için dosya açık bir iletiyle reddedilir. Proje adı zaten varsa, uygulama soracaktır: Timpa proyek lama ya da Nama baru ile kaydet.
+
+Pencarian dan Filter Proyek
+Projeler çoğaldığında, Kelola Project içinde bir arama kutusu ve tür süzgeci vardır. Arama kutusuna proje adını yazın, liste hemen süzülür (büyük ve küçük harfler ayırt edilmez). Tür süzgeci listeyi tek bir türle sınırlandırır: Semua (Tümü), HTML, Situs Web, Java, Kotlin, Compose ya da Python. Her projenin menüsü, süzülmüş listeden de her zamanki gibi açılabilir.
+
+Bangun Aplikasi dengan Suara

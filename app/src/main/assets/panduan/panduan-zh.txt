@@ -1,0 +1,96 @@
+欢迎使用 Create Aplikasi by Al Kautsar
+Create Aplikasi 是一款可直接在手机上运行的 Android 应用创建应用，无需笔记本电脑。本应用让任何人都能创建自己的 Android 应用，包括刚开始学习创建应用的用户和屏幕阅读器用户。本应用的完整使用指南可在关于本工具界面中查看。
+
+本应用是什么，适合谁使用
+Create Aplikasi 是一款在手机上运行的 Android 应用创建工具。本应用面向任何想创建自己的 Android 应用的人，包括初学者和屏幕阅读器用户。本应用提供代码编辑器、用于测试项目的“运行”按钮、用于生成 APK 的“构建”按钮，以及用于签名和安装 APK 的菜单。
+
+本应用的目的
+制作本应用是为了让任何人都能直接通过手机轻松创建自己的 Android 应用。其界面尽可能做得简单，以便新用户也能立即尝试。
+
+如何逐步创建新项目
+1. 点击主菜单中的“创建项目”。
+2. 选择项目类型：HTML、网站、Java、Kotlin、Compose 或 Python。
+3. 输入应用名称，例如：Garuda Decode。
+4. 输入包名（package name），例如：com.android.garudadecode。包名必须使用小写字母，并至少由两个以点分隔的部分组成。
+5. 输入应用版本，例如：1.0，以及数字形式的版本号，例如：1。如果留空，版本将自动填为 1.0，版本号填为 1。
+6. 如有需要，输入最低 SDK 和目标 SDK。如果留空，将使用默认值。最低 SDK 是所支持的最低 Android 版本，例如：21 表示 Android 5.0。目标 SDK 最高为 36（Android 16）。
+7. 点击“选择权限”按钮以选择应用权限，例如：INTERNET。INTERNET 权限默认已勾选。只勾选应用确实需要的权限。
+8. 如有需要，勾选“使用独立的 64 位和 32 位架构”以减小 APK 大小；如果想使用自己制作的密钥库，请勾选“使用个人签名”。
+9. 点击“创建项目”。新项目会保存在 Download/project 文件夹中，并立即显示在“管理项目”中。
+
+可用的项目类型
+• HTML：由 index.html、style.css 和 script.js 构成的界面，通过 WebView 运行。直接在手机上构建。
+• 网站：带有菜单（首页、关于、联系）的网站，由 index.html、tentang.html、kontak.html、style.css 和 script.js 构成，通过 WebView 运行。直接在手机上构建。
+• Java：在手机上构建。MainActivity 位于 app/src/main/java/<package-name>/MainActivity.java。界面来自 app/src/main/res/layout/activity_main.xml，文本来自 app/src/main/res/values/strings.xml，主题来自 app/src/main/res/values/styles.xml。
+• Kotlin：可以使用应用内附带的 Kotlin 编译器在设备上构建（离线），或通过 GitHub Actions 构建。MainActivity 位于 app/src/main/java/<package-name>/MainActivity.kt，res 文件与 Java 项目相同。首次构建 Kotlin 较慢，因为编译器体积较大；引用 Kotlin 类的 .java 文件目前还无法构建（.java 文件会先于 .kt 文件编译）。
+• Compose：界面使用 Jetpack Compose 创建的现代 Android 应用（不是 XML 布局）。MainActivity 位于 app/src/main/java/<package-name>/MainActivity.kt。Compose 项目通过 GitHub Actions（构建项目菜单，然后选择在线构建）构建，或在 Termux 中用 Gradle 构建，因为 Compose 需要设备上没有的 Jetpack Compose 库。
+• Python：应用逻辑用 Python 语言（Chaquopy）编写在 app/src/main/python/main.py 中，并由位于 app/src/main/java/<package-name>/MainActivity.java 的宿主 MainActivity.java 运行。Python 项目可以直接在手机上构建（Chaquopy 运行时已包含在应用中），也可以通过 GitHub Actions 构建。Python 项目的最低 SDK 为 24（Android 7.0）。
+
+Java、HTML、网站、Kotlin、Compose 和 Python 项目的文件结构
+Java、HTML、网站、Kotlin、Compose 和 Python 项目的结构与一般 Android 项目相同。在 app 文件夹内有 src 文件夹，src 内有 main 文件夹。在 main 文件夹内，AndroidManifest.xml 位于 java 文件夹旁边，res 文件夹包含 layout/activity_main.xml 和 values/strings.xml 以及 values/styles.xml；对于 HTML 和网站，还有 assets 文件夹，其中包含 index.html（网站还有 tentang.html 和 kontak.html）。HTML 和网站项目在 app/src/main/java/<package-name>/MainActivity.java 也有自己的 MainActivity，它在 WebView 中加载 index.html 并成为 AndroidManifest 中的启动器。Python 项目的 Python 代码位于 app/src/main/python/main.py，宿主 MainActivity.java 位于 app/src/main/java/<package-name>/MainActivity.java。AndroidManifest.xml、布局、字符串和样式都可以在编辑器中打开和修改，就像 MainActivity 一样。清单文件仍位于 app 文件夹旁边的旧项目仍然可以构建，因为在构建时，应用会先检查 app/src/main/ 中的 AndroidManifest.xml，然后是 app 文件夹旁边的那个，最后是项目数据文件。
+
+权限规则（重要）
+创建项目时勾选的权限只会记录在一个地方，具体取决于项目类型。对于 Java、HTML、网站、Kotlin、Compose 和 Python 项目，勾选的权限仅记录在位于项目文件夹内 app/src/main/ 中、java 文件夹旁边的 AndroidManifest.xml 中。Java、HTML、网站、Kotlin、Compose 和 Python 项目的项目数据文件不包含权限列表。如果选择 Java 然后勾选 INTERNET 和 CAMERA，那么记录在 AndroidManifest.xml 中的只有 INTERNET 和 CAMERA，不会包含其他权限。构建时，应用从相同位置读取权限：对于 Java、HTML、网站、Kotlin、Compose 和 Python 项目，从 app/src/main/ 中的 AndroidManifest.xml 读取（如果没有，则对于旧项目从 app 文件夹旁边的 AndroidManifest.xml 读取），对于旧项目则从项目数据文件读取。
+
+如何使用编辑器
+打开“管理项目”，点击项目名称以打开编辑器。在编辑器中，可以打开文件、编写代码并保存更改。对于 Java、HTML、网站、Kotlin、Compose 和 Python 项目，文件排列在 app/src/main 文件夹内。要共享项目，请使用导出 ZIP（见下文部分）。
+
+如何运行项目
+在编辑器中，点击“运行”以测试项目。对于 HTML 和网站项目，运行的是通过 WebView 打开的 index.html。如果发生错误，请阅读错误消息，修复代码，然后再次运行。
+
+如何构建 APK
+在编辑器中，点击“构建”。有两种构建方式。第一种，在设备上构建：直接在手机上构建，无需互联网，适用于 HTML、网站、Java、Kotlin 和 Python 项目。第二种，通过 GitHub Actions 在线构建：通过互联网在 GitHub 上构建，可用于所有项目类型。Compose 项目只能用第二种方式（在线构建）构建，或在 Termux 中用 Gradle 构建，因为 Compose 需要设备上没有的 Jetpack Compose 库。第一次构建的结果尚未签名。之后应用会对其签名：使用内置密钥自动签名；或者如果在创建项目时勾选了“使用个人签名”复选框，则使用个人签名。
+
+如何安装 APK
+APK 准备好后，点击“安装”进行安装。在 Android 8 及更高版本上，手机会先要求“允许来自此来源”，因为本应用安装的是 Play 商店之外的 APK。在“设置”中启用该权限一次，然后返回应用：安装将自动继续，无需再次点击“安装”。如果“安装”按钮未出现，请确保构建已完成且 APK 已生成。
+
+如何签名应用
+每个 APK 都必须签名才能安装。有两个选项。第一，内置密钥：应用自动自行签名，您无需做任何事情。第二，个人签名：先通过主菜单中的“创建密钥库”菜单创建密钥库，妥善保存其密码，然后在创建项目时勾选“使用个人签名”。密钥库保存在 Download/project/signing 中。
+
+将项目导出为 ZIP
+提供导出 ZIP 是为了让项目可以与朋友共享。操作方法：在“管理项目”中，长按项目名称，然后选择“导出 ZIP”。结果保存在 Download/project/<ProjectName>.zip 中。bin 文件夹不包含在内，因此体积较小，只有几十 KB。该 ZIP 文件可以发送给朋友或上传到 GitHub。
+
+JAWS 扩展
+JAWS 扩展使用 Jieshuo (CSR) 的扩展引擎，而不是其屏幕阅读器。这样，即使使用者使用 TalkBack，设计仍然可以运行。操作方法：在主菜单中打开 JAWS 扩展。由于自动点击会自行运行，必须先在无障碍设置中启用该服务。之后，就可以创建新设计：输入设计名称，点击“确定”，然后填写其框格。
+
+点击列表单独存放以保持整洁
+在一个设计中有两个框格：脚本框和点击列表框。按钮列表单独保存在文件 daftar_klik.txt 中，每行一个名称。其内容示例：tombolSimpan、tombolHapus、tombolBuka。要打开某个应用，只需在该列表中写入 >WhatsApp。尚未拥有 daftar_klik.txt 文件的旧设计将显示该默认示例。
+
+提供的简单函数
+• klikTombol("tombolSimpan") — 根据按钮的文本点击一个按钮。
+• klikDaftarTombol(daftar) — 点击 daftar_klik.txt 中的列表，每行一个按钮，按顺序执行，然后告知有多少个成功、多少个未找到。
+• bukaAplikasi("WhatsApp") — 根据名称打开一个应用，或者在列表中写入 ">WhatsApp"。
+• klik(540, 1200) — 在屏幕坐标处点击。
+所有函数都先做得简单。等您熟悉之后，以后可以添加其他函数。
+
+关于屏幕阅读器
+本应用的设计对屏幕阅读器友好。每个输入字段都有标签和填写示例，所有按钮无需复杂手势即可触及。JAWS 扩展的设计使其即使在使用者使用 TalkBack 时也能继续运行，因为使用的是其扩展引擎，而不是其屏幕阅读器。
+
+隐私与安全
+项目和密钥库保存在您的手机上。GitHub 令牌仅用于在线构建，并保存在本应用内。不要与任何人共享您的令牌或密钥库密码。如果使用个人签名，请将密钥库及其密码保存在安全的地方，因为如果丢失，旧的 APK 将无法用同一签名更新。
+
+要求
+Android 5.0 或更高版本。存储权限：在 Android 11 及更高版本上使用所有文件访问权限，在 Android 10 及更低版本上使用普通存储权限（读/写存储），因为 Android 10 没有所有文件访问权限。在设备上构建需要配备 ARM 处理器（32 位或 64 位）的手机。通过 GitHub Actions 在线构建需要互联网和 GitHub 令牌。Kotlin 项目可以在设备上构建，但首次构建较慢且占用更多内存，因为 Kotlin 编译器体积较大。Compose 项目通过 GitHub Actions 构建，或在 Termux 中用 Gradle 构建。Python 项目需要 Android 7.0 或更高版本（最低 SDK 24），且生成的 APK 更大，因为它包含 Python 运行时 (Chaquopy) 及其标准库。
+
+终端
+主屏幕上的“终端”菜单会在本应用内打开一个终端。可以使用 ls 等命令查看项目文件夹的内容，用 cd 在文件夹之间移动，用 git 管理代码。命令输出以屏幕阅读器可读的文本形式显示，并且有一个“朗读结果”按钮可收听最后一次结果。此终端使用手机的系统 shell，因此 nano 和 vim 等交互式程序目前还无法在此使用。
+
+许可证（付费版）
+要出售应用，请在创建项目时勾选“启用许可证”，然后输入您的 WhatsApp 号码。构建出的应用在首次打开时会要求输入许可证代码：使用者看到其设备 ID，点击“发送设备 ID”按钮将该 ID 发送到您的 WhatsApp，然后您回复许可证代码。许可证代码由设备 ID 和项目密码（项目数据文件中的 lisensi_seed）计算得出——请妥善保存该密码，不要共享。输入正确的代码后，应用将打开，并且不再要求输入代码。
+
+自动图标制作器
+新项目的图标仍然是透明的，因此主菜单中提供了图标制作器。操作方法：点击“图标制作器”，写下一到两个字母（例如应用名称的首字母），选择背景颜色和文字颜色，查看预览，然后点击“保存到项目”将该图标用于所选项目，或点击“保存到下载”在其他地方使用其 PNG 文件。创建项目后，应用还会提供创建图标的选项。项目的旧图标可以随时从“管理项目”中的项目菜单更换（长按项目名称，然后选择“更换图标”）。
+
+现成的项目模板
+如果您不想从空白项目开始，请在创建项目时选择模板：计算器 (Java)、笔记 (Java)、待办事项列表 (Kotlin)、网页计算器 (HTML)、个人主页网站（网站）或计数器 (Compose)。选择模板会自动将项目类型更改为与该模板一致，并且项目会使用现成的初始代码创建——只需运行或修改即可。如果在选择模板后再次手动更改项目类型，模板将被取消，项目恢复为空白。对于 HTML 和网站模板，模板会替换 index.html 的内容，包括在表单中输入的 HTML 脚本。
+
+备份和恢复项目
+为了不丢失项目，提供了备份功能。操作方法：在“管理项目”中，长按项目名称，然后选择“备份”。备份以 ZIP 形式保存在 Download/backup 文件夹中，名称为项目名和日期，例如：GarudaDecode-2026-11-14-123045.zip。其内容与导出 ZIP 相同（项目的全部内容，不含 bin 文件夹）。要恢复：打开“管理项目”中的菜单，选择“恢复备份”，然后选择备份文件。如果项目名称已存在，应用会询问：覆盖旧项目，还是以新名称保存。
+
+共享和导入项目
+要与朋友共享项目：在“管理项目”中，长按项目名称，然后选择“共享”。项目会以 ZIP 形式通过共享应用（WhatsApp、Telegram 等）发送。要接收朋友的项目：打开“管理项目”中的菜单，选择“导入项目”，然后选择 ZIP 文件。该 ZIP 文件必须包含项目数据文件——如果没有，该文件会被拒绝并给出明确的消息，因为该文件不是 Create Aplikasi 项目。如果项目名称已存在，应用会询问：覆盖旧项目，还是以新名称保存。
+
+项目搜索和筛选
+如果项目已经很多，“管理项目”中有搜索框和类型筛选器。在搜索框中输入项目名称，列表会立即筛选（不区分大小写字母）。类型筛选器将列表限制为一种类型：全部、HTML、网站、Java、Kotlin、Compose 或 Python。每个项目的菜单仍可像往常一样从已筛选的列表中打开。
+
+用语音构建应用

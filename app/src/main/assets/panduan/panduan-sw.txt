@@ -1,0 +1,96 @@
+Karibu kwenye Create Aplikasi na Al Kautsar
+Create Aplikasi ni programu ya kutengeneza programu za Android inayotumika moja kwa moja kwenye simu, bila kuhitaji kompyuta ndogo. Programu hii humruhusu mtu yeyote kutengeneza programu zake mwenyewe za Android, wakiwemo watumiaji wanaojifunza kutengeneza programu na watumiaji wa visoma skrini. Mwongozo kamili wa kutumia programu hii unapatikana kwenye skrini hii ya Kuhusu Zana.
+
+Programu hii ni nini na ni ya nani
+Create Aplikasi ni zana ya kutengeneza programu za Android inayotumika kwenye simu. Programu hii inalenga mtu yeyote anayetaka kutengeneza programu zake mwenyewe za Android, wakiwemo wanaoanza na watumiaji wa visoma skrini. Programu hii hutoa kihariri cha msimbo, kitufe cha Endesha kwa ajili ya kujaribu miradi, kitufe cha Jenga kwa ajili ya kutengeneza APK, na menyu za kutia sahihi na kusakinisha APK.
+
+Madhumuni ya programu hii
+Programu hii ilitengenezwa ili mtu yeyote aweze kutengeneza programu zake mwenyewe za Android kwa urahisi, moja kwa moja kutoka kwenye simu. Muonekano wake umetengenezwa kuwa rahisi kadiri iwezekanavyo ili hata watumiaji wapya waweze kuijaribu mara moja.
+
+Jinsi ya kuunda mradi mpya, hatua kwa hatua
+1. Bonyeza Unda Mradi kwenye menyu kuu.
+2. Chagua aina ya mradi: HTML, Tovuti, Java, Kotlin, Compose, au Python.
+3. Jaza jina la programu, mfano: Garuda Decode.
+4. Jaza jina la kifurushi (package name), mfano: com.android.garudadecode. Jina la kifurushi lazima litumie herufi ndogo na liwe na sehemu mbili angalau zilizotenganishwa kwa nukta.
+5. Jaza toleo la programu, mfano: 1.0, na msimbo wa toleo kwa namna ya namba, mfano: 1. Ukiacha wazi, toleo litajazwa kiotomatiki kuwa 1.0 na msimbo wa toleo 1.
+6. Jaza SDK ya chini na SDK lengwa inapohitajika. Ukiacha wazi, thamani za msingi zitatumika. SDK ya chini ni toleo la chini kabisa la Android linaloungwa mkono, mfano: 21 maana yake Android 5.0. SDK lengwa ya juu kabisa ni 36 (Android 16).
+7. Bonyeza kitufe cha Chagua Ruhusa ili kuchagua ruhusa za programu, mfano: INTERNET. Ruhusa ya INTERNET tayari imekwisha tikiwa kama msingi. Tiki ruhusa tu ambazo programu inazihitaji kweli.
+8. Ukitaka, tiki "Tumia usanifu tofauti wa biti 64 na biti 32" ili ukubwa wa APK uwe mdogo zaidi, na tiki "Tumia sahihi ya binafsi" kama unataka kutumia keystore yako mwenyewe.
+9. Bonyeza Unda Mradi. Mradi mpya huhifadhiwa kwenye folda ya Download/project na huonekana mara moja kwenye Simamia Miradi.
+
+Aina za miradi zinazopatikana
+• HTML: muonekano kutoka index.html, style.css, na script.js, hutumika kupitia WebView. Hujengwa moja kwa moja kwenye simu.
+• Tovuti: tovuti yenye menyu (Nyumbani, Kuhusu, Mawasiliano) kutoka index.html, tentang.html, kontak.html, style.css, na script.js, hutumika kupitia WebView. Hujengwa moja kwa moja kwenye simu.
+• Java: hujengwa kwenye simu. MainActivity iko katika app/src/main/java/<jina-la-kifurushi>/MainActivity.java. Muonekano kutoka app/src/main/res/layout/activity_main.xml, maandishi kutoka app/src/main/res/values/strings.xml, na mandhari kutoka app/src/main/res/values/styles.xml.
+• Kotlin: inaweza kujengwa kwenye kifaa (nje ya mtandao) kwa kutumia mkusanyaji wa Kotlin uliojumuishwa kwenye programu, au kupitia GitHub Actions. MainActivity iko katika app/src/main/java/<jina-la-kifurushi>/MainActivity.kt, na mafaili ya res ni sawa na ya mradi wa Java. Ujenzi wa kwanza wa Kotlin ni wa polepole zaidi kwa sababu ya ukubwa mkubwa wa mkusanyaji, na mafaili ya .java yanayorejelea madarasa ya Kotlin bado hayawezi kujengwa (mafaili ya .java hukusanywa kabla ya mafaili ya .kt).
+• Compose: programu ya kisasa ya Android ambayo kiolesura chake kimetengenezwa kwa Jetpack Compose (si mpangilio wa XML). MainActivity iko katika app/src/main/java/<jina-la-kifurushi>/MainActivity.kt. Miradi ya Compose hujengwa kupitia GitHub Actions (menyu ya Jenga mradi, kisha Jenga mtandaoni) au kwenye Termux kwa Gradle, kwa sababu Compose inahitaji maktaba za Jetpack Compose ambazo hazipatikani kwenye kifaa.
+• Python: mantiki ya programu imeandikwa kwa lugha ya Python (Chaquopy) katika app/src/main/python/main.py, na huendeshwa na mwenyeji MainActivity.java katika app/src/main/java/<jina-la-kifurushi>/MainActivity.java. Miradi ya Python inaweza kujengwa moja kwa moja kwenye simu (muda wa uendeshaji wa Chaquopy umejumuishwa kwenye programu) na pia kupitia GitHub Actions. SDK ya chini ya mradi wa Python ni 24 (Android 7.0).
+
+Muundo wa mafaili ya miradi ya Java, HTML, Tovuti, Kotlin, Compose, na Python
+Miradi ya Java, HTML, Tovuti, Kotlin, Compose, na Python imepangwa kama miradi ya Android kwa ujumla. Ndani ya folda ya app kuna folda ya src, na ndani yake kuna folda ya main. Ndani ya folda ya main kuna AndroidManifest.xml kando ya folda ya java, folda ya res yenye layout/activity_main.xml na values/strings.xml pamoja na values/styles.xml, na kwa HTML na Tovuti kuna folda ya assets yenye index.html (Tovuti pia ina tentang.html na kontak.html). Miradi ya HTML na Tovuti pia ina MainActivity yake yenyewe katika app/src/main/java/<jina-la-kifurushi>/MainActivity.java, ambayo hupakia index.html kwenye WebView na kuwa kianzishi katika AndroidManifest. Mradi wa Python una msimbo wa Python katika app/src/main/python/main.py na mwenyeji MainActivity.java katika app/src/main/java/<jina-la-kifurushi>/MainActivity.java. AndroidManifest.xml, mpangilio, strings, na styles zinaweza kufunguliwa na kubadilishwa kwenye kihariri, sawa na MainActivity. Miradi ya zamani ambayo manifest yake bado iko kando ya folda ya app bado inaweza kujengwa, kwa sababu wakati wa kujenga, programu huangalia AndroidManifest.xml katika app/src/main/ kwanza, kisha ile iliyo kando ya folda ya app, na mwisho faili la data ya mradi.
+
+Kanuni za ruhusa (muhimu)
+Ruhusa zinazotikiwa wakati wa kuunda mradi hurekodiwa mahali pamoja tu, kulingana na aina ya mradi. Kwa miradi ya Java, HTML, Tovuti, Kotlin, Compose, na Python, ruhusa zinazotikiwa hurekodiwa TU katika AndroidManifest.xml iliyoko katika app/src/main/, kando ya folda ya java, ndani ya folda ya mradi. Faili la data ya mradi kwa miradi ya Java, HTML, Tovuti, Kotlin, Compose, na Python halina orodha ya ruhusa. Ukichagua Java kisha ukatiki INTERNET na CAMERA, kinachorekodiwa katika AndroidManifest.xml ni INTERNET na CAMERA tu, bila ruhusa nyingine kuongezeka. Wakati wa kujenga, programu husoma ruhusa kutoka mahali palepale: kutoka AndroidManifest.xml katika app/src/main/ kwa miradi ya Java, HTML, Tovuti, Kotlin, Compose, na Python (kama haipo, kutoka AndroidManifest.xml iliyo kando ya folda ya app kwa miradi ya zamani), na kutoka faili la data ya mradi kwa miradi ya zamani.
+
+Jinsi ya kutumia kihariri
+Fungua Simamia Miradi, gusa jina la mradi ili kufungua kihariri. Kwenye kihariri, mafaili yanaweza kufunguliwa, msimbo unaweza kuandikwa, na mabadiliko yanaweza kuhifadhiwa. Kwa miradi ya Java, HTML, Tovuti, Kotlin, Compose, na Python, mafaili yamepangwa ndani ya folda ya app/src/main. Kushiriki mradi, tumia Hamisha ZIP (tazama sehemu iliyo hapa chini).
+
+Jinsi ya kuendesha mradi
+Kwenye kihariri, bonyeza Endesha ili kujaribu mradi. Kwa miradi ya HTML na Tovuti, kinachoendeshwa ni index.html kupitia WebView. Ikitokea hitilafu, soma ujumbe wa hitilafu, rekebisha msimbo, kisha endesha tena.
+
+Jinsi ya kujenga APK
+Kwenye kihariri, bonyeza Jenga. Kuna njia mbili za kujenga. Kwanza, Jenga kwenye kifaa: kujenga moja kwa moja kwenye simu bila mtandao, kwa miradi ya HTML, Tovuti, Java, Kotlin, na Python. Pili, Jenga mtandaoni kupitia GitHub Actions: kujenga kupitia intaneti kwenye GitHub, na inaweza kutumika kwa aina zote za miradi. Miradi ya Compose inaweza kujengwa tu kwa njia ya pili (Jenga mtandaoni) au kwenye Termux kwa Gradle, kwa sababu Compose inahitaji maktaba za Jetpack Compose ambazo hazipatikani kwenye kifaa. Matokeo ya ujenzi wa kwanza bado hayajatiwa sahihi. Baada ya hapo programu huitia sahihi: kiotomatiki kwa ufunguo wa msingi, au kwa sahihi ya binafsi kama kisanduku cha "Tumia sahihi ya binafsi" kilitikiwa wakati wa kuunda mradi.
+
+Jinsi ya kusakinisha APK
+APK ikiwa tayari, bonyeza Sakinisha ili kuisakinisha. Kwenye Android 8 na zaidi, simu itaomba kwanza "Ruhusu kutoka chanzo hiki", kwa sababu programu hii husakinisha APK kutoka nje ya Play Store. Washa ruhusa hiyo mara moja kwenye Mipangilio, kisha rudi kwenye programu: usakinishaji utaendelea kiotomatiki bila kuhitaji kubonyeza Sakinisha tena. Kama kitufe cha Sakinisha hakionekani, hakikisha ujenzi umekamilika na APK imetengenezwa.
+
+Jinsi ya kutia sahihi programu
+Kila APK lazima itiwe sahihi ili iweze kusakinishwa. Kuna chaguo mbili. Kwanza, ufunguo wa msingi: programu hutia sahihi yenyewe kiotomatiki, bila kuhitaji kufanya chochote. Pili, sahihi ya binafsi: tengeneza kwanza keystore kupitia menyu ya Unda Keystore kwenye menyu kuu, hifadhi nenosiri lake vizuri, kisha tiki "Tumia sahihi ya binafsi" wakati wa kuunda mradi. Keystore huhifadhiwa katika Download/project/signing.
+
+Hamisha mradi kuwa ZIP
+Hamisha ZIP hutolewa ili miradi iweze kushirikiwa na marafiki. Hivi ndivyo: kwenye Simamia Miradi, bonyeza kwa muda mrefu jina la mradi, kisha chagua Hamisha ZIP. Matokeo huhifadhiwa katika Download/project/<JinaLaMradi>.zip. Folda ya bin haijumuishwi, hivyo ukubwa ni mdogo, makumi machache tu ya KB. Faili hilo la ZIP linaweza kutumwa kwa marafiki au kupakiwa kwenye GitHub.
+
+Kiendelezi cha JAWS
+Kiendelezi cha JAWS hutumia injini ya kiendelezi kutoka Jieshuo (CSR), si kisoma skrini chake. Kwa hivyo, mpango bado unaweza kufanya kazi hata kama mtumiaji anatumia TalkBack. Hivi ndivyo: fungua Kiendelezi cha JAWS kwenye menyu kuu. Kwa sababu ubonyezaji wa kiotomatiki huendeshwa wenyewe, huduma lazima iwashwe kwanza kwenye Mipangilio ya Ufikivu. Baada ya hapo mpango mpya unaweza kuundwa: andika jina la mpango, bonyeza OK, kisha jaza kisanduku chake.
+
+Orodha ya Mibonyezo imetenganishwa ili iwe nadhifu
+Ndani ya mpango kuna visanduku viwili: kisanduku cha hati na kisanduku cha Orodha ya Mibonyezo. Orodha ya vitufe huhifadhiwa tofauti katika faili la daftar_klik.txt, jina moja kwa kila mstari. Mfano wa yaliyomo: tombolSimpan, tombolHapus, tombolBuka. Kufungua programu, andika tu >WhatsApp kwenye orodha hiyo. Mipango ya zamani ambayo bado haina faili la daftar_klik.txt itaonyesha mfano huo wa msingi.
+
+Vitendakazi rahisi vinavyotolewa
+• klikTombol("tombolSimpan") — bonyeza kitufe kimoja kulingana na maandishi yake.
+• klikDaftarTombol(daftar) — bonyeza orodha iliyoko katika daftar_klik.txt, kitufe kimoja kwa kila mstari, kwa mpangilio, kisha taarifu ni vingapi vilivyofanikiwa na vingapi havikupatikana.
+• bukaAplikasi("WhatsApp") — fungua programu kulingana na jina lake, au andika ">WhatsApp" kwenye orodha.
+• klik(540, 1200) — bonyeza kwenye viwianishi vya skrini.
+Vitendakazi vyote vimetengenezwa kuwa rahisi kwanza. Ukishazoea, vitendakazi vya ziada vinaweza kuongezwa baadaye.
+
+Kuhusu visoma skrini
+Programu hii imeundwa kuwa rafiki kwa visoma skrini. Kila sehemu ya kujaza ina lebo na mfano wa kujaza, na vitufe vyote vinaweza kufikiwa bila ishara ngumu. Kiendelezi cha JAWS kimetengenezwa ili kiendelee kufanya kazi hata kama mtumiaji anatumia TalkBack, kwa sababu kinachotumika ni injini yake ya kiendelezi, si kisoma skrini chake.
+
+Faragha na usalama
+Miradi na keystore huhifadhiwa kwenye simu yako. Tokeni ya GitHub hutumika tu kwa ujenzi wa mtandaoni na huhifadhiwa ndani ya programu hii. Usishiriki tokeni yako au nenosiri la keystore yako na mtu yeyote. Ukitumia sahihi ya binafsi, hifadhi keystore na nenosiri lake mahali salama, kwa sababu zikipotea, APK ya zamani haiwezi kusasishwa kwa sahihi ileile.
+
+Mahitaji
+Android 5.0 au mpya zaidi. Ruhusa ya hifadhi: kwenye Android 11 na zaidi hutumia ruhusa ya kufikia mafaili yote, kwenye Android 10 na chini hutumia ruhusa ya kawaida ya hifadhi (kusoma/kuandika hifadhi) kwa sababu Android 10 haina ruhusa ya kufikia mafaili yote. Kujenga kwenye kifaa kunahitaji simu yenye kichakataji cha ARM (biti 32 au 64). Kujenga mtandaoni kupitia GitHub Actions kunahitaji intaneti na tokeni ya GitHub. Miradi ya Kotlin inaweza kujengwa kwenye kifaa, lakini ujenzi wake wa kwanza ni wa polepole zaidi na hutumia kumbukumbu zaidi kwa sababu ya ukubwa mkubwa wa mkusanyaji wa Kotlin. Miradi ya Compose hujengwa kupitia GitHub Actions au kwenye Termux kwa Gradle. Miradi ya Python inahitaji Android 7.0 au mpya zaidi (SDK ya chini 24) na APK yake ni kubwa zaidi kwa sababu inajumuisha muda wa uendeshaji wa Python (Chaquopy) pamoja na maktaba yake ya kawaida.
+
+Terminal
+Menyu ya Terminal kwenye skrini kuu hufungua terminal ndani ya programu hii. Amri kama ls zinaweza kutumika kuona yaliyomo kwenye folda ya mradi, cd kubadilisha folda, na git kusimamia msimbo. Matokeo ya amri huonekana kama maandishi yanayoweza kusomwa na kisoma skrini, na kuna kitufe cha Soma matokeo ili kusikiliza matokeo ya mwisho. Terminal hii hutumia ganda la mfumo wa simu, hivyo programu shirikishi kama nano na vim bado haziwezi kutumika hapa.
+
+Leseni (toleo la kulipia)
+Kuuza programu, tiki "Washa Leseni" wakati wa kuunda mradi, kisha jaza namba yako ya WhatsApp. Programu iliyojengwa itaomba msimbo wa leseni inapofunguliwa kwa mara ya kwanza: mtumiaji huona kitambulisho cha kifaa chake, hubonyeza kitufe cha Tuma Kitambulisho cha Kifaa ili kutuma kitambulisho hicho kwenye WhatsApp yako, kisha wewe hujibu kwa msimbo wake wa leseni. Msimbo wa leseni huhesabiwa kutoka kitambulisho cha kifaa na nenosiri la mradi (lisensi_seed katika faili la data ya mradi) — hifadhi nenosiri hilo vizuri na usilishiriki. Baada ya msimbo sahihi kuingizwa, programu hufunguka na haiombi msimbo tena.
+
+Kitengeneza Ikoni Kiotomatiki
+Ikoni za miradi mipya bado ni wazi, hivyo Kitengeneza Ikoni kinapatikana kwenye menyu kuu. Hivi ndivyo: bonyeza Kitengeneza Ikoni, andika herufi moja au mbili (mfano herufi za kwanza za jina la programu), chagua rangi ya mandharinyuma na rangi ya maandishi, tazama hakikisho lake, kisha bonyeza Hifadhi kwenye Mradi ili kutumia ikoni hiyo kwenye mradi uliochaguliwa, au Hifadhi kwenye Download ili kutumia faili lake la PNG mahali pengine. Baada ya mradi kuundwa, programu pia hupendekeza kutengeneza ikoni. Ikoni ya zamani ya mradi inaweza kubadilishwa wakati wowote kutoka menyu ya mradi katika Simamia Miradi (bonyeza kwa muda mrefu jina la mradi, kisha chagua Badilisha Ikoni).
+
+Violezo vya Miradi Vilivyo Tayari
+Kama hutaki kuanza kutoka mradi mtupu, chagua kiolezo wakati wa kuunda mradi: Kikokotoo (Java), Vidokezo (Java), Orodha ya Majukumu (Kotlin), Kikokotoo cha Wavuti (HTML), Tovuti ya Wasifu (Tovuti), au Kihesabu (Compose). Kuchagua kiolezo hubadilisha kiotomatiki aina ya mradi kufuata kiolezo hicho, na mradi huundwa na msimbo wa kuanzia ulio tayari — kilichobaki ni kuuendesha au kuubadilisha. Aina ya mradi ikibadilishwa tena kwa mkono baada ya kuchagua kiolezo, kiolezo hubatilishwa na mradi hurudi kuwa mtupu. Kwa violezo vya HTML na Tovuti, kiolezo hubadilisha yaliyomo katika index.html, pamoja na hati ya HTML iliyoandikwa kwenye fomu.
+
+Hifadhi Nakala na Rejesha Miradi
+Ili miradi isipotee, kuna kipengele cha kuhifadhi nakala. Hivi ndivyo: kwenye Simamia Miradi, bonyeza kwa muda mrefu jina la mradi, kisha chagua Hifadhi Nakala. Nakala huhifadhiwa kama ZIP katika folda ya Download/backup ikiwa na jina la mradi na tarehe, mfano: GarudaDecode-2026-11-14-123045.zip. Yaliyomo ni sawa na Hamisha ZIP (yaliyomo yote ya mradi, bila folda ya bin). Kurejesha: fungua menyu katika Simamia Miradi, chagua Rejesha nakala, kisha chagua faili lake la nakala. Kama jina la mradi tayari lipo, programu itauliza: Andika juu ya mradi wa zamani, au hifadhi kwa Jina jipya.
+
+Shiriki na Ingiza Miradi
+Kushiriki mradi na rafiki: kwenye Simamia Miradi, bonyeza kwa muda mrefu jina la mradi, kisha chagua Shiriki. Mradi hutumwa kama ZIP kupitia programu za kushiriki (WhatsApp, Telegram, na nyingine). Kupokea mradi kutoka kwa rafiki: fungua menyu katika Simamia Miradi, chagua Ingiza mradi, kisha chagua faili lake la ZIP. Faili hilo la ZIP lazima liwe na faili la data ya mradi — kama halina, faili hukataliwa kwa ujumbe wazi, kwa sababu faili hilo si mradi wa Create Aplikasi. Kama jina la mradi tayari lipo, programu itauliza: Andika juu ya mradi wa zamani, au hifadhi kwa Jina jipya.
+
+Utafutaji na Uchujaji wa Miradi
+Kama miradi tayari ni mingi, katika Simamia Miradi kuna kisanduku cha kutafuta na kichujio cha aina. Andika jina la mradi kwenye kisanduku cha kutafuta, orodha huchujwa mara moja (herufi kubwa na ndogo hazitofautishwi). Kichujio cha aina huweka kikomo orodha kwa aina moja tu: Yote, HTML, Tovuti, Java, Kotlin, Compose, au Python. Menyu ya kila mradi bado inaweza kufunguliwa kama kawaida kutoka orodha iliyochujwa.
+
+Kujenga Programu kwa Sauti

@@ -1,0 +1,96 @@
+Wilujeng sumping di Create Aplikasi by Al Kautsar
+Create Aplikasi nyaéta aplikasi pikeun nyieun aplikasi Android anu jalan langsung dina telepon, tanpa merlukeun laptop. Aplikasi ieu ngidinan saha waé nyieun aplikasi Android sorangan, kaasup pangguna anu kakara diajar nyieun aplikasi jeung pangguna pamaca layar. Pituduh lengkep pikeun ngagunakeun aplikasi ieu sayogi dina layar Tentang Alat ieu.
+
+Aplikasi ieu téh naon jeung pikeun saha
+Create Aplikasi nyaéta pakakas pikeun nyieun aplikasi Android anu jalan dina telepon. Aplikasi ieu ditujukeun pikeun saha waé anu hayang nyieun aplikasi Android sorangan, kaasup pamula jeung pangguna pamaca layar. Aplikasi ieu nyayogikeun éditor kode, tombol Jalankan pikeun nguji proyek, tombol Bangun pikeun nyieun APK, sarta menu pikeun nandatanganan jeung masang APK.
+
+Tujuan aplikasi ieu
+Aplikasi ieu dijieun sangkan saha waé bisa nyieun aplikasi Android sorangan kalawan gampang, langsung tina telepon. Pidanganna dijieun sasingkat mungkin sangkan pangguna anyar ogé bisa langsung nyobaan.
+
+Cara nyieun proyek anyar, léngkah demi léngkah
+1. Pencét Buat Project dina menu utama.
+2. Pilih jenis proyek: HTML, Situs Web, Java, Kotlin, Compose, atawa Python.
+3. Eusian ngaran aplikasi, conto: Garuda Decode.
+4. Eusian ngaran pakét (package name), conto: com.android.garudadecode. Ngaran pakét kudu ngagunakeun aksara leutik jeung diwangun ku sahenteuna dua bagian anu dipisahkeun ku titik.
+5. Eusian vérsi aplikasi, conto: 1.0, jeung kode vérsi dina wangun angka, conto: 1. Lamun dikosongkeun, vérsi bakal dieusian otomatis ku 1.0 jeung kode vérsi 1.
+6. Eusian SDK minimum jeung SDK target lamun diperlukeun. Lamun dikosongkeun, nilai bawaan bakal digunakeun. SDK minimum nyaéta vérsi Android panghandapna anu didukung, conto: 21 hartina Android 5.0. SDK target maksimum nyaéta 36 (Android 16).
+7. Pencét tombol Pilih Izin pikeun milih idin aplikasi, conto: INTERNET. Idin INTERNET geus dicirian sacara bawaan. Cirian ukur idin anu memang diperlukeun ku aplikasi.
+8. Lamun dipikahayang, cirian "Gunakan arsitektur terpisah 64 bit dan 32 bit" sangkan ukuran APK leuwih leutik, jeung cirian "Gunakan tanda tangan pribadi" lamun hayang ngagunakeun keystore jieunan sorangan.
+9. Pencét Buat Proyek. Proyek anyar disimpen dina folder Download/project jeung langsung katémbong dina Kelola Project.
+
+Jenis proyek anu sayogi
+• HTML: pidangan tina index.html, style.css, jeung script.js, jalan ngaliwatan WebView. Dijieun langsung dina telepon.
+• Situs Web: website kalawan menu (Beranda, Tentang, Kontak) tina index.html, tentang.html, kontak.html, style.css, jeung script.js, jalan ngaliwatan WebView. Dijieun langsung dina telepon.
+• Java: dijieun dina telepon. MainActivity aya di app/src/main/java/<nama-paket>/MainActivity.java. Pidangan tina app/src/main/res/layout/activity_main.xml, téks tina app/src/main/res/values/strings.xml, jeung téma tina app/src/main/res/values/styles.xml.
+• Kotlin: bisa dijieun dina alat (offline) ngagunakeun compiler Kotlin anu kaasup dina aplikasi, atawa ngaliwatan GitHub Actions. MainActivity aya di app/src/main/java/<nama-paket>/MainActivity.kt, jeung berkas res sarua jeung proyek Java. Bangun Kotlin munggaran leuwih lila kusabab ukuran compiler anu gedé, jeung berkas .java anu ngarujuk kelas Kotlin tacan bisa dijieun (berkas .java dikompilasi heula saméméh berkas .kt).
+• Compose: aplikasi Android modéren anu antarbeungeutna dijieun ku Jetpack Compose (lain layout XML). MainActivity aya di app/src/main/java/<nama-paket>/MainActivity.kt. Proyek Compose dijieun ngaliwatan GitHub Actions (menu Bangun proyek, tuluy Bangun online) atawa di Termux ku Gradle, kusabab Compose merlukeun pustaka Jetpack Compose anu teu sayogi dina alat.
+• Python: logika aplikasi ditulis dina basa Python (Chaquopy) di app/src/main/python/main.py, jeung dijalankeun ku host MainActivity.java di app/src/main/java/<nama-paket>/MainActivity.java. Proyek Python bisa dijieun langsung dina telepon (runtime Chaquopy kaasup dina aplikasi) atawa ngaliwatan GitHub Actions. SDK minimum proyek Python nyaéta 24 (Android 7.0).
+
+Susunan berkas proyek Java, HTML, Situs Web, Kotlin, Compose, jeung Python
+Proyek Java, HTML, Situs Web, Kotlin, Compose, jeung Python disusun kawas proyek Android umumna. Di jero folder app aya folder src, jeung di jerona aya folder main. Di jero folder main aya AndroidManifest.xml di gigireun folder java, folder res anu ngandung layout/activity_main.xml jeung values/strings.xml sarta values/styles.xml, jeung pikeun HTML jeung Situs Web aya folder assets anu ngandung index.html (Situs Web ogé mibanda tentang.html jeung kontak.html). Proyek HTML jeung Situs Web ogé mibanda MainActivity sorangan di app/src/main/java/<nama-paket>/MainActivity.java, anu ngamuat index.html dina WebView jeung jadi launcher dina AndroidManifest. Proyek Python mibanda kode Python di app/src/main/python/main.py jeung host MainActivity.java di app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, layout, strings, jeung styles bisa dibuka jeung dirobah dina éditor, sarua jeung MainActivity. Proyek heubeul anu manifest-na masih aya di gigireun folder app masih bisa dijieun, kusabab nalika nyieun, aplikasi mariksa AndroidManifest.xml di app/src/main/ heula, tuluy anu di gigireun folder app, jeung pamungkas berkas data proyek.
+
+Aturan idin (penting)
+Idin anu dicirian nalika nyieun proyek ukur kacatet di hiji tempat, luyu jeung jenis proyekna. Pikeun proyek Java, HTML, Situs Web, Kotlin, Compose, jeung Python, idin anu dicirian kacatet UKUR dina AndroidManifest.xml anu aya di app/src/main/, di gigireun folder java, di jero folder proyek. Berkas data proyek pikeun proyek Java, HTML, Situs Web, Kotlin, Compose, jeung Python teu ngandung daptar idin. Lamun milih Java tuluy nyirian INTERNET jeung CAMERA, anu kacatet dina AndroidManifest.xml ukur INTERNET jeung CAMERA, tanpa idin séjén anu milu. Nalika nyieun, aplikasi maca idin tina tempat anu sarua: tina AndroidManifest.xml di app/src/main/ pikeun proyek Java, HTML, Situs Web, Kotlin, Compose, jeung Python (lamun euweuh, tina AndroidManifest.xml di gigireun folder app pikeun proyek heubeul), jeung tina berkas data proyek pikeun proyek heubeul.
+
+Cara ngagunakeun éditor
+Buka Kelola Project, toél ngaran proyek pikeun muka éditor. Dina éditor, berkas bisa dibuka, kode bisa ditulis, jeung parobahan bisa disimpen. Pikeun proyek Java, HTML, Situs Web, Kotlin, Compose, jeung Python, berkas disusun di jero folder app/src/main. Pikeun ngabagikeun proyek, gunakeun Ekspor ZIP (tempo bagian di handap).
+
+Cara ngajalankeun proyek
+Dina éditor, pencét Jalankan pikeun nguji proyek. Pikeun proyek HTML jeung Situs Web, anu dijalankeun nyaéta index.html ngaliwatan WebView. Lamun aya kasalahan, baca pesen kasalahanana, benerkeun kode, tuluy jalankeun deui.
+
+Cara nyieun APK
+Dina éditor, pencét Bangun. Aya dua cara nyieun. Kahiji, Bangun di perangkat: nyieun langsung dina telepon tanpa internét, pikeun proyek HTML, Situs Web, Java, Kotlin, jeung Python. Kadua, Bangun online ngaliwatan GitHub Actions: nyieun ngaliwatan internét di GitHub, jeung bisa digunakeun pikeun sakabéh jenis proyek. Proyek Compose ukur bisa dijieun ku cara kadua (Bangun online) atawa di Termux ku Gradle, kusabab Compose merlukeun pustaka Jetpack Compose anu teu sayogi dina alat. Hasil bangun munggaran tacan ditandatanganan. Sanggeus éta aplikasi nandatangananna: otomatis ku konci bawaan, atawa ku tanda tangan pribadi lamun kotak "Gunakan tanda tangan pribadi" dicirian nalika nyieun proyek.
+
+Cara masang APK
+Lamun APK geus jadi, pencét Pasang pikeun masangna. Dina Android 8 ka luhur, telepon bakal ménta "Izinkan dari sumber ini" heula, kusabab aplikasi ieu masang APK ti luar Play Store. Aktipkeun idin éta sakali dina Pengaturan, tuluy balik deui ka aplikasi: pamasangan bakal nuluykeun otomatis tanpa kudu mencét Pasang deui. Lamun tombol Pasang teu némbongan, pastikeun bangun geus réngsé jeung APK geus dijieun.
+
+Cara nandatanganan aplikasi
+Unggal APK kudu ditandatanganan sangkan bisa dipasang. Sayogi dua pilihan. Kahiji, konci bawaan: aplikasi nandatanganan sorangan sacara otomatis, tanpa kudu ngalakukeun nanaon. Kadua, tanda tangan pribadi: jieun heula keystore ngaliwatan menu Buat Keystore dina menu utama, simpen kecap sandina kalawan alus, tuluy cirian "Gunakan tanda tangan pribadi" nalika nyieun proyek. Keystore disimpen di Download/project/signing.
+
+Ékspor proyek jadi ZIP
+Ekspor ZIP disayogikeun sangkan proyek bisa dibagikeun ka babaturan. Carana: dina Kelola Project, tahan lila ngaran proyek, tuluy pilih Ekspor ZIP. Hasilna disimpen di Download/project/<NamaProyek>.zip. Folder bin teu milu diasupkeun, ku kituna ukuranana leutik, ukur puluhan KB. Berkas ZIP éta bisa dikirim ka babaturan atawa diunggah ka GitHub.
+
+Éksténsi JAWS
+Éksténsi JAWS ngagunakeun mesin éksténsi ti Jieshuo (CSR), lain pamaca layarna. Ku kituna, rancangan masih bisa jalan sanajan pangguna ngagunakeun TalkBack. Carana: buka Ekstensi JAWS dina menu utama. Kusabab klik otomatis jalan sorangan, layanan kudu diaktipkeun heula dina Pengaturan Aksesibilitas. Sanggeus éta, rancangan anyar bisa dijieun: ketik ngaran rancangan, pencét OK, tuluy eusian kotakna.
+
+Daftar Klik dipisahkeun sangkan rapih
+Di jero rancangan aya dua kotak: kotak skrip jeung kotak Daftar Klik. Daptar tombol disimpen misah dina berkas daftar_klik.txt, hiji ngaran per baris. Conto eusina: tombolSimpan, tombolHapus, tombolBuka. Pikeun muka aplikasi, tulis waé >WhatsApp dina daptar éta. Rancangan heubeul anu tacan mibanda berkas daftar_klik.txt bakal némbongkeun conto bawaan éta.
+
+Fungsi basajan anu disayogikeun
+• klikTombol("tombolSimpan") — ngaklik hiji tombol dumasar kana téksna.
+• klikDaftarTombol(daftar) — ngaklik daptar dina daftar_klik.txt, hiji tombol per baris, ngaruntuy, tuluy ngabéjaan sabaraha anu hasil jeung sabaraha anu teu kapanggih.
+• bukaAplikasi("WhatsApp") — muka aplikasi dumasar kana ngaranna, atawa tulis ">WhatsApp" dina daptar.
+• klik(540, 1200) — ngaklik dina koordinat layar.
+Sakabéh fungsi dijieun basajan heula. Lamun geus biasa, fungsi tambahan bisa ditambahkeun engké.
+
+Ngeunaan pamaca layar
+Aplikasi ieu dirancang sangkan ramah pamaca layar. Unggal kolom eusian mibanda labél jeung conto ngeusian, jeung sakabéh tombol bisa kahontal tanpa gestur anu riweuh. Éksténsi JAWS dijieun sangkan masih jalan sanajan pangguna ngagunakeun TalkBack, kusabab anu digunakeun nyaéta mesin éksténsina, lain pamaca layarna.
+
+Privasi jeung kaamanan
+Proyek jeung keystore disimpen dina telepon anjeun. Token GitHub ukur dipaké pikeun bangun online jeung disimpen di jero aplikasi ieu. Ulah ngabagikeun token atawa kecap sandi keystore anjeun ka saha waé. Lamun ngagunakeun tanda tangan pribadi, simpen keystore jeung kecap sandina di tempat anu aman, kusabab lamun leungit, APK heubeul teu bisa dianyarkeun ku tanda tangan anu sarua.
+
+Kabutuhan
+Android 5.0 atawa leuwih anyar. Idin panyimpenan: dina Android 11 ka luhur ngagunakeun idin aksés sakabéh berkas, dina Android 10 ka handap ngagunakeun idin panyimpenan biasa (maca/nulis panyimpenan) kusabab Android 10 teu mibanda idin aksés sakabéh berkas. Nyieun dina alat merlukeun telepon anu prosésorna ARM (32 atawa 64 bit). Nyieun online ngaliwatan GitHub Actions merlukeun internét jeung token GitHub. Proyek Kotlin bisa dijieun dina alat, tapi bangun munggaranna leuwih lila jeung ngagunakeun memori leuwih loba kusabab ukuran compiler Kotlin anu gedé. Proyek Compose dijieun ngaliwatan GitHub Actions atawa di Termux ku Gradle. Proyek Python merlukeun Android 7.0 atawa leuwih anyar (SDK minimum 24) jeung APK hasilna leuwih gedé kusabab ngasupkeun runtime Python (Chaquopy) jeung pustaka bakuna.
+
+Terminal
+Menu Terminal dina layar utama muka terminal di jero aplikasi ieu. Paréntah saperti ls bisa digunakeun pikeun ningali eusi folder proyek, cd pikeun pindah folder, jeung git pikeun ngatur kode. Kaluaran paréntah némbongan minangka téks anu bisa dibaca ku pamaca layar, jeung aya tombol Bacakan hasil pikeun ngadéngékeun hasil pamungkas. Terminal ieu ngagunakeun shell sistem telepon, ku kituna program interaktif saperti nano jeung vim tacan bisa dipaké di dieu.
+
+Lisénsi (vérsi mayar)
+Pikeun ngajual aplikasi, cirian "Aktifkan Lisensi" nalika nyieun proyek, tuluy eusian nomer WhatsApp anjeun. Aplikasi hasil bangun bakal ménta kode lisénsi nalika mimiti dibuka: pangguna ningali ID alatna, mencét tombol Kirim ID Perangkat pikeun ngirim ID éta ka WhatsApp anjeun, tuluy anjeun ngawalon ku kode lisénsina. Kode lisénsi diitung tina ID alat jeung kecap sandi proyek (lisensi_seed dina berkas data proyek) — simpen kecap sandi éta kalawan alus jeung ulah dibagikeun. Sanggeus kode anu bener diasupkeun, aplikasi kabuka jeung teu ménta kode deui.
+
+Pembuat Ikon Otomatis
+Ikon proyek anyar masih transparan, ku kituna sayogi Pembuat Ikon dina menu utama. Carana: pencét Pembuat Ikon, tulis hiji atawa dua aksara (contona inisial ngaran aplikasi), pilih warna latar jeung warna tulisan, tempo pratayangna, tuluy pencét Simpan ke Proyek pikeun ngagunakeun ikon éta dina proyek anu dipilih, atawa Simpan ke Download pikeun ngagunakeun berkas PNG-na di tempat séjén. Sanggeus proyek dijieun, aplikasi ogé nawaran nyieun ikon. Ikon heubeul proyek bisa diganti iraha waé tina menu proyek dina Kelola Project (tahan lila ngaran proyek, tuluy pilih Ganti Ikon).
+
+Template Proyek Siap Pakai
+Lamun teu hayang ngamimitian tina proyek kosong, pilih template nalika nyieun proyek: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web), atawa Penghitung (Compose). Milih template sacara otomatis ngarobah jenis proyek nuturkeun template éta, jeung proyek dijieun ku kode awal anu geus jadi — kari dijalankeun atawa dirobah. Lamun jenis proyek dirobah deui sacara manual sanggeus milih template, template dibatalkeun jeung proyek balik kosong. Pikeun template HTML jeung Situs Web, template ngaganti eusi index.html, kaasup skrip HTML anu diketik dina form.
+
+Cadangan jeung Pulihkan Proyek
+Sangkan proyek teu leungit, sayogi fitur cadangan. Carana: dina Kelola Project, tahan lila ngaran proyek, tuluy pilih Cadangkan. Cadangan disimpen minangka ZIP dina folder Download/backup kalawan ngaran proyek jeung tanggal, conto: GarudaDecode-2026-11-14-123045.zip. Eusina sarua jeung Ekspor ZIP (sakabéh eusi proyek, tanpa folder bin). Pikeun mulihkeun: buka menu dina Kelola Project, pilih Pulihkan cadangan, tuluy pilih berkas cadanganana. Lamun ngaran proyek geus aya, aplikasi bakal nanyakeun: Timpa proyek lama, atawa simpen ku Nama baru.
+
+Bagikan jeung Impor Proyek
+Pikeun ngabagikeun proyek ka babaturan: dina Kelola Project, tahan lila ngaran proyek, tuluy pilih Bagikan. Proyek dikirim minangka ZIP ngaliwatan aplikasi babagi (WhatsApp, Telegram, jeung sajabana). Pikeun nampa proyek ti babaturan: buka menu dina Kelola Project, pilih Impor proyek, tuluy pilih berkas ZIP-na. Berkas ZIP éta kudu ngandung berkas data proyek — lamun euweuh, berkas ditolak ku pesen anu jelas, kusabab berkas éta lain proyek Create Aplikasi. Lamun ngaran proyek geus aya, aplikasi bakal nanyakeun: Timpa proyek lama, atawa simpen ku Nama baru.
+
+Pencarian jeung Filter Proyek
+Lamun proyek geus loba, dina Kelola Project aya kotak pencarian jeung panyaring jenis. Ketik ngaran proyek dina kotak pencarian, daptar langsung kasaring (aksara gedé jeung leutik teu dibédakeun). Panyaring jenis ngawatesan daptar kana hiji jenis wungkul: Semua, HTML, Situs Web, Java, Kotlin, Compose, atawa Python. Menu unggal proyek masih bisa dibuka saperti biasa tina daptar anu geus kasaring.
+
+Bangun Aplikasi dengan Suara

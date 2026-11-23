@@ -1,0 +1,96 @@
+Benvenuto in Create Aplikasi by Al Kautsar
+Create Aplikasi è un'applicazione per creare applicazioni Android che funziona direttamente sul telefono, senza bisogno di un computer portatile. Questa applicazione permette a chiunque di creare la propria applicazione Android, compresi gli utenti che stanno imparando a creare applicazioni e gli utenti di screen reader. La guida completa all'uso di questa applicazione è disponibile in questa schermata Tentang Alat (Informazioni sullo strumento).
+
+Che cos'è questa applicazione e a chi è rivolta
+Create Aplikasi è uno strumento per creare applicazioni Android che funziona sul telefono. È rivolto a chiunque voglia creare la propria applicazione Android, compresi i principianti e gli utenti di screen reader. L'applicazione fornisce un editor di codice, il pulsante Jalankan (Esegui) per provare il progetto, il pulsante Bangun (Compila) per creare l'APK, oltre a menu per firmare e installare l'APK.
+
+Scopo di questa applicazione
+Questa applicazione è stata creata affinché chiunque possa creare facilmente la propria applicazione Android, direttamente dal telefono. L'interfaccia è resa il più semplice possibile, in modo che anche i nuovi utenti possano provarla subito.
+
+Come creare un nuovo progetto, passo dopo passo
+1. Premi Buat Project (Crea progetto) nel menu principale.
+2. Scegli il tipo di progetto: HTML, Situs Web (Sito web), Java, Kotlin, Compose oppure Python.
+3. Inserisci il nome dell'applicazione, ad esempio: Garuda Decode.
+4. Inserisci il nome del pacchetto (package name), ad esempio: com.android.garudadecode. Il nome del pacchetto deve usare lettere minuscole ed essere composto da almeno due parti separate da un punto.
+5. Inserisci la versione dell'applicazione, ad esempio: 1.0, e il codice di versione in forma numerica, ad esempio: 1. Se lasciato vuoto, la versione verrà compilata automaticamente con 1.0 e il codice di versione con 1.
+6. Se necessario, inserisci l'SDK minimo e l'SDK di destinazione. Se lasciato vuoto, verrà usato il valore predefinito. L'SDK minimo è la versione Android più bassa supportata, ad esempio: 21 significa Android 5.0. L'SDK di destinazione massimo è 36 (Android 16).
+7. Premi il pulsante Pilih Izin (Scegli autorizzazioni) per scegliere le autorizzazioni dell'applicazione, ad esempio: INTERNET. L'autorizzazione INTERNET è già selezionata per impostazione predefinita. Seleziona solo le autorizzazioni di cui l'applicazione ha davvero bisogno.
+8. Se lo desideri, seleziona "Gunakan arsitektur terpisah 64 bit dan 32 bit" (Usa architetture separate a 64 bit e 32 bit) per ridurre le dimensioni dell'APK, e seleziona "Gunakan tanda tangan pribadi" (Usa firma personale) se vuoi usare un keystore creato da te.
+9. Premi Buat Proyek (Crea progetto). Il nuovo progetto viene salvato nella cartella Download/project e compare subito in Kelola Project (Gestione progetti).
+
+Tipi di progetto disponibili
+• HTML: interfaccia da index.html, style.css e script.js, eseguita tramite WebView. Viene compilato direttamente sul telefono.
+• Situs Web: sito web con menu (Beranda (Home), Tentang (Informazioni), Kontak (Contatti)) da index.html, tentang.html, kontak.html, style.css e script.js, eseguito tramite WebView. Viene compilato direttamente sul telefono.
+• Java: viene compilato sul telefono. MainActivity si trova in app/src/main/java/<nama-paket>/MainActivity.java. L'interfaccia proviene da app/src/main/res/layout/activity_main.xml, il testo da app/src/main/res/values/strings.xml e il tema da app/src/main/res/values/styles.xml.
+• Kotlin: può essere compilato sul dispositivo (offline) usando il compilatore Kotlin incluso nell'applicazione, oppure tramite GitHub Actions. MainActivity si trova in app/src/main/java/<nama-paket>/MainActivity.kt e i file res sono gli stessi di un progetto Java. La prima compilazione Kotlin è più lenta a causa delle grandi dimensioni del compilatore, e i file .java che fanno riferimento a classi Kotlin non possono ancora essere compilati (i file .java vengono compilati prima dei file .kt).
+• Compose: applicazione Android moderna la cui interfaccia è creata con Jetpack Compose (non con layout XML). MainActivity si trova in app/src/main/java/<nama-paket>/MainActivity.kt. I progetti Compose vengono compilati tramite GitHub Actions (menu Bangun del progetto, poi Bangun online (Compila online)) oppure in Termux con Gradle, perché Compose richiede le librerie Jetpack Compose che non sono disponibili sul dispositivo.
+• Python: la logica dell'applicazione è scritta in linguaggio Python (Chaquopy) in app/src/main/python/main.py e viene eseguita dall'host MainActivity.java in app/src/main/java/<nama-paket>/MainActivity.java. I progetti Python possono essere compilati direttamente sul telefono (il runtime Chaquopy è incluso nell'applicazione) e anche tramite GitHub Actions. L'SDK minimo dei progetti Python è 24 (Android 7.0).
+
+Struttura dei file dei progetti Java, HTML, Situs Web, Kotlin, Compose e Python
+I progetti Java, HTML, Situs Web, Kotlin, Compose e Python sono organizzati come i normali progetti Android. Dentro la cartella app si trova la cartella src e dentro di essa la cartella main. Dentro la cartella main si trova AndroidManifest.xml accanto alla cartella java, la cartella res che contiene layout/activity_main.xml e values/strings.xml oltre a values/styles.xml, e per HTML e Situs Web la cartella assets che contiene index.html (Situs Web ha anche tentang.html e kontak.html). Anche i progetti HTML e Situs Web hanno un proprio MainActivity in app/src/main/java/<nama-paket>/MainActivity.java, che carica index.html nella WebView e diventa il launcher in AndroidManifest. I progetti Python hanno il codice Python in app/src/main/python/main.py e l'host MainActivity.java in app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, layout, strings e styles possono essere aperti e modificati nell'editor, proprio come MainActivity. I vecchi progetti il cui manifest si trova ancora accanto alla cartella app possono comunque essere compilati, perché al momento della compilazione l'applicazione controlla prima AndroidManifest.xml in app/src/main/, poi quello accanto alla cartella app e infine il file dati del progetto.
+
+Regole sulle autorizzazioni (importante)
+Le autorizzazioni selezionate al momento della creazione del progetto vengono registrate in un solo posto, a seconda del tipo di progetto. Per i progetti Java, HTML, Situs Web, Kotlin, Compose e Python, le autorizzazioni selezionate vengono registrate SOLO in AndroidManifest.xml che si trova in app/src/main/, accanto alla cartella java, dentro la cartella del progetto. Il file dati del progetto per i progetti Java, HTML, Situs Web, Kotlin, Compose e Python non contiene un elenco di autorizzazioni. Se scegli Java e selezioni INTERNET e CAMERA, in AndroidManifest.xml verranno registrati solo INTERNET e CAMERA, senza altre autorizzazioni aggiunte. Al momento della compilazione, l'applicazione legge le autorizzazioni dallo stesso posto: da AndroidManifest.xml in app/src/main/ per i progetti Java, HTML, Situs Web, Kotlin, Compose e Python (se non c'è, da AndroidManifest.xml accanto alla cartella app per i vecchi progetti), e dal file dati del progetto per i vecchi progetti.
+
+Come usare l'editor
+Apri Kelola Project, tocca il nome del progetto per aprire l'editor. Nell'editor i file possono essere aperti, il codice può essere scritto e le modifiche possono essere salvate. Per i progetti Java, HTML, Situs Web, Kotlin, Compose e Python, i file sono organizzati dentro la cartella app/src/main. Per condividere un progetto, usa Ekspor ZIP (Esporta ZIP) (vedi la sezione seguente).
+
+Come eseguire il progetto
+Nell'editor, premi Jalankan per provare il progetto. Per i progetti HTML e Situs Web, viene eseguito index.html tramite WebView. Se si verifica un errore, leggi il messaggio di errore, correggi il codice e poi esegui di nuovo.
+
+Come compilare l'APK
+Nell'editor, premi Bangun. Ci sono due modi per compilare. Primo, Bangun di perangkat (Compila sul dispositivo): compila direttamente sul telefono senza internet, per i progetti HTML, Situs Web, Java, Kotlin e Python. Secondo, Bangun online tramite GitHub Actions: compila tramite internet su GitHub e può essere usato per tutti i tipi di progetto. I progetti Compose possono essere compilati solo con il secondo modo (Bangun online) oppure in Termux con Gradle, perché Compose richiede le librerie Jetpack Compose che non sono disponibili sul dispositivo. Il risultato della prima compilazione non è ancora firmato. Dopodiché l'applicazione lo firma: automaticamente con la chiave predefinita, oppure con una firma personale se la casella "Gunakan tanda tangan pribadi" è stata selezionata al momento della creazione del progetto.
+
+Come installare l'APK
+Quando l'APK è pronto, premi Pasang (Installa) per installarlo. Su Android 8 e versioni successive, il telefono chiederà prima "Izinkan dari sumber ini" (Consenti da questa fonte), perché questa applicazione installa APK dall'esterno del Play Store. Attiva tale autorizzazione una volta in Pengaturan (Impostazioni), poi torna all'applicazione: l'installazione continuerà automaticamente senza dover premere di nuovo Pasang. Se il pulsante Pasang non compare, assicurati che la compilazione sia terminata e che l'APK sia stato creato.
+
+Come firmare l'applicazione
+Ogni APK deve essere firmato per poter essere installato. Sono disponibili due scelte. Prima, la chiave predefinita: l'applicazione firma da sola in modo automatico, senza che tu debba fare nulla. Seconda, la firma personale: crea prima un keystore tramite il menu Buat Keystore (Crea keystore) nel menu principale, conserva bene la sua password, poi seleziona "Gunakan tanda tangan pribadi" al momento della creazione del progetto. Il keystore è salvato in Download/project/signing.
+
+Esportare il progetto in ZIP
+Ekspor ZIP è fornito affinché il progetto possa essere condiviso con gli amici. Ecco come: in Kelola Project, tieni premuto a lungo il nome del progetto, poi scegli Ekspor ZIP. Il risultato viene salvato in Download/project/<NamaProyek>.zip. La cartella bin non viene inclusa, quindi le dimensioni sono piccole, solo poche decine di KB. Quel file ZIP può essere inviato a un amico o caricato su GitHub.
+
+Ekstensi JAWS
+Ekstensi JAWS usa il motore di estensione di Jieshuo (CSR), non il suo screen reader. In questo modo la progettazione può continuare a funzionare anche se l'utente usa TalkBack. Ecco come: apri Ekstensi JAWS nel menu principale. Poiché il clic automatico funziona da solo, il servizio deve prima essere attivato in Pengaturan Aksesibilitas (Impostazioni di accessibilità). Dopodiché si può creare una nuova progettazione: digita il nome della progettazione, premi OK, poi compila le sue caselle.
+
+Daftar Klik separato per mantenere l'ordine
+Dentro una progettazione ci sono due caselle: la casella dello script e la casella Daftar Klik (Elenco dei clic). L'elenco dei pulsanti è salvato separatamente nel file daftar_klik.txt, un nome per riga. Esempio di contenuto: tombolSimpan, tombolHapus, tombolBuka. Per aprire un'applicazione, basta scrivere >WhatsApp in quell'elenco. Le vecchie progettazioni che non hanno ancora il file daftar_klik.txt mostreranno quell'esempio predefinito.
+
+Funzioni semplici fornite
+• klikTombol("tombolSimpan") — fa clic su un pulsante in base al suo testo.
+• klikDaftarTombol(daftar) — fa clic sull'elenco in daftar_klik.txt, un pulsante per riga, in ordine, poi comunica quanti sono riusciti e quanti non sono stati trovati.
+• bukaAplikasi("WhatsApp") — apre un'applicazione in base al suo nome, oppure scrivi ">WhatsApp" nell'elenco.
+• klik(540, 1200) — fa clic alle coordinate dello schermo.
+Tutte le funzioni sono rese semplici per prima cosa. Una volta che ci hai preso la mano, in seguito si potranno aggiungere altre funzioni.
+
+Informazioni sullo screen reader
+Questa applicazione è progettata per essere accessibile agli screen reader. Ogni campo di inserimento ha un'etichetta e un esempio di compilazione, e tutti i pulsanti possono essere raggiunti senza gesti complicati. Ekstensi JAWS è fatta in modo da continuare a funzionare anche se l'utente usa TalkBack, perché ciò che viene usato è il suo motore di estensione, non il suo screen reader.
+
+Privacy e sicurezza
+I progetti e i keystore sono salvati sul tuo telefono. Il token GitHub è usato solo per la compilazione online ed è salvato dentro questa applicazione. Non condividere con nessuno il tuo token o la password del keystore. Se usi una firma personale, conserva il keystore e la sua password in un luogo sicuro, perché se vanno persi, il vecchio APK non potrà essere aggiornato con la stessa firma.
+
+Requisiti
+Android 5.0 o versioni successive. Autorizzazione di archiviazione: su Android 11 e versioni successive usa l'autorizzazione di accesso a tutti i file, su Android 10 e versioni precedenti usa la normale autorizzazione di archiviazione (lettura/scrittura dell'archiviazione) perché Android 10 non ha l'autorizzazione di accesso a tutti i file. Compilare sul dispositivo richiede un telefono con processore ARM (32 o 64 bit). Compilare online tramite GitHub Actions richiede internet e un token GitHub. I progetti Kotlin possono essere compilati sul dispositivo, ma la prima compilazione è più lenta e usa più memoria a causa delle grandi dimensioni del compilatore Kotlin. I progetti Compose vengono compilati tramite GitHub Actions oppure in Termux con Gradle. I progetti Python richiedono Android 7.0 o versioni successive (SDK minimo 24) e l'APK risultante è più grande perché include il runtime Python (Chaquopy) insieme alla sua libreria standard.
+
+Terminal
+Il menu Terminal nella schermata principale apre un terminale dentro questa applicazione. Comandi come ls possono essere usati per vedere il contenuto della cartella del progetto, cd per spostarsi tra le cartelle e git per gestire il codice. L'output dei comandi appare come testo che può essere letto dallo screen reader, e c'è il pulsante Bacakan hasil (Leggi il risultato) per ascoltare l'ultimo risultato. Questo terminale usa la shell di sistema del telefono, quindi programmi interattivi come nano e vim non possono ancora essere usati qui.
+
+Lisensi (versione a pagamento)
+Per vendere un'applicazione, seleziona "Aktifkan Lisensi" (Attiva licenza) al momento della creazione del progetto, poi inserisci il tuo numero WhatsApp. L'applicazione risultante dalla compilazione chiederà un codice di licenza alla prima apertura: l'utente vede il suo ID dispositivo, preme il pulsante Kirim ID Perangkat (Invia ID dispositivo) per inviare quell'ID al tuo WhatsApp, poi tu rispondi con il codice di licenza. Il codice di licenza viene calcolato dall'ID dispositivo e dalla password del progetto (lisensi_seed nel file dati del progetto) — conserva bene quella password e non condividerla. Dopo che il codice corretto è stato inserito, l'applicazione si apre e non chiede più il codice.
+
+Pembuat Ikon Otomatis
+L'icona dei nuovi progetti è ancora trasparente, quindi nel menu principale è disponibile Pembuat Ikon (Crea icona). Ecco come: premi Pembuat Ikon, scrivi una o due lettere (ad esempio le iniziali del nome dell'applicazione), scegli il colore di sfondo e il colore del testo, guarda l'anteprima, poi premi Simpan ke Proyek (Salva nel progetto) per usare quell'icona nel progetto scelto, oppure Simpan ke Download (Salva in Download) per usare il suo file PNG altrove. Dopo che il progetto è stato creato, l'applicazione propone anche di creare un'icona. La vecchia icona di un progetto può essere cambiata in qualsiasi momento dal menu del progetto in Kelola Project (tieni premuto a lungo il nome del progetto, poi scegli Ganti Ikon (Cambia icona)).
+
+Template Proyek Siap Pakai
+Se non vuoi partire da un progetto vuoto, scegli un modello al momento della creazione del progetto: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) oppure Penghitung (Compose). Scegliere un modello cambia automaticamente il tipo di progetto in base a quel modello, e il progetto viene creato con un codice iniziale già pronto — basta eseguirlo o modificarlo. Se il tipo di progetto viene cambiato di nuovo manualmente dopo aver scelto un modello, il modello viene annullato e il progetto torna vuoto. Per i modelli HTML e Situs Web, il modello sostituisce il contenuto di index.html, compreso lo script HTML digitato nel modulo.
+
+Cadangan dan Pulihkan Proyek
+Affinché i progetti non vadano persi, è disponibile una funzione di backup. Ecco come: in Kelola Project, tieni premuto a lungo il nome del progetto, poi scegli Cadangkan (Esegui backup). Il backup viene salvato come ZIP nella cartella Download/backup con il nome del progetto e la data, ad esempio: GarudaDecode-2026-11-14-123045.zip. Il suo contenuto è lo stesso di Ekspor ZIP (l'intero contenuto del progetto, senza la cartella bin). Per ripristinare: apri il menu in Kelola Project, scegli Pulihkan cadangan (Ripristina backup), poi scegli il file di backup. Se il nome del progetto esiste già, l'applicazione chiederà: Timpa proyek lama (Sovrascrivi il vecchio progetto), oppure salva con Nama baru (Nuovo nome).
+
+Bagikan dan Impor Proyek
+Per condividere un progetto con un amico: in Kelola Project, tieni premuto a lungo il nome del progetto, poi scegli Bagikan (Condividi). Il progetto viene inviato come ZIP tramite le app di condivisione (WhatsApp, Telegram e altre). Per ricevere un progetto da un amico: apri il menu in Kelola Project, scegli Impor proyek (Importa progetto), poi scegli il suo file ZIP. Quel file ZIP deve contenere un file dati del progetto — se non c'è, il file viene rifiutato con un messaggio chiaro, perché quel file non è un progetto Create Aplikasi. Se il nome del progetto esiste già, l'applicazione chiederà: Timpa proyek lama, oppure salva con Nama baru.
+
+Pencarian dan Filter Proyek
+Se i progetti sono diventati molti, in Kelola Project ci sono una casella di ricerca e un filtro per tipo. Digita il nome del progetto nella casella di ricerca e l'elenco viene filtrato subito (maiuscole e minuscole non vengono distinte). Il filtro per tipo limita l'elenco a un solo tipo: Semua (Tutti), HTML, Situs Web, Java, Kotlin, Compose oppure Python. Il menu di ogni progetto può comunque essere aperto come al solito dall'elenco filtrato.
+
+Bangun Aplikasi dengan Suara

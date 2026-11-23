@@ -1,0 +1,96 @@
+Barka da zuwa Create Aplikasi ta Al Kautsar
+Create Aplikasi manhaja ce ta gina manhajojin Android da ke aiki kai tsaye a waya, ba tare da buƙatar kwamfutar tafi-da-gidanka ba. Wannan manhaja tana ba kowa damar ƙirƙirar manhajojin Android nasa, har da masu amfani da ke koyon ƙirƙirar manhaja da masu amfani da na'urar karanta allo. Cikakken jagora game da amfani da wannan manhaja yana nan a wannan allon Game da Kayan aiki.
+
+Menene wannan manhaja kuma wa take yi wa
+Create Aplikasi kayan aiki ne na gina manhajojin Android da ke aiki a waya. An yi nufin wannan manhaja ga duk wanda yake son ƙirƙirar manhajojin Android nasa, har da masu farawa da masu amfani da na'urar karanta allo. Wannan manhaja tana ba da editan lamba, maɓallin Gudanar don gwada ayyuka, maɓallin Gina don ƙirƙirar APK, da menus don sanya hannu da shigar da APK.
+
+Manufar wannan manhaja
+An ƙirƙiri wannan manhaja ne don kowa ya iya ƙirƙirar manhajojin Android nasa cikin sauƙi, kai tsaye daga waya. An sa yanayinta ya zama mai sauƙi gwargwadon iko don har ma sababbin masu amfani su iya gwada ta nan da nan.
+
+Yadda ake ƙirƙirar sabon aiki, mataki-mataki
+1. Danna Ƙirƙiri Aiki a menu na farko.
+2. Zaɓi nau'in aiki: HTML, Shafin Intanet, Java, Kotlin, Compose, ko Python.
+3. Cika sunan manhaja, misali: Garuda Decode.
+4. Cika sunan kunshi (package name), misali: com.android.garudadecode. Sunan kunshi dole ya yi amfani da ƙananan haruffa kuma ya ƙunshi aƙalla sassa biyu da digo ya raba su.
+5. Cika sigar manhaja, misali: 1.0, da lambar siga a siffar lamba, misali: 1. Idan an bar shi babu komai, za a cika siga kai tsaye da 1.0 da lambar siga 1.
+6. Cika mafi ƙanƙantar SDK da SDK da aka nufa idan ana buƙata. Idan an bar shi babu komai, za a yi amfani da ƙimar asali. Mafi ƙanƙantar SDK ita ce mafi ƙanƙantar sigar Android da ake goyon baya, misali: 21 na nufin Android 5.0. Mafi girman SDK da aka nufa ita ce 36 (Android 16).
+7. Danna maɓallin Zaɓi Izini don zaɓar izinin manhaja, misali: INTERNET. Izinin INTERNET an riga an yi masa alama a matsayin asali. Yi alama ga izinin da manhaja take buƙata da gaske kawai.
+8. Idan ana so, yi alama ga "Yi amfani da gine-gine daban na bit 64 da bit 32" don girman APK ya zama ƙarami, kuma yi alama ga "Yi amfani da sa hannu na kashin kai" idan kana son amfani da keystore naka.
+9. Danna Ƙirƙiri Aiki. Sabon aiki yana ajiyuwa a babban fayil ɗin Download/project kuma yana bayyana nan da nan a Sarrafa Ayyuka.
+
+Nau'ukan ayyuka da ake da su
+• HTML: nuni daga index.html, style.css, da script.js, yana aiki ta WebView. Ana ginawa kai tsaye a waya.
+• Shafin Intanet: shafin intanet mai menu (Gida, Game da, Tuntuɓa) daga index.html, tentang.html, kontak.html, style.css, da script.js, yana aiki ta WebView. Ana ginawa kai tsaye a waya.
+• Java: ana ginawa a waya. MainActivity yana cikin app/src/main/java/<sunan-kunshi>/MainActivity.java. Nuni daga app/src/main/res/layout/activity_main.xml, rubutu daga app/src/main/res/values/strings.xml, da jigo daga app/src/main/res/values/styles.xml.
+• Kotlin: ana iya ginawa a na'ura (ba tare da intanet ba) ta amfani da mai tarawa na Kotlin da aka haɗa a manhajar, ko ta GitHub Actions. MainActivity yana cikin app/src/main/java/<sunan-kunshi>/MainActivity.kt, kuma fayilolin res iri ɗaya ne da na aikin Java. Ginin Kotlin na farko ya fi hankali a hankali saboda girman mai tarawa, kuma fayilolin .java da ke nuni ga azuzuwan Kotlin ba za a iya gina su tukuna ba (ana tarawa fayilolin .java kafin fayilolin .kt).
+• Compose: manhajar Android ta zamani wadda aka ƙirƙiri yanayinta da Jetpack Compose (ba tsarin XML ba). MainActivity yana cikin app/src/main/java/<sunan-kunshi>/MainActivity.kt. Ana gina ayyukan Compose ta GitHub Actions (menu na Gina aiki, sannan Gina a kan layi) ko a Termux da Gradle, saboda Compose na buƙatar ɗakunan karatu na Jetpack Compose da ba sa samuwa a na'ura.
+• Python: an rubuta dabarar manhajar da harshen Python (Chaquopy) a app/src/main/python/main.py, kuma mai masaukin MainActivity.java a app/src/main/java/<sunan-kunshi>/MainActivity.java ke gudanar da ita. Ana iya gina ayyukan Python kai tsaye a waya (lokacin gudanarwa na Chaquopy an haɗa shi a manhajar) da kuma ta GitHub Actions. Mafi ƙanƙantar SDK na aikin Python ita ce 24 (Android 7.0).
+
+Tsarin fayiloli na ayyukan Java, HTML, Shafin Intanet, Kotlin, Compose, da Python
+Ayyukan Java, HTML, Shafin Intanet, Kotlin, Compose, da Python an tsara su kamar ayyukan Android gabaɗaya. A cikin babban fayil ɗin app akwai babban fayil ɗin src, kuma a cikinsa akwai babban fayil ɗin main. A cikin babban fayil ɗin main akwai AndroidManifest.xml a gefen babban fayil ɗin java, babban fayil ɗin res mai ɗauke da layout/activity_main.xml da values/strings.xml da kuma values/styles.xml, kuma ga HTML da Shafin Intanet akwai babban fayil ɗin assets mai ɗauke da index.html (Shafin Intanet kuma yana da tentang.html da kontak.html). Ayyukan HTML da Shafin Intanet kuma suna da MainActivity nasu a app/src/main/java/<sunan-kunshi>/MainActivity.java, wanda ke ɗaukar index.html a WebView kuma ya zama mai ƙaddamarwa a AndroidManifest. Aikin Python yana da lambar Python a app/src/main/python/main.py da mai masaukin MainActivity.java a app/src/main/java/<sunan-kunshi>/MainActivity.java. Ana iya buɗewa da canza AndroidManifest.xml, tsari, strings, da styles a edita, kamar MainActivity. Ayyukan da suka tsufa da manifest nasu yake a gefen babban fayil ɗin app har yanzu ana iya gina su, saboda lokacin ginawa, manhajar tana bincikar AndroidManifest.xml a app/src/main/ da farko, sannan wanda yake gefen babban fayil ɗin app, kuma a ƙarshe fayil ɗin bayanan aiki.
+
+Dokokin izini (muhimmi)
+Izinin da aka yi wa alama lokacin ƙirƙirar aiki ana rubuta su a wuri ɗaya kawai, gwargwadon nau'in aiki. Ga ayyukan Java, HTML, Shafin Intanet, Kotlin, Compose, da Python, izinin da aka yi wa alama ana rubuta su KAWAI a AndroidManifest.xml da yake cikin app/src/main/, a gefen babban fayil ɗin java, a cikin babban fayil ɗin aiki. Fayil ɗin bayanan aiki ga ayyukan Java, HTML, Shafin Intanet, Kotlin, Compose, da Python ba ya ƙunshe da jerin izini. Idan ka zaɓi Java sannan ka yi alama ga INTERNET da CAMERA, abin da za a rubuta a AndroidManifest.xml shi ne INTERNET da CAMERA kawai, ba tare da wasu izini sun shigo ba. Lokacin ginawa, manhajar tana karanta izini daga wuri guda: daga AndroidManifest.xml a app/src/main/ ga ayyukan Java, HTML, Shafin Intanet, Kotlin, Compose, da Python (idan babu shi, daga AndroidManifest.xml da yake gefen babban fayil ɗin app ga ayyukan da suka tsufa), da kuma daga fayil ɗin bayanan aiki ga ayyukan da suka tsufa.
+
+Yadda ake amfani da edita
+Buɗe Sarrafa Ayyuka, taɓa sunan aiki don buɗe edita. A edita, ana iya buɗe fayiloli, rubuta lamba, da adana canje-canje. Ga ayyukan Java, HTML, Shafin Intanet, Kotlin, Compose, da Python, fayiloli an tsara su a cikin babban fayil ɗin app/src/main. Don raba aiki, yi amfani da Fitarwa ZIP (duba sashen da ke ƙasa).
+
+Yadda ake gudanar da aiki
+A edita, danna Gudanar don gwada aikin. Ga ayyukan HTML da Shafin Intanet, abin da ake gudanarwa shi ne index.html ta WebView. Idan kuskure ya faru, karanta saƙon kuskuren, gyara lambar, sannan gudanar kuma.
+
+Yadda ake gina APK
+A edita, danna Gina. Akwai hanyoyi biyu na ginawa. Na farko, Gina a na'ura: ginawa kai tsaye a waya ba tare da intanet ba, ga ayyukan HTML, Shafin Intanet, Java, Kotlin, da Python. Na biyu, Gina a kan layi ta GitHub Actions: ginawa ta intanet a GitHub, kuma ana iya amfani da shi ga duk nau'ukan ayyuka. Ayyukan Compose ana iya gina su ta hanya ta biyu kawai (Gina a kan layi) ko a Termux da Gradle, saboda Compose na buƙatar ɗakunan karatu na Jetpack Compose da ba sa samuwa a na'ura. Sakamakon ginin farko ba a sa masa hannu tukuna ba. Bayan haka manhajar tana sa masa hannu: kai tsaye da maɓallin asali, ko da sa hannu na kashin kai idan an yi alama ga akwatin "Yi amfani da sa hannu na kashin kai" lokacin ƙirƙirar aikin.
+
+Yadda ake shigar da APK
+Idan APK ya shirya, danna Shigar don shigar da shi. A Android 8 da sama, wayar za ta nemi "Ba da izini daga wannan tushe" da farko, saboda wannan manhaja tana shigar da APK daga wajen Play Store. Kunna wannan izini sau ɗaya a Saituna, sannan ka dawo manhajar: shigarwar za ta ci gaba kai tsaye ba tare da buƙatar danna Shigar kuma ba. Idan maɓallin Shigar bai bayyana ba, tabbata ginawar ta ƙare kuma an ƙirƙiri APK.
+
+Yadda ake sanya hannu ga manhaja
+Dole a sa wa kowace APK hannu don a iya shigar da ita. Akwai zaɓuɓɓuka biyu. Na farko, maɓallin asali: manhajar tana sa hannu da kanta kai tsaye, ba tare da buƙatar yin komai ba. Na biyu, sa hannu na kashin kai: ƙirƙiri keystore da farko ta menu na Ƙirƙiri Keystore a menu na farko, adana kalmar sirrinsa da kyau, sannan yi alama ga "Yi amfani da sa hannu na kashin kai" lokacin ƙirƙirar aiki. Ana adana keystore a Download/project/signing.
+
+Fitar da aiki zuwa ZIP
+Ana ba da Fitarwa ZIP don a iya raba ayyuka ga abokai. Ga yadda: a Sarrafa Ayyuka, danna sunan aikin na dogon lokaci, sannan zaɓi Fitarwa ZIP. Sakamakon yana ajiyuwa a Download/project/<SunanAiki>.zip. Ba a haɗa babban fayil ɗin bin ba, don haka girmansa ƙarami ne, dubun-dubatar KB kawai. Ana iya aika wannan fayil ɗin ZIP ga abokai ko a ɗora shi a GitHub.
+
+Ƙarin JAWS
+Ƙarin JAWS yana amfani da injin ƙari daga Jieshuo (CSR), ba na'urar karanta allonta ba. Ta haka, tsarin har yanzu yana iya aiki ko da mai amfani yana amfani da TalkBack. Ga yadda: buɗe Ƙarin JAWS a menu na farko. Saboda dannawa kai tsaye tana aiki da kanta, dole a kunna sabis ɗin da farko a Saitunan Samun dama. Bayan haka ana iya ƙirƙirar sabon tsari: rubuta sunan tsarin, danna OK, sannan cika akwatin sa.
+
+An raba Jerin Dannawa don ya zama mai tsari
+A cikin tsarin akwai akwatuna biyu: akwatin rubutun aiki da akwatin Jerin Dannawa. Ana adana jerin maɓallai daban a fayil ɗin daftar_klik.txt, suna ɗaya a kowane layi. Misalin abin da ke ciki: tombolSimpan, tombolHapus, tombolBuka. Don buɗe manhaja, kawai rubuta >WhatsApp a wannan jerin. Tsoffin tsare-tsare da ba su da fayil ɗin daftar_klik.txt tukuna za su nuna wannan misali na asali.
+
+Ayyuka masu sauƙi da ake bayarwa
+• klikTombol("tombolSimpan") — danna maɓalli ɗaya gwargwadon rubutunsa.
+• klikDaftarTombol(daftar) — danna jerin da ke cikin daftar_klik.txt, maɓalli ɗaya a kowane layi, a jere, sannan a sanar da nawa suka yi nasara da nawa ba a same su ba.
+• bukaAplikasi("WhatsApp") — buɗe manhaja gwargwadon sunanta, ko rubuta ">WhatsApp" a jerin.
+• klik(540, 1200) — dannawa a madaidaitan allo.
+Duk ayyukan an sa su masu sauƙi da farko. Idan an saba, ana iya ƙara ƙarin ayyuka daga baya.
+
+Game da na'urorin karanta allo
+An tsara wannan manhaja don ta zama abokiya ga na'urorin karanta allo. Kowane filin cike yana da lakabi da misalin cikewa, kuma ana iya isa ga duk maɓallai ba tare da motsi masu rikitarwa ba. An yi Ƙarin JAWS don ya ci gaba da aiki ko da mai amfani yana amfani da TalkBack, saboda abin da ake amfani da shi shi ne injin ƙarinsa, ba na'urar karanta allonta ba.
+
+Sirri da tsaro
+Ayyuka da keystore ana adana su a wayarka. Alamar GitHub ana amfani da ita ne don ginawa a kan layi kawai kuma ana adana ta a cikin wannan manhaja. Kada ka raba alamar ka ko kalmar sirrin keystore naka ga kowa. Idan kana amfani da sa hannu na kashin kai, adana keystore da kalmar sirrinsa a wuri mai tsaro, saboda idan sun ɓace, ba za a iya sabunta tsohuwar APK da sa hannu iri ɗaya ba.
+
+Buƙatu
+Android 5.0 ko sabuwa fiye da haka. Izinin ajiya: a Android 11 da sama yana amfani da izinin samun duk fayiloli, a Android 10 da ƙasa yana amfani da izinin ajiya na al'ada (karanta/rubuta ajiya) saboda Android 10 ba ta da izinin samun duk fayiloli. Ginawa a na'ura na buƙatar waya mai sarrafa ARM (bit 32 ko 64). Ginawa a kan layi ta GitHub Actions na buƙatar intanet da alamar GitHub. Ana iya gina ayyukan Kotlin a na'ura, amma ginin su na farko ya fi hankali kuma yana amfani da ƙarin ƙwaƙwalwa saboda girman mai tarawa na Kotlin. Ana gina ayyukan Compose ta GitHub Actions ko a Termux da Gradle. Ayyukan Python na buƙatar Android 7.0 ko sabuwa fiye da haka (mafi ƙanƙantar SDK 24) kuma APK nasu ya fi girma saboda yana haɗa da lokacin gudanarwa na Python (Chaquopy) tare da ɗakin karatunsa na asali.
+
+Terminal
+Menu na Terminal a allon farko yana buɗe terminal a cikin wannan manhaja. Ana iya amfani da umarni kamar ls don ganin abin da ke cikin babban fayil ɗin aiki, cd don canza manyan fayiloli, da git don sarrafa lamba. Fitowar umarni tana bayyana a matsayin rubutu da na'urar karanta allo za ta iya karantawa, kuma akwai maɓallin Karanta sakamako don sauraron sakamakon ƙarshe. Wannan terminal yana amfani da harsashin tsarin wayar, don haka shirye-shirye masu mu'amala kamar nano da vim ba za a iya amfani da su a nan tukuna ba.
+
+Lasisi (sigar da ake biya)
+Don sayar da manhaja, yi alama ga "Kunna Lasisi" lokacin ƙirƙirar aiki, sannan cika lambar WhatsApp naka. Manhajar da aka gina za ta nemi lambar lasisi lokacin da aka buɗe ta da farko: mai amfani yana ganin ID na na'urarsa, ya danna maɓallin Aika ID na Na'ura don aika wannan ID zuwa WhatsApp naka, sannan kai ka amsa da lambar lasisinsa. Ana ƙididdige lambar lasisi daga ID na na'ura da kalmar sirrin aiki (lisensi_seed a fayil ɗin bayanan aiki) — adana wannan kalmar sirri da kyau kuma kada ka raba ta. Bayan an shigar da lambar da ta dace, manhajar tana buɗewa kuma ba ta ƙara neman lamba ba.
+
+Mai Ƙirƙirar Alama ta Kai tsaye
+Alamomin sababbin ayyuka har yanzu a bayyane suke, don haka Mai Ƙirƙirar Alama yana samuwa a menu na farko. Ga yadda: danna Mai Ƙirƙirar Alama, rubuta harafi ɗaya ko biyu (misali farkon haruffan sunan manhaja), zaɓi launin bango da launin rubutu, duba samfurinsa, sannan danna Ajiye zuwa Aiki don amfani da wannan alama a aikin da aka zaɓa, ko Ajiye zuwa Download don amfani da fayil ɗin PNG nasa a wani wuri. Bayan an ƙirƙiri aiki, manhajar kuma tana ba da damar ƙirƙirar alama. Ana iya canza tsohuwar alamar aiki a kowane lokaci daga menu na aiki a Sarrafa Ayyuka (danna sunan aikin na dogon lokaci, sannan zaɓi Canza Alama).
+
+Samfuran Aiki da Suka Shirya
+Idan ba ka son farawa daga aikin da babu komai, zaɓi samfuri lokacin ƙirƙirar aiki: Kalkuleta (Java), Bayanan kula (Java), Jerin Ayyuka (Kotlin), Kalkuleta ta Intanet (HTML), Shafin Bayanin martaba (Shafin Intanet), ko Mai Ƙidaya (Compose). Zaɓar samfuri yana canza nau'in aikin kai tsaye ya bi wannan samfuri, kuma ana ƙirƙirar aikin da lambar farawa da ta shirya — abin da ya rage shi ne gudanarwa ko canzawa. Idan aka canza nau'in aikin da hannu kuma bayan zaɓar samfuri, samfurin yana sokewa kuma aikin ya koma babu komai. Ga samfuran HTML da Shafin Intanet, samfurin yana maye gurbin abin da ke cikin index.html, har da rubutun HTML da aka rubuta a fom.
+
+Ajiye Ayyuka da Maido da Su
+Don ayyuka kada su ɓace, akwai fasalin ajiya. Ga yadda: a Sarrafa Ayyuka, danna sunan aikin na dogon lokaci, sannan zaɓi Ajiya. Ajiyar tana ajiyuwa a matsayin ZIP a babban fayil ɗin Download/backup tare da sunan aiki da kwanan wata, misali: GarudaDecode-2026-11-14-123045.zip. Abin da ke ciki iri ɗaya ne da Fitarwa ZIP (duk abin da ke cikin aikin, ba tare da babban fayil ɗin bin ba). Don maidowa: buɗe menu a Sarrafa Ayyuka, zaɓi Maido da ajiya, sannan zaɓi fayil ɗin ajiyarsa. Idan sunan aikin ya riga ya wanzu, manhajar za ta tambaya: Rubuta a kan tsohon aikin, ko ajiye da Sabon suna.
+
+Raba da Shigo da Ayyuka
+Don raba aiki ga aboki: a Sarrafa Ayyuka, danna sunan aikin na dogon lokaci, sannan zaɓi Raba. Ana aika aikin a matsayin ZIP ta manhajojin rabawa (WhatsApp, Telegram, da sauransu). Don karɓar aiki daga aboki: buɗe menu a Sarrafa Ayyuka, zaɓi Shigo da aiki, sannan zaɓi fayil ɗin ZIP nasa. Wannan fayil ɗin ZIP dole ya ƙunshi fayil ɗin bayanan aiki — idan babu shi, ana ƙin fayil ɗin da saƙo mai haske, saboda wannan fayil ɗin ba aikin Create Aplikasi ba ne. Idan sunan aikin ya riga ya wanzu, manhajar za ta tambaya: Rubuta a kan tsohon aikin, ko ajiye da Sabon suna.
+
+Nema da Tace Ayyuka
+Idan ayyuka sun riga sun yi yawa, a Sarrafa Ayyuka akwai akwatin nema da matatar nau'i. Rubuta sunan aikin a akwatin nema, jerin yana tacewa nan da nan (ba a bambanta manyan da ƙananan haruffa ba). Matatar nau'i tana iyakance jerin ga nau'i ɗaya kawai: Duka, HTML, Shafin Intanet, Java, Kotlin, Compose, ko Python. Har yanzu ana iya buɗe menu na kowane aiki kamar yadda aka saba daga jerin da aka tace.
+
+Gina Manhaja da Murya

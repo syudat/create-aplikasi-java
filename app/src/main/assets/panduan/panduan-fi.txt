@@ -1,0 +1,96 @@
+Tervetuloa käyttämään Create Aplikasi by Al Kautsar -sovellusta
+Create Aplikasi on Android-sovellusten tekoon tarkoitettu sovellus, joka toimii suoraan puhelimessa ilman kannettavaa tietokonetta. Sovelluksen avulla kuka tahansa voi tehdä oman Android-sovelluksensa, myös käyttäjät, jotka vasta opettelevat sovellusten tekemistä, sekä ruudunlukijan käyttäjät. Tämän sovelluksen täydellinen käyttöopas on saatavilla tällä Tentang Alat -näytöllä.
+
+Mikä tämä sovellus on ja kenelle se on tarkoitettu
+Create Aplikasi on puhelimessa toimiva työkalu Android-sovellusten tekemiseen. Sovellus on tarkoitettu kaikille, jotka haluavat tehdä oman Android-sovelluksensa, myös aloittelijoille ja ruudunlukijan käyttäjille. Sovelluksessa on koodieditori, Jalankan-painike projektien testaamiseen, Bangun-painike APK:n luomiseen sekä valikot APK:n allekirjoittamiseen ja asentamiseen.
+
+Tämän sovelluksen tarkoitus
+Tämä sovellus on tehty, jotta kuka tahansa voi tehdä oman Android-sovelluksensa helposti suoraan puhelimesta. Sen ulkoasu on tehty mahdollisimman yksinkertaiseksi, jotta uudetkin käyttäjät voivat kokeilla sitä heti.
+
+Uuden projektin luominen vaihe vaiheelta
+1. Paina Buat Project päävalikossa.
+2. Valitse projektin tyyppi: HTML, Situs Web, Java, Kotlin, Compose tai Python.
+3. Kirjoita sovelluksen nimi, esimerkiksi: Garuda Decode.
+4. Kirjoita paketin nimi (package name), esimerkiksi: com.android.garudadecode. Paketin nimen on käytettävä pieniä kirjaimia ja koostuttava vähintään kahdesta pisteellä erotetusta osasta.
+5. Kirjoita sovelluksen versio, esimerkiksi: 1.0, ja versiokoodi numerona, esimerkiksi: 1. Jos kenttä jätetään tyhjäksi, versioksi täytetään automaattisesti 1.0 ja versiokoodiksi 1.
+6. Kirjoita tarvittaessa vähimmäis-SDK ja kohde-SDK. Jos kentät jätetään tyhjiksi, käytetään oletusarvoja. Vähimmäis-SDK on alin tuettu Android-versio, esimerkiksi: 21 tarkoittaa Android 5.0:aa. Kohde-SDK:n enimmäisarvo on 36 (Android 16).
+7. Paina Pilih Izin -painiketta valitaksesi sovelluksen käyttöoikeudet, esimerkiksi: INTERNET. INTERNET-käyttöoikeus on valittuna oletuksena. Valitse vain ne käyttöoikeudet, joita sovellus todella tarvitsee.
+8. Halutessasi valitse "Gunakan arsitektur terpisah 64 bit dan 32 bit", jotta APK:n koko pienenee, ja valitse "Gunakan tanda tangan pribadi", jos haluat käyttää itse tekemääsi keystorea.
+9. Paina Buat Proyek. Uusi projekti tallentuu kansioon Download/project ja näkyy heti kohdassa Kelola Project.
+
+Saatavilla olevat projektityypit
+• HTML: näkymä tiedostoista index.html, style.css ja script.js, toimii WebView'n kautta. Rakennetaan suoraan puhelimessa.
+• Situs Web: verkkosivusto, jossa on valikot (Beranda, Tentang, Kontak) tiedostoista index.html, tentang.html, kontak.html, style.css ja script.js, toimii WebView'n kautta. Rakennetaan suoraan puhelimessa.
+• Java: rakennetaan puhelimessa. MainActivity sijaitsee polussa app/src/main/java/<nama-paket>/MainActivity.java. Näkymä tulee tiedostosta app/src/main/res/layout/activity_main.xml, teksti tiedostosta app/src/main/res/values/strings.xml ja teema tiedostosta app/src/main/res/values/styles.xml.
+• Kotlin: voidaan rakentaa laitteessa (offline) sovelluksen mukana tulevalla Kotlin-kääntäjällä tai GitHub Actionsin kautta. MainActivity sijaitsee polussa app/src/main/java/<nama-paket>/MainActivity.kt, ja res-tiedostot ovat samat kuin Java-projektissa. Ensimmäinen Kotlin-rakennus on hitaampi kääntäjän suuren koon vuoksi, eikä Kotlin-luokkiin viittaavia .java-tiedostoja voi vielä rakentaa (.java-tiedostot käännetään ennen .kt-tiedostoja).
+• Compose: moderni Android-sovellus, jonka käyttöliittymä on tehty Jetpack Composella (ei XML-asettelulla). MainActivity sijaitsee polussa app/src/main/java/<nama-paket>/MainActivity.kt. Compose-projektit rakennetaan GitHub Actionsin kautta (valikko Bangun proyek, sitten Bangun online) tai Termuxissa Gradlella, koska Compose vaatii Jetpack Compose -kirjastoja, joita laitteessa ei ole.
+• Python: sovelluksen logiikka kirjoitetaan Pythonilla (Chaquopy) tiedostoon app/src/main/python/main.py, ja sitä ajaa isäntä MainActivity.java polussa app/src/main/java/<nama-paket>/MainActivity.java. Python-projektit voidaan rakentaa suoraan puhelimessa (Chaquopy-ajonaikainen ympäristö sisältyy sovellukseen) tai GitHub Actionsin kautta. Python-projektien vähimmäis-SDK on 24 (Android 7.0).
+
+Java-, HTML-, Situs Web-, Kotlin-, Compose- ja Python-projektien tiedostorakenne
+Java-, HTML-, Situs Web-, Kotlin-, Compose- ja Python-projektit on järjestetty kuten Android-projektit yleensä. Kansion app sisällä on kansio src, ja sen sisällä on kansio main. Kansion main sisällä on AndroidManifest.xml java-kansion vieressä, kansio res, joka sisältää tiedostot layout/activity_main.xml ja values/strings.xml sekä values/styles.xml, ja HTML- ja Situs Web -projekteissa kansio assets, joka sisältää tiedoston index.html (Situs Web sisältää myös tiedostot tentang.html ja kontak.html). HTML- ja Situs Web -projekteilla on myös oma MainActivity polussa app/src/main/java/<nama-paket>/MainActivity.java, joka lataa tiedoston index.html WebView'hun ja toimii käynnistimenä AndroidManifestissa. Python-projekteissa Python-koodi on tiedostossa app/src/main/python/main.py ja isäntä MainActivity.java polussa app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, asettelu, strings ja styles voidaan avata ja muokata editorissa, aivan kuten MainActivity. Vanhemmat projektit, joiden manifesti on edelleen app-kansion vieressä, voidaan edelleen rakentaa, koska sovellus tarkistaa rakentamisen aikana ensin AndroidManifest.xml-tiedoston polusta app/src/main/, sitten app-kansion vierestä ja viimeisenä projektin datatiedoston.
+
+Käyttöoikeussäännöt (tärkeää)
+Projektia luotaessa valitut käyttöoikeudet tallennetaan vain yhteen paikkaan projektityypin mukaan. Java-, HTML-, Situs Web-, Kotlin-, Compose- ja Python-projekteissa valitut käyttöoikeudet tallennetaan VAIN AndroidManifest.xml-tiedostoon, joka sijaitsee polussa app/src/main/, java-kansion vieressä, projektikansion sisällä. Java-, HTML-, Situs Web-, Kotlin-, Compose- ja Python-projektien projektin datatiedosto ei sisällä käyttöoikeusluetteloa. Jos valitset Javan ja valitset sitten INTERNET ja CAMERA, AndroidManifest.xml-tiedostoon tallennetaan vain INTERNET ja CAMERA ilman muita käyttöoikeuksia. Rakentamisen aikana sovellus lukee käyttöoikeudet samasta paikasta: AndroidManifest.xml-tiedostosta polusta app/src/main/ Java-, HTML-, Situs Web-, Kotlin-, Compose- ja Python-projekteissa (jos sitä ei ole, app-kansion vieressä olevasta AndroidManifest.xml-tiedostosta vanhoissa projekteissa) ja projektin datatiedostosta vanhoissa projekteissa.
+
+Editorin käyttö
+Avaa Kelola Project ja napauta projektin nimeä avataksesi editorin. Editorissa tiedostoja voi avata, koodia voi kirjoittaa ja muutokset voi tallentaa. Java-, HTML-, Situs Web-, Kotlin-, Compose- ja Python-projekteissa tiedostot sijaitsevat kansiossa app/src/main. Projektin jakamiseen käytetään Ekspor ZIP -toimintoa (katso alla oleva osio).
+
+Projektin suorittaminen
+Paina editorissa Jalankan testataksesi projektin. HTML- ja Situs Web -projekteissa suoritetaan index.html WebView'n kautta. Jos tapahtuu virhe, lue virheilmoitus, korjaa koodi ja suorita uudelleen.
+
+APK:n rakentaminen
+Paina editorissa Bangun. Rakentamiseen on kaksi tapaa. Ensimmäinen, Bangun di perangkat: rakentaa suoraan puhelimessa ilman internetiä HTML-, Situs Web-, Java-, Kotlin- ja Python-projekteille. Toinen, Bangun online GitHub Actionsin kautta: rakentaa internetin kautta GitHubissa, ja sitä voidaan käyttää kaikille projektityypeille. Compose-projekteja voidaan rakentaa vain toisella tavalla (Bangun online) tai Termuxissa Gradlella, koska Compose vaatii Jetpack Compose -kirjastoja, joita laitteessa ei ole. Ensimmäisen rakennuksen tulos ei ole vielä allekirjoitettu. Sen jälkeen sovellus allekirjoittaa sen: automaattisesti oletusavaimella tai henkilökohtaisella allekirjoituksella, jos kenttä "Gunakan tanda tangan pribadi" oli valittuna projektia luotaessa.
+
+APK:n asentaminen
+Kun APK on valmis, paina Pasang asentaaksesi sen. Android 8:ssa ja uudemmissa puhelin pyytää ensin luvan "Izinkan dari sumber ini", koska tämä sovellus asentaa APK-tiedostoja Play Kaupan ulkopuolelta. Ota tämä käyttöoikeus käyttöön kerran Asetuksissa ja palaa sitten sovellukseen: asennus jatkuu automaattisesti ilman, että sinun tarvitsee painaa Pasang uudelleen. Jos Pasang-painike ei näy, varmista, että rakennus on valmis ja APK on luotu.
+
+Sovelluksen allekirjoittaminen
+Jokainen APK on allekirjoitettava, jotta sen voi asentaa. Vaihtoehtoja on kaksi. Ensimmäinen, oletusavain: sovellus allekirjoittaa itse automaattisesti ilman, että sinun tarvitsee tehdä mitään. Toinen, henkilökohtainen allekirjoitus: luo ensin keystore päävalikon Buat Keystore -valikon kautta, säilytä sen salasana hyvin ja valitse sitten "Gunakan tanda tangan pribadi" projektia luotaessa. Keystore tallennetaan kansioon Download/project/signing.
+
+Projektin vieminen ZIP-tiedostona
+Ekspor ZIP on tarjolla, jotta projekteja voi jakaa ystäville. Näin se tehdään: pidä projektin nimeä painettuna kohdassa Kelola Project ja valitse sitten Ekspor ZIP. Tulos tallennetaan polkuun Download/project/<NamaProyek>.zip. Kansio bin ei sisälly mukaan, joten koko on pieni, vain joitakin kymmeniä kilotavuja. ZIP-tiedoston voi lähettää ystävälle tai ladata GitHubiin.
+
+Ekstensi JAWS
+Ekstensi JAWS käyttää Jieshuon (CSR) laajennusmoottoria, ei sen ruudunlukijaa. Näin suunnittelu voi silti toimia, vaikka käyttäjä käyttäisi TalkBackia. Näin se tehdään: avaa Ekstensi JAWS päävalikossa. Koska automaattiset napsautukset toimivat itsestään, palvelu on ensin otettava käyttöön Esteettömyysasetuksissa. Sen jälkeen voidaan luoda uusi suunnitelma: kirjoita suunnitelman nimi, paina OK ja täytä sitten sen kentät.
+
+Daftar Klik pidetään erillään siisteyden vuoksi
+Suunnitelman sisällä on kaksi kenttää: komentosarjakenttä ja Daftar Klik -kenttä. Painikkeiden luettelo tallennetaan erikseen tiedostoon daftar_klik.txt, yksi nimi riviä kohden. Esimerkki sisällöstä: tombolSimpan, tombolHapus, tombolBuka. Sovelluksen avaamiseksi kirjoita luetteloon vain >WhatsApp. Vanhemmat suunnitelmat, joilla ei vielä ole daftar_klik.txt-tiedostoa, näyttävät tämän oletusesimerkin.
+
+Tarjolla olevat yksinkertaiset funktiot
+• klikTombol("tombolSimpan") — napsauttaa yhtä painiketta sen tekstin perusteella.
+• klikDaftarTombol(daftar) — napsauttaa daftar_klik.txt-tiedoston luetteloa, yksi painike riviä kohden, järjestyksessä, ja kertoo sitten, kuinka monta onnistui ja kuinka monta ei löytynyt.
+• bukaAplikasi("WhatsApp") — avaa sovelluksen sen nimen perusteella, tai kirjoita luetteloon ">WhatsApp".
+• klik(540, 1200) — napsauttaa näytön koordinaatteja.
+Kaikki funktiot on tehty aluksi yksinkertaisiksi. Kun olet tottunut niihin, lisää funktioita voidaan lisätä myöhemmin.
+
+Tietoa ruudunlukijoista
+Tämä sovellus on suunniteltu ruudunlukijaystävälliseksi. Jokaisella syöttökentällä on nimi ja täyttöesimerkki, ja kaikki painikkeet ovat saavutettavissa ilman monimutkaisia eleitä. Ekstensi JAWS on tehty toimimaan edelleen, vaikka käyttäjä käyttäisi TalkBackia, koska käytössä on sen laajennusmoottori, ei sen ruudunlukija.
+
+Yksityisyys ja turvallisuus
+Projektit ja keystoret tallennetaan puhelimeesi. GitHub-tunnusta käytetään vain verkkkorakennuksiin, ja se tallennetaan tähän sovellukseen. Älä jaa tunnustasi tai keystoresi salasanaa kenellekään. Jos käytät henkilökohtaista allekirjoitusta, säilytä keystore ja sen salasana turvallisessa paikassa, koska jos ne katoavat, vanhaa APK:ta ei voi päivittää samalla allekirjoituksella.
+
+Vaatimukset
+Android 5.0 tai uudempi. Tallennustilan käyttöoikeus: Android 11:ssä ja uudemmissa käytetään kaikkien tiedostojen käyttöoikeutta, Android 10:ssä ja vanhemmissa käytetään tavallista tallennustilan käyttöoikeutta (tallennustilan luku/kirjoitus), koska Android 10:ssä ei ole kaikkien tiedostojen käyttöoikeutta. Laitteessa rakentaminen vaatii puhelimen, jossa on ARM-suoritin (32- tai 64-bittinen). Verkkorakentaminen GitHub Actionsin kautta vaatii internetin ja GitHub-tunnuksen. Kotlin-projektit voidaan rakentaa laitteessa, mutta ensimmäinen rakennus on hitaampi ja käyttää enemmän muistia Kotlin-kääntäjän suuren koon vuoksi. Compose-projektit rakennetaan GitHub Actionsin kautta tai Termuxissa Gradlella. Python-projektit vaativat Android 7.0:n tai uudemman (vähimmäis-SDK 24), ja tuloksena saatava APK on suurempi, koska se sisältää Python-ajonaikaisen ympäristön (Chaquopy) ja sen standardikirjaston.
+
+Terminal
+Aloitusnäytön Terminal-valikko avaa päätteen tämän sovelluksen sisällä. Komentoja, kuten ls, voidaan käyttää projektikansion sisällön katseluun, cd:tä kansion vaihtamiseen ja gitiä koodin hallintaan. Komentojen tuloste näytetään tekstinä, jonka ruudunlukija voi lukea, ja siinä on Bacakan hasil -painike viimeisimmän tuloksen kuuntelemiseen. Tämä pääte käyttää puhelimen järjestelmäkuorta, joten vuorovaikutteisia ohjelmia, kuten nanoa ja vimiä, ei voi vielä käyttää täällä.
+
+Lisenssi (maksullinen versio)
+Sovelluksen myymiseksi valitse "Aktifkan Lisensi" projektia luotaessa ja kirjoita sitten WhatsApp-numerosi. Rakennettu sovellus pyytää lisenssikoodia, kun se avataan ensimmäisen kerran: käyttäjä näkee laitetunnuksensa, painaa Kirim ID Perangkat -painiketta lähettääkseen tunnuksen WhatsAppiisi, ja sinä vastaat lisenssikoodilla. Lisenssikoodi lasketaan laitetunnuksesta ja projektin salasanasta (lisensi_seed projektin datatiedostossa) — säilytä tämä salasana hyvin äläkä jaa sitä. Kun oikea koodi on syötetty, sovellus avautuu eikä pyydä koodia enää.
+
+Automaattinen kuvakkeiden tekijä
+Uusien projektien kuvake on edelleen läpinäkyvä, joten Pembuat Ikon on saatavilla päävalikossa. Näin se tehdään: paina Pembuat Ikon, kirjoita yksi tai kaksi kirjainta (esimerkiksi sovelluksen nimen alkukirjaimet), valitse taustaväri ja tekstin väri, katso esikatselua ja paina sitten Simpan ke Proyek käyttääksesi kuvaketta valitussa projektissa tai Simpan ke Download käyttääksesi PNG-tiedostoa muualla. Kun projekti on luotu, sovellus tarjoaa myös kuvakkeen tekemistä. Projektin vanhan kuvakkeen voi vaihtaa milloin tahansa projektivalikosta kohdassa Kelola Project (pidä projektin nimeä painettuna ja valitse sitten Ganti Ikon).
+
+Käyttövalmiit projektimallit
+Jos et halua aloittaa tyhjästä projektista, valitse malli projektia luotaessa: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) tai Penghitung (Compose). Mallin valitseminen muuttaa projektityypin automaattisesti mallin mukaiseksi, ja projekti luodaan valmiilla aloituskoodilla — valmiina suoritettavaksi tai muokattavaksi. Jos projektityyppiä muutetaan manuaalisesti uudelleen mallin valitsemisen jälkeen, malli peruutetaan ja projekti palaa tyhjäksi. HTML- ja Situs Web -malleissa malli korvaa index.html-tiedoston sisällön, mukaan lukien lomakkeeseen kirjoitetun HTML-komentosarjan.
+
+Projektien varmuuskopiointi ja palauttaminen
+Jotta projektit eivät katoaisi, tarjolla on varmuuskopiointiominaisuus. Näin se tehdään: pidä projektin nimeä painettuna kohdassa Kelola Project ja valitse sitten Cadangkan. Varmuuskopio tallennetaan ZIP-tiedostona kansioon Download/backup projektin nimellä ja päivämäärällä, esimerkiksi: GarudaDecode-2026-11-14-123045.zip. Sen sisältö on sama kuin Ekspor ZIP (projektin koko sisältö ilman bin-kansiota). Palauttaminen: avaa valikko kohdassa Kelola Project, valitse Pulihkan cadangan ja valitse sitten varmuuskopiotiedosto. Jos projektin nimi on jo olemassa, sovellus kysyy: korvataanko vanha projekti vai tallennetaanko uudella nimellä.
+
+Projektien jakaminen ja tuominen
+Projektin jakaminen ystävälle: pidä projektin nimeä painettuna kohdassa Kelola Project ja valitse sitten Bagikan. Projekti lähetetään ZIP-tiedostona jakosovellusten kautta (WhatsApp, Telegram ja muut). Projektin vastaanottaminen ystävältä: avaa valikko kohdassa Kelola Project, valitse Impor proyek ja valitse sitten ZIP-tiedosto. ZIP-tiedoston on sisällettävä projektin datatiedosto — jos sitä ei ole, tiedosto hylätään selkeällä viestillä, koska tiedosto ei ole Create Aplikasi -projekti. Jos projektin nimi on jo olemassa, sovellus kysyy: korvataanko vanha projekti vai tallennetaanko uudella nimellä.
+
+Projektien haku ja suodatus
+Jos projekteja on jo paljon, kohdassa Kelola Project on hakukenttä ja tyyppisuodatin. Kirjoita projektin nimi hakukenttään, niin luettelo suodattuu heti (kirjainkoolla ei ole väliä). Tyyppisuodatin rajoittaa luettelon vain yhteen tyyppiin: Kaikki, HTML, Situs Web, Java, Kotlin, Compose tai Python. Kunkin projektin valikko voidaan edelleen avata tavalliseen tapaan suodatetusta luettelosta.
+
+Sovellusten rakentaminen äänellä

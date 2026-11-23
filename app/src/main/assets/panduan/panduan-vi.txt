@@ -1,0 +1,96 @@
+Chào mừng bạn đến với Create Aplikasi by Al Kautsar
+Create Aplikasi là ứng dụng tạo ứng dụng Android chạy trực tiếp trên điện thoại, không cần máy tính xách tay. Ứng dụng này cho phép bất kỳ ai cũng có thể tự tạo ứng dụng Android, bao gồm cả người dùng mới học tạo ứng dụng và người dùng trình đọc màn hình. Hướng dẫn sử dụng đầy đủ của ứng dụng này có sẵn tại màn hình Tentang Alat (Giới thiệu công cụ) này.
+
+Ứng dụng này là gì và dành cho ai
+Create Aplikasi là công cụ tạo ứng dụng Android chạy trên điện thoại. Ứng dụng này dành cho bất kỳ ai muốn tự tạo ứng dụng Android, bao gồm người mới bắt đầu và người dùng trình đọc màn hình. Ứng dụng này cung cấp trình soạn thảo mã, nút Jalankan (Chạy) để thử dự án, nút Bangun (Biên dịch) để tạo APK, cùng các menu để ký và cài đặt APK.
+
+Mục đích của ứng dụng này
+Ứng dụng này được tạo ra để bất kỳ ai cũng có thể dễ dàng tự tạo ứng dụng Android, trực tiếp từ điện thoại. Giao diện được làm càng đơn giản càng tốt để ngay cả người dùng mới cũng có thể thử ngay.
+
+Cách tạo dự án mới, từng bước một
+1. Nhấn Buat Project (Tạo dự án) trong menu chính.
+2. Chọn loại dự án: HTML, Situs Web (Trang web), Java, Kotlin, Compose hoặc Python.
+3. Điền tên ứng dụng, ví dụ: Garuda Decode.
+4. Điền tên gói (package name), ví dụ: com.android.garudadecode. Tên gói phải dùng chữ thường và gồm ít nhất hai phần được ngăn cách bằng dấu chấm.
+5. Điền phiên bản ứng dụng, ví dụ: 1.0, và mã phiên bản dạng số, ví dụ: 1. Nếu để trống, phiên bản sẽ được tự động điền là 1.0 và mã phiên bản là 1.
+6. Điền SDK tối thiểu và SDK mục tiêu nếu cần. Nếu để trống, giá trị mặc định sẽ được sử dụng. SDK tối thiểu là phiên bản Android thấp nhất được hỗ trợ, ví dụ: 21 có nghĩa là Android 5.0. SDK mục tiêu tối đa là 36 (Android 16).
+7. Nhấn nút Pilih Izin (Chọn quyền) để chọn các quyền của ứng dụng, ví dụ: INTERNET. Quyền INTERNET đã được chọn sẵn theo mặc định. Chỉ chọn những quyền mà ứng dụng thật sự cần.
+8. Nếu muốn, hãy chọn "Gunakan arsitektur terpisah 64 bit dan 32 bit" (Dùng kiến trúc tách riêng 64 bit và 32 bit) để kích thước APK nhỏ hơn, và chọn "Gunakan tanda tangan pribadi" (Dùng chữ ký cá nhân) nếu muốn dùng keystore do bạn tự tạo.
+9. Nhấn Buat Proyek (Tạo dự án). Dự án mới được lưu trong thư mục Download/project và hiện ngay trong Kelola Project (Quản lý dự án).
+
+Các loại dự án có sẵn
+• HTML: giao diện từ index.html, style.css và script.js, chạy qua WebView. Được biên dịch trực tiếp trên điện thoại.
+• Situs Web: trang web có menu (Beranda (Trang chủ), Tentang (Giới thiệu), Kontak (Liên hệ)) từ index.html, tentang.html, kontak.html, style.css và script.js, chạy qua WebView. Được biên dịch trực tiếp trên điện thoại.
+• Java: được biên dịch trên điện thoại. MainActivity nằm tại app/src/main/java/<nama-paket>/MainActivity.java. Giao diện lấy từ app/src/main/res/layout/activity_main.xml, văn bản từ app/src/main/res/values/strings.xml và chủ đề từ app/src/main/res/values/styles.xml.
+• Kotlin: có thể được biên dịch trên thiết bị (ngoại tuyến) bằng trình biên dịch Kotlin được kèm theo ứng dụng, hoặc qua GitHub Actions. MainActivity nằm tại app/src/main/java/<nama-paket>/MainActivity.kt và các tệp res giống như dự án Java. Lần biên dịch Kotlin đầu tiên chậm hơn vì kích thước trình biên dịch lớn, và các tệp .java tham chiếu đến các lớp Kotlin thì chưa biên dịch được (tệp .java được biên dịch trước tệp .kt).
+• Compose: ứng dụng Android hiện đại mà giao diện của nó được tạo bằng Jetpack Compose (không phải bố cục XML). MainActivity nằm tại app/src/main/java/<nama-paket>/MainActivity.kt. Các dự án Compose được biên dịch qua GitHub Actions (menu Bangun của dự án, rồi Bangun online (Biên dịch trực tuyến)) hoặc trong Termux với Gradle, vì Compose cần các thư viện Jetpack Compose không có sẵn trên thiết bị.
+• Python: logic của ứng dụng được viết bằng ngôn ngữ Python (Chaquopy) tại app/src/main/python/main.py và được chạy bởi máy chủ MainActivity.java tại app/src/main/java/<nama-paket>/MainActivity.java. Các dự án Python có thể được biên dịch trực tiếp trên điện thoại (runtime Chaquopy được kèm theo ứng dụng) cũng như qua GitHub Actions. SDK tối thiểu của dự án Python là 24 (Android 7.0).
+
+Cấu trúc tệp của các dự án Java, HTML, Situs Web, Kotlin, Compose và Python
+Các dự án Java, HTML, Situs Web, Kotlin, Compose và Python được sắp xếp giống như các dự án Android nói chung. Bên trong thư mục app có thư mục src, và bên trong nó có thư mục main. Bên trong thư mục main có AndroidManifest.xml nằm cạnh thư mục java, thư mục res chứa layout/activity_main.xml và values/strings.xml cùng values/styles.xml, và đối với HTML và Situs Web có thư mục assets chứa index.html (Situs Web còn có tentang.html và kontak.html). Các dự án HTML và Situs Web cũng có MainActivity riêng tại app/src/main/java/<nama-paket>/MainActivity.java, tệp này tải index.html vào WebView và trở thành launcher trong AndroidManifest. Các dự án Python có mã Python tại app/src/main/python/main.py và máy chủ MainActivity.java tại app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, layout, strings và styles đều có thể mở và thay đổi trong trình soạn thảo, giống như MainActivity. Các dự án cũ mà manifest vẫn nằm cạnh thư mục app vẫn có thể biên dịch được, vì khi biên dịch, ứng dụng kiểm tra AndroidManifest.xml trong app/src/main/ trước, sau đó đến tệp nằm cạnh thư mục app, và cuối cùng là tệp dữ liệu dự án.
+
+Quy tắc về quyền (quan trọng)
+Các quyền được chọn khi tạo dự án chỉ được ghi lại ở một nơi, tùy theo loại dự án. Đối với các dự án Java, HTML, Situs Web, Kotlin, Compose và Python, các quyền đã chọn CHỈ được ghi trong AndroidManifest.xml nằm tại app/src/main/, cạnh thư mục java, bên trong thư mục dự án. Tệp dữ liệu dự án của các dự án Java, HTML, Situs Web, Kotlin, Compose và Python không chứa danh sách quyền. Nếu bạn chọn Java rồi chọn INTERNET và CAMERA, thì những gì được ghi trong AndroidManifest.xml chỉ là INTERNET và CAMERA, không có quyền nào khác đi kèm. Khi biên dịch, ứng dụng đọc quyền từ cùng một nơi: từ AndroidManifest.xml trong app/src/main/ đối với các dự án Java, HTML, Situs Web, Kotlin, Compose và Python (nếu không có, từ AndroidManifest.xml nằm cạnh thư mục app đối với các dự án cũ), và từ tệp dữ liệu dự án đối với các dự án cũ.
+
+Cách dùng trình soạn thảo
+Mở Kelola Project, chạm vào tên dự án để mở trình soạn thảo. Trong trình soạn thảo, bạn có thể mở tệp, viết mã và lưu thay đổi. Đối với các dự án Java, HTML, Situs Web, Kotlin, Compose và Python, các tệp được sắp xếp bên trong thư mục app/src/main. Để chia sẻ dự án, hãy dùng Ekspor ZIP (Xuất ZIP) (xem phần bên dưới).
+
+Cách chạy dự án
+Trong trình soạn thảo, nhấn Jalankan để thử dự án. Đối với các dự án HTML và Situs Web, thứ được chạy là index.html qua WebView. Nếu xảy ra lỗi, hãy đọc thông báo lỗi, sửa mã, rồi chạy lại.
+
+Cách biên dịch APK
+Trong trình soạn thảo, nhấn Bangun. Có hai cách biên dịch. Thứ nhất, Bangun di perangkat (Biên dịch trên thiết bị): biên dịch trực tiếp trên điện thoại mà không cần internet, dành cho các dự án HTML, Situs Web, Java, Kotlin và Python. Thứ hai, Bangun online qua GitHub Actions: biên dịch qua internet trên GitHub, và có thể dùng cho mọi loại dự án. Các dự án Compose chỉ có thể biên dịch bằng cách thứ hai (Bangun online) hoặc trong Termux với Gradle, vì Compose cần các thư viện Jetpack Compose không có sẵn trên thiết bị. Kết quả biên dịch đầu tiên chưa được ký. Sau đó ứng dụng sẽ ký nó: tự động bằng khóa mặc định, hoặc bằng chữ ký cá nhân nếu hộp "Gunakan tanda tangan pribadi" đã được chọn khi tạo dự án.
+
+Cách cài đặt APK
+Khi APK đã sẵn sàng, nhấn Pasang (Cài đặt) để cài đặt. Trên Android 8 trở lên, điện thoại sẽ yêu cầu "Izinkan dari sumber ini" (Cho phép từ nguồn này) trước, vì ứng dụng này cài đặt APK từ bên ngoài Play Store. Hãy bật quyền đó một lần trong Pengaturan (Cài đặt), rồi quay lại ứng dụng: việc cài đặt sẽ tự động tiếp tục mà không cần nhấn Pasang lần nữa. Nếu nút Pasang không xuất hiện, hãy chắc chắn việc biên dịch đã xong và APK đã được tạo.
+
+Cách ký ứng dụng
+Mọi APK đều phải được ký để có thể cài đặt. Có hai lựa chọn. Thứ nhất, khóa mặc định: ứng dụng tự ký tự động, bạn không cần làm gì cả. Thứ hai, chữ ký cá nhân: trước tiên hãy tạo keystore qua menu Buat Keystore (Tạo keystore) trong menu chính, giữ mật khẩu của nó cẩn thận, rồi chọn "Gunakan tanda tangan pribadi" khi tạo dự án. Keystore được lưu trong Download/project/signing.
+
+Xuất dự án thành ZIP
+Ekspor ZIP được cung cấp để dự án có thể được chia sẻ với bạn bè. Cách làm: trong Kelola Project, nhấn giữ lâu tên dự án, rồi chọn Ekspor ZIP. Kết quả được lưu tại Download/project/<NamaProyek>.zip. Thư mục bin không được đưa vào, nên kích thước nhỏ, chỉ vài chục KB. Tệp ZIP đó có thể gửi cho bạn bè hoặc tải lên GitHub.
+
+Ekstensi JAWS
+Ekstensi JAWS sử dụng công cụ tiện ích mở rộng của Jieshuo (CSR), không phải trình đọc màn hình của nó. Nhờ vậy, thiết kế vẫn có thể chạy ngay cả khi người dùng dùng TalkBack. Cách làm: mở Ekstensi JAWS trong menu chính. Vì thao tác nhấp tự động tự chạy, dịch vụ phải được bật trước trong Pengaturan Aksesibilitas (Cài đặt trợ năng). Sau đó mới có thể tạo thiết kế mới: gõ tên thiết kế, nhấn OK, rồi điền các ô của nó.
+
+Daftar Klik được tách riêng cho gọn gàng
+Bên trong một thiết kế có hai ô: ô script và ô Daftar Klik (Danh sách nhấp). Danh sách nút được lưu riêng trong tệp daftar_klik.txt, mỗi dòng một tên. Ví dụ nội dung: tombolSimpan, tombolHapus, tombolBuka. Để mở một ứng dụng, chỉ cần viết >WhatsApp trong danh sách đó. Các thiết kế cũ chưa có tệp daftar_klik.txt sẽ hiển thị ví dụ mặc định đó.
+
+Các hàm đơn giản được cung cấp
+• klikTombol("tombolSimpan") — nhấp một nút dựa trên văn bản của nó.
+• klikDaftarTombol(daftar) — nhấp danh sách trong daftar_klik.txt, mỗi dòng một nút, theo thứ tự, rồi cho biết có bao nhiêu cái thành công và bao nhiêu cái không tìm thấy.
+• bukaAplikasi("WhatsApp") — mở ứng dụng dựa trên tên của nó, hoặc viết ">WhatsApp" trong danh sách.
+• klik(540, 1200) — nhấp tại tọa độ màn hình.
+Tất cả các hàm đều được làm đơn giản trước. Khi đã quen, sau này có thể thêm các hàm khác.
+
+Về trình đọc màn hình
+Ứng dụng này được thiết kế thân thiện với trình đọc màn hình. Mỗi ô điền đều có nhãn và ví dụ cách điền, và mọi nút đều có thể chạm tới mà không cần cử chỉ phức tạp. Ekstensi JAWS được làm để vẫn chạy ngay cả khi người dùng dùng TalkBack, vì thứ được sử dụng là công cụ tiện ích mở rộng của nó, không phải trình đọc màn hình của nó.
+
+Quyền riêng tư và bảo mật
+Các dự án và keystore được lưu trên điện thoại của bạn. Token GitHub chỉ được dùng cho việc biên dịch trực tuyến và được lưu bên trong ứng dụng này. Đừng chia sẻ token hoặc mật khẩu keystore của bạn cho bất kỳ ai. Nếu dùng chữ ký cá nhân, hãy giữ keystore và mật khẩu của nó ở nơi an toàn, vì nếu bị mất, APK cũ sẽ không thể cập nhật bằng cùng một chữ ký.
+
+Yêu cầu
+Android 5.0 trở lên. Quyền lưu trữ: trên Android 11 trở lên dùng quyền truy cập tất cả các tệp, trên Android 10 trở xuống dùng quyền lưu trữ thông thường (đọc/ghi bộ nhớ) vì Android 10 không có quyền truy cập tất cả các tệp. Biên dịch trên thiết bị cần điện thoại có bộ xử lý ARM (32 hoặc 64 bit). Biên dịch trực tuyến qua GitHub Actions cần internet và token GitHub. Các dự án Kotlin có thể biên dịch trên thiết bị, nhưng lần biên dịch đầu tiên chậm hơn và dùng nhiều bộ nhớ hơn vì kích thước trình biên dịch Kotlin lớn. Các dự án Compose được biên dịch qua GitHub Actions hoặc trong Termux với Gradle. Các dự án Python cần Android 7.0 trở lên (SDK tối thiểu 24) và APK kết quả lớn hơn vì bao gồm runtime Python (Chaquopy) cùng thư viện chuẩn của nó.
+
+Terminal
+Menu Terminal trên màn hình chính mở một terminal bên trong ứng dụng này. Các lệnh như ls có thể dùng để xem nội dung thư mục dự án, cd để chuyển thư mục và git để quản lý mã. Kết quả lệnh hiển thị dưới dạng văn bản mà trình đọc màn hình có thể đọc, và có nút Bacakan hasil (Đọc kết quả) để nghe kết quả gần nhất. Terminal này dùng shell hệ thống của điện thoại, nên các chương trình tương tác như nano và vim chưa thể dùng ở đây.
+
+Lisensi (phiên bản trả phí)
+Để bán ứng dụng, hãy chọn "Aktifkan Lisensi" (Kích hoạt giấy phép) khi tạo dự án, rồi điền số WhatsApp của bạn. Ứng dụng đã biên dịch sẽ yêu cầu mã giấy phép khi mở lần đầu: người dùng nhìn thấy ID thiết bị của mình, nhấn nút Kirim ID Perangkat (Gửi ID thiết bị) để gửi ID đó đến WhatsApp của bạn, rồi bạn trả lời bằng mã giấy phép. Mã giấy phép được tính từ ID thiết bị và mật khẩu dự án (lisensi_seed trong tệp dữ liệu dự án) — hãy giữ mật khẩu đó cẩn thận và đừng chia sẻ. Sau khi mã đúng được nhập, ứng dụng sẽ mở và không yêu cầu mã nữa.
+
+Pembuat Ikon Otomatis
+Biểu tượng của dự án mới vẫn trong suốt, nên trong menu chính có Pembuat Ikon (Trình tạo biểu tượng). Cách làm: nhấn Pembuat Ikon, viết một hoặc hai chữ cái (ví dụ chữ viết tắt của tên ứng dụng), chọn màu nền và màu chữ, xem bản xem trước của nó, rồi nhấn Simpan ke Proyek (Lưu vào dự án) để dùng biểu tượng đó trong dự án đã chọn, hoặc Simpan ke Download (Lưu vào Download) để dùng tệp PNG của nó ở nơi khác. Sau khi dự án được tạo, ứng dụng cũng đề xuất tạo biểu tượng. Biểu tượng cũ của dự án có thể thay đổi bất cứ lúc nào từ menu dự án trong Kelola Project (nhấn giữ lâu tên dự án, rồi chọn Ganti Ikon (Đổi biểu tượng)).
+
+Template Proyek Siap Pakai
+Nếu không muốn bắt đầu từ một dự án trống, hãy chọn mẫu khi tạo dự án: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) hoặc Penghitung (Compose). Việc chọn mẫu sẽ tự động đổi loại dự án theo mẫu đó, và dự án được tạo với mã khởi đầu đã sẵn sàng — chỉ cần chạy hoặc sửa đổi. Nếu loại dự án lại bị thay đổi thủ công sau khi chọn mẫu, mẫu sẽ bị hủy và dự án trở lại trống. Đối với các mẫu HTML và Situs Web, mẫu sẽ thay thế nội dung của index.html, bao gồm cả script HTML được gõ trong biểu mẫu.
+
+Cadangan dan Pulihkan Proyek
+Để dự án không bị mất, có tính năng sao lưu. Cách làm: trong Kelola Project, nhấn giữ lâu tên dự án, rồi chọn Cadangkan (Sao lưu). Bản sao lưu được lưu dưới dạng ZIP trong thư mục Download/backup với tên dự án và ngày tháng, ví dụ: GarudaDecode-2026-11-14-123045.zip. Nội dung của nó giống như Ekspor ZIP (toàn bộ nội dung dự án, không có thư mục bin). Để khôi phục: mở menu trong Kelola Project, chọn Pulihkan cadangan (Khôi phục bản sao lưu), rồi chọn tệp sao lưu của nó. Nếu tên dự án đã tồn tại, ứng dụng sẽ hỏi: Timpa proyek lama (Ghi đè dự án cũ), hoặc lưu với Nama baru (Tên mới).
+
+Bagikan dan Impor Proyek
+Để chia sẻ dự án với bạn bè: trong Kelola Project, nhấn giữ lâu tên dự án, rồi chọn Bagikan (Chia sẻ). Dự án được gửi dưới dạng ZIP qua các ứng dụng chia sẻ (WhatsApp, Telegram và những ứng dụng khác). Để nhận dự án từ bạn bè: mở menu trong Kelola Project, chọn Impor proyek (Nhập dự án), rồi chọn tệp ZIP của nó. Tệp ZIP đó phải chứa tệp dữ liệu dự án — nếu không có, tệp sẽ bị từ chối với thông báo rõ ràng, vì tệp đó không phải là dự án Create Aplikasi. Nếu tên dự án đã tồn tại, ứng dụng sẽ hỏi: Timpa proyek lama, hoặc lưu với Nama baru.
+
+Pencarian dan Filter Proyek
+Nếu dự án đã nhiều, trong Kelola Project có ô tìm kiếm và bộ lọc loại. Gõ tên dự án vào ô tìm kiếm, danh sách sẽ được lọc ngay (không phân biệt chữ hoa và chữ thường). Bộ lọc loại giới hạn danh sách vào chỉ một loại: Semua (Tất cả), HTML, Situs Web, Java, Kotlin, Compose hoặc Python. Menu của từng dự án vẫn có thể mở như thường từ danh sách đã lọc.
+
+Bangun Aplikasi dengan Suara

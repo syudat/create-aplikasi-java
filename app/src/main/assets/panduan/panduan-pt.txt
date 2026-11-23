@@ -1,0 +1,96 @@
+Bem-vindo ao Create Aplikasi by Al Kautsar
+Create Aplikasi é um aplicativo criador de aplicativos Android que funciona diretamente no telefone, sem precisar de um notebook. Este aplicativo permite que qualquer pessoa crie seus próprios aplicativos Android, incluindo usuários que estão apenas começando a aprender a criar aplicativos e usuários de leitores de tela. O guia completo de uso deste aplicativo está disponível nesta tela Sobre esta ferramenta.
+
+O que é este aplicativo e para quem ele é
+Create Aplikasi é uma ferramenta criadora de aplicativos Android que funciona no telefone. Este aplicativo é destinado a qualquer pessoa que queira criar seus próprios aplicativos Android, incluindo iniciantes e usuários de leitores de tela. Este aplicativo oferece um editor de código, um botão Executar para testar projetos, um botão Compilar para criar um APK, e menus para assinar e instalar o APK.
+
+Objetivo deste aplicativo
+Este aplicativo foi feito para que qualquer pessoa possa criar seus próprios aplicativos Android com facilidade, diretamente do telefone. Sua interface foi feita o mais simples possível para que até usuários novos possam experimentá-lo imediatamente.
+
+Como criar um novo projeto, passo a passo
+1. Toque em Criar projeto no menu principal.
+2. Escolha o tipo de projeto: HTML, Site, Java, Kotlin, Compose ou Python.
+3. Preencha o nome do aplicativo, por exemplo: Garuda Decode.
+4. Preencha o nome do pacote (package name), por exemplo: com.android.garudadecode. O nome do pacote deve usar letras minúsculas e consistir em pelo menos duas partes separadas por pontos.
+5. Preencha a versão do aplicativo, por exemplo: 1.0, e um código de versão na forma de número, por exemplo: 1. Se ficar vazio, a versão será preenchida automaticamente com 1.0 e o código de versão 1.
+6. Preencha o SDK mínimo e o SDK de destino, se necessário. Se ficarem vazios, os valores padrão serão usados. O SDK mínimo é a versão mais baixa do Android suportada, por exemplo: 21 significa Android 5.0. O SDK de destino máximo é 36 (Android 16).
+7. Toque no botão Selecionar permissões para escolher as permissões do aplicativo, por exemplo: INTERNET. A permissão INTERNET já está marcada por padrão. Marque apenas as permissões de que o aplicativo realmente precisa.
+8. Se desejar, marque "Usar arquiteturas separadas de 64 bits e 32 bits" para que o tamanho do APK fique menor, e marque "Usar assinatura pessoal" se quiser usar um keystore feito por você.
+9. Toque em Criar projeto. O novo projeto é salvo na pasta Download/project e aparece imediatamente em Gerenciar projetos.
+
+Tipos de projeto disponíveis
+• HTML: exibição a partir de index.html, style.css e script.js, executando por meio do WebView. Compilado diretamente no telefone.
+• Site: um site com menus (Início, Sobre, Contato) a partir de index.html, tentang.html, kontak.html, style.css e script.js, executando por meio do WebView. Compilado diretamente no telefone.
+• Java: compilado no telefone. MainActivity está localizado em app/src/main/java/<nome-do-pacote>/MainActivity.java. A exibição vem de app/src/main/res/layout/activity_main.xml, o texto de app/src/main/res/values/strings.xml e o tema de app/src/main/res/values/styles.xml.
+• Kotlin: pode ser compilado no dispositivo (offline) usando o compilador Kotlin incluído no aplicativo, ou por meio do GitHub Actions. MainActivity está localizado em app/src/main/java/<nome-do-pacote>/MainActivity.kt, e os arquivos res são os mesmos de um projeto Java. A primeira compilação em Kotlin é mais lenta devido ao grande tamanho do compilador, e arquivos .java que referenciam classes Kotlin ainda não podem ser compilados (arquivos .java são compilados antes dos arquivos .kt).
+• Compose: um aplicativo Android moderno cuja interface é criada com Jetpack Compose (não layouts XML). MainActivity está localizado em app/src/main/java/<nome-do-pacote>/MainActivity.kt. Projetos Compose são compilados por meio do GitHub Actions (o menu Compilar projeto, depois Compilar online) ou no Termux com Gradle, porque o Compose requer as bibliotecas do Jetpack Compose, que não estão disponíveis no dispositivo.
+• Python: a lógica do aplicativo é escrita na linguagem Python (Chaquopy) em app/src/main/python/main.py, e é executada pelo host MainActivity.java em app/src/main/java/<nome-do-pacote>/MainActivity.java. Projetos Python podem ser compilados diretamente no telefone (o runtime do Chaquopy está incluído no aplicativo) ou por meio do GitHub Actions. O SDK mínimo para projetos Python é 24 (Android 7.0).
+
+Estrutura de arquivos dos projetos Java, HTML, Site, Kotlin, Compose e Python
+Os projetos Java, HTML, Site, Kotlin, Compose e Python são estruturados como os projetos Android em geral. Dentro da pasta app há a pasta src, e dentro dela há a pasta main. Dentro da pasta main há AndroidManifest.xml ao lado da pasta java, a pasta res contendo layout/activity_main.xml e values/strings.xml, bem como values/styles.xml, e para HTML e Site há a pasta assets contendo index.html (Site também tem tentang.html e kontak.html). Os projetos HTML e Site também têm seu próprio MainActivity em app/src/main/java/<nome-do-pacote>/MainActivity.java, que carrega index.html em um WebView e se torna o launcher no AndroidManifest. Os projetos Python têm o código Python em app/src/main/python/main.py e o host MainActivity.java em app/src/main/java/<nome-do-pacote>/MainActivity.java. AndroidManifest.xml, layouts, strings e estilos podem ser abertos e alterados no editor, assim como MainActivity. Projetos antigos cujo manifesto ainda está ao lado da pasta app ainda podem ser compilados, porque ao compilar, o aplicativo verifica primeiro AndroidManifest.xml em app/src/main/, depois o que está ao lado da pasta app, e por último o arquivo de dados do projeto.
+
+Regras de permissões (importante)
+As permissões marcadas ao criar um projeto são registradas em apenas um lugar, de acordo com o tipo de projeto. Para projetos Java, HTML, Site, Kotlin, Compose e Python, as permissões marcadas são registradas APENAS em AndroidManifest.xml localizado em app/src/main/, ao lado da pasta java, dentro da pasta do projeto. O arquivo de dados do projeto para projetos Java, HTML, Site, Kotlin, Compose e Python não contém uma lista de permissões. Se você escolher Java e depois marcar INTERNET e CAMERA, o que é registrado em AndroidManifest.xml é apenas INTERNET e CAMERA, sem nenhuma outra permissão incluída. Ao compilar, o aplicativo lê as permissões do mesmo lugar: de AndroidManifest.xml em app/src/main/ para projetos Java, HTML, Site, Kotlin, Compose e Python (se não houver nenhum, de AndroidManifest.xml ao lado da pasta app para projetos antigos), e do arquivo de dados do projeto para projetos antigos.
+
+Como usar o editor
+Abra Gerenciar projetos, toque no nome de um projeto para abrir o editor. No editor, arquivos podem ser abertos, código pode ser escrito e alterações podem ser salvas. Para projetos Java, HTML, Site, Kotlin, Compose e Python, os arquivos são organizados dentro da pasta app/src/main. Para compartilhar um projeto, use Exportar ZIP (veja a seção abaixo).
+
+Como executar um projeto
+No editor, toque em Executar para testar o projeto. Para projetos HTML e Site, o que é executado é index.html por meio do WebView. Se ocorrer um erro, leia a mensagem de erro, corrija o código e execute novamente.
+
+Como compilar um APK
+No editor, toque em Compilar. Há duas maneiras de compilar. Primeira, Compilar no dispositivo: compila diretamente no telefone sem internet, para projetos HTML, Site, Java, Kotlin e Python. Segunda, Compilar online por meio do GitHub Actions: compila pela internet no GitHub e pode ser usada para todos os tipos de projeto. Projetos Compose só podem ser compilados da segunda maneira (Compilar online) ou no Termux com Gradle, porque o Compose requer as bibliotecas do Jetpack Compose, que não estão disponíveis no dispositivo. O resultado da primeira compilação ainda não está assinado. Depois disso, o aplicativo o assina: automaticamente com a chave incorporada, ou com uma assinatura pessoal se a caixa "Usar assinatura pessoal" estava marcada ao criar o projeto.
+
+Como instalar um APK
+Quando o APK estiver pronto, toque em Instalar para instalá-lo. No Android 8 e superior, o telefone pedirá primeiro "Permitir desta fonte", porque este aplicativo instala APKs de fora da Play Store. Ative essa permissão uma vez nas Configurações e depois volte ao aplicativo: a instalação continuará automaticamente sem precisar tocar em Instalar novamente. Se o botão Instalar não aparecer, certifique-se de que a compilação terminou e o APK foi criado.
+
+Como assinar um aplicativo
+Todo APK deve ser assinado para poder ser instalado. Há duas opções disponíveis. Primeira, a chave incorporada: o aplicativo assina por si só automaticamente, sem que você precise fazer nada. Segunda, uma assinatura pessoal: primeiro crie um keystore por meio do menu Criar keystore no menu principal, guarde sua senha com cuidado e depois marque "Usar assinatura pessoal" ao criar o projeto. O keystore é armazenado em Download/project/signing.
+
+Exportar um projeto para ZIP
+Exportar ZIP é fornecido para que os projetos possam ser compartilhados com amigos. Como fazer: em Gerenciar projetos, pressione e segure o nome do projeto, depois escolha Exportar ZIP. O resultado é salvo em Download/project/<NomeDoProjeto>.zip. A pasta bin não é incluída, então o tamanho é pequeno, apenas dezenas de KB. Esse arquivo ZIP pode ser enviado a amigos ou carregado para o GitHub.
+
+Extensão JAWS
+A Extensão JAWS usa o mecanismo de extensões do Jieshuo (CSR), não o seu leitor de tela. Dessa forma, os designs podem continuar funcionando mesmo que o usuário use o TalkBack. Como fazer: abra Extensão JAWS no menu principal. Como o clique automático funciona sozinho, o serviço deve primeiro ser ativado nas Configurações de acessibilidade. Depois disso, um novo design pode ser criado: digite o nome do design, toque em OK e preencha suas caixas.
+
+Lista de Cliques mantida separada para ficar organizada
+Dentro de um design há duas caixas: a caixa de script e a caixa Lista de Cliques. A lista de botões é armazenada separadamente no arquivo daftar_klik.txt, um nome por linha. Um exemplo de seu conteúdo: tombolSimpan, tombolHapus, tombolBuka. Para abrir um aplicativo, basta escrever >WhatsApp nessa lista. Designs antigos que ainda não têm um arquivo daftar_klik.txt exibirão esse exemplo padrão.
+
+Funções simples fornecidas
+• klikTombol("tombolSimpan") — clica em um botão com base em seu texto.
+• klikDaftarTombol(daftar) — clica na lista em daftar_klik.txt, um botão por linha, em ordem, e depois informa quantos tiveram sucesso e quantos não foram encontrados.
+• bukaAplikasi("WhatsApp") — abre um aplicativo pelo nome, ou escreva ">WhatsApp" na lista.
+• klik(540, 1200) — clica nas coordenadas da tela.
+Todas as funções são feitas simples primeiro. Quando você se acostumar com elas, funções adicionais podem ser adicionadas depois.
+
+Sobre leitores de tela
+Este aplicativo foi projetado para ser amigável a leitores de tela. Cada campo de entrada tem um rótulo e um exemplo de preenchimento, e todos os botões podem ser alcançados sem gestos complicados. A Extensão JAWS foi feita para continuar funcionando mesmo que o usuário use o TalkBack, porque o que é usado é o seu mecanismo de extensões, não o seu leitor de tela.
+
+Privacidade e segurança
+Projetos e keystores são armazenados no seu telefone. O token do GitHub é usado apenas para compilações online e é armazenado dentro deste aplicativo. Não compartilhe seu token ou a senha do seu keystore com ninguém. Se você usar uma assinatura pessoal, guarde o keystore e sua senha em um lugar seguro, porque se forem perdidos, APKs antigos não poderão ser atualizados com a mesma assinatura.
+
+Requisitos
+Android 5.0 ou mais recente. Permissão de armazenamento: no Android 11 e superior, usa a permissão de acesso a todos os arquivos; no Android 10 e inferior, usa a permissão de armazenamento comum (ler/escrever armazenamento), porque o Android 10 não tem a permissão de acesso a todos os arquivos. Compilar no dispositivo requer um telefone com processador ARM (32 ou 64 bits). Compilar online por meio do GitHub Actions requer internet e um token do GitHub. Projetos Kotlin podem ser compilados no dispositivo, mas a primeira compilação é mais lenta e usa mais memória devido ao grande tamanho do compilador Kotlin. Projetos Compose são compilados por meio do GitHub Actions ou no Termux com Gradle. Projetos Python requerem Android 7.0 ou mais recente (SDK mínimo 24) e o APK resultante é maior porque inclui o runtime do Python (Chaquopy) junto com sua biblioteca padrão.
+
+Terminal
+O menu Terminal na tela principal abre um terminal dentro deste aplicativo. Comandos como ls podem ser usados para ver o conteúdo da pasta do projeto, cd para se mover entre pastas e git para gerenciar o código. A saída dos comandos aparece como texto que pode ser lido por um leitor de tela, e há um botão Ler resultado em voz alta para ouvir o último resultado. Este terminal usa o shell do sistema do telefone, então programas interativos como nano e vim ainda não podem ser usados aqui.
+
+Licença (versão paga)
+Para vender um aplicativo, marque "Ativar licença" ao criar o projeto e depois preencha seu número de WhatsApp. O aplicativo compilado pedirá um código de licença quando for aberto pela primeira vez: o usuário vê seu ID de dispositivo, toca no botão Enviar ID do dispositivo para enviar esse ID ao seu WhatsApp, e então você responde com o código de licença. O código de licença é calculado a partir do ID do dispositivo e da senha do projeto (lisensi_seed no arquivo de dados do projeto) — guarde essa senha com cuidado e não a compartilhe. Depois que o código correto é inserido, o aplicativo abre e não pede um código novamente.
+
+Criador Automático de Ícones
+Os ícones de novos projetos ainda são transparentes, então um Criador de ícones está disponível no menu principal. Como fazer: toque em Criador de ícones, escreva uma ou duas letras (por exemplo, as iniciais do nome do aplicativo), escolha uma cor de fundo e uma cor de texto, veja a prévia e depois toque em Salvar no projeto para usar esse ícone no projeto selecionado, ou Salvar em Downloads para usar seu arquivo PNG em outro lugar. Depois que um projeto é criado, o aplicativo também oferece a criação de um ícone. O ícone antigo de um projeto pode ser substituído a qualquer momento pelo menu do projeto em Gerenciar projetos (pressione e segure o nome do projeto, depois escolha Alterar ícone).
+
+Modelos de Projeto Prontos para Uso
+Se você não quiser começar de um projeto vazio, escolha um modelo ao criar um projeto: Calculadora (Java), Notas (Java), Lista de Tarefas (Kotlin), Calculadora Web (HTML), Site de Perfil (Site) ou Contador (Compose). Escolher um modelo altera automaticamente o tipo de projeto para seguir esse modelo, e o projeto é criado com código inicial pronto — basta executá-lo ou alterá-lo. Se o tipo de projeto for alterado manualmente novamente depois de escolher um modelo, o modelo é cancelado e o projeto volta a ficar vazio. Para modelos HTML e Site, o modelo substitui o conteúdo de index.html, incluindo o script HTML digitado no formulário.
+
+Backup e Restauração de Projetos
+Para que os projetos não se percam, há um recurso de backup disponível. Como fazer: em Gerenciar projetos, pressione e segure o nome do projeto, depois escolha Fazer backup. O backup é salvo como um ZIP na pasta Download/backup com o nome do projeto e a data, por exemplo: GarudaDecode-2026-11-14-123045.zip. Seu conteúdo é o mesmo de Exportar ZIP (todo o conteúdo do projeto, sem a pasta bin). Para restaurar: abra o menu em Gerenciar projetos, escolha Restaurar backup e depois escolha o arquivo de backup. Se o nome do projeto já existir, o aplicativo perguntará: Sobrescrever o projeto antigo, ou salvar com um Novo nome.
+
+Compartilhar e Importar Projetos
+Para compartilhar um projeto com amigos: em Gerenciar projetos, pressione e segure o nome do projeto, depois escolha Compartilhar. O projeto é enviado como um ZIP por meio de aplicativos de compartilhamento (WhatsApp, Telegram e outros). Para receber um projeto de um amigo: abra o menu em Gerenciar projetos, escolha Importar projeto e depois escolha o arquivo ZIP. Esse arquivo ZIP deve conter um arquivo de dados do projeto — se não houver nenhum, o arquivo é rejeitado com uma mensagem clara, porque esse arquivo não é um projeto do Create Aplikasi. Se o nome do projeto já existir, o aplicativo perguntará: Sobrescrever o projeto antigo, ou salvar com um Novo nome.
+
+Busca e Filtro de Projetos
+Se já houver muitos projetos, em Gerenciar projetos há uma caixa de busca e um filtro de tipo. Digite o nome do projeto na caixa de busca e a lista é filtrada imediatamente (letras maiúsculas e minúsculas não são diferenciadas). O filtro de tipo limita a lista a apenas um tipo: Todos, HTML, Site, Java, Kotlin, Compose ou Python. O menu de cada projeto ainda pode ser aberto como de costume a partir da lista já filtrada.
+
+Criar Aplicativos com a Voz

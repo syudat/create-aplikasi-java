@@ -29,6 +29,14 @@ import android.widget.TextView;
  */
 public class AboutActivity extends Activity {
 
+    /** Kode bahasa efektif layar ini (tahap tampilan B, 2026-11-23). */
+    private String kodeBahasa = "id";
+
+    /** Teks antarmuka dalam bahasa efektif (TeksUI, fallback Indonesia). */
+    private String t(String kunci) {
+        return TeksUI.teks(kodeBahasa, kunci);
+    }
+
     // Teks panduan lengkap, bahasa baku/formal gaya deskripsi Play Store
     // (ditulis ulang dari TENTANG di main.lua; 209 baris, tanpa Lua).
     private static final String TENTANG =
@@ -491,7 +499,11 @@ public class AboutActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Tentang Alat");
+        kodeBahasa = Bahasa.kodeEfektif(
+                PengaturanActivity.baca(this).getString(
+                        PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
+                java.util.Locale.getDefault().getLanguage());
+        setTitle(t("Tentang Alat"));
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = new LinearLayout(this);
@@ -501,41 +513,52 @@ public class AboutActivity extends Activity {
         sv.addView(r);
         setContentView(sv);
 
-        heading(r, "Tentang Alat", 20);
+        heading(r, t("Tentang Alat"), 20);
 
         // Deskripsi profesional mengikuti bahasa terpilih (perintah al
         // kautsar 2026-11-23): judul layar + paragraf pembuka Tentang
-        // Alat tampil dalam bahasa efektif aplikasi (50 bahasa); panduan
-        // lengkap di bawahnya tetap bahasa Indonesia dan itu dicatat.
+        // Alat tampil dalam bahasa efektif aplikasi (50 bahasa).
+        // Panduan lengkap di bawahnya juga mengikuti bahasa terpilih:
+        // terjemahannya dimuat dari aset panduan/panduan-<kode>.txt
+        // (perintah al kautsar 2026-11-23 sore: "bagian tentang harus
+        // diterjemahkan juga, terjemahkan satu per satu"). Bila berkas
+        // terjemahan tidak ada, panduan bahasa Indonesia dipakai dan
+        // catatan kecil menjelaskannya dalam bahasa terpilih.
+        String panduanTerjemahan = null;
         try {
-            String kode = Bahasa.kodeEfektif(
+            kodeBahasa = Bahasa.kodeEfektif(
                     PengaturanActivity.baca(this).getString(
                             PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
                     java.util.Locale.getDefault().getLanguage());
+            if (!"id".equals(kodeBahasa)) {
+                panduanTerjemahan = muatPanduanAset(kodeBahasa);
+            }
             TextView tvJudulBahasa = new TextView(this);
-            tvJudulBahasa.setText(TentangBahasa.judul(kode));
+            tvJudulBahasa.setText(TentangBahasa.judul(kodeBahasa));
             GayaStudio.judul(tvJudulBahasa, 17);
             tvJudulBahasa.setPadding(dp(16), dp(8), dp(16), 0);
             r.addView(tvJudulBahasa);
             TextView tvDeskripsi = new TextView(this);
-            tvDeskripsi.setText(TentangBahasa.deskripsi(kode));
+            tvDeskripsi.setText(TentangBahasa.deskripsi(kodeBahasa));
             GayaStudio.label(tvDeskripsi, 15);
             tvDeskripsi.setTextIsSelectable(true);
             tvDeskripsi.setPadding(dp(16), dp(4), dp(16), 0);
             r.addView(tvDeskripsi);
-            String catatan = TentangBahasa.catatanPanduan(kode);
-            if (catatan != null && catatan.length() > 0) {
-                TextView tvCatatan = new TextView(this);
-                tvCatatan.setText(catatan);
-                GayaStudio.labelKecil(tvCatatan, 12);
-                tvCatatan.setPadding(dp(16), dp(4), dp(16), 0);
-                r.addView(tvCatatan);
+            if (panduanTerjemahan == null) {
+                String catatan = TentangBahasa.catatanPanduan(kodeBahasa);
+                if (catatan != null && catatan.length() > 0) {
+                    TextView tvCatatan = new TextView(this);
+                    tvCatatan.setText(catatan);
+                    GayaStudio.labelKecil(tvCatatan, 12);
+                    tvCatatan.setPadding(dp(16), dp(4), dp(16), 0);
+                    r.addView(tvCatatan);
+                }
             }
         } catch (Throwable ignored) {
         }
 
         TextView tv = new TextView(this);
-        tv.setText(TENTANG);
+        tv.setText(panduanTerjemahan != null ? panduanTerjemahan : TENTANG);
         GayaStudio.label(tv, 15);
         tv.setTextIsSelectable(true);
         tv.setPadding(dp(16), dp(8), dp(16), dp(8));
@@ -543,7 +566,7 @@ public class AboutActivity extends Activity {
 
         Button tutup = new Button(this);
         GayaStudio.tombol(tutup);
-        tutup.setText("Tutup");
+        tutup.setText(t("Tutup"));
         tutup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -555,7 +578,7 @@ public class AboutActivity extends Activity {
         lp.topMargin = dp(8);
         r.addView(tutup, lp);
 
-        announce("Tentang Alat");
+        announce(t("Tentang Alat"));
     }
 
     @Override
@@ -578,6 +601,29 @@ public class AboutActivity extends Activity {
             }
         }
         parent.addView(tv);
+    }
+
+    /**
+     * Muat terjemahan panduan lengkap dari aset
+     * panduan/panduan-<kode>.txt (UTF-8). Mengembalikan null bila
+     * berkas tidak ada atau gagal dibaca, supaya pemanggil memakai
+     * panduan bahasa Indonesia bawaan.
+     */
+    private String muatPanduanAset(String kode) {
+        java.io.InputStream in = null;
+        try {
+            in = getAssets().open("panduan/panduan-" + kode + ".txt");
+            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = in.read(buf)) >= 0) bos.write(buf, 0, n);
+            String teks = new String(bos.toByteArray(), "UTF-8");
+            return teks.trim().length() > 1000 ? teks : null;
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            if (in != null) try { in.close(); } catch (Throwable ignored) {}
+        }
     }
 
     private int dp(float v) {

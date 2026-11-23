@@ -1,0 +1,96 @@
+Vítejte v aplikaci Create Aplikasi by Al Kautsar
+Create Aplikasi je aplikace pro tvorbu androidových aplikací, která běží přímo v telefonu, bez potřeby notebooku. Tato aplikace umožňuje komukoli vytvořit si vlastní androidovou aplikaci, včetně uživatelů, kteří se teprve učí aplikace vytvářet, a uživatelů čteček obrazovky. Kompletní návod k použití této aplikace je k dispozici na této obrazovce Tentang Alat.
+
+Co je tato aplikace a pro koho je určena
+Create Aplikasi je nástroj pro tvorbu androidových aplikací, který běží v telefonu. Tato aplikace je určena pro každého, kdo si chce vytvořit vlastní androidovou aplikaci, včetně začátečníků a uživatelů čteček obrazovky. Tato aplikace poskytuje editor kódu, tlačítko Jalankan pro testování projektů, tlačítko Bangun pro vytvoření APK a také nabídky pro podepsání a instalaci APK.
+
+Účel této aplikace
+Tato aplikace byla vytvořena, aby si každý mohl snadno vytvořit vlastní androidovou aplikaci přímo z telefonu. Její vzhled byl vytvořen co nejjednodušší, aby ji mohli hned vyzkoušet i noví uživatelé.
+
+Jak vytvořit nový projekt, krok za krokem
+1. Stiskněte Buat Project v hlavní nabídce.
+2. Vyberte typ projektu: HTML, Situs Web, Java, Kotlin, Compose nebo Python.
+3. Vyplňte název aplikace, příklad: Garuda Decode.
+4. Vyplňte název balíčku (package name), příklad: com.android.garudadecode. Název balíčku musí používat malá písmena a skládat se z alespoň dvou částí oddělených tečkou.
+5. Vyplňte verzi aplikace, příklad: 1.0, a kód verze jako číslo, příklad: 1. Pokud zůstane prázdné, verze se automaticky vyplní jako 1.0 a kód verze jako 1.
+6. V případě potřeby vyplňte minimální SDK a cílové SDK. Pokud zůstanou prázdná, použijí se výchozí hodnoty. Minimální SDK je nejnižší podporovaná verze Androidu, příklad: 21 znamená Android 5.0. Maximální cílové SDK je 36 (Android 16).
+7. Stiskněte tlačítko Pilih Izin pro výběr oprávnění aplikace, příklad: INTERNET. Oprávnění INTERNET je ve výchozím nastavení zaškrtnuto. Zaškrtněte pouze oprávnění, která aplikace skutečně potřebuje.
+8. Pokud si přejete, zaškrtněte „Gunakan arsitektur terpisah 64 bit dan 32 bit", aby byla velikost APK menší, a zaškrtněte „Gunakan tanda tangan pribadi", pokud chcete použít vlastní keystore.
+9. Stiskněte Buat Proyek. Nový projekt se uloží do složky Download/project a okamžitě se zobrazí v Kelola Project.
+
+Dostupné typy projektů
+• HTML: zobrazení ze souborů index.html, style.css a script.js, běží přes WebView. Sestavuje se přímo v telefonu.
+• Situs Web: webové stránky s nabídkami (Beranda, Tentang, Kontak) ze souborů index.html, tentang.html, kontak.html, style.css a script.js, běží přes WebView. Sestavuje se přímo v telefonu.
+• Java: sestavuje se v telefonu. MainActivity se nachází v app/src/main/java/<nama-paket>/MainActivity.java. Zobrazení pochází z app/src/main/res/layout/activity_main.xml, text z app/src/main/res/values/strings.xml a motiv z app/src/main/res/values/styles.xml.
+• Kotlin: lze sestavit v zařízení (offline) pomocí kompilátoru Kotlinu, který je součástí aplikace, nebo prostřednictvím GitHub Actions. MainActivity se nachází v app/src/main/java/<nama-paket>/MainActivity.kt a soubory res jsou stejné jako u projektu v Javě. První sestavení v Kotlinu je pomalejší kvůli velké velikosti kompilátoru a soubory .java, které odkazují na třídy Kotlinu, zatím nelze sestavit (soubory .java se kompilují před soubory .kt).
+• Compose: moderní androidová aplikace, jejíž rozhraní je vytvořeno pomocí Jetpack Compose (nikoli rozvržení XML). MainActivity se nachází v app/src/main/java/<nama-paket>/MainActivity.kt. Projekty Compose se sestavují prostřednictvím GitHub Actions (nabídka Bangun proyek, poté Bangun online) nebo v Termuxu pomocí Gradle, protože Compose vyžaduje knihovny Jetpack Compose, které nejsou v zařízení k dispozici.
+• Python: logika aplikace je napsána v Pythonu (Chaquopy) v app/src/main/python/main.py a spouští ji hostitel MainActivity.java v app/src/main/java/<nama-paket>/MainActivity.java. Projekty v Pythonu lze sestavit přímo v telefonu (běhové prostředí Chaquopy je součástí aplikace) nebo prostřednictvím GitHub Actions. Minimální SDK pro projekty v Pythonu je 24 (Android 7.0).
+
+Struktura souborů projektů Java, HTML, Situs Web, Kotlin, Compose a Python
+Projekty Java, HTML, Situs Web, Kotlin, Compose a Python jsou uspořádány jako androidové projekty obecně. Uvnitř složky app se nachází složka src a uvnitř ní složka main. Uvnitř složky main se nachází AndroidManifest.xml vedle složky java, složka res, která obsahuje layout/activity_main.xml a values/strings.xml a také values/styles.xml, a pro HTML a Situs Web složka assets, která obsahuje index.html (Situs Web má také tentang.html a kontak.html). Projekty HTML a Situs Web mají také vlastní MainActivity v app/src/main/java/<nama-paket>/MainActivity.java, která načítá index.html do WebView a stává se spouštěčem v AndroidManifest. Projekty v Pythonu mají kód v Pythonu v app/src/main/python/main.py a hostitele MainActivity.java v app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, rozvržení, strings a styles lze otevřít a upravit v editoru, stejně jako MainActivity. Starší projekty, jejichž manifest se stále nachází vedle složky app, lze stále sestavit, protože při sestavování aplikace zkontroluje nejprve AndroidManifest.xml v app/src/main/, poté ten vedle složky app a nakonec datový soubor projektu.
+
+Pravidla oprávnění (důležité)
+Oprávnění zaškrtnutá při vytváření projektu se zaznamenávají pouze na jednom místě, podle typu projektu. U projektů Java, HTML, Situs Web, Kotlin, Compose a Python se zaškrtnutá oprávnění zaznamenávají POUZE do AndroidManifest.xml, který se nachází v app/src/main/, vedle složky java, uvnitř složky projektu. Datový soubor projektu pro projekty Java, HTML, Situs Web, Kotlin, Compose a Python neobsahuje seznam oprávnění. Pokud vyberete Javu a poté zaškrtnete INTERNET a CAMERA, do AndroidManifest.xml se zaznamenají pouze INTERNET a CAMERA, bez dalších oprávnění. Při sestavování aplikace čte oprávnění ze stejného místa: z AndroidManifest.xml v app/src/main/ u projektů Java, HTML, Situs Web, Kotlin, Compose a Python (pokud neexistuje, z AndroidManifest.xml vedle složky app u starších projektů) a z datového souboru projektu u starších projektů.
+
+Jak používat editor
+Otevřete Kelola Project a klepnutím na název projektu otevřete editor. V editoru lze soubory otevírat, psát kód a ukládat změny. U projektů Java, HTML, Situs Web, Kotlin, Compose a Python se soubory nacházejí uvnitř složky app/src/main. Ke sdílení projektu použijte Ekspor ZIP (viz část níže).
+
+Jak spustit projekt
+V editoru stiskněte Jalankan pro otestování projektu. U projektů HTML a Situs Web se spouští index.html přes WebView. Pokud dojde k chybě, přečtěte si chybovou zprávu, opravte kód a spusťte znovu.
+
+Jak sestavit APK
+V editoru stiskněte Bangun. Existují dva způsoby sestavení. První, Bangun di perangkat: sestavuje přímo v telefonu bez internetu, pro projekty HTML, Situs Web, Java, Kotlin a Python. Druhý, Bangun online prostřednictvím GitHub Actions: sestavuje přes internet na GitHubu a lze jej použít pro všechny typy projektů. Projekty Compose lze sestavit pouze druhým způsobem (Bangun online) nebo v Termuxu pomocí Gradle, protože Compose vyžaduje knihovny Jetpack Compose, které nejsou v zařízení k dispozici. Výsledek prvního sestavení ještě není podepsán. Poté jej aplikace podepíše: automaticky výchozím klíčem, nebo osobním podpisem, pokud bylo při vytváření projektu zaškrtnuto políčko „Gunakan tanda tangan pribadi".
+
+Jak nainstalovat APK
+Když je APK hotové, stiskněte Pasang pro jeho instalaci. V systému Android 8 a novějším telefon nejprve požádá o „Izinkan dari sumber ini", protože tato aplikace instaluje APK mimo Play Store. Toto oprávnění jednou aktivujte v Nastavení a poté se vraťte do aplikace: instalace bude automaticky pokračovat, aniž byste museli znovu stisknout Pasang. Pokud se tlačítko Pasang nezobrazuje, ujistěte se, že sestavení skončilo a APK bylo vytvořeno.
+
+Jak podepsat aplikaci
+Každé APK musí být podepsáno, aby je bylo možné nainstalovat. K dispozici jsou dvě možnosti. První, výchozí klíč: aplikace podepisuje sama automaticky, aniž byste museli cokoli dělat. Druhá, osobní podpis: nejprve vytvořte keystore prostřednictvím nabídky Buat Keystore v hlavní nabídce, dobře si uložte jeho heslo a poté při vytváření projektu zaškrtněte „Gunakan tanda tangan pribadi". Keystore se ukládá do Download/project/signing.
+
+Export projektu do ZIP
+Ekspor ZIP je k dispozici, aby bylo možné projekty sdílet s přáteli. Postup: v Kelola Project dlouze stiskněte název projektu a poté vyberte Ekspor ZIP. Výsledek se uloží do Download/project/<NamaProyek>.zip. Složka bin není součástí, takže velikost je malá, pouze několik desítek KB. Soubor ZIP lze poslat příteli nebo nahrát na GitHub.
+
+Ekstensi JAWS
+Ekstensi JAWS používá rozšiřovací engine z Jieshuo (CSR), nikoli jeho čtečku obrazovky. Díky tomu může návrh fungovat, i když uživatel používá TalkBack. Postup: otevřete Ekstensi JAWS v hlavní nabídce. Protože automatická kliknutí běží sama, je nutné službu nejprve aktivovat v Nastavení přístupnosti. Poté lze vytvořit nový návrh: zadejte název návrhu, stiskněte OK a poté vyplňte jeho pole.
+
+Daftar Klik je oddělen pro přehlednost
+Uvnitř návrhu jsou dvě pole: pole skriptu a pole Daftar Klik. Seznam tlačítek je uložen samostatně v souboru daftar_klik.txt, jeden název na řádek. Příklad obsahu: tombolSimpan, tombolHapus, tombolBuka. Chcete-li otevřít aplikaci, stačí do seznamu napsat >WhatsApp. Starší návrhy, které zatím nemají soubor daftar_klik.txt, zobrazí tento výchozí příklad.
+
+Poskytované jednoduché funkce
+• klikTombol("tombolSimpan") — klikne na jedno tlačítko podle jeho textu.
+• klikDaftarTombol(daftar) — kliká na seznam v daftar_klik.txt, jedno tlačítko na řádek, v pořadí, a poté oznámí, kolik jich bylo úspěšných a kolik nebylo nalezeno.
+• bukaAplikasi("WhatsApp") — otevře aplikaci podle jejího názvu, nebo do seznamu napište „>WhatsApp".
+• klik(540, 1200) — klikne na souřadnice obrazovky.
+Všechny funkce jsou pro začátek jednoduché. Až si na ně zvyknete, lze později přidat další funkce.
+
+O čtečkách obrazovky
+Tato aplikace je navržena tak, aby byla přívětivá ke čtečkám obrazovky. Každé vyplňovací pole má popisek a příklad vyplnění a všechna tlačítka jsou dosažitelná bez složitých gest. Ekstensi JAWS je vytvořeno tak, aby fungovalo, i když uživatel používá TalkBack, protože se používá jeho rozšiřovací engine, nikoli jeho čtečka obrazovky.
+
+Soukromí a bezpečnost
+Projekty a keystory jsou uloženy ve vašem telefonu. Token GitHubu se používá pouze pro online sestavení a je uložen v této aplikaci. Nesdílejte svůj token ani heslo ke keystore s nikým. Pokud používáte osobní podpis, uložte keystore a jeho heslo na bezpečném místě, protože pokud se ztratí, staré APK nelze aktualizovat stejným podpisem.
+
+Požadavky
+Android 5.0 nebo novější. Oprávnění k úložišti: v systému Android 11 a novějším se používá oprávnění pro přístup ke všem souborům, v systému Android 10 a starším se používá běžné oprávnění k úložišti (čtení/zápis úložiště), protože Android 10 oprávnění pro přístup ke všem souborům nemá. Sestavení v zařízení vyžaduje telefon s procesorem ARM (32 nebo 64 bitů). Online sestavení prostřednictvím GitHub Actions vyžaduje internet a token GitHubu. Projekty v Kotlinu lze sestavit v zařízení, ale jejich první sestavení je pomalejší a využívá více paměti kvůli velké velikosti kompilátoru Kotlinu. Projekty Compose se sestavují prostřednictvím GitHub Actions nebo v Termuxu pomocí Gradle. Projekty v Pythonu vyžadují Android 7.0 nebo novější (minimální SDK 24) a výsledné APK je větší, protože obsahuje běhové prostředí Pythonu (Chaquopy) spolu s jeho standardní knihovnou.
+
+Terminal
+Nabídka Terminal na hlavní obrazovce otevírá terminál uvnitř této aplikace. Příkazy jako ls lze použít k zobrazení obsahu složky projektu, cd ke změně složky a git ke správě kódu. Výstup příkazů se zobrazuje jako text, který může čtečka obrazovky přečíst, a je zde tlačítko Bacakan hasil pro poslech posledního výsledku. Tento terminál používá systémový shell telefonu, takže interaktivní programy jako nano a vim zde zatím nelze používat.
+
+Licence (placená verze)
+Chcete-li aplikaci prodávat, při vytváření projektu zaškrtněte „Aktifkan Lisensi" a poté vyplňte své číslo WhatsApp. Sestavená aplikace při prvním otevření požádá o licenční kód: uživatel uvidí ID svého zařízení, stiskne tlačítko Kirim ID Perangkat, aby toto ID odeslal na váš WhatsApp, a vy poté odpovíte licenčním kódem. Licenční kód se vypočítává z ID zařízení a hesla projektu (lisensi_seed v datovém souboru projektu) — toto heslo dobře uložte a nesdílejte ho. Po zadání správného kódu se aplikace otevře a kód již znovu nežádá.
+
+Automatický tvůrce ikon
+Ikona nových projektů je zatím průhledná, proto je v hlavní nabídce k dispozici Pembuat Ikon. Postup: stiskněte Pembuat Ikon, napište jedno nebo dvě písmena (například iniciály názvu aplikace), vyberte barvu pozadí a barvu písma, prohlédněte si náhled a poté stiskněte Simpan ke Proyek pro použití ikony ve vybraném projektu, nebo Simpan ke Download pro použití jeho souboru PNG jinde. Po vytvoření projektu aplikace také nabídne vytvoření ikony. Starou ikonu projektu lze kdykoli vyměnit z nabídky projektu v Kelola Project (dlouze stiskněte název projektu a poté vyberte Ganti Ikon).
+
+Hotové šablony projektů
+Pokud nechcete začínat od prázdného projektu, vyberte při vytváření projektu šablonu: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) nebo Penghitung (Compose). Výběr šablony automaticky změní typ projektu podle šablony a projekt se vytvoří s hotovým počátečním kódem — stačí jej spustit nebo upravit. Pokud po výběru šablony typ projektu znovu ručně změníte, šablona se zruší a projekt se vrátí do prázdného stavu. U šablon HTML a Situs Web šablona nahradí obsah index.html, včetně skriptu HTML zadaného ve formuláři.
+
+Zálohování a obnovení projektů
+Aby se projekty neztratily, je k dispozici funkce zálohování. Postup: v Kelola Project dlouze stiskněte název projektu a poté vyberte Cadangkan. Záloha se uloží jako ZIP do složky Download/backup s názvem projektu a datem, příklad: GarudaDecode-2026-11-14-123045.zip. Její obsah je stejný jako u Ekspor ZIP (veškerý obsah projektu, bez složky bin). Pro obnovení: otevřete nabídku v Kelola Project, vyberte Pulihkan cadangan a poté vyberte soubor zálohy. Pokud název projektu již existuje, aplikace se zeptá: Přepsat starý projekt, nebo uložit pod novým názvem.
+
+Sdílení a import projektů
+Sdílení projektu s přítelem: v Kelola Project dlouze stiskněte název projektu a poté vyberte Bagikan. Projekt se odešle jako ZIP prostřednictvím aplikací pro sdílení (WhatsApp, Telegram a další). Příjem projektu od přítele: otevřete nabídku v Kelola Project, vyberte Impor proyek a poté vyberte jeho soubor ZIP. Soubor ZIP musí obsahovat datový soubor projektu — pokud ho neobsahuje, soubor je odmítnut s jasnou zprávou, protože tento soubor není projektem Create Aplikasi. Pokud název projektu již existuje, aplikace se zeptá: Přepsat starý projekt, nebo uložit pod novým názvem.
+
+Vyhledávání a filtrování projektů
+Pokud je projektů již mnoho, v Kelola Project je vyhledávací pole a filtr typů. Zadejte název projektu do vyhledávacího pole a seznam se okamžitě přefiltruje (nerozlišují se velká a malá písmena). Filtr typů omezí seznam pouze na jeden typ: Vše, HTML, Situs Web, Java, Kotlin, Compose nebo Python. Nabídku každého projektu lze z přefiltrovaného seznamu stále otevřít jako obvykle.
+
+Tvořte aplikace hlasem

@@ -1,0 +1,96 @@
+Bine ați venit la Create Aplikasi by Al Kautsar
+Create Aplikasi este o aplicație de creare de aplicații Android care rulează direct pe telefon, fără a avea nevoie de un laptop. Această aplicație permite oricui să își creeze propria aplicație Android, inclusiv utilizatorilor care abia învață să creeze aplicații și utilizatorilor de cititoare de ecran. Ghidul complet de utilizare a acestei aplicații este disponibil pe acest ecran Tentang Alat.
+
+Ce este această aplicație și pentru cine este
+Create Aplikasi este un instrument de creare de aplicații Android care rulează pe telefon. Această aplicație se adresează oricui dorește să își creeze propria aplicație Android, inclusiv începătorilor și utilizatorilor de cititoare de ecran. Această aplicație oferă un editor de cod, un buton Jalankan pentru testarea proiectelor, un buton Bangun pentru crearea unui APK, precum și meniuri pentru semnarea și instalarea APK-ului.
+
+Scopul acestei aplicații
+Această aplicație a fost creată pentru ca oricine să își poată crea cu ușurință propria aplicație Android, direct de pe telefon. Aspectul său a fost făcut cât mai simplu posibil, astfel încât chiar și utilizatorii noi să o poată încerca imediat.
+
+Cum se creează un proiect nou, pas cu pas
+1. Apăsați Buat Project în meniul principal.
+2. Alegeți tipul de proiect: HTML, Situs Web, Java, Kotlin, Compose sau Python.
+3. Completați numele aplicației, exemplu: Garuda Decode.
+4. Completați numele pachetului (package name), exemplu: com.android.garudadecode. Numele pachetului trebuie să folosească litere mici și să fie format din cel puțin două părți separate printr-un punct.
+5. Completați versiunea aplicației, exemplu: 1.0, și codul versiunii ca număr, exemplu: 1. Dacă este lăsat necompletat, versiunea va fi completată automat cu 1.0, iar codul versiunii cu 1.
+6. Completați SDK-ul minim și SDK-ul țintă, dacă este necesar. Dacă sunt lăsate necompletate, vor fi folosite valorile implicite. SDK-ul minim este cea mai joasă versiune Android acceptată, exemplu: 21 înseamnă Android 5.0. SDK-ul țintă maxim este 36 (Android 16).
+7. Apăsați butonul Pilih Izin pentru a alege permisiunile aplicației, exemplu: INTERNET. Permisiunea INTERNET este bifată în mod implicit. Bifați doar permisiunile de care aplicația are cu adevărat nevoie.
+8. Dacă doriți, bifați „Gunakan arsitektur terpisah 64 bit dan 32 bit" pentru ca dimensiunea APK-ului să fie mai mică și bifați „Gunakan tanda tangan pribadi" dacă doriți să folosiți un keystore creat de dumneavoastră.
+9. Apăsați Buat Proyek. Noul proiect este salvat în dosarul Download/project și apare imediat în Kelola Project.
+
+Tipuri de proiecte disponibile
+• HTML: afișare din index.html, style.css și script.js, rulează prin WebView. Se construiește direct pe telefon.
+• Situs Web: un site web cu meniuri (Beranda, Tentang, Kontak) din index.html, tentang.html, kontak.html, style.css și script.js, rulează prin WebView. Se construiește direct pe telefon.
+• Java: se construiește pe telefon. MainActivity se află în app/src/main/java/<nama-paket>/MainActivity.java. Afișarea provine din app/src/main/res/layout/activity_main.xml, textul din app/src/main/res/values/strings.xml și tema din app/src/main/res/values/styles.xml.
+• Kotlin: poate fi construit pe dispozitiv (offline) folosind compilatorul Kotlin inclus în aplicație sau prin GitHub Actions. MainActivity se află în app/src/main/java/<nama-paket>/MainActivity.kt, iar fișierele res sunt aceleași ca într-un proiect Java. Prima construire Kotlin este mai lentă din cauza dimensiunii mari a compilatorului, iar fișierele .java care fac referire la clase Kotlin nu pot fi încă construite (fișierele .java sunt compilate înaintea fișierelor .kt).
+• Compose: o aplicație Android modernă a cărei interfață este creată cu Jetpack Compose (nu cu aspect XML). MainActivity se află în app/src/main/java/<nama-paket>/MainActivity.kt. Proiectele Compose sunt construite prin GitHub Actions (meniul Bangun proyek, apoi Bangun online) sau în Termux cu Gradle, deoarece Compose necesită bibliotecile Jetpack Compose care nu sunt disponibile pe dispozitiv.
+• Python: logica aplicației este scrisă în Python (Chaquopy) în app/src/main/python/main.py și este rulată de gazda MainActivity.java din app/src/main/java/<nama-paket>/MainActivity.java. Proiectele Python pot fi construite direct pe telefon (mediul de rulare Chaquopy este inclus în aplicație) sau prin GitHub Actions. SDK-ul minim pentru proiectele Python este 24 (Android 7.0).
+
+Structura fișierelor proiectelor Java, HTML, Situs Web, Kotlin, Compose și Python
+Proiectele Java, HTML, Situs Web, Kotlin, Compose și Python sunt organizate ca proiectele Android în general. În interiorul dosarului app se află dosarul src, iar în interiorul acestuia se află dosarul main. În interiorul dosarului main se află AndroidManifest.xml lângă dosarul java, dosarul res care conține layout/activity_main.xml și values/strings.xml, precum și values/styles.xml, iar pentru HTML și Situs Web există dosarul assets care conține index.html (Situs Web are și tentang.html și kontak.html). Proiectele HTML și Situs Web au, de asemenea, propriul MainActivity în app/src/main/java/<nama-paket>/MainActivity.java, care încarcă index.html în WebView și devine lansatorul (launcher) în AndroidManifest. Proiectele Python au cod Python în app/src/main/python/main.py și gazda MainActivity.java în app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, aspectul, strings și styles pot fi deschise și modificate în editor, la fel ca MainActivity. Proiectele mai vechi al căror manifest se află încă lângă dosarul app pot fi construite în continuare, deoarece la construire aplicația verifică mai întâi AndroidManifest.xml din app/src/main/, apoi pe cel de lângă dosarul app și, în final, fișierul de date al proiectului.
+
+Reguli privind permisiunile (important)
+Permisiunile bifate la crearea unui proiect sunt înregistrate într-un singur loc, în funcție de tipul proiectului. Pentru proiectele Java, HTML, Situs Web, Kotlin, Compose și Python, permisiunile bifate sunt înregistrate NUMAI în AndroidManifest.xml aflat în app/src/main/, lângă dosarul java, în interiorul dosarului proiectului. Fișierul de date al proiectului pentru proiectele Java, HTML, Situs Web, Kotlin, Compose și Python nu conține o listă de permisiuni. Dacă alegeți Java și apoi bifați INTERNET și CAMERA, cele înregistrate în AndroidManifest.xml sunt doar INTERNET și CAMERA, fără alte permisiuni care să le însoțească. La construire, aplicația citește permisiunile din același loc: din AndroidManifest.xml din app/src/main/ pentru proiectele Java, HTML, Situs Web, Kotlin, Compose și Python (dacă nu există, din AndroidManifest.xml de lângă dosarul app pentru proiectele mai vechi) și din fișierul de date al proiectului pentru proiectele mai vechi.
+
+Cum se folosește editorul
+Deschideți Kelola Project, atingeți numele unui proiect pentru a deschide editorul. În editor, fișierele pot fi deschise, codul poate fi scris și modificările pot fi salvate. Pentru proiectele Java, HTML, Situs Web, Kotlin, Compose și Python, fișierele se află în interiorul dosarului app/src/main. Pentru a partaja un proiect, folosiți Ekspor ZIP (vedeți secțiunea de mai jos).
+
+Cum se rulează un proiect
+În editor, apăsați Jalankan pentru a testa proiectul. Pentru proiectele HTML și Situs Web, cel care rulează este index.html prin WebView. Dacă apare o eroare, citiți mesajul de eroare, corectați codul și rulați din nou.
+
+Cum se construiește un APK
+În editor, apăsați Bangun. Există două moduri de construire. Primul, Bangun di perangkat: construiește direct pe telefon, fără internet, pentru proiectele HTML, Situs Web, Java, Kotlin și Python. Al doilea, Bangun online prin GitHub Actions: construiește prin internet pe GitHub și poate fi folosit pentru toate tipurile de proiecte. Proiectele Compose pot fi construite doar în al doilea mod (Bangun online) sau în Termux cu Gradle, deoarece Compose necesită bibliotecile Jetpack Compose care nu sunt disponibile pe dispozitiv. Rezultatul primei construiri nu este încă semnat. Apoi aplicația îl semnează: automat cu cheia implicită sau cu o semnătură personală, dacă câmpul „Gunakan tanda tangan pribadi" a fost bifat la crearea proiectului.
+
+Cum se instalează un APK
+Când APK-ul este gata, apăsați Pasang pentru a-l instala. Pe Android 8 și versiunile mai noi, telefonul va cere mai întâi „Izinkan dari sumber ini", deoarece această aplicație instalează APK-uri din afara Play Store. Activați această permisiune o singură dată în Setări, apoi reveniți în aplicație: instalarea va continua automat, fără a mai fi nevoie să apăsați Pasang din nou. Dacă butonul Pasang nu apare, asigurați-vă că construirea s-a încheiat și că APK-ul a fost creat.
+
+Cum se semnează o aplicație
+Fiecare APK trebuie semnat pentru a putea fi instalat. Există două opțiuni. Prima, cheia implicită: aplicația semnează singură, automat, fără a fi nevoie să faceți nimic. A doua, semnătura personală: creați mai întâi un keystore prin meniul Buat Keystore din meniul principal, păstrați-i bine parola, apoi bifați „Gunakan tanda tangan pribadi" la crearea unui proiect. Keystore-ul este salvat în Download/project/signing.
+
+Exportarea unui proiect ca ZIP
+Ekspor ZIP este oferit pentru ca proiectele să poată fi partajate cu prietenii. Modul de folosire: în Kelola Project, apăsați lung numele unui proiect, apoi alegeți Ekspor ZIP. Rezultatul este salvat în Download/project/<NamaProyek>.zip. Dosarul bin nu este inclus, așa că dimensiunea este mică, doar câteva zeci de KB. Fișierul ZIP poate fi trimis unui prieten sau încărcat pe GitHub.
+
+Ekstensi JAWS
+Ekstensi JAWS folosește motorul de extensie al Jieshuo (CSR), nu cititorul său de ecran. În acest fel, schema poate continua să funcționeze chiar dacă utilizatorul folosește TalkBack. Modul de folosire: deschideți Ekstensi JAWS în meniul principal. Deoarece clicurile automate rulează singure, serviciul trebuie mai întâi activat în Setările de accesibilitate. După aceea, poate fi creată o schemă nouă: tastați numele schemei, apăsați OK, apoi completați câmpurile sale.
+
+Daftar Klik este separat pentru ordine
+În interiorul schemei există două câmpuri: câmpul de script și câmpul Daftar Klik. Lista de butoane este salvată separat în fișierul daftar_klik.txt, câte un nume pe linie. Exemplu de conținut: tombolSimpan, tombolHapus, tombolBuka. Pentru a deschide o aplicație, scrieți pur și simplu >WhatsApp în acea listă. Schemele mai vechi care nu au încă un fișier daftar_klik.txt vor afișa acest exemplu implicit.
+
+Funcții simple oferite
+• klikTombol("tombolSimpan") — face clic pe un buton pe baza textului său.
+• klikDaftarTombol(daftar) — face clic pe lista din daftar_klik.txt, câte un buton pe linie, în ordine, apoi anunță câte au reușit și câte nu au fost găsite.
+• bukaAplikasi("WhatsApp") — deschide o aplicație pe baza numelui său sau scrieți „>WhatsApp" în listă.
+• klik(540, 1200) — face clic la coordonatele ecranului.
+Toate funcțiile au fost făcute simple la început. După ce vă obișnuiți cu ele, funcții suplimentare pot fi adăugate ulterior.
+
+Despre cititoarele de ecran
+Această aplicație este concepută pentru a fi prietenoasă cu cititoarele de ecran. Fiecare câmp de completare are o etichetă și un exemplu de completare, iar toate butoanele pot fi accesate fără gesturi complicate. Ekstensi JAWS este creat pentru a continua să funcționeze chiar dacă utilizatorul folosește TalkBack, deoarece cel folosit este motorul său de extensie, nu cititorul său de ecran.
+
+Confidențialitate și securitate
+Proiectele și keystore-urile sunt salvate pe telefonul dumneavoastră. Tokenul GitHub este folosit doar pentru construirile online și este salvat în această aplicație. Nu partajați tokenul sau parola keystore-ului dumneavoastră cu nimeni. Dacă folosiți o semnătură personală, păstrați keystore-ul și parola sa într-un loc sigur, deoarece, dacă se pierd, vechiul APK nu poate fi actualizat cu aceeași semnătură.
+
+Cerințe
+Android 5.0 sau mai nou. Permisiunea de stocare: pe Android 11 și versiunile mai noi se folosește permisiunea de acces la toate fișierele, pe Android 10 și versiunile mai vechi se folosește permisiunea obișnuită de stocare (citire/scriere stocare), deoarece Android 10 nu are permisiunea de acces la toate fișierele. Construirea pe dispozitiv necesită un telefon cu procesor ARM (32 sau 64 de biți). Construirea online prin GitHub Actions necesită internet și un token GitHub. Proiectele Kotlin pot fi construite pe dispozitiv, dar prima lor construire este mai lentă și folosește mai multă memorie din cauza dimensiunii mari a compilatorului Kotlin. Proiectele Compose sunt construite prin GitHub Actions sau în Termux cu Gradle. Proiectele Python necesită Android 7.0 sau mai nou (SDK minim 24), iar APK-ul rezultat este mai mare deoarece include mediul de rulare Python (Chaquopy) împreună cu biblioteca sa standard.
+
+Terminal
+Meniul Terminal de pe ecranul principal deschide un terminal în interiorul acestei aplicații. Comenzi precum ls pot fi folosite pentru a vedea conținutul dosarului proiectului, cd pentru a schimba dosarul și git pentru a gestiona codul. Rezultatul comenzilor este afișat ca text care poate fi citit de un cititor de ecran și există un buton Bacakan hasil pentru a asculta ultimul rezultat. Acest terminal folosește shell-ul de sistem al telefonului, așa că programele interactive precum nano și vim nu pot fi încă folosite aici.
+
+Licență (versiune plătită)
+Pentru a vinde o aplicație, bifați „Aktifkan Lisensi" la crearea unui proiect, apoi completați numărul dumneavoastră de WhatsApp. Aplicația construită va cere un cod de licență la prima deschidere: utilizatorul își vede ID-ul dispozitivului, apasă butonul Kirim ID Perangkat pentru a trimite acel ID la WhatsApp-ul dumneavoastră, iar dumneavoastră răspundeți cu codul de licență. Codul de licență este calculat din ID-ul dispozitivului și parola proiectului (lisensi_seed în fișierul de date al proiectului) — păstrați bine această parolă și nu o partajați. După introducerea codului corect, aplicația se deschide și nu mai cere codul.
+
+Creator automat de pictograme
+Pictograma proiectelor noi este încă transparentă, așa că Pembuat Ikon este disponibil în meniul principal. Modul de folosire: apăsați Pembuat Ikon, scrieți una sau două litere (de exemplu inițialele numelui aplicației), alegeți o culoare de fundal și o culoare a textului, vedeți previzualizarea, apoi apăsați Simpan ke Proyek pentru a folosi pictograma în proiectul ales sau Simpan ke Download pentru a folosi fișierul său PNG în altă parte. După crearea unui proiect, aplicația oferă, de asemenea, crearea unei pictograme. Pictograma veche a unui proiect poate fi înlocuită oricând din meniul proiectului din Kelola Project (apăsați lung numele proiectului, apoi alegeți Ganti Ikon).
+
+Șabloane de proiecte gata de folosit
+Dacă nu doriți să porniți de la un proiect gol, alegeți un șablon la crearea unui proiect: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) sau Penghitung (Compose). Alegerea unui șablon schimbă automat tipul de proiect pentru a urma șablonul, iar proiectul este creat cu cod de pornire gata făcut — gata de rulat sau de modificat. Dacă tipul de proiect este schimbat din nou manual după alegerea unui șablon, șablonul este anulat și proiectul revine la gol. Pentru șabloanele HTML și Situs Web, șablonul înlocuiește conținutul lui index.html, inclusiv scriptul HTML tastat în formular.
+
+Copierea de rezervă și restaurarea proiectelor
+Pentru ca proiectele să nu se piardă, este disponibilă o funcție de copie de rezervă. Modul de folosire: în Kelola Project, apăsați lung numele unui proiect, apoi alegeți Cadangkan. Copia de rezervă este salvată ca ZIP în dosarul Download/backup cu numele proiectului și data, exemplu: GarudaDecode-2026-11-14-123045.zip. Conținutul său este același ca la Ekspor ZIP (întregul conținut al proiectului, fără dosarul bin). Pentru restaurare: deschideți meniul în Kelola Project, alegeți Pulihkan cadangan, apoi alegeți fișierul copiei de rezervă. Dacă numele proiectului există deja, aplicația va întreba: Suprascrieți proiectul vechi sau salvați cu un nume nou.
+
+Partajarea și importul proiectelor
+Pentru a partaja un proiect cu un prieten: în Kelola Project, apăsați lung numele unui proiect, apoi alegeți Bagikan. Proiectul este trimis ca ZIP prin aplicațiile de partajare (WhatsApp, Telegram și altele). Pentru a primi un proiect de la un prieten: deschideți meniul în Kelola Project, alegeți Impor proyek, apoi alegeți fișierul său ZIP. Fișierul ZIP trebuie să conțină un fișier de date al proiectului — dacă nu îl conține, fișierul este respins cu un mesaj clar, deoarece acel fișier nu este un proiect Create Aplikasi. Dacă numele proiectului există deja, aplicația va întreba: Suprascrieți proiectul vechi sau salvați cu un nume nou.
+
+Căutarea și filtrarea proiectelor
+Dacă proiectele sunt deja multe, în Kelola Project există o casetă de căutare și un filtru de tip. Tastați un nume de proiect în caseta de căutare și lista se filtrează imediat (nu se face distincție între litere mari și mici). Filtrul de tip limitează lista la un singur tip: Toate, HTML, Situs Web, Java, Kotlin, Compose sau Python. Meniul fiecărui proiect poate fi deschis în continuare ca de obicei din lista filtrată.
+
+Creați aplicații cu vocea

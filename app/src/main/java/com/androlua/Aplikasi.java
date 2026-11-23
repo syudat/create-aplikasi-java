@@ -72,6 +72,19 @@ public class Aplikasi extends Application {
             System.exit(10);
             return;
         }
+        if (!periksaKeutuhanString()) {
+            // String/panduan diubah oleh pihak lain: tolak berjalan.
+            try {
+                android.widget.Toast.makeText(this,
+                        "Aplikasi ini telah diubah sehingga tidak dapat dijalankan.",
+                        android.widget.Toast.LENGTH_LONG).show();
+            } catch (Throwable t) {
+                // abaikan: tetap berhenti di bawah
+            }
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(10);
+            return;
+        }
         CrashHandler crashHandler = CrashHandler.getInstance();
         // Daftarkan crashHandler
         crashHandler.init(getApplicationContext());
@@ -100,8 +113,61 @@ public class Aplikasi extends Application {
         }
     }
 
-    private byte[] ambilSertifikatSendiri() throws Exception {
-        PackageManager pm = getPackageManager();
+    /**
+     * DebugKausar (perintah al kautsar 2026-11-23 20:21 WITA): periksa
+     * keutuhan string antarmuka (tabel TeksUI) dan berkas panduan di aset.
+     * Hanya berlaku untuk paket IDE sendiri. Gagal AMAN: bila pemeriksaan
+     * tidak bisa berjalan sama sekali (mis. aset tidak terbaca), aplikasi
+     * TETAP berjalan — yang ditolak hanya ketidakcocokan yang terbukti
+     * (satu huruf berubah di string atau di berkas panduan yang ada).
+     */
+    private boolean periksaKeutuhanString() {
+        try {
+            if (!"com.pembuataplikasi".equals(getPackageName())) return true;
+            final android.content.res.AssetManager aset = getAssets();
+            StringBuilder catatan = new StringBuilder();
+            boolean ok = DebugKausar.periksaSemua(new DebugKausar.PenyediaPanduan() {
+                public boolean ada(String namaBerkas) {
+                    java.io.InputStream in = null;
+                    try {
+                        in = aset.open("panduan/" + namaBerkas);
+                        return true;
+                    } catch (Throwable t) {
+                        return false;
+                    } finally {
+                        if (in != null) try { in.close(); } catch (Throwable ignored) {}
+                    }
+                }
+                public byte[] baca(String namaBerkas) {
+                    java.io.InputStream in = null;
+                    try {
+                        in = aset.open("panduan/" + namaBerkas);
+                        java.io.ByteArrayOutputStream bos =
+                                new java.io.ByteArrayOutputStream();
+                        byte[] buf = new byte[8192];
+                        int n;
+                        while ((n = in.read(buf)) >= 0) bos.write(buf, 0, n);
+                        return bos.toByteArray();
+                    } catch (Throwable t) {
+                        return null;
+                    } finally {
+                        if (in != null) try { in.close(); } catch (Throwable ignored) {}
+                    }
+                }
+            }, catatan);
+            if (!ok) {
+                try {
+                    android.util.Log.w("DebugKausar", catatan.toString());
+                } catch (Throwable ignored) {
+                }
+            }
+            return ok;
+        } catch (Throwable t) {
+            return true;
+        }
+    }
+
+    private byte[] ambilSertifikatSendiri() throws Exception {        PackageManager pm = getPackageManager();
         if (Build.VERSION.SDK_INT >= 28) {
             PackageInfo pi = pm.getPackageInfo(getPackageName(),
                     PackageManager.GET_SIGNING_CERTIFICATES);

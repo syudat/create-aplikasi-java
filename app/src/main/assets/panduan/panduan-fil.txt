@@ -1,0 +1,96 @@
+Maligayang pagdating sa Create Aplikasi by Al Kautsar
+Ang Create Aplikasi ay isang app na gumagawa ng mga Android app na direktang tumatakbo sa telepono, nang hindi nangangailangan ng laptop. Pinapayagan ng app na ito ang sinuman na gumawa ng sarili nilang Android app, kabilang ang mga user na nagsisimula pa lang matutong gumawa ng mga app at ang mga user ng screen reader. Ang kumpletong gabay sa paggamit ng app na ito ay available sa screen na Tentang Alat na ito.
+
+Ano ang app na ito at para kanino ito
+Ang Create Aplikasi ay isang kasangkapan sa paggawa ng mga Android app na tumatakbo sa telepono. Ang app na ito ay para sa sinumang gustong gumawa ng sarili nilang Android app, kabilang ang mga baguhan at mga user ng screen reader. Nagbibigay ang app na ito ng code editor, ng button na Jalankan para subukan ang proyekto, ng button na Bangun para gumawa ng APK, at ng mga menu para lagdaan at i-install ang APK.
+
+Ang layunin ng app na ito
+Ginawa ang app na ito para madaling makagawa ang sinuman ng sarili nilang Android app, direkta mula sa telepono. Ginawang pinakasimple ang hitsura nito para kahit ang mga bagong user ay makasubok agad.
+
+Paano gumawa ng bagong proyekto, hakbang-hakbang
+1. Pindutin ang Buat Project sa pangunahing menu.
+2. Piliin ang uri ng proyekto: HTML, Situs Web, Java, Kotlin, Compose, o Python.
+3. Ilagay ang pangalan ng app, halimbawa: Garuda Decode.
+4. Ilagay ang pangalan ng package (package name), halimbawa: com.android.garudadecode. Ang pangalan ng package ay dapat gumamit ng maliliit na titik at binubuo ng hindi bababa sa dalawang bahagi na pinaghihiwalay ng tuldok.
+5. Ilagay ang bersyon ng app, halimbawa: 1.0, at ang code ng bersyon sa anyong numero, halimbawa: 1. Kung iiwang blangko, awtomatikong pupunan ang bersyon ng 1.0 at ang code ng bersyon ng 1.
+6. Ilagay ang minimum na SDK at target na SDK kung kailangan. Kung iiwang blangko, ang mga default na value ang gagamitin. Ang minimum na SDK ay ang pinakamababang bersyon ng Android na sinusuportahan, halimbawa: ang 21 ay nangangahulugang Android 5.0. Ang maximum na target na SDK ay 36 (Android 16).
+7. Pindutin ang button na Pilih Izin para pumili ng mga pahintulot ng app, halimbawa: INTERNET. Ang pahintulot na INTERNET ay nakamarka na bilang default. Markahan lamang ang mga pahintulot na talagang kailangan ng app.
+8. Kung nais, markahan ang "Gunakan arsitektur terpisah 64 bit dan 32 bit" para mas maliit ang sukat ng APK, at markahan ang "Gunakan tanda tangan pribadi" kung gustong gumamit ng sariling gawang keystore.
+9. Pindutin ang Buat Proyek. Ang bagong proyekto ay mase-save sa folder na Download/project at agad na makikita sa Kelola Project.
+
+Mga uring proyekto na available
+• HTML: hitsura mula sa index.html, style.css, at script.js, tumatakbo sa pamamagitan ng WebView. Direktang ginagawa sa telepono.
+• Situs Web: website na may menu (Beranda, Tentang, Kontak) mula sa index.html, tentang.html, kontak.html, style.css, at script.js, tumatakbo sa pamamagitan ng WebView. Direktang ginagawa sa telepono.
+• Java: ginagawa sa telepono. Ang MainActivity ay nasa app/src/main/java/<nama-paket>/MainActivity.java. Ang hitsura ay mula sa app/src/main/res/layout/activity_main.xml, ang teksto ay mula sa app/src/main/res/values/strings.xml, at ang tema ay mula sa app/src/main/res/values/styles.xml.
+• Kotlin: maaaring gawin sa device (offline) gamit ang Kotlin compiler na kasama sa app, o sa pamamagitan ng GitHub Actions. Ang MainActivity ay nasa app/src/main/java/<nama-paket>/MainActivity.kt, at ang mga res file ay katulad ng sa proyektong Java. Ang unang pagbuo sa Kotlin ay mas mabagal dahil sa malaking sukat ng compiler, at ang mga .java file na tumutukoy sa mga Kotlin class ay hindi pa maaaring buuin (ang mga .java file ay kina-compile muna bago ang mga .kt file).
+• Compose: modernong Android app na ang interface ay ginawa gamit ang Jetpack Compose (hindi XML layout). Ang MainActivity ay nasa app/src/main/java/<nama-paket>/MainActivity.kt. Ang mga proyektong Compose ay binubuo sa pamamagitan ng GitHub Actions (menu na Bangun proyek, pagkatapos Bangun online) o sa Termux gamit ang Gradle, dahil kailangan ng Compose ang mga Jetpack Compose library na hindi available sa device.
+• Python: ang logic ng app ay isinusulat sa wikang Python (Chaquopy) sa app/src/main/python/main.py, at pinatatakbo ng host na MainActivity.java sa app/src/main/java/<nama-paket>/MainActivity.java. Ang mga proyektong Python ay maaaring direktang buuin sa telepono (ang Chaquopy runtime ay kasama sa app) o sa pamamagitan ng GitHub Actions. Ang minimum na SDK ng mga proyektong Python ay 24 (Android 7.0).
+
+Ayos ng mga file ng proyektong Java, HTML, Situs Web, Kotlin, Compose, at Python
+Ang mga proyektong Java, HTML, Situs Web, Kotlin, Compose, at Python ay nakaayos tulad ng mga Android project sa pangkalahatan. Sa loob ng folder na app ay may folder na src, at sa loob nito ay may folder na main. Sa loob ng folder na main ay may AndroidManifest.xml sa tabi ng folder na java, folder na res na naglalaman ng layout/activity_main.xml at values/strings.xml at values/styles.xml, at para sa HTML at Situs Web ay may folder na assets na naglalaman ng index.html (ang Situs Web ay mayroon ding tentang.html at kontak.html). Ang mga proyektong HTML at Situs Web ay mayroon ding sariling MainActivity sa app/src/main/java/<nama-paket>/MainActivity.java, na naglo-load ng index.html sa WebView at nagsisilbing launcher sa AndroidManifest. Ang mga proyektong Python ay may Python code sa app/src/main/python/main.py at host na MainActivity.java sa app/src/main/java/<nama-paket>/MainActivity.java. Ang AndroidManifest.xml, layout, strings, at styles ay maaaring buksan at baguhin sa editor, tulad ng MainActivity. Ang mga lumang proyekto na ang manifest ay nasa tabi pa rin ng folder na app ay maaari pa ring buuin, dahil kapag nagbubuo, sinusuri muna ng app ang AndroidManifest.xml sa app/src/main/, pagkatapos ang nasa tabi ng folder na app, at panghuli ang project data file.
+
+Mga patakaran sa pahintulot (mahalaga)
+Ang mga pahintulot na minarkahan kapag gumagawa ng proyekto ay naitatala lamang sa isang lugar, ayon sa uri ng proyekto. Para sa mga proyektong Java, HTML, Situs Web, Kotlin, Compose, at Python, ang mga minarkahang pahintulot ay naitatala LAMANG sa AndroidManifest.xml na nasa app/src/main/, sa tabi ng folder na java, sa loob ng folder ng proyekto. Ang project data file para sa mga proyektong Java, HTML, Situs Web, Kotlin, Compose, at Python ay walang listahan ng mga pahintulot. Kung pipiliin mo ang Java at mamarkahan ang INTERNET at CAMERA, ang maitatala sa AndroidManifest.xml ay INTERNET at CAMERA lamang, nang walang ibang pahintulot na kasama. Kapag nagbubuo, binabasa ng app ang mga pahintulot mula sa iisang lugar: mula sa AndroidManifest.xml sa app/src/main/ para sa mga proyektong Java, HTML, Situs Web, Kotlin, Compose, at Python (kung wala, mula sa AndroidManifest.xml sa tabi ng folder na app para sa mga lumang proyekto), at mula sa project data file para sa mga lumang proyekto.
+
+Paano gamitin ang editor
+Buksan ang Kelola Project, i-tap ang pangalan ng proyekto para buksan ang editor. Sa editor, maaaring buksan ang mga file, maaaring isulat ang code, at maaaring i-save ang mga pagbabago. Para sa mga proyektong Java, HTML, Situs Web, Kotlin, Compose, at Python, ang mga file ay nakaayos sa loob ng folder na app/src/main. Para magbahagi ng proyekto, gamitin ang Ekspor ZIP (tingnan ang seksyon sa ibaba).
+
+Paano patakbuhin ang proyekto
+Sa editor, pindutin ang Jalankan para subukan ang proyekto. Para sa mga proyektong HTML at Situs Web, ang pinatatakbo ay ang index.html sa pamamagitan ng WebView. Kung may maganap na error, basahin ang mensahe ng error, ayusin ang code, pagkatapos ay patakbuhin ulit.
+
+Paano buuin ang APK
+Sa editor, pindutin ang Bangun. May dalawang paraan ng pagbuo. Una, Bangun di perangkat: direktang pagbuo sa telepono nang walang internet, para sa mga proyektong HTML, Situs Web, Java, Kotlin, at Python. Pangalawa, Bangun online sa pamamagitan ng GitHub Actions: pagbuo sa pamamagitan ng internet sa GitHub, at maaaring gamitin para sa lahat ng uri ng proyekto. Ang mga proyektong Compose ay maaari lamang buuin sa pangalawang paraan (Bangun online) o sa Termux gamit ang Gradle, dahil kailangan ng Compose ang mga Jetpack Compose library na hindi available sa device. Ang resulta ng unang pagbuo ay hindi pa nalalagdaan. Pagkatapos noon ay lalagdaan ito ng app: awtomatiko gamit ang default na key, o gamit ang personal na lagda kung ang kahon na "Gunakan tanda tangan pribadi" ay minarkahan kapag gumagawa ng proyekto.
+
+Paano i-install ang APK
+Kung handa na ang APK, pindutin ang Pasang para i-install ito. Sa Android 8 pataas, hihingin muna ng telepono ang "Izinkan dari sumber ini", dahil nag-i-install ang app na ito ng mga APK mula sa labas ng Play Store. I-activate ang pahintulot na iyon nang isang beses sa Pengaturan, pagkatapos ay bumalik sa app: awtomatikong magpapatuloy ang pag-install nang hindi na kailangang pindutin ulit ang Pasang. Kung hindi lumabas ang button na Pasang, tiyaking tapos na ang pagbuo at nagawa na ang APK.
+
+Paano lagdaan ang app
+Bawat APK ay dapat lagdaan para ma-install. May dalawang pagpipilian. Una, ang default na key: awtomatikong lumalagda ang app nang mag-isa, nang hindi mo na kailangang gumawa ng anuman. Pangalawa, ang personal na lagda: gumawa muna ng keystore sa pamamagitan ng menu na Buat Keystore sa pangunahing menu, itago nang maayos ang password nito, pagkatapos ay markahan ang "Gunakan tanda tangan pribadi" kapag gumagawa ng proyekto. Ang keystore ay nase-save sa Download/project/signing.
+
+I-export ang proyekto bilang ZIP
+Ang Ekspor ZIP ay ibinibigay para maibahagi ang mga proyekto sa mga kaibigan. Ang paraan: sa Kelola Project, pindutin nang matagal ang pangalan ng proyekto, pagkatapos ay piliin ang Ekspor ZIP. Ang resulta ay mase-save sa Download/project/<NamaProyek>.zip. Ang folder na bin ay hindi kasama, kaya maliit ang sukat, ilang sampung KB lamang. Ang ZIP file na iyon ay maaaring ipadala sa kaibigan o i-upload sa GitHub.
+
+Extension na JAWS
+Ang extension na JAWS ay gumagamit ng extension engine ng Jieshuo (CSR), hindi ng screen reader nito. Dahil dito, ang disenyo ay maaari pa ring tumakbo kahit TalkBack ang gamit ng user. Ang paraan: buksan ang Ekstensi JAWS sa pangunahing menu. Dahil ang awtomatikong pag-click ay tumatakbo nang mag-isa, dapat munang i-activate ang serbisyo sa Pengaturan Aksesibilitas. Pagkatapos noon, maaaring gumawa ng bagong disenyo: i-type ang pangalan ng disenyo, pindutin ang OK, pagkatapos ay punan ang mga kahon nito.
+
+Ang Daftar Klik ay pinaghiwalay para maayos
+Sa loob ng disenyo ay may dalawang kahon: ang kahon ng script at ang kahon ng Daftar Klik. Ang listahan ng mga button ay hiwalay na nase-save sa file na daftar_klik.txt, isang pangalan bawat linya. Halimbawa ng laman nito: tombolSimpan, tombolHapus, tombolBuka. Para magbukas ng app, isulat lamang ang >WhatsApp sa listahang iyon. Ang mga lumang disenyo na wala pang file na daftar_klik.txt ay magpapakita ng default na halimbawang iyon.
+
+Mga simpleng function na ibinibigay
+• klikTombol("tombolSimpan") — nagki-click ng isang button batay sa teksto nito.
+• klikDaftarTombol(daftar) — nagki-click ng listahan sa daftar_klik.txt, isang button bawat linya, nang sunod-sunod, pagkatapos ay sinasabi kung ilan ang nagtagumpay at ilan ang hindi natagpuan.
+• bukaAplikasi("WhatsApp") — nagbubukas ng app batay sa pangalan nito, o isulat ang ">WhatsApp" sa listahan.
+• klik(540, 1200) — nagki-click sa mga coordinate ng screen.
+Ang lahat ng function ay ginawang simple muna. Kung nasanay na, maaaring magdagdag ng karagdagang mga function sa bandang huli.
+
+Tungkol sa screen reader
+Ang app na ito ay dinisenyo para maging magiliw sa screen reader. Bawat field ng paglalagay ay may label at halimbawa ng pagpuno, at lahat ng button ay maaabot nang walang kumplikadong mga gesture. Ang extension na JAWS ay ginawa para tumakbo pa rin kahit TalkBack ang gamit ng user, dahil ang ginagamit ay ang extension engine nito, hindi ang screen reader nito.
+
+Privacy at seguridad
+Ang mga proyekto at keystore ay nase-save sa iyong telepono. Ang GitHub token ay ginagamit lamang para sa mga online na pagbuo at nase-save sa loob ng app na ito. Huwag ibahagi ang iyong token o password ng keystore kaninuman. Kung gagamit ng personal na lagda, itago ang keystore at ang password nito sa ligtas na lugar, dahil kung mawala ang mga ito, ang lumang APK ay hindi na maa-update gamit ang parehong lagda.
+
+Mga pangangailangan
+Android 5.0 o mas bago. Pahintulot sa storage: sa Android 11 pataas ay gumagamit ng pahintulot sa pag-access ng lahat ng file, sa Android 10 pababa ay gumagamit ng karaniwang pahintulot sa storage (basahin/isulat ang storage) dahil ang Android 10 ay walang pahintulot sa pag-access ng lahat ng file. Ang pagbuo sa device ay nangangailangan ng teleponong may ARM processor (32 o 64 bit). Ang pagbuo online sa pamamagitan ng GitHub Actions ay nangangailangan ng internet at GitHub token. Ang mga proyektong Kotlin ay maaaring buuin sa device, ngunit ang unang pagbuo nito ay mas mabagal at gumagamit ng mas maraming memory dahil sa malaking sukat ng Kotlin compiler. Ang mga proyektong Compose ay binubuo sa pamamagitan ng GitHub Actions o sa Termux gamit ang Gradle. Ang mga proyektong Python ay nangangailangan ng Android 7.0 o mas bago (minimum na SDK 24) at ang resultang APK ay mas malaki dahil kasama nito ang Python runtime (Chaquopy) at ang standard library nito.
+
+Terminal
+Ang menu na Terminal sa pangunahing screen ay nagbubukas ng terminal sa loob ng app na ito. Ang mga command tulad ng ls ay maaaring gamitin para tingnan ang laman ng folder ng proyekto, cd para lumipat ng folder, at git para pamahalaan ang code. Ang output ng command ay lumalabas bilang tekstong mababasa ng screen reader, at may button na Bacakan hasil para pakinggan ang huling resulta. Ang terminal na ito ay gumagamit ng system shell ng telepono, kaya ang mga interactive na programa tulad ng nano at vim ay hindi pa maaaring gamitin dito.
+
+Lisensya (bayad na bersyon)
+Para magbenta ng mga app, markahan ang "Aktifkan Lisensi" kapag gumagawa ng proyekto, pagkatapos ay ilagay ang iyong numero ng WhatsApp. Ang app na resulta ng pagbuo ay hihingi ng code ng lisensya kapag unang binuksan: makikita ng user ang ID ng kanyang device, pipindutin ang button na Kirim ID Perangkat para ipadala ang ID na iyon sa iyong WhatsApp, pagkatapos ay sasagot ka gamit ang code ng lisensya. Ang code ng lisensya ay kinukuwenta mula sa ID ng device at sa password ng proyekto (lisensi_seed sa project data file) — itago nang maayos ang password na iyon at huwag ibahagi. Pagkatapos mailagay ang tamang code, bubukas ang app at hindi na hihingi ng code ulit.
+
+Pembuat Ikon Otomatis
+Ang mga icon ng bagong proyekto ay transparent pa rin, kaya available ang Pembuat Ikon sa pangunahing menu. Ang paraan: pindutin ang Pembuat Ikon, magsulat ng isa o dalawang titik (halimbawa, ang mga inisyal ng pangalan ng app), piliin ang kulay ng background at kulay ng teksto, tingnan ang preview nito, pagkatapos ay pindutin ang Simpan ke Proyek para gamitin ang icon na iyon sa napiling proyekto, o ang Simpan ke Download para gamitin ang PNG file nito sa ibang lugar. Pagkatapos magawa ang proyekto, nag-aalok din ang app na gumawa ng icon. Ang mga lumang icon ng proyekto ay maaaring palitan anumang oras mula sa menu ng proyekto sa Kelola Project (pindutin nang matagal ang pangalan ng proyekto, pagkatapos ay piliin ang Ganti Ikon).
+
+Mga Template ng Proyekto na Handa Nang Gamitin
+Kung ayaw mong magsimula sa blangkong proyekto, pumili ng template kapag gumagawa ng proyekto: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web), o Penghitung (Compose). Ang pagpili ng template ay awtomatikong binabago ang uri ng proyekto para sumunod sa template na iyon, at ang proyekto ay ginagawa nang may handa nang panimulang code — patatakbuhin o babaguhin na lamang ito. Kung babaguhin ulit nang mano-mano ang uri ng proyekto pagkatapos pumili ng template, makakansela ang template at babalik sa blangko ang proyekto. Para sa mga template na HTML at Situs Web, pinapalitan ng template ang laman ng index.html, kabilang ang HTML script na itinype sa form.
+
+Backup at Pag-restore ng Proyekto
+Para hindi mawala ang mga proyekto, may feature na backup. Ang paraan: sa Kelola Project, pindutin nang matagal ang pangalan ng proyekto, pagkatapos ay piliin ang Cadangkan. Ang backup ay mase-save bilang ZIP sa folder na Download/backup na may pangalan ng proyekto at petsa, halimbawa: GarudaDecode-2026-11-14-123045.zip. Ang laman nito ay katulad ng Ekspor ZIP (ang buong laman ng proyekto, nang walang folder na bin). Para mag-restore: buksan ang menu sa Kelola Project, piliin ang Pulihkan cadangan, pagkatapos ay piliin ang backup file nito. Kung mayroon nang pangalan ng proyekto, magtatanong ang app: Timpa proyek lama, o i-save gamit ang Nama baru.
+
+Pagbahagi at Pag-import ng Proyekto
+Para magbahagi ng proyekto sa kaibigan: sa Kelola Project, pindutin nang matagal ang pangalan ng proyekto, pagkatapos ay piliin ang Bagikan. Ang proyekto ay ipinapadala bilang ZIP sa pamamagitan ng mga app sa pagbahagi (WhatsApp, Telegram, at iba pa). Para tumanggap ng proyekto mula sa kaibigan: buksan ang menu sa Kelola Project, piliin ang Impor proyek, pagkatapos ay piliin ang ZIP file nito. Ang ZIP file na iyon ay dapat maglaman ng project data file — kung wala, ang file ay tatanggihan nang may malinaw na mensahe, dahil ang file na iyon ay hindi proyekto ng Create Aplikasi. Kung mayroon nang pangalan ng proyekto, magtatanong ang app: Timpa proyek lama, o i-save gamit ang Nama baru.
+
+Paghahanap at Filter ng Proyekto
+Kung marami na ang mga proyekto, sa Kelola Project ay may kahon ng paghahanap at filter ng uri. I-type ang pangalan ng proyekto sa kahon ng paghahanap, agad na mafi-filter ang listahan (ang malalaki at maliliit na titik ay hindi pinag-iiba). Ang filter ng uri ay nililimitahan ang listahan sa iisang uri lamang: Semua, HTML, Situs Web, Java, Kotlin, Compose, o Python. Ang menu ng bawat proyekto ay maaari pa ring buksan tulad ng dati mula sa na-filter nang listahan.
+
+Bangun Aplikasi dengan Suara

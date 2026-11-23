@@ -1,0 +1,96 @@
+Welkom bij Create Aplikasi by Al Kautsar
+Create Aplikasi is een applicatie om Android-applicaties te maken die rechtstreeks op de telefoon draait, zonder dat er een laptop nodig is. Met deze applicatie kan iedereen zijn eigen Android-applicatie maken, ook gebruikers die net leren applicaties te maken en gebruikers van schermlezers. De volledige handleiding voor het gebruik van deze applicatie is beschikbaar op dit scherm Tentang Alat (Over de tool).
+
+Wat deze applicatie is en voor wie hij bedoeld is
+Create Aplikasi is een hulpmiddel om Android-applicaties te maken dat op de telefoon draait. Deze applicatie is bedoeld voor iedereen die zijn eigen Android-applicatie wil maken, ook voor beginners en gebruikers van schermlezers. Deze applicatie biedt een code-editor, de knop Jalankan (Uitvoeren) om het project te testen, de knop Bangun (Bouwen) om een APK te maken, en menu's om de APK te ondertekenen en te installeren.
+
+Doel van deze applicatie
+Deze applicatie is gemaakt zodat iedereen gemakkelijk zijn eigen Android-applicatie kan maken, rechtstreeks vanaf de telefoon. De weergave is zo eenvoudig mogelijk gemaakt, zodat zelfs nieuwe gebruikers het meteen kunnen proberen.
+
+Hoe je een nieuw project maakt, stap voor stap
+1. Druk op Buat Project (Project maken) in het hoofdmenu.
+2. Kies het soort project: HTML, Situs Web (Website), Java, Kotlin, Compose of Python.
+3. Vul de naam van de applicatie in, bijvoorbeeld: Garuda Decode.
+4. Vul de pakketnaam (package name) in, bijvoorbeeld: com.android.garudadecode. De pakketnaam moet kleine letters gebruiken en uit ten minste twee delen bestaan die door een punt worden gescheiden.
+5. Vul de versie van de applicatie in, bijvoorbeeld: 1.0, en de versiecode als getal, bijvoorbeeld: 1. Als je dit leeg laat, wordt de versie automatisch ingevuld met 1.0 en de versiecode met 1.
+6. Vul indien nodig de minimale SDK en de doel-SDK in. Als je dit leeg laat, wordt de standaardwaarde gebruikt. De minimale SDK is de laagste ondersteunde Android-versie, bijvoorbeeld: 21 betekent Android 5.0. De maximale doel-SDK is 36 (Android 16).
+7. Druk op de knop Pilih Izin (Machtigingen kiezen) om de machtigingen van de applicatie te kiezen, bijvoorbeeld: INTERNET. De machtiging INTERNET is standaard al aangevinkt. Vink alleen de machtigingen aan die de applicatie echt nodig heeft.
+8. Als je wilt, vink dan "Gunakan arsitektur terpisah 64 bit dan 32 bit" (Aparte 64-bits en 32-bits architecturen gebruiken) aan zodat de APK kleiner wordt, en vink "Gunakan tanda tangan pribadi" (Persoonlijke handtekening gebruiken) aan als je een zelfgemaakte keystore wilt gebruiken.
+9. Druk op Buat Proyek (Project maken). Het nieuwe project wordt opgeslagen in de map Download/project en verschijnt meteen in Kelola Project (Projecten beheren).
+
+Beschikbare soorten projecten
+• HTML: weergave uit index.html, style.css en script.js, draait via WebView. Wordt rechtstreeks op de telefoon gebouwd.
+• Situs Web: website met een menu (Beranda (Startpagina), Tentang (Over), Kontak (Contact)) uit index.html, tentang.html, kontak.html, style.css en script.js, draait via WebView. Wordt rechtstreeks op de telefoon gebouwd.
+• Java: wordt op de telefoon gebouwd. MainActivity bevindt zich in app/src/main/java/<nama-paket>/MainActivity.java. De weergave komt uit app/src/main/res/layout/activity_main.xml, de tekst uit app/src/main/res/values/strings.xml en het thema uit app/src/main/res/values/styles.xml.
+• Kotlin: kan op het apparaat (offline) worden gebouwd met de Kotlin-compiler die in de applicatie is meegeleverd, of via GitHub Actions. MainActivity bevindt zich in app/src/main/java/<nama-paket>/MainActivity.kt en de res-bestanden zijn dezelfde als bij een Java-project. De eerste Kotlin-build is trager vanwege de grote omvang van de compiler, en .java-bestanden die naar Kotlin-klassen verwijzen kunnen nog niet worden gebouwd (.java-bestanden worden vóór .kt-bestanden gecompileerd).
+• Compose: een moderne Android-applicatie waarvan de interface wordt gemaakt met Jetpack Compose (niet met XML-layouts). MainActivity bevindt zich in app/src/main/java/<nama-paket>/MainActivity.kt. Compose-projecten worden gebouwd via GitHub Actions (het menu Bangun van het project, daarna Bangun online (Online bouwen)) of in Termux met Gradle, omdat Compose de Jetpack Compose-bibliotheken nodig heeft die niet op het apparaat beschikbaar zijn.
+• Python: de logica van de applicatie wordt geschreven in de taal Python (Chaquopy) in app/src/main/python/main.py en wordt uitgevoerd door de host MainActivity.java in app/src/main/java/<nama-paket>/MainActivity.java. Python-projecten kunnen rechtstreeks op de telefoon worden gebouwd (de Chaquopy-runtime is in de applicatie meegeleverd) en ook via GitHub Actions. De minimale SDK van Python-projecten is 24 (Android 7.0).
+
+Bestandsindeling van projecten in Java, HTML, Situs Web, Kotlin, Compose en Python
+Projecten in Java, HTML, Situs Web, Kotlin, Compose en Python zijn ingedeeld zoals Android-projecten in het algemeen. In de map app bevindt zich de map src, en daarin de map main. In de map main bevindt zich AndroidManifest.xml naast de map java, de map res met daarin layout/activity_main.xml en values/strings.xml en values/styles.xml, en voor HTML en Situs Web de map assets met daarin index.html (Situs Web heeft ook tentang.html en kontak.html). Projecten in HTML en Situs Web hebben ook hun eigen MainActivity in app/src/main/java/<nama-paket>/MainActivity.java, die index.html in WebView laadt en de launcher wordt in AndroidManifest. Python-projecten hebben Python-code in app/src/main/python/main.py en de host MainActivity.java in app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, layout, strings en styles kunnen in de editor worden geopend en gewijzigd, net als MainActivity. Oudere projecten waarvan het manifest nog naast de map app staat, kunnen ook worden gebouwd, omdat de applicatie bij het bouwen eerst AndroidManifest.xml in app/src/main/ controleert, daarna die naast de map app, en ten slotte het projectgegevensbestand.
+
+Regels voor machtigingen (belangrijk)
+De machtigingen die bij het maken van een project worden aangevinkt, worden slechts op één plaats vastgelegd, afhankelijk van het soort project. Voor projecten in Java, HTML, Situs Web, Kotlin, Compose en Python worden de aangevinkte machtigingen ALLEEN vastgelegd in AndroidManifest.xml dat zich in app/src/main/ bevindt, naast de map java, in de projectmap. Het projectgegevensbestand voor projecten in Java, HTML, Situs Web, Kotlin, Compose en Python bevat geen lijst met machtigingen. Als je Java kiest en INTERNET en CAMERA aanvinkt, wordt in AndroidManifest.xml alleen INTERNET en CAMERA vastgelegd, zonder dat er andere machtigingen bij komen. Bij het bouwen leest de applicatie de machtigingen van dezelfde plaats: uit AndroidManifest.xml in app/src/main/ voor projecten in Java, HTML, Situs Web, Kotlin, Compose en Python (als die er niet is, uit AndroidManifest.xml naast de map app voor oudere projecten), en uit het projectgegevensbestand voor oudere projecten.
+
+Hoe je de editor gebruikt
+Open Kelola Project en tik op de naam van het project om de editor te openen. In de editor kunnen bestanden worden geopend, kan code worden geschreven en kunnen wijzigingen worden opgeslagen. Voor projecten in Java, HTML, Situs Web, Kotlin, Compose en Python zijn de bestanden ingedeeld in de map app/src/main. Om een project te delen, gebruik je Ekspor ZIP (ZIP exporteren) (zie de sectie hieronder).
+
+Hoe je het project uitvoert
+Druk in de editor op Jalankan om het project te testen. Voor projecten in HTML en Situs Web wordt index.html uitgevoerd via WebView. Als er een fout optreedt, lees dan de foutmelding, corrigeer de code en voer het daarna opnieuw uit.
+
+Hoe je de APK bouwt
+Druk in de editor op Bangun. Er zijn twee manieren om te bouwen. Ten eerste, Bangun di perangkat (Op het apparaat bouwen): bouwt rechtstreeks op de telefoon zonder internet, voor projecten in HTML, Situs Web, Java, Kotlin en Python. Ten tweede, Bangun online via GitHub Actions: bouwt via internet op GitHub en kan voor alle soorten projecten worden gebruikt. Compose-projecten kunnen alleen met de tweede manier (Bangun online) worden gebouwd of in Termux met Gradle, omdat Compose de Jetpack Compose-bibliotheken nodig heeft die niet op het apparaat beschikbaar zijn. Het resultaat van de eerste build is nog niet ondertekend. Daarna ondertekent de applicatie het: automatisch met de standaardsleutel, of met een persoonlijke handtekening als het vakje "Gunakan tanda tangan pribadi" bij het maken van het project was aangevinkt.
+
+Hoe je de APK installeert
+Als de APK klaar is, druk dan op Pasang (Installeren) om hem te installeren. Op Android 8 en hoger vraagt de telefoon eerst om "Izinkan dari sumber ini" (Toestaan vanaf deze bron), omdat deze applicatie APK's van buiten de Play Store installeert. Schakel die machtiging één keer in bij Pengaturan (Instellingen) en ga daarna terug naar de applicatie: de installatie gaat automatisch verder zonder dat je opnieuw op Pasang hoeft te drukken. Als de knop Pasang niet verschijnt, zorg er dan voor dat de build is afgerond en de APK is gemaakt.
+
+Hoe je de applicatie ondertekent
+Elke APK moet worden ondertekend om geïnstalleerd te kunnen worden. Er zijn twee keuzes beschikbaar. Ten eerste, de standaardsleutel: de applicatie ondertekent zelf automatisch, zonder dat je iets hoeft te doen. Ten tweede, de persoonlijke handtekening: maak eerst een keystore via het menu Buat Keystore (Keystore maken) in het hoofdmenu, bewaar het wachtwoord ervan goed en vink daarna "Gunakan tanda tangan pribadi" aan bij het maken van het project. De keystore wordt bewaard in Download/project/signing.
+
+Het project exporteren naar ZIP
+Ekspor ZIP is beschikbaar zodat het project met vrienden kan worden gedeeld. Zo doe je dat: houd in Kelola Project de naam van het project lang ingedrukt en kies daarna Ekspor ZIP. Het resultaat wordt opgeslagen in Download/project/<NamaProyek>.zip. De map bin wordt niet meegenomen, dus de grootte is klein, slechts enkele tientallen KB. Dat ZIP-bestand kan naar een vriend worden gestuurd of naar GitHub worden geüpload.
+
+Ekstensi JAWS
+Ekstensi JAWS gebruikt de extensiemotor van Jieshuo (CSR), niet zijn schermlezer. Op die manier kan het ontwerp blijven werken, zelfs als de gebruiker TalkBack gebruikt. Zo doe je dat: open Ekstensi JAWS in het hoofdmenu. Omdat het automatische klikken vanzelf werkt, moet de dienst eerst worden ingeschakeld in Pengaturan Aksesibilitas (Toegankelijkheidsinstellingen). Daarna kan een nieuw ontwerp worden gemaakt: typ de naam van het ontwerp, druk op OK en vul daarna zijn vakken in.
+
+Daftar Klik apart gescheiden om het netjes te houden
+In een ontwerp zijn er twee vakken: het scriptvak en het vak Daftar Klik (Kliklijst). De lijst met knoppen wordt apart bewaard in het bestand daftar_klik.txt, één naam per regel. Voorbeeld van de inhoud: tombolSimpan, tombolHapus, tombolBuka. Om een applicatie te openen, schrijf je gewoon >WhatsApp in die lijst. Oudere ontwerpen die nog geen bestand daftar_klik.txt hebben, tonen dat standaardvoorbeeld.
+
+Eenvoudige functies die worden aangeboden
+• klikTombol("tombolSimpan") — klikt op één knop op basis van zijn tekst.
+• klikDaftarTombol(daftar) — klikt de lijst in daftar_klik.txt, één knop per regel, op volgorde, en meldt daarna hoeveel er gelukt zijn en hoeveel er niet gevonden zijn.
+• bukaAplikasi("WhatsApp") — opent een applicatie op basis van zijn naam, of schrijf ">WhatsApp" in de lijst.
+• klik(540, 1200) — klikt op schermcoördinaten.
+Alle functies zijn eerst eenvoudig gemaakt. Als je er eenmaal aan gewend bent, kunnen er later extra functies worden toegevoegd.
+
+Over de schermlezer
+Deze applicatie is ontworpen om vriendelijk te zijn voor schermlezers. Elk invulveld heeft een label en een voorbeeld van invullen, en alle knoppen kunnen worden bereikt zonder ingewikkelde gebaren. Ekstensi JAWS is zo gemaakt dat het blijft werken, zelfs als de gebruiker TalkBack gebruikt, omdat zijn extensiemotor wordt gebruikt, niet zijn schermlezer.
+
+Privacy en veiligheid
+Projecten en keystores worden op je telefoon bewaard. Het GitHub-token wordt alleen gebruikt voor online bouwen en wordt in deze applicatie bewaard. Deel je token of het wachtwoord van je keystore met niemand. Als je een persoonlijke handtekening gebruikt, bewaar de keystore en het wachtwoord ervan dan op een veilige plaats, want als ze verloren gaan, kan de oude APK niet met dezelfde handtekening worden bijgewerkt.
+
+Vereisten
+Android 5.0 of nieuwer. Opslagmachtiging: op Android 11 en hoger wordt de machtiging voor toegang tot alle bestanden gebruikt, op Android 10 en lager wordt de gewone opslagmachtiging (opslag lezen/schrijven) gebruikt, omdat Android 10 geen machtiging voor toegang tot alle bestanden heeft. Bouwen op het apparaat vereist een telefoon met een ARM-processor (32 of 64 bits). Online bouwen via GitHub Actions vereist internet en een GitHub-token. Kotlin-projecten kunnen op het apparaat worden gebouwd, maar hun eerste build is trager en gebruikt meer geheugen vanwege de grote omvang van de Kotlin-compiler. Compose-projecten worden gebouwd via GitHub Actions of in Termux met Gradle. Python-projecten vereisen Android 7.0 of nieuwer (minimale SDK 24) en de resulterende APK is groter omdat hij de Python-runtime (Chaquopy) met zijn standaardbibliotheek bevat.
+
+Terminal
+Het menu Terminal op het hoofdscherm opent een terminal in deze applicatie. Commando's zoals ls kunnen worden gebruikt om de inhoud van de projectmap te bekijken, cd om van map te wisselen en git om code te beheren. De uitvoer van commando's verschijnt als tekst die door de schermlezer kan worden gelezen, en er is een knop Bacakan hasil (Resultaat voorlezen) om het laatste resultaat te beluisteren. Deze terminal gebruikt de systeemshell van de telefoon, dus interactieve programma's zoals nano en vim kunnen hier nog niet worden gebruikt.
+
+Lisensi (betaalde versie)
+Om een applicatie te verkopen, vink je "Aktifkan Lisensi" (Licentie activeren) aan bij het maken van het project en vul je daarna je WhatsApp-nummer in. De gebouwde applicatie vraagt bij de eerste keer openen om een licentiecode: de gebruiker ziet de ID van zijn apparaat, drukt op de knop Kirim ID Perangkat (Apparaat-ID verzenden) om die ID naar jouw WhatsApp te sturen, en daarna antwoord jij met de licentiecode. De licentiecode wordt berekend uit de apparaat-ID en het projectwachtwoord (lisensi_seed in het projectgegevensbestand) — bewaar dat wachtwoord goed en deel het niet. Nadat de juiste code is ingevoerd, opent de applicatie en vraagt hij niet meer om een code.
+
+Pembuat Ikon Otomatis
+Het pictogram van nieuwe projecten is nog transparant, daarom is er Pembuat Ikon (Pictogrammaker) beschikbaar in het hoofdmenu. Zo doe je dat: druk op Pembuat Ikon, schrijf één of twee letters (bijvoorbeeld de initialen van de naam van de applicatie), kies de achtergrondkleur en de tekstkleur, bekijk het voorbeeld ervan, en druk daarna op Simpan ke Proyek (Opslaan in project) om dat pictogram in het gekozen project te gebruiken, of op Simpan ke Download (Opslaan in Download) om het PNG-bestand ervan ergens anders te gebruiken. Nadat het project is gemaakt, biedt de applicatie ook aan om een pictogram te maken. Het oude pictogram van een project kan op elk moment worden gewijzigd vanuit het projectmenu in Kelola Project (houd de naam van het project lang ingedrukt en kies daarna Ganti Ikon (Pictogram wijzigen)).
+
+Template Proyek Siap Pakai
+Als je niet met een leeg project wilt beginnen, kies dan een sjabloon bij het maken van het project: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) of Penghitung (Compose). Het kiezen van een sjabloon verandert automatisch het soort project volgens dat sjabloon, en het project wordt gemaakt met startcode die al klaar is — je hoeft het alleen maar uit te voeren of te wijzigen. Als het soort project na het kiezen van een sjabloon opnieuw handmatig wordt gewijzigd, wordt het sjabloon geannuleerd en is het project weer leeg. Bij sjablonen voor HTML en Situs Web vervangt het sjabloon de inhoud van index.html, inclusief het HTML-script dat in het formulier is getypt.
+
+Cadangan dan Pulihkan Proyek
+Zodat projecten niet verloren gaan, is er een back-upfunctie beschikbaar. Zo doe je dat: houd in Kelola Project de naam van het project lang ingedrukt en kies daarna Cadangkan (Back-up maken). De back-up wordt opgeslagen als ZIP in de map Download/backup met de naam van het project en de datum, bijvoorbeeld: GarudaDecode-2026-11-14-123045.zip. De inhoud ervan is dezelfde als bij Ekspor ZIP (de volledige inhoud van het project, zonder de map bin). Om te herstellen: open het menu in Kelola Project, kies Pulihkan cadangan (Back-up herstellen) en kies daarna het back-upbestand ervan. Als de naam van het project al bestaat, vraagt de applicatie: Timpa proyek lama (Het oude project overschrijven), of opslaan met Nama baru (Nieuwe naam).
+
+Bagikan dan Impor Proyek
+Om een project met een vriend te delen: houd in Kelola Project de naam van het project lang ingedrukt en kies daarna Bagikan (Delen). Het project wordt als ZIP verzonden via deel-apps (WhatsApp, Telegram en andere). Om een project van een vriend te ontvangen: open het menu in Kelola Project, kies Impor proyek (Project importeren) en kies daarna het ZIP-bestand ervan. Dat ZIP-bestand moet een projectgegevensbestand bevatten — als dat er niet is, wordt het bestand met een duidelijke melding geweigerd, omdat dat bestand geen Create Aplikasi-project is. Als de naam van het project al bestaat, vraagt de applicatie: Timpa proyek lama, of opslaan met Nama baru.
+
+Pencarian dan Filter Proyek
+Als er al veel projecten zijn, heeft Kelola Project een zoekvak en een soortfilter. Typ de naam van het project in het zoekvak en de lijst wordt meteen gefilterd (hoofdletters en kleine letters worden niet onderscheiden). Het soortfilter beperkt de lijst tot slechts één soort: Semua (Alle), HTML, Situs Web, Java, Kotlin, Compose of Python. Het menu van elk project kan nog steeds zoals gewoonlijk worden geopend vanuit de gefilterde lijst.
+
+Bangun Aplikasi dengan Suara

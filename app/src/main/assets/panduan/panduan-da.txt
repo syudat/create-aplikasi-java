@@ -1,0 +1,96 @@
+Velkommen til Create Aplikasi by Al Kautsar
+Create Aplikasi er en app til at lave Android-apps, som kører direkte på telefonen uden behov for en bærbar computer. Appen gør det muligt for alle at lave deres egen Android-app, herunder brugere, der er nye i at lave apps, og brugere af skærmlæsere. En komplet vejledning i brugen af denne app findes på denne skærm, Tentang Alat.
+
+Hvad denne app er, og hvem den er til
+Create Aplikasi er et værktøj til at lave Android-apps, som kører på telefonen. Appen henvender sig til alle, der ønsker at lave deres egen Android-app, herunder begyndere og brugere af skærmlæsere. Appen har en kodeeditor, en knap Jalankan til at teste projekter, en knap Bangun til at lave en APK samt menuer til at signere og installere APK'en.
+
+Formålet med denne app
+Denne app er lavet, så alle nemt kan lave deres egen Android-app direkte fra telefonen. Dens udseende er gjort så enkelt som muligt, så selv nye brugere kan prøve den med det samme.
+
+Sådan opretter du et nyt projekt, trin for trin
+1. Tryk på Buat Project i hovedmenuen.
+2. Vælg projekttype: HTML, Situs Web, Java, Kotlin, Compose eller Python.
+3. Udfyld appens navn, eksempel: Garuda Decode.
+4. Udfyld pakkenavnet (package name), eksempel: com.android.garudadecode. Pakkenavnet skal bruge små bogstaver og bestå af mindst to dele adskilt af et punktum.
+5. Udfyld appens version, eksempel: 1.0, og versionskoden som et tal, eksempel: 1. Hvis det efterlades tomt, udfyldes versionen automatisk med 1.0 og versionskoden med 1.
+6. Udfyld minimum-SDK og mål-SDK, hvis det er nødvendigt. Hvis det efterlades tomt, bruges standardværdierne. Minimum-SDK er den laveste understøttede Android-version, eksempel: 21 betyder Android 5.0. Det maksimale mål-SDK er 36 (Android 16).
+7. Tryk på knappen Pilih Izin for at vælge appens tilladelser, eksempel: INTERNET. Tilladelsen INTERNET er markeret som standard. Markér kun de tilladelser, som appen virkelig har brug for.
+8. Hvis det ønskes, markér "Gunakan arsitektur terpisah 64 bit dan 32 bit", så APK'en bliver mindre, og markér "Gunakan tanda tangan pribadi", hvis du vil bruge en keystore, du selv har lavet.
+9. Tryk på Buat Proyek. Det nye projekt gemmes i mappen Download/project og vises med det samme i Kelola Project.
+
+Tilgængelige projekttyper
+• HTML: visning fra index.html, style.css og script.js, kører gennem WebView. Bygges direkte på telefonen.
+• Situs Web: et websted med menuer (Beranda, Tentang, Kontak) fra index.html, tentang.html, kontak.html, style.css og script.js, kører gennem WebView. Bygges direkte på telefonen.
+• Java: bygges på telefonen. MainActivity ligger i app/src/main/java/<nama-paket>/MainActivity.java. Visningen kommer fra app/src/main/res/layout/activity_main.xml, teksten fra app/src/main/res/values/strings.xml og temaet fra app/src/main/res/values/styles.xml.
+• Kotlin: kan bygges på enheden (offline) med den Kotlin-compiler, der følger med appen, eller via GitHub Actions. MainActivity ligger i app/src/main/java/<nama-paket>/MainActivity.kt, og res-filerne er de samme som i et Java-projekt. Den første Kotlin-build er langsommere på grund af compilerens store størrelse, og .java-filer, der henviser til Kotlin-klasser, kan endnu ikke bygges (.java-filer kompileres før .kt-filer).
+• Compose: en moderne Android-app, hvis brugerflade er lavet med Jetpack Compose (ikke XML-layout). MainActivity ligger i app/src/main/java/<nama-paket>/MainActivity.kt. Compose-projekter bygges via GitHub Actions (menuen Bangun proyek, derefter Bangun online) eller i Termux med Gradle, fordi Compose kræver Jetpack Compose-biblioteker, som ikke findes på enheden.
+• Python: appens logik skrives i Python (Chaquopy) i app/src/main/python/main.py og køres af værten MainActivity.java i app/src/main/java/<nama-paket>/MainActivity.java. Python-projekter kan bygges direkte på telefonen (Chaquopy-runtime følger med appen) eller via GitHub Actions. Minimum-SDK for Python-projekter er 24 (Android 7.0).
+
+Filstruktur for projekter i Java, HTML, Situs Web, Kotlin, Compose og Python
+Projekter i Java, HTML, Situs Web, Kotlin, Compose og Python er struktureret som Android-projekter generelt. Inde i mappen app findes mappen src, og inde i den findes mappen main. Inde i mappen main findes AndroidManifest.xml ved siden af mappen java, mappen res, som indeholder layout/activity_main.xml og values/strings.xml samt values/styles.xml, og for HTML og Situs Web findes mappen assets, som indeholder index.html (Situs Web har også tentang.html og kontak.html). HTML- og Situs Web-projekter har også deres egen MainActivity i app/src/main/java/<nama-paket>/MainActivity.java, som indlæser index.html i WebView og bliver launcher i AndroidManifest. Python-projekter har Python-kode i app/src/main/python/main.py og værten MainActivity.java i app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, layout, strings og styles kan åbnes og ændres i editoren, ligesom MainActivity. Ældre projekter, hvis manifest stadig ligger ved siden af mappen app, kan stadig bygges, fordi appen under bygningen først kontrollerer AndroidManifest.xml i app/src/main/, derefter den ved siden af mappen app og til sidst projektets datafil.
+
+Regler for tilladelser (vigtigt)
+Tilladelser, der markeres, når et projekt oprettes, registreres kun ét sted, afhængigt af projekttypen. For projekter i Java, HTML, Situs Web, Kotlin, Compose og Python registreres de markerede tilladelser KUN i AndroidManifest.xml, som ligger i app/src/main/, ved siden af mappen java, inde i projektmappen. Projektets datafil for projekter i Java, HTML, Situs Web, Kotlin, Compose og Python indeholder ikke en liste over tilladelser. Hvis du vælger Java og derefter markerer INTERNET og CAMERA, er det kun INTERNET og CAMERA, der registreres i AndroidManifest.xml, uden at andre tilladelser følger med. Under bygningen læser appen tilladelserne fra det samme sted: fra AndroidManifest.xml i app/src/main/ for projekter i Java, HTML, Situs Web, Kotlin, Compose og Python (hvis den ikke findes, fra AndroidManifest.xml ved siden af mappen app for ældre projekter) og fra projektets datafil for ældre projekter.
+
+Sådan bruger du editoren
+Åbn Kelola Project, tryk på et projektnavn for at åbne editoren. I editoren kan filer åbnes, kode kan skrives, og ændringer kan gemmes. For projekter i Java, HTML, Situs Web, Kotlin, Compose og Python ligger filerne i mappen app/src/main. For at dele et projekt skal du bruge Ekspor ZIP (se afsnittet nedenfor).
+
+Sådan kører du et projekt
+Tryk på Jalankan i editoren for at teste projektet. For HTML- og Situs Web-projekter er det index.html, der køres gennem WebView. Hvis der opstår en fejl, skal du læse fejlmeddelelsen, rette koden og derefter køre igen.
+
+Sådan bygger du en APK
+Tryk på Bangun i editoren. Der er to måder at bygge på. For det første, Bangun di perangkat: bygger direkte på telefonen uden internet, til projekter i HTML, Situs Web, Java, Kotlin og Python. For det andet, Bangun online via GitHub Actions: bygger via internettet på GitHub og kan bruges til alle projekttyper. Compose-projekter kan kun bygges på den anden måde (Bangun online) eller i Termux med Gradle, fordi Compose kræver Jetpack Compose-biblioteker, som ikke findes på enheden. Resultatet af den første build er endnu ikke signeret. Derefter signerer appen det: automatisk med standardnøglen eller med en personlig signatur, hvis feltet "Gunakan tanda tangan pribadi" var markeret, da projektet blev oprettet.
+
+Sådan installerer du en APK
+Når APK'en er klar, skal du trykke på Pasang for at installere den. På Android 8 og nyere vil telefonen først bede om "Izinkan dari sumber ini", fordi denne app installerer APK'er uden om Play Store. Aktivér denne tilladelse én gang i Indstillinger, og vend derefter tilbage til appen: installationen fortsætter automatisk, uden at du behøver at trykke på Pasang igen. Hvis knappen Pasang ikke vises, skal du sikre dig, at builden er færdig, og at APK'en er blevet oprettet.
+
+Sådan signerer du en app
+Enhver APK skal signeres for at kunne installeres. Der er to muligheder. For det første standardnøglen: appen signerer selv automatisk, uden at du behøver at gøre noget. For det andet en personlig signatur: opret først en keystore via menuen Buat Keystore i hovedmenuen, opbevar dens adgangskode godt, og markér derefter "Gunakan tanda tangan pribadi", når du opretter et projekt. Keystoren gemmes i Download/project/signing.
+
+Eksportér et projekt som ZIP
+Ekspor ZIP findes, så projekter kan deles med venner. Sådan gør du: tryk og hold på et projektnavn i Kelola Project, og vælg derefter Ekspor ZIP. Resultatet gemmes i Download/project/<NamaProyek>.zip. Mappen bin er ikke inkluderet, så størrelsen er lille, kun nogle få titals KB. ZIP-filen kan sendes til en ven eller uploades til GitHub.
+
+Ekstensi JAWS
+Ekstensi JAWS bruger udvidelsesmotoren fra Jieshuo (CSR), ikke dens skærmlæser. På den måde kan designet stadig køre, selv om brugeren bruger TalkBack. Sådan gør du: åbn Ekstensi JAWS i hovedmenuen. Fordi automatiske klik kører af sig selv, skal tjenesten først aktiveres i Indstillinger for tilgængelighed. Derefter kan et nyt design oprettes: skriv designets navn, tryk på OK, og udfyld derefter dets felter.
+
+Daftar Klik holdes adskilt for at holde orden
+Inde i designet er der to felter: scriptfeltet og feltet Daftar Klik. Listen over knapper gemmes separat i filen daftar_klik.txt, ét navn pr. linje. Eksempel på indhold: tombolSimpan, tombolHapus, tombolBuka. For at åbne en app skal du blot skrive >WhatsApp på listen. Ældre designs, som endnu ikke har en fil daftar_klik.txt, viser dette standardeksempel.
+
+Enkle funktioner, der stilles til rådighed
+• klikTombol("tombolSimpan") — klikker på én knap ud fra dens tekst.
+• klikDaftarTombol(daftar) — klikker på listen i daftar_klik.txt, én knap pr. linje, i rækkefølge, og fortæller derefter, hvor mange der lykkedes, og hvor mange der ikke blev fundet.
+• bukaAplikasi("WhatsApp") — åbner en app ud fra dens navn, eller skriv ">WhatsApp" på listen.
+• klik(540, 1200) — klikker på skærmkoordinater.
+Alle funktioner er gjort enkle til at begynde med. Når du har vænnet dig til dem, kan der tilføjes flere funktioner senere.
+
+Om skærmlæsere
+Denne app er designet til at være venlig over for skærmlæsere. Hvert indtastningsfelt har en etiket og et eksempel på udfyldning, og alle knapper kan nås uden komplicerede bevægelser. Ekstensi JAWS er lavet til stadig at køre, selv om brugeren bruger TalkBack, fordi det er dens udvidelsesmotor, der bruges, ikke dens skærmlæser.
+
+Privatliv og sikkerhed
+Projekter og keystores gemmes på din telefon. GitHub-tokenet bruges kun til online-builds og gemmes i denne app. Del ikke dit token eller adgangskoden til din keystore med nogen. Hvis du bruger en personlig signatur, skal du opbevare keystoren og dens adgangskode et sikkert sted, for hvis de går tabt, kan den gamle APK ikke opdateres med den samme signatur.
+
+Krav
+Android 5.0 eller nyere. Lagringstilladelse: på Android 11 og nyere bruges tilladelsen til adgang til alle filer, på Android 10 og derunder bruges den almindelige lagringstilladelse (læse/skrive lager), fordi Android 10 ikke har tilladelsen til adgang til alle filer. Bygning på enheden kræver en telefon med en ARM-processor (32 eller 64 bit). Online-bygning via GitHub Actions kræver internet og et GitHub-token. Kotlin-projekter kan bygges på enheden, men den første build er langsommere og bruger mere hukommelse på grund af Kotlin-compilerens store størrelse. Compose-projekter bygges via GitHub Actions eller i Termux med Gradle. Python-projekter kræver Android 7.0 eller nyere (minimum-SDK 24), og den resulterende APK er større, fordi den indeholder Python-runtime (Chaquopy) sammen med dens standardbibliotek.
+
+Terminal
+Menuen Terminal på startskærmen åbner en terminal inde i denne app. Kommandoer som ls kan bruges til at se indholdet af projektmappen, cd til at skifte mappe og git til at administrere kode. Kommandoernes output vises som tekst, der kan læses af en skærmlæser, og der er en knap Bacakan hasil til at lytte til det seneste resultat. Denne terminal bruger telefonens systemshell, så interaktive programmer som nano og vim kan endnu ikke bruges her.
+
+Licens (betalt version)
+For at sælge en app skal du markere "Aktifkan Lisensi", når du opretter et projekt, og derefter udfylde dit WhatsApp-nummer. Den byggede app vil bede om en licenskode, første gang den åbnes: brugeren ser sit enheds-ID, trykker på knappen Kirim ID Perangkat for at sende ID'et til din WhatsApp, og derefter svarer du med licenskoden. Licenskoden beregnes ud fra enheds-ID'et og projektets adgangskode (lisensi_seed i projektets datafil) — opbevar denne adgangskode godt, og del den ikke. Når den rigtige kode er indtastet, åbnes appen og beder ikke om koden igen.
+
+Automatisk ikonmager
+Ikonet for nye projekter er stadig gennemsigtigt, så Pembuat Ikon findes i hovedmenuen. Sådan gør du: tryk på Pembuat Ikon, skriv et eller to bogstaver (for eksempel appnavnets forbogstaver), vælg en baggrundsfarve og en tekstfarve, se forhåndsvisningen, og tryk derefter på Simpan ke Proyek for at bruge ikonet i det valgte projekt eller på Simpan ke Download for at bruge PNG-filen et andet sted. Når et projekt er oprettet, tilbyder appen også at lave et ikon. Et projekts gamle ikon kan til enhver tid udskiftes fra projektmenuen i Kelola Project (tryk og hold på projektnavnet, og vælg derefter Ganti Ikon).
+
+Brugsklare projektskabeloner
+Hvis du ikke vil starte fra et tomt projekt, skal du vælge en skabelon, når du opretter et projekt: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) eller Penghitung (Compose). Når du vælger en skabelon, ændres projekttypen automatisk til at følge skabelonen, og projektet oprettes med færdig startkode — klar til at køre eller ændre. Hvis projekttypen ændres manuelt igen efter valg af en skabelon, annulleres skabelonen, og projektet bliver tomt igen. For HTML- og Situs Web-skabeloner erstatter skabelonen indholdet af index.html, herunder det HTML-script, der er skrevet i formularen.
+
+Sikkerhedskopiér og gendan projekter
+For at projekter ikke går tabt, findes der en funktion til sikkerhedskopiering. Sådan gør du: tryk og hold på et projektnavn i Kelola Project, og vælg derefter Cadangkan. Sikkerhedskopien gemmes som en ZIP i mappen Download/backup med projektets navn og dato, eksempel: GarudaDecode-2026-11-14-123045.zip. Dens indhold er det samme som Ekspor ZIP (hele projektets indhold, uden mappen bin). For at gendanne: åbn menuen i Kelola Project, vælg Pulihkan cadangan, og vælg derefter sikkerhedskopifilen. Hvis projektnavnet allerede findes, spørger appen: Overskriv det gamle projekt, eller gem med et nyt navn.
+
+Del og importér projekter
+For at dele et projekt med en ven: tryk og hold på et projektnavn i Kelola Project, og vælg derefter Bagikan. Projektet sendes som en ZIP via dele-apps (WhatsApp, Telegram og andre). For at modtage et projekt fra en ven: åbn menuen i Kelola Project, vælg Impor proyek, og vælg derefter ZIP-filen. ZIP-filen skal indeholde en projekts datafil — hvis den ikke gør det, afvises filen med en tydelig meddelelse, fordi filen ikke er et Create Aplikasi-projekt. Hvis projektnavnet allerede findes, spørger appen: Overskriv det gamle projekt, eller gem med et nyt navn.
+
+Søgning og filtrering af projekter
+Hvis der allerede er mange projekter, findes der i Kelola Project et søgefelt og et typefilter. Skriv et projektnavn i søgefeltet, og listen filtreres med det samme (der skelnes ikke mellem store og små bogstaver). Typefilteret begrænser listen til kun én type: Alle, HTML, Situs Web, Java, Kotlin, Compose eller Python. Menuen for hvert projekt kan stadig åbnes som sædvanligt fra den filtrerede liste.
+
+Byg apps med stemmen

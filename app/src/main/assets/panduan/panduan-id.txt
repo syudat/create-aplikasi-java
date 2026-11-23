@@ -1,0 +1,96 @@
+Selamat datang di Create Aplikasi by Al Kautsar
+Create Aplikasi adalah aplikasi pembuat aplikasi Android yang berjalan langsung di ponsel, tanpa memerlukan laptop. Aplikasi ini memungkinkan siapa saja membuat aplikasi Android sendiri, termasuk pengguna yang baru belajar membuat aplikasi dan pengguna pembaca layar. Panduan lengkap penggunaan aplikasi ini tersedia di layar Tentang Alat ini.
+
+Apa aplikasi ini dan untuk siapa
+Create Aplikasi adalah alat pembuat aplikasi Android yang berjalan di ponsel. Aplikasi ini ditujukan bagi siapa saja yang ingin membuat aplikasi Android sendiri, termasuk pemula dan pengguna pembaca layar. Aplikasi ini menyediakan editor kode, tombol Jalankan untuk menguji proyek, tombol Bangun untuk membuat APK, serta menu untuk menandatangani dan memasang APK.
+
+Tujuan aplikasi ini
+Aplikasi ini dibuat agar siapa saja dapat membuat aplikasi Android sendiri dengan mudah, langsung dari ponsel. Tampilannya dibuat sesederhana mungkin agar pengguna baru pun dapat langsung mencoba.
+
+Cara membuat proyek baru, langkah demi langkah
+1. Tekan Buat Project di menu utama.
+2. Pilih jenis proyek: HTML, Situs Web, Java, Kotlin, Compose, atau Python.
+3. Isi nama aplikasi, contoh: Garuda Decode.
+4. Isi nama paket (package name), contoh: com.android.garudadecode. Nama paket harus menggunakan huruf kecil dan terdiri dari minimal dua bagian yang dipisahkan titik.
+5. Isi versi aplikasi, contoh: 1.0, dan kode versi berupa angka, contoh: 1. Apabila dikosongkan, versi akan diisi otomatis dengan 1.0 dan kode versi 1.
+6. Isi SDK minimum dan SDK target apabila diperlukan. Apabila dikosongkan, nilai bawaan akan digunakan. SDK minimum adalah versi Android terendah yang didukung, contoh: 21 berarti Android 5.0. SDK target maksimum adalah 36 (Android 16).
+7. Tekan tombol Pilih Izin untuk memilih izin aplikasi, contoh: INTERNET. Izin INTERNET sudah dicentang secara bawaan. Centang hanya izin yang memang dibutuhkan oleh aplikasi.
+8. Apabila diinginkan, centang "Gunakan arsitektur terpisah 64 bit dan 32 bit" agar ukuran APK lebih kecil, dan centang "Gunakan tanda tangan pribadi" apabila ingin memakai keystore buatan sendiri.
+9. Tekan Buat Proyek. Proyek baru tersimpan di folder Download/project dan langsung terlihat di Kelola Project.
+
+Jenis proyek yang tersedia
+• HTML: tampilan dari index.html, style.css, dan script.js, berjalan melalui WebView. Dibangun langsung di ponsel.
+• Situs Web: website dengan menu (Beranda, Tentang, Kontak) dari index.html, tentang.html, kontak.html, style.css, dan script.js, berjalan melalui WebView. Dibangun langsung di ponsel.
+• Java: dibangun di ponsel. MainActivity berada di app/src/main/java/<nama-paket>/MainActivity.java. Tampilan dari app/src/main/res/layout/activity_main.xml, teks dari app/src/main/res/values/strings.xml, dan tema dari app/src/main/res/values/styles.xml.
+• Kotlin: dapat dibangun di perangkat (offline) menggunakan compiler Kotlin yang disertakan dalam aplikasi, atau melalui GitHub Actions. MainActivity berada di app/src/main/java/<nama-paket>/MainActivity.kt, dan berkas res sama seperti proyek Java. Build Kotlin pertama lebih lambat karena ukuran compiler yang besar, dan berkas .java yang merujuk kelas Kotlin belum dapat dibangun (berkas .java dikompilasi terlebih dahulu sebelum berkas .kt).
+• Compose: aplikasi Android modern yang antarmukanya dibuat dengan Jetpack Compose (bukan layout XML). MainActivity berada di app/src/main/java/<nama-paket>/MainActivity.kt. Proyek Compose dibangun melalui GitHub Actions (menu Bangun proyek, lalu Bangun online) atau di Termux dengan Gradle, karena Compose membutuhkan pustaka Jetpack Compose yang tidak tersedia di perangkat.
+• Python: logika aplikasi ditulis dalam bahasa Python (Chaquopy) di app/src/main/python/main.py, dan dijalankan oleh host MainActivity.java di app/src/main/java/<nama-paket>/MainActivity.java. Proyek Python dapat dibangun langsung di ponsel (runtime Chaquopy disertakan dalam aplikasi) maupun melalui GitHub Actions. SDK minimum proyek Python adalah 24 (Android 7.0).
+
+Susunan berkas proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python
+Proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python tersusun seperti proyek Android pada umumnya. Di dalam folder app terdapat folder src, dan di dalamnya terdapat folder main. Di dalam folder main terdapat AndroidManifest.xml di samping folder java, folder res yang berisi layout/activity_main.xml dan values/strings.xml serta values/styles.xml, dan untuk HTML dan Situs Web terdapat folder assets yang berisi index.html (Situs Web juga memiliki tentang.html dan kontak.html). Proyek HTML dan Situs Web juga memiliki MainActivity sendiri di app/src/main/java/<nama-paket>/MainActivity.java, yang memuat index.html di WebView dan menjadi launcher di AndroidManifest. Proyek Python memiliki kode Python di app/src/main/python/main.py dan host MainActivity.java di app/src/main/java/<nama-paket>/MainActivity.java. AndroidManifest.xml, layout, strings, dan styles dapat dibuka dan diubah di editor, sama seperti MainActivity. Proyek lama yang manifest-nya masih berada di samping folder app tetap dapat dibangun, karena pada saat membangun, aplikasi memeriksa AndroidManifest.xml di app/src/main/ terlebih dahulu, kemudian yang di samping folder app, dan terakhir berkas data proyek.
+
+Aturan izin (penting)
+Izin yang dicentang saat membuat proyek hanya tercatat di satu tempat, sesuai jenis proyeknya. Untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python, izin yang dicentang tercatat HANYA di AndroidManifest.xml yang berada di app/src/main/, di samping folder java, di dalam folder proyek. Berkas data proyek untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python tidak berisi daftar izin. Apabila memilih Java lalu mencentang INTERNET dan CAMERA, yang tercatat di AndroidManifest.xml hanyalah INTERNET dan CAMERA, tanpa izin lain yang ikut. Pada saat membangun, aplikasi membaca izin dari tempat yang sama: dari AndroidManifest.xml di app/src/main/ untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python (apabila tidak ada, dari AndroidManifest.xml di samping folder app untuk proyek lama), dan dari berkas data proyek untuk proyek lama.
+
+Cara memakai editor
+Buka Kelola Project, ketuk nama proyek untuk membuka editor. Di editor, berkas dapat dibuka, kode dapat ditulis, dan perubahan dapat disimpan. Untuk proyek Java, HTML, Situs Web, Kotlin, Compose, dan Python, berkas tersusun di dalam folder app/src/main. Untuk membagikan proyek, gunakan Ekspor ZIP (lihat bagian di bawah).
+
+Cara menjalankan proyek
+Di editor, tekan Jalankan untuk menguji proyek. Untuk proyek HTML dan Situs Web, yang dijalankan adalah index.html melalui WebView. Apabila terjadi kesalahan, baca pesan kesalahannya, perbaiki kode, lalu jalankan lagi.
+
+Cara membangun APK
+Di editor, tekan Bangun. Terdapat dua cara membangun. Pertama, Bangun di perangkat: membangun langsung di ponsel tanpa internet, untuk proyek HTML, Situs Web, Java, Kotlin, dan Python. Kedua, Bangun online melalui GitHub Actions: membangun melalui internet di GitHub, dan dapat digunakan untuk semua jenis proyek. Proyek Compose hanya dapat dibangun dengan cara kedua (Bangun online) atau di Termux dengan Gradle, karena Compose membutuhkan pustaka Jetpack Compose yang tidak tersedia di perangkat. Hasil build pertama belum ditandatangani. Setelah itu aplikasi menandatanganinya: otomatis dengan kunci bawaan, atau dengan tanda tangan pribadi apabila kotak "Gunakan tanda tangan pribadi" dicentang saat membuat proyek.
+
+Cara memasang APK
+Apabila APK sudah jadi, tekan Pasang untuk memasangnya. Di Android 8 ke atas, ponsel akan meminta "Izinkan dari sumber ini" terlebih dahulu, karena aplikasi ini memasang APK dari luar Play Store. Aktifkan izin tersebut satu kali di Pengaturan, lalu kembali ke aplikasi: pemasangan akan berlanjut otomatis tanpa perlu menekan Pasang lagi. Apabila tombol Pasang tidak muncul, pastikan build sudah selesai dan APK sudah dibuat.
+
+Cara menandatangani aplikasi
+Setiap APK harus ditandatangani agar dapat dipasang. Tersedia dua pilihan. Pertama, kunci bawaan: aplikasi menandatangani sendiri secara otomatis, tanpa perlu melakukan apa pun. Kedua, tanda tangan pribadi: buat terlebih dahulu keystore melalui menu Buat Keystore di menu utama, simpan kata sandinya dengan baik, lalu centang "Gunakan tanda tangan pribadi" saat membuat proyek. Keystore tersimpan di Download/project/signing.
+
+Ekspor proyek menjadi ZIP
+Ekspor ZIP disediakan agar proyek dapat dibagikan kepada teman. Caranya: di Kelola Project, tahan lama nama proyek, lalu pilih Ekspor ZIP. Hasilnya tersimpan di Download/project/<NamaProyek>.zip. Folder bin tidak ikut disertakan, sehingga ukurannya kecil, hanya puluhan KB. Berkas ZIP tersebut dapat dikirim kepada teman atau diunggah ke GitHub.
+
+Ekstensi JAWS
+Ekstensi JAWS menggunakan mesin ekstensi dari Jieshuo (CSR), bukan pembaca layarnya. Dengan demikian, rancangan tetap dapat berjalan walaupun pengguna memakai TalkBack. Caranya: buka Ekstensi JAWS di menu utama. Karena klik otomatis berjalan sendiri, layanan harus diaktifkan terlebih dahulu di Pengaturan Aksesibilitas. Setelah itu, rancangan baru dapat dibuat: ketik nama rancangan, tekan OK, lalu isi kotaknya.
+
+Daftar Klik dipisah agar rapi
+Di dalam rancangan terdapat dua kotak: kotak skrip dan kotak Daftar Klik. Daftar tombol disimpan terpisah di berkas daftar_klik.txt, satu nama per baris. Contoh isinya: tombolSimpan, tombolHapus, tombolBuka. Untuk membuka aplikasi, tulis saja >WhatsApp di daftar tersebut. Rancangan lama yang belum memiliki berkas daftar_klik.txt akan menampilkan contoh bawaan tersebut.
+
+Fungsi sederhana yang disediakan
+• klikTombol("tombolSimpan") — klik satu tombol berdasarkan teksnya.
+• klikDaftarTombol(daftar) — klik daftar di daftar_klik.txt, satu tombol per baris, berurutan, lalu memberi tahu berapa yang berhasil dan berapa yang tidak ditemukan.
+• bukaAplikasi("WhatsApp") — buka aplikasi berdasarkan namanya, atau tulis ">WhatsApp" di daftar.
+• klik(540, 1200) — klik di koordinat layar.
+Semua fungsi dibuat sederhana terlebih dahulu. Apabila sudah terbiasa, fungsi tambahan dapat ditambahkan kemudian.
+
+Tentang pembaca layar
+Aplikasi ini dirancang agar ramah pembaca layar. Setiap kolom isian memiliki label dan contoh pengisian, dan semua tombol dapat dijangkau tanpa gestur yang rumit. Ekstensi JAWS dibuat agar tetap berjalan walaupun pengguna memakai TalkBack, karena yang digunakan adalah mesin ekstensinya, bukan pembaca layarnya.
+
+Privasi dan keamanan
+Proyek dan keystore tersimpan di ponsel Anda. Token GitHub hanya dipakai untuk bangun online dan disimpan di dalam aplikasi ini. Jangan bagikan token atau kata sandi keystore Anda kepada siapa pun. Apabila memakai tanda tangan pribadi, simpan keystore dan kata sandinya di tempat yang aman, karena apabila hilang, APK lama tidak dapat diperbarui dengan tanda tangan yang sama.
+
+Kebutuhan
+Android 5.0 atau lebih baru. Izin penyimpanan: di Android 11 ke atas memakai izin akses semua file, di Android 10 ke bawah memakai izin penyimpanan biasa (baca/tulis penyimpanan) karena Android 10 tidak memiliki izin akses semua file. Membangun di perangkat memerlukan ponsel berprosesor ARM (32 atau 64 bit). Membangun online melalui GitHub Actions memerlukan internet dan token GitHub. Proyek Kotlin dapat dibangun di perangkat, tetapi build pertamanya lebih lambat dan memakai memori lebih banyak karena ukuran compiler Kotlin yang besar. Proyek Compose dibangun melalui GitHub Actions atau di Termux dengan Gradle. Proyek Python membutuhkan Android 7.0 atau lebih baru (SDK minimum 24) dan APK hasilnya lebih besar karena menyertakan runtime Python (Chaquopy) beserta pustaka standarnya.
+
+Terminal
+Menu Terminal di layar utama membuka terminal di dalam aplikasi ini. Perintah seperti ls dapat digunakan untuk melihat isi folder proyek, cd untuk berpindah folder, dan git untuk mengelola kode. Keluaran perintah tampil sebagai teks yang dapat dibaca pembaca layar, dan terdapat tombol Bacakan hasil untuk mendengarkan hasil terakhir. Terminal ini memakai shell sistem ponsel, sehingga program interaktif seperti nano dan vim belum dapat dipakai di sini.
+
+Lisensi (versi berbayar)
+Untuk menjual aplikasi, centang "Aktifkan Lisensi" saat membuat proyek, lalu isi nomor WhatsApp Anda. Aplikasi hasil build akan meminta kode lisensi saat pertama dibuka: pengguna melihat ID perangkatnya, menekan tombol Kirim ID Perangkat untuk mengirim ID tersebut ke WhatsApp Anda, lalu Anda membalas kode lisensinya. Kode lisensi dihitung dari ID perangkat dan kata sandi proyek (lisensi_seed di berkas data proyek) — simpan kata sandi tersebut dengan baik dan jangan dibagikan. Setelah kode yang benar dimasukkan, aplikasi terbuka dan tidak meminta kode lagi.
+
+Pembuat Ikon Otomatis
+Ikon proyek baru masih transparan, sehingga tersedia Pembuat Ikon di menu utama. Caranya: tekan Pembuat Ikon, tulis satu atau dua huruf (misalnya inisial nama aplikasi), pilih warna latar dan warna tulisan, lihat pratinjaunya, lalu tekan Simpan ke Proyek untuk memakai ikon tersebut di proyek yang dipilih, atau Simpan ke Download untuk memakai berkas PNG-nya di tempat lain. Setelah proyek dibuat, aplikasi juga menawarkan pembuatan ikon. Ikon lama proyek dapat diganti kapan saja dari menu proyek di Kelola Project (tahan lama nama proyek, lalu pilih Ganti Ikon).
+
+Template Proyek Siap Pakai
+Apabila tidak ingin memulai dari proyek kosong, pilih template saat membuat proyek: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web), atau Penghitung (Compose). Memilih template otomatis mengubah jenis proyek mengikuti template tersebut, dan proyek dibuat dengan kode awal yang sudah jadi — tinggal dijalankan atau diubah. Apabila jenis proyek diubah lagi secara manual setelah memilih template, template dibatalkan dan proyek kembali kosong. Untuk template HTML dan Situs Web, template mengganti isi index.html, termasuk skrip HTML yang diketik di form.
+
+Cadangan dan Pulihkan Proyek
+Agar proyek tidak hilang, tersedia fitur cadangan. Caranya: di Kelola Project, tahan lama nama proyek, lalu pilih Cadangkan. Cadangan tersimpan sebagai ZIP di folder Download/backup dengan nama proyek dan tanggal, contoh: GarudaDecode-2026-11-14-123045.zip. Isinya sama seperti Ekspor ZIP (seluruh isi proyek, tanpa folder bin). Untuk memulihkan: buka menu di Kelola Project, pilih Pulihkan cadangan, lalu pilih berkas cadangannya. Apabila nama proyek sudah ada, aplikasi akan menanyakan: Timpa proyek lama, atau simpan dengan Nama baru.
+
+Bagikan dan Impor Proyek
+Untuk berbagi proyek kepada teman: di Kelola Project, tahan lama nama proyek, lalu pilih Bagikan. Proyek dikirim sebagai ZIP melalui aplikasi berbagi (WhatsApp, Telegram, dan lain-lain). Untuk menerima proyek dari teman: buka menu di Kelola Project, pilih Impor proyek, lalu pilih berkas ZIP-nya. Berkas ZIP tersebut harus berisi berkas data proyek — apabila tidak ada, berkas ditolak dengan pesan yang jelas, karena berkas tersebut bukan proyek Create Aplikasi. Apabila nama proyek sudah ada, aplikasi akan menanyakan: Timpa proyek lama, atau simpan dengan Nama baru.
+
+Pencarian dan Filter Proyek
+Apabila proyek sudah banyak, di Kelola Project terdapat kotak pencarian dan penyaring jenis. Ketik nama proyek di kotak pencarian, daftar langsung tersaring (huruf besar dan kecil tidak dibedakan). Penyaring jenis membatasi daftar ke satu jenis saja: Semua, HTML, Situs Web, Java, Kotlin, Compose, atau Python. Menu tiap proyek tetap dapat dibuka seperti biasa dari daftar yang sudah tersaring.
+
+Bangun Aplikasi dengan Suara

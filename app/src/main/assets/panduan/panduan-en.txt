@@ -1,0 +1,96 @@
+Welcome to Create Aplikasi by Al Kautsar
+Create Aplikasi is an Android app builder application that runs directly on your phone, without needing a laptop. This application allows anyone to create their own Android applications, including users who are just learning to create applications and screen reader users. The complete guide to using this application is available on this About This Tool screen.
+
+What this application is and who it is for
+Create Aplikasi is an Android app builder tool that runs on your phone. This application is intended for anyone who wants to create their own Android applications, including beginners and screen reader users. This application provides a code editor, a Run button to test projects, a Build button to create an APK, and menus for signing and installing the APK.
+
+Purpose of this application
+This application was made so that anyone can create their own Android applications easily, directly from a phone. Its interface is made as simple as possible so that even new users can try it right away.
+
+How to create a new project, step by step
+1. Press Create Project in the main menu.
+2. Choose the project type: HTML, Website, Java, Kotlin, Compose, or Python.
+3. Enter the application name, for example: Garuda Decode.
+4. Enter the package name, for example: com.android.garudadecode. The package name must use lowercase letters and consist of at least two parts separated by dots.
+5. Enter the application version, for example: 1.0, and a version code in the form of a number, for example: 1. If left empty, the version will be filled in automatically with 1.0 and version code 1.
+6. Enter the minimum SDK and target SDK if needed. If left empty, the default values will be used. The minimum SDK is the lowest Android version supported, for example: 21 means Android 5.0. The maximum target SDK is 36 (Android 16).
+7. Press the Select Permissions button to choose application permissions, for example: INTERNET. The INTERNET permission is already checked by default. Check only the permissions that the application actually needs.
+8. If desired, check "Use separate 64-bit and 32-bit architectures" to make the APK size smaller, and check "Use personal signature" if you want to use your own keystore.
+9. Press Create Project. The new project is saved in the Download/project folder and immediately appears in Manage Projects.
+
+Available project types
+• HTML: display from index.html, style.css, and script.js, running through WebView. Built directly on the phone.
+• Website: a website with menus (Home, About, Contact) from index.html, tentang.html, kontak.html, style.css, and script.js, running through WebView. Built directly on the phone.
+• Java: built on the phone. MainActivity is located at app/src/main/java/<package-name>/MainActivity.java. The display comes from app/src/main/res/layout/activity_main.xml, the text from app/src/main/res/values/strings.xml, and the theme from app/src/main/res/values/styles.xml.
+• Kotlin: can be built on the device (offline) using the Kotlin compiler included in the application, or through GitHub Actions. MainActivity is located at app/src/main/java/<package-name>/MainActivity.kt, and the res files are the same as in a Java project. The first Kotlin build is slower because of the large compiler size, and .java files that reference Kotlin classes cannot yet be built (.java files are compiled before .kt files).
+• Compose: a modern Android application whose interface is created with Jetpack Compose (not XML layouts). MainActivity is located at app/src/main/java/<package-name>/MainActivity.kt. Compose projects are built through GitHub Actions (the Build project menu, then Build online) or in Termux with Gradle, because Compose requires the Jetpack Compose libraries, which are not available on the device.
+• Python: the application logic is written in the Python language (Chaquopy) in app/src/main/python/main.py, and is run by the host MainActivity.java at app/src/main/java/<package-name>/MainActivity.java. Python projects can be built directly on the phone (the Chaquopy runtime is included in the application) or through GitHub Actions. The minimum SDK for Python projects is 24 (Android 7.0).
+
+File structure of Java, HTML, Website, Kotlin, Compose, and Python projects
+Java, HTML, Website, Kotlin, Compose, and Python projects are structured like Android projects in general. Inside the app folder there is the src folder, and inside it there is the main folder. Inside the main folder there is AndroidManifest.xml next to the java folder, the res folder containing layout/activity_main.xml and values/strings.xml as well as values/styles.xml, and for HTML and Website there is the assets folder containing index.html (Website also has tentang.html and kontak.html). HTML and Website projects also have their own MainActivity at app/src/main/java/<package-name>/MainActivity.java, which loads index.html in a WebView and becomes the launcher in the AndroidManifest. Python projects have Python code at app/src/main/python/main.py and the host MainActivity.java at app/src/main/java/<package-name>/MainActivity.java. AndroidManifest.xml, layouts, strings, and styles can be opened and changed in the editor, just like MainActivity. Old projects whose manifest is still next to the app folder can still be built, because when building, the application checks AndroidManifest.xml in app/src/main/ first, then the one next to the app folder, and finally the project data file.
+
+Permission rules (important)
+Permissions checked when creating a project are recorded in only one place, according to the project type. For Java, HTML, Website, Kotlin, Compose, and Python projects, the checked permissions are recorded ONLY in AndroidManifest.xml located in app/src/main/, next to the java folder, inside the project folder. The project data file for Java, HTML, Website, Kotlin, Compose, and Python projects does not contain a list of permissions. If you choose Java and then check INTERNET and CAMERA, what is recorded in AndroidManifest.xml is only INTERNET and CAMERA, with no other permissions included. When building, the application reads permissions from the same place: from AndroidManifest.xml in app/src/main/ for Java, HTML, Website, Kotlin, Compose, and Python projects (if there is none, from AndroidManifest.xml next to the app folder for old projects), and from the project data file for old projects.
+
+How to use the editor
+Open Manage Projects, tap a project name to open the editor. In the editor, files can be opened, code can be written, and changes can be saved. For Java, HTML, Website, Kotlin, Compose, and Python projects, the files are arranged inside the app/src/main folder. To share a project, use Export ZIP (see the section below).
+
+How to run a project
+In the editor, press Run to test the project. For HTML and Website projects, what runs is index.html through WebView. If an error occurs, read the error message, fix the code, then run it again.
+
+How to build an APK
+In the editor, press Build. There are two ways to build. First, Build on device: builds directly on the phone without internet, for HTML, Website, Java, Kotlin, and Python projects. Second, Build online through GitHub Actions: builds over the internet on GitHub, and can be used for all project types. Compose projects can only be built the second way (Build online) or in Termux with Gradle, because Compose requires the Jetpack Compose libraries, which are not available on the device. The first build result is not yet signed. After that the application signs it: automatically with the built-in key, or with a personal signature if the "Use personal signature" box was checked when creating the project.
+
+How to install an APK
+When the APK is ready, press Install to install it. On Android 8 and above, the phone will first ask for "Allow from this source", because this application installs APKs from outside the Play Store. Enable that permission once in Settings, then return to the application: the installation will continue automatically without needing to press Install again. If the Install button does not appear, make sure the build has finished and the APK has been created.
+
+How to sign an application
+Every APK must be signed in order to be installed. There are two choices available. First, the built-in key: the application signs it by itself automatically, without you needing to do anything. Second, a personal signature: first create a keystore through the Create Keystore menu in the main menu, save its password carefully, then check "Use personal signature" when creating the project. The keystore is stored in Download/project/signing.
+
+Exporting a project to ZIP
+Export ZIP is provided so that projects can be shared with friends. How to do it: in Manage Projects, long-press the project name, then choose Export ZIP. The result is saved in Download/project/<ProjectName>.zip. The bin folder is not included, so the size is small, only tens of KB. That ZIP file can be sent to friends or uploaded to GitHub.
+
+JAWS Extension
+The JAWS Extension uses the extension engine from Jieshuo (CSR), not its screen reader. That way, designs can still run even if the user uses TalkBack. How to do it: open JAWS Extension in the main menu. Because automatic clicking runs by itself, the service must first be enabled in Accessibility Settings. After that, a new design can be created: type the design name, press OK, then fill in its boxes.
+
+Click List kept separate for neatness
+Inside a design there are two boxes: the script box and the Click List box. The list of buttons is stored separately in the file daftar_klik.txt, one name per line. An example of its contents: tombolSimpan, tombolHapus, tombolBuka. To open an application, just write >WhatsApp in that list. Old designs that do not yet have a daftar_klik.txt file will display that default example.
+
+Simple functions provided
+• klikTombol("tombolSimpan") — clicks one button based on its text.
+• klikDaftarTombol(daftar) — clicks the list in daftar_klik.txt, one button per line, in order, then reports how many succeeded and how many were not found.
+• bukaAplikasi("WhatsApp") — opens an application by its name, or write ">WhatsApp" in the list.
+• klik(540, 1200) — clicks at screen coordinates.
+All functions are made simple first. Once you are used to them, additional functions can be added later.
+
+About screen readers
+This application is designed to be screen reader friendly. Every input field has a label and a filling example, and all buttons can be reached without complicated gestures. The JAWS Extension is made to keep running even if the user uses TalkBack, because what is used is its extension engine, not its screen reader.
+
+Privacy and security
+Projects and keystores are stored on your phone. The GitHub token is only used for online builds and is stored inside this application. Do not share your token or keystore password with anyone. If you use a personal signature, keep the keystore and its password in a safe place, because if they are lost, old APKs cannot be updated with the same signature.
+
+Requirements
+Android 5.0 or newer. Storage permission: on Android 11 and above it uses the all-files access permission, on Android 10 and below it uses the regular storage permission (read/write storage) because Android 10 does not have the all-files access permission. Building on device requires a phone with an ARM processor (32 or 64 bit). Building online through GitHub Actions requires internet and a GitHub token. Kotlin projects can be built on device, but the first build is slower and uses more memory because of the large size of the Kotlin compiler. Compose projects are built through GitHub Actions or in Termux with Gradle. Python projects require Android 7.0 or newer (minimum SDK 24) and the resulting APK is larger because it includes the Python runtime (Chaquopy) along with its standard library.
+
+Terminal
+The Terminal menu on the main screen opens a terminal inside this application. Commands such as ls can be used to view the contents of the project folder, cd to move between folders, and git to manage code. Command output appears as text that can be read by a screen reader, and there is a Read Result Aloud button to listen to the last result. This terminal uses the phone's system shell, so interactive programs such as nano and vim cannot yet be used here.
+
+License (paid version)
+To sell an application, check "Enable License" when creating the project, then enter your WhatsApp number. The built application will ask for a license code when first opened: the user sees their device ID, presses the Send Device ID button to send that ID to your WhatsApp, then you reply with the license code. The license code is calculated from the device ID and the project password (lisensi_seed in the project data file) — keep that password carefully and do not share it. After the correct code is entered, the application opens and does not ask for a code again.
+
+Automatic Icon Maker
+New project icons are still transparent, so an Icon Maker is available in the main menu. How to do it: press Icon Maker, write one or two letters (for example the initials of the application name), choose a background color and a text color, view the preview, then press Save to Project to use that icon in the selected project, or Save to Download to use its PNG file elsewhere. After a project is created, the application also offers to create an icon. A project's old icon can be replaced at any time from the project menu in Manage Projects (long-press the project name, then choose Change Icon).
+
+Ready-to-Use Project Templates
+If you do not want to start from an empty project, choose a template when creating a project: Calculator (Java), Notes (Java), To-Do List (Kotlin), Web Calculator (HTML), Profile Site (Website), or Counter (Compose). Choosing a template automatically changes the project type to follow that template, and the project is created with ready-made starter code — just run it or change it. If the project type is changed manually again after choosing a template, the template is canceled and the project returns to empty. For HTML and Website templates, the template replaces the contents of index.html, including the HTML script typed in the form.
+
+Back Up and Restore Projects
+So that projects are not lost, a backup feature is available. How to do it: in Manage Projects, long-press the project name, then choose Back Up. The backup is saved as a ZIP in the Download/backup folder with the project name and date, for example: GarudaDecode-2026-11-14-123045.zip. Its contents are the same as Export ZIP (the entire contents of the project, without the bin folder). To restore: open the menu in Manage Projects, choose Restore backup, then choose the backup file. If the project name already exists, the application will ask: Overwrite the old project, or save with a New name.
+
+Share and Import Projects
+To share a project with friends: in Manage Projects, long-press the project name, then choose Share. The project is sent as a ZIP through sharing applications (WhatsApp, Telegram, and others). To receive a project from a friend: open the menu in Manage Projects, choose Import project, then choose the ZIP file. That ZIP file must contain a project data file — if there is none, the file is rejected with a clear message, because that file is not a Create Aplikasi project. If the project name already exists, the application will ask: Overwrite the old project, or save with a New name.
+
+Project Search and Filter
+If there are already many projects, in Manage Projects there is a search box and a type filter. Type the project name in the search box, and the list is filtered immediately (uppercase and lowercase letters are not distinguished). The type filter limits the list to just one type: All, HTML, Website, Java, Kotlin, Compose, or Python. Each project's menu can still be opened as usual from the filtered list.
+
+Building Applications with Voice

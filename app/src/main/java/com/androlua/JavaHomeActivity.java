@@ -85,6 +85,13 @@ public class JavaHomeActivity extends Activity {
 
     private TextView noticeLabel;
     private Button noticeButton;
+    /** Kode bahasa efektif layar ini (Tahap tampilan A, 2026-11-23). */
+    private String kodeBahasa = "id";
+
+    /** Teks antarmuka dalam bahasa efektif (TeksUI, fallback Indonesia). */
+    private String t(String kunci) {
+        return TeksUI.teks(kodeBahasa, kunci);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +99,12 @@ public class JavaHomeActivity extends Activity {
         // Terapkan tema aplikasi yang tersimpan (reorganisasi pengaturan 2026-11-17).
         PaletStudio.terapkanTema(PengaturanActivity.temaAplikasi(this));
         setTitle(APP_NAME);
+        // Tahap tampilan A (2026-11-23): 46 teks menu utama mengikuti
+        // bahasa efektif aplikasi (pilihan pengguna -> sistem -> id).
+        kodeBahasa = Bahasa.kodeEfektif(
+                PengaturanActivity.baca(this).getString(
+                        PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
+                java.util.Locale.getDefault().getLanguage());
 
         ScrollView sv = new ScrollView(this);
         LinearLayout r = newRoot();
@@ -102,254 +115,254 @@ public class JavaHomeActivity extends Activity {
         // Nama pengembang di samping judul (perintah al kautsar 2026-11-23).
         label(r, "Developer by al kautsar", true);
 
-        noticeLabel = label(r, "Aplikasi perlu " + pesanIzinPenyimpanan()
+        noticeLabel = label(r, t("Aplikasi perlu ") + pesanIzinPenyimpanan()
                 + " untuk menyimpan project di folder Download/project.", false);
-        noticeButton = button(r, "Berikan Izin Penyimpanan", new View.OnClickListener() {
+        noticeButton = button(r, t("Berikan Izin Penyimpanan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requestAccess();
             }
         });
 
-        button(r, "Buat Project", new View.OnClickListener() {
+        button(r, t("Buat Project"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaBuatProyek();
             }
         });
-        button(r, "Kelola Project", new View.OnClickListener() {
+        button(r, t("Kelola Project"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaKelolaProyek();
             }
         });
-        button(r, "Buat Keystore", new View.OnClickListener() {
+        button(r, t("Buat Keystore"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaKeystore();
             }
         });
         // Tahap 3J: kelompok visual menu utama (urutan tombol tidak berubah).
-        heading(r, "Fitur Pembuat", 16);
-        button(r, "Pembuat Ikon", new View.OnClickListener() {
+        heading(r, t("Fitur Pembuat"), 16);
+        button(r, t("Pembuat Ikon"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaPembuatIkon();
             }
         });
-        button(r, "Bangun dengan Suara", new View.OnClickListener() {
+        button(r, t("Bangun dengan Suara"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaSuara();
             }
         });
-        button(r, "AI Pembuat Aplikasi", new View.OnClickListener() {
+        button(r, t("AI Pembuat Aplikasi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaAi();
             }
         });
-        button(r, "Pasar Proyek", new View.OnClickListener() {
+        button(r, t("Pasar Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaPasar();
             }
         });
-        button(r, "Kolaborasi", new View.OnClickListener() {
+        button(r, t("Kolaborasi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaKolaborasi();
             }
         });
-        button(r, "Penerjemah Aplikasi", new View.OnClickListener() {
+        button(r, t("Penerjemah Aplikasi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaPenerjemah();
             }
         });
-        button(r, "Pembuat Game", new View.OnClickListener() {
+        button(r, t("Pembuat Game"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaGame();
             }
         });
-        button(r, "Periksa Kode", new View.OnClickListener() {
+        button(r, t("Periksa Kode"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaPeriksaKode();
             }
         });
-        button(r, "Belajar", new View.OnClickListener() {
+        button(r, t("Belajar"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaBelajar();
             }
         });
         // Tahap 3J: kelompok visual menu utama (urutan tombol tidak berubah).
-        heading(r, "Cloud, Tema & Lainnya", 16);
-        button(r, "Sinkronisasi Cloud", new View.OnClickListener() {
+        heading(r, t("Cloud, Tema & Lainnya"), 16);
+        button(r, t("Sinkronisasi Cloud"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaCloud();
             }
         });
-        button(r, "Pembuat Backend", new View.OnClickListener() {
+        button(r, t("Pembuat Backend"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaBackend();
             }
         });
-        button(r, "Desainer Tema", new View.OnClickListener() {
+        button(r, t("Desainer Tema"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaTema();
             }
         });
-        button(r, "Pembuat Animasi", new View.OnClickListener() {
+        button(r, t("Pembuat Animasi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaAnimasi();
             }
         });
-        button(r, "Perekam Aksi", new View.OnClickListener() {
+        button(r, t("Perekam Aksi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaPerekamAksi();
             }
         });
-        button(r, "Keamanan Otomatis", new View.OnClickListener() {
+        button(r, t("Keamanan Otomatis"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaKeamanan();
             }
         });
-        button(r, "AI Offline", new View.OnClickListener() {
+        button(r, t("AI Offline"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaAiOffline();
             }
         });
-        button(r, "Widget & Wallpaper", new View.OnClickListener() {
+        button(r, t("Widget & Wallpaper"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaWidget();
             }
         });
-        button(r, "Media Sosial", new View.OnClickListener() {
+        button(r, t("Media Sosial"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaMediaSosial();
             }
         });
-        button(r, "Aplikasi dari Gambar", new View.OnClickListener() {
+        button(r, t("Aplikasi dari Gambar"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaDariGambar();
             }
         });
         // Tahap 3J: kelompok visual menu utama (urutan tombol tidak berubah).
-        heading(r, "Suara, Kode & Fitur Baru", 16);
-        button(r, "Mode Suara", new View.OnClickListener() {
+        heading(r, t("Suara, Kode & Fitur Baru"), 16);
+        button(r, t("Mode Suara"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaModeSuara();
             }
         });
-        button(r, "Penerjemah Kode", new View.OnClickListener() {
+        button(r, t("Penerjemah Kode"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaPenerjemahKode();
             }
         });
-        button(r, "Git di Dalam Aplikasi", new View.OnClickListener() {
+        button(r, t("Git di Dalam Aplikasi"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaGit();
             }
         });
-        button(r, "Pembuat Iklan", new View.OnClickListener() {
+        button(r, t("Pembuat Iklan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaIklan();
             }
         });
-        button(r, "Mode Anak", new View.OnClickListener() {
+        button(r, t("Mode Anak"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaModeAnak();
             }
         });
-        button(r, "Wear OS & TV", new View.OnClickListener() {
+        button(r, t("Wear OS & TV"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaWearTv();
             }
         });
-        button(r, "Peta Proyek", new View.OnClickListener() {
+        button(r, t("Peta Proyek"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaPeta();
             }
         });
-        button(r, "Kalkulator Ukuran APK", new View.OnClickListener() {
+        button(r, t("Kalkulator Ukuran APK"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaUkuranApk();
             }
         });
-        button(r, "Penganalisis APK", new View.OnClickListener() {
+        button(r, t("Penganalisis APK"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaAnalisisApk();
             }
         });
-        button(r, "Pratinjau Ukuran Layar", new View.OnClickListener() {
+        button(r, t("Pratinjau Ukuran Layar"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaPratinjauUkuran();
             }
         });
-        button(r, "Pengelola Sumber Daya", new View.OnClickListener() {
+        button(r, t("Pengelola Sumber Daya"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaSumberDaya();
             }
         });
-        button(r, "Pemantau Kinerja Ringan", new View.OnClickListener() {
+        button(r, t("Pemantau Kinerja Ringan"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaKinerja();
             }
         });
-        button(r, "Pembuat Video Demo", new View.OnClickListener() {
+        button(r, t("Pembuat Video Demo"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaVideoDemo();
             }
         });
         // Tahap 3J: kelompok visual menu utama (urutan tombol tidak berubah).
-        heading(r, "Alat", 16);
-        button(r, "Terminal", new View.OnClickListener() {
+        heading(r, t("Alat"), 16);
+        button(r, t("Terminal"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaTerminal();
             }
         });
-        button(r, "Tentang Alat", new View.OnClickListener() {
+        button(r, t("Tentang Alat"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaTentang();
             }
         });
         // Batch pasca-v2: Donasi ke Pengembang, di samping Tentang Alat.
-        button(r, "Donasi ke Pengembang", new View.OnClickListener() {
+        button(r, t("Donasi ke Pengembang"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaDonasi();
             }
         });
         // Analitik + App Quality Insights: di samping Donasi ke Pengembang.
-        button(r, "Analitik & Kualitas", new View.OnClickListener() {
+        button(r, t("Analitik & Kualitas"), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bukaAnalitik();
@@ -393,7 +406,7 @@ public class JavaHomeActivity extends Activity {
         // "Tentang Alat" menu utama; izin penyimpanan/pasang APK diminta
         // lewat alurnya masing-masing (tombol izin / saat pasang APK).
         menu.add("Muat ulang");
-        menu.add("Pengaturan");
+        menu.add(t("Pengaturan"));
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -403,7 +416,7 @@ public class JavaHomeActivity extends Activity {
         String t = String.valueOf(item.getTitle());
         if ("Muat ulang".equals(t)) {
             perbaruiIzin();
-        } else if ("Pengaturan".equals(t)) {
+        } else if (TeksUI.teks(kodeBahasa, "Pengaturan").equals(t)) {
             bukaPengaturan();
         } else {
             return super.onOptionsItemSelected(item);

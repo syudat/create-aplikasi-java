@@ -1,0 +1,96 @@
+Üdvözöljük a Create Aplikasi by Al Kautsar alkalmazásban
+A Create Aplikasi egy Android-alkalmazáskészítő alkalmazás, amely közvetlenül a telefonon fut, laptop nélkül. Az alkalmazás lehetővé teszi, hogy bárki saját Android-alkalmazást készítsen, beleértve azokat is, akik most tanulnak alkalmazást készíteni, valamint a képernyőolvasót használókat. Az alkalmazás használatának teljes útmutatója ezen a Tentang Alat képernyőn érhető el.
+
+Mi ez az alkalmazás, és kinek szól
+A Create Aplikasi egy Android-alkalmazáskészítő eszköz, amely a telefonon fut. Az alkalmazás mindazoknak szól, akik saját Android-alkalmazást szeretnének készíteni, beleértve a kezdőket és a képernyőolvasót használókat is. Az alkalmazás kódszerkesztőt, a projekt tesztelésére szolgáló Jalankan gombot, az APK létrehozására szolgáló Bangun gombot, valamint az APK aláírására és telepítésére szolgáló menüt biztosít.
+
+Az alkalmazás célja
+Ez az alkalmazás azért készült, hogy bárki könnyedén készíthessen saját Android-alkalmazást, közvetlenül a telefonjáról. A felülete a lehető legegyszerűbb, hogy az új felhasználók is azonnal kipróbálhassák.
+
+Új projekt létrehozása, lépésről lépésre
+1. Nyomja meg a Buat Project gombot a főmenüben.
+2. Válassza ki a projekt típusát: HTML, Situs Web, Java, Kotlin, Compose vagy Python.
+3. Adja meg az alkalmazás nevét, például: Garuda Decode.
+4. Adja meg a csomagnevet (package name), például: com.android.garudadecode. A csomagnévnek kisbetűkből kell állnia, és legalább két, ponttal elválasztott részből kell állnia.
+5. Adja meg az alkalmazás verzióját, például: 1.0, és a verziókódot számként, például: 1. Ha üresen hagyja, a verzió automatikusan 1.0, a verziókód pedig 1 lesz.
+6. Szükség esetén adja meg a minimális SDK-t és a cél-SDK-t. Ha üresen hagyja, az alapértelmezett értékek kerülnek felhasználásra. A minimális SDK a támogatott legalacsonyabb Android-verzió, például: a 21 az Android 5.0-t jelenti. A cél-SDK maximuma 36 (Android 16).
+7. Nyomja meg a Pilih Izin gombot az alkalmazás engedélyeinek kiválasztásához, például: INTERNET. Az INTERNET engedély alapértelmezés szerint be van jelölve. Csak azokat az engedélyeket jelölje be, amelyekre az alkalmazásnak valóban szüksége van.
+8. Ha szeretné, jelölje be a "Gunakan arsitektur terpisah 64 bit dan 32 bit" lehetőséget, hogy az APK mérete kisebb legyen, és jelölje be a "Gunakan tanda tangan pribadi" lehetőséget, ha saját készítésű keystore-t szeretne használni.
+9. Nyomja meg a Buat Proyek gombot. Az új projekt a Download/project mappába kerül mentésre, és azonnal megjelenik a Kelola Project listában.
+
+Elérhető projekttípusok
+• HTML: a megjelenítés az index.html, a style.css és a script.js fájlokból történik, WebView-n keresztül fut. Közvetlenül a telefonon épül fel.
+• Situs Web: weboldal menüvel (Beranda, Tentang, Kontak) az index.html, a tentang.html, a kontak.html, a style.css és a script.js fájlokból, WebView-n keresztül fut. Közvetlenül a telefonon épül fel.
+• Java: a telefonon épül fel. A MainActivity az app/src/main/java/<nama-paket>/MainActivity.java helyen található. A megjelenítés az app/src/main/res/layout/activity_main.xml fájlból, a szöveg az app/src/main/res/values/strings.xml fájlból, a téma pedig az app/src/main/res/values/styles.xml fájlból származik.
+• Kotlin: az eszközön (offline) felépíthető az alkalmazáshoz mellékelt Kotlin-fordítóval, vagy GitHub Actions segítségével. A MainActivity az app/src/main/java/<nama-paket>/MainActivity.kt helyen található, és a res fájlok ugyanazok, mint a Java-projekteknél. Az első Kotlin-build lassabb a fordító nagy mérete miatt, és a Kotlin-osztályokra hivatkozó .java fájlok még nem építhetők fel (a .java fájlok a .kt fájlok előtt kerülnek lefordításra).
+• Compose: modern Android-alkalmazás, amelynek felülete Jetpack Compose-zal készül (nem XML-elrendezéssel). A MainActivity az app/src/main/java/<nama-paket>/MainActivity.kt helyen található. A Compose-projektek GitHub Actions segítségével (Bangun proyek menü, majd Bangun online) vagy Termuxban, Gradle segítségével épülnek fel, mert a Compose-hoz Jetpack Compose könyvtárak szükségesek, amelyek nem érhetők el az eszközön.
+• Python: az alkalmazás logikája Python nyelven (Chaquopy) íródik az app/src/main/python/main.py fájlban, és a gazda MainActivity.java futtatja az app/src/main/java/<nama-paket>/MainActivity.java helyen. A Python-projektek közvetlenül a telefonon is felépíthetők (a Chaquopy futtatókörnyezet az alkalmazás része), valamint GitHub Actions segítségével is. A Python-projektek minimális SDK-ja 24 (Android 7.0).
+
+A Java, HTML, Situs Web, Kotlin, Compose és Python projektek fájlszerkezete
+A Java, HTML, Situs Web, Kotlin, Compose és Python projektek a szokásos Android-projektekhez hasonlóan épülnek fel. Az app mappán belül található a src mappa, azon belül pedig a main mappa. A main mappában az AndroidManifest.xml található a java mappa mellett, a res mappa, amely a layout/activity_main.xml fájlt, valamint a values/strings.xml és a values/styles.xml fájlokat tartalmazza, a HTML és Situs Web projektek esetében pedig az assets mappa, amely az index.html fájlt tartalmazza (a Situs Web a tentang.html és a kontak.html fájlokat is tartalmazza). A HTML és Situs Web projekteknek saját MainActivity-jük is van az app/src/main/java/<nama-paket>/MainActivity.java helyen, amely betölti az index.html fájlt a WebView-ba, és az AndroidManifestben indítóként (launcher) szerepel. A Python-projektek Python-kódja az app/src/main/python/main.py fájlban, a gazda MainActivity.java pedig az app/src/main/java/<nama-paket>/MainActivity.java helyen található. Az AndroidManifest.xml, az elrendezés, a strings és a styles fájlok a szerkesztőben megnyithatók és módosíthatók, ugyanúgy, mint a MainActivity. A régebbi projektek, amelyek manifestje még az app mappa mellett található, továbbra is felépíthetők, mert az építés során az alkalmazás először az app/src/main/ mappában lévő AndroidManifest.xml fájlt ellenőrzi, azután az app mappa mellett lévőt, végül a projekt adatfájlját.
+
+Engedélyszabályok (fontos)
+A projekt létrehozásakor bejelölt engedélyek csak egy helyen kerülnek rögzítésre, a projekt típusának megfelelően. A Java, HTML, Situs Web, Kotlin, Compose és Python projektek esetében a bejelölt engedélyek CSAK az AndroidManifest.xml fájlban kerülnek rögzítésre, amely az app/src/main/ mappában, a java mappa mellett, a projektmappán belül található. A Java, HTML, Situs Web, Kotlin, Compose és Python projektek adatfájlja nem tartalmaz engedélylistát. Ha a Java típust választja, és bejelöli az INTERNET és a CAMERA engedélyt, az AndroidManifest.xml fájlban csak az INTERNET és a CAMERA kerül rögzítésre, más engedélyek nem társulnak hozzájuk. Az építés során az alkalmazás az engedélyeket ugyanarról a helyről olvassa be: a Java, HTML, Situs Web, Kotlin, Compose és Python projektek esetében az app/src/main/ mappában lévő AndroidManifest.xml fájlból (ha nincs ilyen, a régebbi projektek esetében az app mappa mellett lévő AndroidManifest.xml fájlból), a régebbi projektek esetében pedig a projekt adatfájljából.
+
+A szerkesztő használata
+Nyissa meg a Kelola Project listát, koppintson a projekt nevére a szerkesztő megnyitásához. A szerkesztőben a fájlok megnyithatók, kód írható, és a módosítások menthetők. A Java, HTML, Situs Web, Kotlin, Compose és Python projektek esetében a fájlok az app/src/main mappában helyezkednek el. A projekt megosztásához használja az Ekspor ZIP funkciót (lásd az alábbi szakaszt).
+
+A projekt futtatása
+A szerkesztőben nyomja meg a Jalankan gombot a projekt teszteléséhez. A HTML és Situs Web projektek esetében az index.html fut WebView-n keresztül. Ha hiba történik, olvassa el a hibaüzenetet, javítsa ki a kódot, majd futtassa újra.
+
+Az APK felépítése
+A szerkesztőben nyomja meg a Bangun gombot. Két építési mód áll rendelkezésre. Az első az eszközön történő építés: közvetlenül a telefonon, internet nélkül épít, HTML, Situs Web, Java, Kotlin és Python projektekhez. A második az online építés GitHub Actions segítségével: az interneten, a GitHubon épít, és minden projekttípushoz használható. A Compose-projektek csak a második módon (Bangun online) vagy Termuxban, Gradle segítségével építhetők fel, mert a Compose-hoz Jetpack Compose könyvtárak szükségesek, amelyek nem érhetők el az eszközön. Az első build eredménye még nincs aláírva. Ezután az alkalmazás aláírja: automatikusan a beépített kulccsal, vagy személyes aláírással, ha a projekt létrehozásakor bejelölte a "Gunakan tanda tangan pribadi" négyzetet.
+
+Az APK telepítése
+Ha az APK elkészült, nyomja meg a Pasang gombot a telepítéséhez. Android 8 és újabb rendszereken a telefon először az "Izinkan dari sumber ini" engedélyt kéri, mert ez az alkalmazás a Play Áruházon kívülről telepít APK-t. Engedélyezze ezt egyszer a Beállításokban, majd térjen vissza az alkalmazásba: a telepítés automatikusan folytatódik, anélkül, hogy újra meg kellene nyomnia a Pasang gombot. Ha a Pasang gomb nem jelenik meg, győződjön meg arról, hogy a build befejeződött és az APK elkészült.
+
+Az alkalmazás aláírása
+Minden APK-t alá kell írni, hogy telepíthető legyen. Két lehetőség áll rendelkezésre. Az első a beépített kulcs: az alkalmazás automatikusan aláírja magát, semmit sem kell tennie. A második a személyes aláírás: először hozzon létre egy keystore-t a főmenü Buat Keystore menüpontjával, őrizze meg jól a jelszavát, majd a projekt létrehozásakor jelölje be a "Gunakan tanda tangan pribadi" lehetőséget. A keystore a Download/project/signing mappában tárolódik.
+
+A projekt exportálása ZIP formátumba
+Az Ekspor ZIP azért áll rendelkezésre, hogy a projekt megosztható legyen a barátokkal. A módja: a Kelola Project listában nyomja meg hosszan a projekt nevét, majd válassza az Ekspor ZIP lehetőséget. Az eredmény a Download/project/<NamaProyek>.zip helyen kerül mentésre. A bin mappa nem kerül bele, így a mérete kicsi, mindössze néhány tíz KB. A ZIP-fájl elküldhető a barátoknak vagy feltölthető a GitHubra.
+
+JAWS-kiterjesztés
+A JAWS-kiterjesztés a Jieshuo (CSR) kiterjesztésmotorját használja, nem a képernyőolvasóját. Így a terv akkor is futtatható marad, ha a felhasználó TalkBacket használ. A módja: nyissa meg az Ekstensi JAWS menüpontot a főmenüben. Mivel az automatikus kattintás önmagától fut, a szolgáltatást először engedélyezni kell a Kisegítő lehetőségek beállításaiban. Ezután új terv hozható létre: írja be a terv nevét, nyomja meg az OK gombot, majd töltse ki a mezőit.
+
+A kattintáslista különválasztva, az áttekinthetőségért
+A terven belül két mező található: a szkriptmező és a Daftar Klik mező. A gombok listája külön, a daftar_klik.txt fájlban tárolódik, soronként egy névvel. Példa a tartalmára: tombolSimpan, tombolHapus, tombolBuka. Egy alkalmazás megnyitásához egyszerűen írja be a >WhatsApp szöveget a listába. A régebbi tervek, amelyek még nem rendelkeznek daftar_klik.txt fájllal, ezt a beépített példát jelenítik meg.
+
+Biztosított egyszerű függvények
+• klikTombol("tombolSimpan") — egy gomb kattintása a szövege alapján.
+• klikDaftarTombol(daftar) — a daftar_klik.txt fájlban lévő lista kattintása, soronként egy gomb, sorrendben, majd jelzi, hány volt sikeres és hány nem található.
+• bukaAplikasi("WhatsApp") — alkalmazás megnyitása a neve alapján, vagy írja be a ">WhatsApp" szöveget a listába.
+• klik(540, 1200) — kattintás a képernyő koordinátáinál.
+Minden függvény először egyszerűen készült. Ha már megszokta, később további függvények adhatók hozzá.
+
+A képernyőolvasóról
+Ezt az alkalmazást úgy tervezték, hogy képernyőolvasó-barátt legyen. Minden beviteli mezőnek van címkéje és kitöltési példája, és minden gomb bonyolult gesztusok nélkül elérhető. A JAWS-kiterjesztést úgy készítették, hogy akkor is fusson, ha a felhasználó TalkBacket használ, mert a kiterjesztésmotorját használja, nem a képernyőolvasóját.
+
+Adatvédelem és biztonság
+A projektek és a keystore az Ön telefonján tárolódnak. A GitHub-token csak az online építéshez használatos, és ebben az alkalmazásban tárolódik. Ne ossza meg senkivel a tokenjét vagy a keystore jelszavát. Ha személyes aláírást használ, őrizze a keystore-t és a jelszavát biztonságos helyen, mert ha elvesznek, a régi APK nem frissíthető ugyanazzal az aláírással.
+
+Követelmények
+Android 5.0 vagy újabb. Tárhelyengedély: Android 11 és újabb rendszereken az összes fájlhoz való hozzáférési engedélyt használja, Android 10 és régebbi rendszereken a szokásos tárhelyengedélyt (tárhely olvasása/írása), mert az Android 10 nem rendelkezik az összes fájlhoz való hozzáférési engedéllyel. Az eszközön történő építéshez ARM-processzoros telefon szükséges (32 vagy 64 bites). Az online építés GitHub Actions segítségével internetet és GitHub-tokent igényel. A Kotlin-projektek felépíthetők az eszközön, de az első build lassabb, és több memóriát használ a Kotlin-fordító nagy mérete miatt. A Compose-projektek GitHub Actions segítségével vagy Termuxban, Gradle-lel épülnek fel. A Python-projektekhez Android 7.0 vagy újabb szükséges (minimális SDK 24), és az eredményül kapott APK nagyobb, mert tartalmazza a Python-futtatókörnyezetet (Chaquopy) és annak standard könyvtárát.
+
+Terminál
+A főképernyőn lévő Terminal menü megnyitja a terminált ebben az alkalmazásban. Az olyan parancsok, mint az ls, használhatók a projektmappa tartalmának megtekintésére, a cd a mappák közötti váltásra, a git pedig a kód kezelésére. A parancsok kimenete képernyőolvasóval olvasható szövegként jelenik meg, és van egy Bacakan hasil gomb a legutóbbi eredmény felolvastatásához. Ez a terminál a telefon rendszershelljét használja, így az interaktív programok, mint a nano és a vim, itt még nem használhatók.
+
+Licenc (fizetős verzió)
+Egy alkalmazás eladásához a projekt létrehozásakor jelölje be az "Aktifkan Lisensi" lehetőséget, majd adja meg a WhatsApp-számát. A felépített alkalmazás az első megnyitáskor licenckódot kér: a felhasználó látja az eszköze azonosítóját, megnyomja a Kirim ID Perangkat gombot, hogy elküldje az azonosítót az Ön WhatsAppjára, Ön pedig válaszul elküldi a licenckódot. A licenckód az eszközazonosítóból és a projekt jelszavából (a projekt adatfájljában lévő lisensi_seed) kerül kiszámításra — őrizze meg jól ezt a jelszót, és ne ossza meg. A helyes kód megadása után az alkalmazás megnyílik, és többé nem kér kódot.
+
+Automatikus ikonkészítő
+Az új projektek ikonja még átlátszó, ezért a főmenüben elérhető a Pembuat Ikon. A módja: nyomja meg a Pembuat Ikon gombot, írjon be egy vagy két betűt (például az alkalmazás nevének kezdőbetűit), válassza ki a háttérszínt és a szöveg színét, tekintse meg az előnézetet, majd nyomja meg a Simpan ke Proyek gombot, hogy az ikont a kiválasztott projektben használja, vagy a Simpan ke Download gombot, hogy a PNG-fájlt máshol használja. A projekt létrehozása után az alkalmazás felajánlja az ikon létrehozását is. A projekt régi ikonja bármikor lecserélhető a Kelola Project projektmenüjéből (nyomja meg hosszan a projekt nevét, majd válassza a Ganti Ikon lehetőséget).
+
+Kész projektsablonok
+Ha nem szeretne üres projektből indulni, a projekt létrehozásakor válasszon sablont: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) vagy Penghitung (Compose). A sablon kiválasztása automatikusan megváltoztatja a projekt típusát a sablonnak megfelelően, és a projekt kész kezdőkóddal jön létre — csak futtatni vagy módosítani kell. Ha a sablon kiválasztása után a projekt típusát kézzel újra megváltoztatja, a sablon törlődik, és a projekt ismét üres lesz. A HTML és Situs Web sablonok esetében a sablon felülírja az index.html tartalmát, beleértve az űrlapba beírt HTML-szkriptet is.
+
+Projekt biztonsági mentése és visszaállítása
+Hogy a projektek ne vesszenek el, biztonsági mentési funkció áll rendelkezésre. A módja: a Kelola Project listában nyomja meg hosszan a projekt nevét, majd válassza a Cadangkan lehetőséget. A biztonsági mentés ZIP formátumban a Download/backup mappába kerül mentésre, a projekt nevével és dátummal, például: GarudaDecode-2026-11-14-123045.zip. A tartalma megegyezik az Ekspor ZIP tartalmával (a teljes projekt, a bin mappa nélkül). A visszaállításhoz: nyissa meg a menüt a Kelola Project listában, válassza a Pulihkan cadangan lehetőséget, majd válassza ki a mentési fájlt. Ha a projekt neve már létezik, az alkalmazás megkérdezi: Felülírja a régi projektet, vagy új néven menti.
+
+Projekt megosztása és importálása
+Egy projekt barátokkal való megosztásához: a Kelola Project listában nyomja meg hosszan a projekt nevét, majd válassza a Bagikan lehetőséget. A projekt ZIP formátumban kerül elküldésre egy megosztó alkalmazáson keresztül (WhatsApp, Telegram és mások). Projekt fogadásához egy baráttól: nyissa meg a menüt a Kelola Project listában, válassza az Impor proyek lehetőséget, majd válassza ki a ZIP-fájlt. A ZIP-fájlnak tartalmaznia kell a projekt adatfájlját — ha nem tartalmazza, a fájl egyértelmű üzenettel elutasításra kerül, mert az a fájl nem Create Aplikasi-projekt. Ha a projekt neve már létezik, az alkalmazás megkérdezi: Felülírja a régi projektet, vagy új néven menti.
+
+Projektkeresés és -szűrés
+Ha már sok projekt van, a Kelola Project listában keresőmező és típusszűrő található. Írja be a projekt nevét a keresőmezőbe, a lista azonnal szűrődik (a kis- és nagybetűk nem számítanak). A típusszűrő egyetlen típusra korlátozza a listát: Semua, HTML, Situs Web, Java, Kotlin, Compose vagy Python. Az egyes projektek menüje a szűrt listából is a szokásos módon megnyitható.
+
+Alkalmazásépítés hanggal

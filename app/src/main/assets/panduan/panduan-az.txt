@@ -1,0 +1,96 @@
+Create Aplikasi by Al Kautsar tətbiqinə xoş gəlmisiniz
+Create Aplikasi — noutbuka ehtiyac olmadan, birbaşa telefonda işləyən Android tətbiqləri yaradan tətbiqdir. Bu tətbiq hər kəsə, o cümlədən tətbiq yaratmağı yeni öyrənənlərə və ekran oxuyucusu istifadəçilərinə öz Android tətbiqini yaratmağa imkan verir. Bu tətbiqdən istifadə üzrə tam təlimat məhz bu Tentang Alat ekranında mövcuddur.
+
+Bu hansı tətbiqdir və kimlər üçündür
+Create Aplikasi — telefonda işləyən Android tətbiqləri yaratmaq üçün vasitədir. Bu tətbiq öz Android tətbiqini yaratmaq istəyən hər kəs, o cümlədən yeni başlayanlar və ekran oxuyucusu istifadəçiləri üçün nəzərdə tutulub. Bu tətbiq kod redaktoru, layihəni sınamaq üçün Jalankan düyməsi, APK yaratmaq üçün Bangun düyməsi, eləcə də APK-nı imzalamaq və quraşdırmaq üçün menyu təqdim edir.
+
+Bu tətbiqin məqsədi
+Bu tətbiq hər kəsin öz Android tətbiqini birbaşa telefondan asanlıqla yarada bilməsi üçün yaradılıb. Onun görünüşü yeni istifadəçilərin də dərhal sınaya bilməsi üçün mümkün qədər sadə edilib.
+
+Yeni layihə yaratmaq, addım-addım
+1. Əsas menyuda Buat Project düyməsini basın.
+2. Layihə növünü seçin: HTML, Situs Web, Java, Kotlin, Compose və ya Python.
+3. Tətbiq adını daxil edin, məsələn: Garuda Decode.
+4. Paket adını (package name) daxil edin, məsələn: com.android.garudadecode. Paket adı kiçik hərflərdən ibarət olmalı və nöqtə ilə ayrılan ən azı iki hissədən təşkil olunmalıdır.
+5. Tətbiq versiyasını, məsələn: 1.0, və rəqəm şəklində versiya kodunu, məsələn: 1 daxil edin. Boş buraxılsa, versiya avtomatik olaraq 1.0, versiya kodu isə 1 ilə doldurulacaq.
+6. Lazım gələrsə, minimum SDK və hədəf SDK daxil edin. Boş buraxılsa, standart qiymətlər istifadə olunacaq. Minimum SDK — dəstəklənən ən aşağı Android versiyasıdır, məsələn: 21 demək Android 5.0. Hədəf SDK-nin maksimum qiyməti 36 (Android 16) təşkil edir.
+7. Tətbiq icazələrini seçmək üçün Pilih Izin düyməsini basın, məsələn: INTERNET. INTERNET icazəsi standart olaraq işarələnib. Yalnız tətbiqə həqiqətən lazım olan icazələri işarələyin.
+8. İstəsəniz, APK ölçüsünün daha kiçik olması üçün "Gunakan arsitektur terpisah 64 bit dan 32 bit" xanasını işarələyin və öz yaratdığınız keystore-dan istifadə etmək istəsəniz, "Gunakan tanda tangan pribadi" xanasını işarələyin.
+9. Buat Proyek düyməsini basın. Yeni layihə Download/project qovluğunda saxlanılır və dərhal Kelola Project daxilində görünür.
+
+Mövcud layihə növləri
+• HTML: WebView vasitəsilə işləyən index.html, style.css və script.js-dən ibarət görünüş. Birbaşa telefonda yığılır.
+• Situs Web: WebView vasitəsilə işləyən index.html, tentang.html, kontak.html, style.css və script.js-dən ibarət, menyusu (Beranda, Tentang, Kontak) olan veb-sayt. Birbaşa telefonda yığılır.
+• Java: telefonda yığılır. MainActivity app/src/main/java/<nama-paket>/MainActivity.java daxilində yerləşir. Görünüş app/src/main/res/layout/activity_main.xml-dən, mətn app/src/main/res/values/strings.xml-dən, mövzu isə app/src/main/res/values/styles.xml-dən götürülür.
+• Kotlin: tətbiqə daxil edilmiş Kotlin kompilyatoru vasitəsilə cihazın özündə (offline) və ya GitHub Actions vasitəsilə yığıla bilər. MainActivity app/src/main/java/<nama-paket>/MainActivity.kt daxilində yerləşir, res faylları isə Java layihəsindəki kimidir. Kompilyatorun ölçüsü böyük olduğu üçün ilk Kotlin yığılması daha yavaşdır və Kotlin siniflərinə istinad edən .java faylları hələlik yığıla bilmir (.java faylları .kt fayllarından əvvəl kompilyasiya olunur).
+• Compose: interfeysi Jetpack Compose ilə yaradılmış müasir Android tətbiqi (XML düzülüşü deyil). MainActivity app/src/main/java/<nama-paket>/MainActivity.kt daxilində yerləşir. Compose layihələri GitHub Actions vasitəsilə (Bangun proyek menyusu, sonra Bangun online) və ya Gradle ilə Termux daxilində yığılır, çünki Compose cihazda mövcud olmayan Jetpack Compose kitabxanalarını tələb edir.
+• Python: tətbiq məntiqi Python dilində (Chaquopy) app/src/main/python/main.py daxilində yazılır və app/src/main/java/<nama-paket>/MainActivity.java daxilindəki MainActivity hostu tərəfindən işə salınır. Python layihələrini birbaşa telefonda (Chaquopy iş mühiti tətbiqə daxil edilib) eləcə də GitHub Actions vasitəsilə yığmaq olar. Python layihəsinin minimum SDK-si 24 (Android 7.0) təşkil edir.
+
+Java, HTML, Situs Web, Kotlin, Compose və Python layihələrinin fayl quruluşu
+Java, HTML, Situs Web, Kotlin, Compose və Python layihələri adi Android layihələri kimi qurulub. app qovluğunun içində src qovluğu, onun içində isə main qovluğu var. main qovluğunun içində java qovluğunun yanında AndroidManifest.xml, layout/activity_main.xml ilə values/strings.xml və values/styles.xml-i əhatə edən res qovluğu, HTML və Situs Web üçün isə index.html-i əhatə edən assets qovluğu (Situs Web-də tentang.html və kontak.html də var) yerləşir. HTML və Situs Web layihələrində də app/src/main/java/<nama-paket>/MainActivity.java daxilində öz MainActivity-si var, o, index.html-i WebView içərisinə yükləyir və AndroidManifest-də işəsalıcı (launcher) olur. Python layihəsinin Python kodu app/src/main/python/main.py daxilində, host MainActivity.java isə app/src/main/java/<nama-paket>/MainActivity.java daxilində yerləşir. AndroidManifest.xml, layout, strings və styles-i MainActivity kimi redaktorda açıb dəyişmək olar. Manifesti hələ app qovluğunun yanında yerləşən köhnə layihələri də yığmaq olar, çünki yığma zamanı tətbiq əvvəlcə app/src/main/ daxilindəki AndroidManifest.xml-i, sonra app qovluğunun yanındakını, ən sonda isə layihə məlumatları faylını yoxlayır.
+
+İcazə qaydaları (vacib)
+Layihə yaradılarkən işarələnən icazələr layihə növünə görə yalnız bir yerdə qeyd olunur. Java, HTML, Situs Web, Kotlin, Compose və Python layihələri üçün işarələnən icazələr YALNIZ layihə qovluğunun içindəki java qovluğunun yanında, app/src/main/ daxilində yerləşən AndroidManifest.xml daxilində qeyd olunur. Java, HTML, Situs Web, Kotlin, Compose və Python layihələrinin layihə məlumatları faylında icazələr siyahısı yoxdur. Java seçib INTERNET və CAMERA işarələsəniz, AndroidManifest.xml daxilində başqa icazələr əlavə olunmadan yalnız INTERNET və CAMERA qeyd olunur. Yığma zamanı tətbiq icazələri həmin yerdən oxuyur: Java, HTML, Situs Web, Kotlin, Compose və Python layihələri üçün app/src/main/ daxilindəki AndroidManifest.xml-dən (olmazsa, köhnə layihələr üçün app qovluğunun yanındakı AndroidManifest.xml-dən), köhnə layihələr üçün isə layihə məlumatları faylından.
+
+Redaktordan istifadə qaydası
+Kelola Project-i açın, redaktoru açmaq üçün layihə adına toxunun. Redaktorda faylları açmaq, kod yazmaq və dəyişiklikləri saxlamaq olar. Java, HTML, Situs Web, Kotlin, Compose və Python layihələri üçün fayllar app/src/main qovluğunun içində yerləşir. Layihəni paylaşmaq üçün Ekspor ZIP istifadə edin (aşağıdakı bölməyə baxın).
+
+Layihəni işə salmaq qaydası
+Redaktorda layihəni sınamaq üçün Jalankan düyməsini basın. HTML və Situs Web layihələri üçün index.html WebView vasitəsilə işə salınır. Xəta baş verərsə, xəta haqqında mesajı oxuyun, kodu düzəldin, sonra yenidən işə salın.
+
+APK yığmaq qaydası
+Redaktorda Bangun düyməsini basın. Yığmağın iki yolu var. Birincisi, cihazda yığmaq: HTML, Situs Web, Java, Kotlin və Python layihələri üçün internetsiz birbaşa telefonda yığır. İkincisi, GitHub Actions vasitəsilə onlayn yığmaq: internet vasitəsilə GitHub-da yığır və bütün layihə növləri üçün istifadə oluna bilər. Compose layihələrini yalnız ikinci yolla (Bangun online) və ya Gradle ilə Termux daxilində yığmaq olar, çünki Compose cihazda mövcud olmayan Jetpack Compose kitabxanalarını tələb edir. İlk yığma nəticəsi hələ imzalanmayıb. Sonra tətbiq onu imzalayır: avtomatik olaraq daxili açarla və ya layihə yaradılarkən "Gunakan tanda tangan pribadi" xanası işarələnibsə, şəxsi imza ilə.
+
+APK quraşdırmaq qaydası
+APK hazır olduqdan sonra, onu quraşdırmaq üçün Pasang düyməsini basın. Android 8 və yuxarısında telefon əvvəlcə "Izinkan dari sumber ini" icazəsini istəyəcək, çünki bu tətbiq APK-nı Play Store-dan kənarda quraşdırır. Bu icazəni Pengaturan daxilində bir dəfə aktivləşdirin, sonra tətbiqə qayıdın: quraşdırma Pasang düyməsini yenidən basmadan avtomatik davam edəcək. Pasang düyməsi görünmürsə, yığmanın bitdiyini və APK-nın yaradıldığını yoxlayın.
+
+Tətbiqi imzalamaq qaydası
+Quraşdırıla bilməsi üçün hər bir APK imzalanmalıdır. İki seçim var. Birincisi, daxili açar: tətbiq heç nə etmədən özü avtomatik imzalayır. İkincisi, şəxsi imza: əvvəlcə əsas menyudakı Buat Keystore menyusu vasitəsilə keystore yaradın, onun parolunu yaxşı saxlayın, sonra layihə yaradılarkən "Gunakan tanda tangan pribadi" xanasını işarələyin. Keystore Download/project/signing daxilində saxlanılır.
+
+Layihəni ZIP kimi ixrac etmək
+Ekspor ZIP layihənin dostlarla paylaşıla bilməsi üçün təqdim edilir. Qaydası: Kelola Project daxilində layihə adını uzun basın, sonra Ekspor ZIP seçin. Nəticə Download/project/<NamaProyek>.zip kimi saxlanılır. bin qovluğu daxil edilmir, ona görə ölçüsü kiçikdir, cəmi onlarla KB. Bu ZIP faylı dostlara göndərmək və ya GitHub-a yükləmək olar.
+
+Ekstensi JAWS
+Ekstensi JAWS Jieshuo (CSR)-in genişləndirmə mühərrikindən istifadə edir, onun ekran oxuyucusundan deyil. Beləliklə, istifadəçi TalkBack istifadə etsə də dizayn işləyə bilir. Qaydası: əsas menyuda Ekstensi JAWS-i açın. Avtomatik klik özü işlədiyi üçün xidmət əvvəlcə Pengaturan Aksesibilitas daxilində aktivləşdirilməlidir. Sonra yeni dizayn yaratmaq olar: dizayn adını yazın, OK basın, sonra onun xanasını doldurun.
+
+Daftar Klik səliqəli olması üçün ayrılıb
+Dizaynın içində iki xana var: skript xanası və Daftar Klik xanası. Düymələr siyahısı daftar_klik.txt faylında ayrıca saxlanılır, hər sətirdə bir ad. Onun məzmununa misal: tombolSimpan, tombolHapus, tombolBuka. Tətbiqi açmaq üçün siyahıya >WhatsApp yazın. Hələ daftar_klik.txt faylı olmayan köhnə dizaynlar bu standart misalı göstərəcək.
+
+Təqdim olunan sadə funksiyalar
+• klikTombol("tombolSimpan") — mətni üzrə bir düyməni klikləmək.
+• klikDaftarTombol(daftar) — daftar_klik.txt daxilindəki siyahını klikləmək, hər sətirdə bir düymə, ardıcıl, sonra neçəsinin uğurlu olduğunu və neçəsinin tapılmadığını bildirir.
+• bukaAplikasi("WhatsApp") — tətbiqi adı üzrə açmaq və ya siyahıya ">WhatsApp" yazmaq.
+• klik(540, 1200) — ekran koordinatlarında klikləmək.
+Bütün funksiyalar əvvəlcə sadə edilib. Öyrəşdikdən sonra əlavə funksiyaları sonra əlavə etmək olar.
+
+Ekran oxuyucusu haqqında
+Bu tətbiq ekran oxuyucusuna uyğun yaradılıb. Hər bir doldurma sahəsinin etiketi və doldurma misalı var və bütün düymələrə mürəkkəb jestlər olmadan çatmaq olar. Ekstensi JAWS istifadəçi TalkBack istifadə etsə də işləyə bilməsi üçün yaradılıb, çünki istifadə olunan onun genişləndirmə mühərrikidir, ekran oxuyucusu deyil.
+
+Məxfilik və təhlükəsizlik
+Layihələr və keystore telefonunuzda saxlanılır. GitHub tokeni yalnız onlayn yığmaq üçün istifadə olunur və bu tətbiqin içində saxlanılır. Tokeninizi və ya keystore parolunuzu heç kəslə paylaşmayın. Şəxsi imzadan istifadə edirsinizsə, keystore-u və onun parolunu təhlükəsiz yerdə saxlayın, çünki onlar itərsə, köhnə APK-nı eyni imza ilə yeniləmək mümkün olmayacaq.
+
+Tələblər
+Android 5.0 və ya daha yeni. Yaddaş icazəsi: Android 11 və yuxarısında bütün fayllara giriş icazəsi istifadə olunur, Android 10 və aşağısında adi yaddaş icazəsi (yaddaşı oxumaq/yazmaq) istifadə olunur, çünki Android 10-da bütün fayllara giriş icazəsi yoxdur. Cihazda yığmaq ARM prosessorlu (32 və ya 64 bit) telefon tələb edir. GitHub Actions vasitəsilə onlayn yığmaq internet və GitHub tokeni tələb edir. Kotlin layihələrini cihazda yığmaq olar, lakin Kotlin kompilyatorunun ölçüsü böyük olduğu üçün ilk yığma daha yavaşdır və daha çox yaddaş istifadə edir. Compose layihələri GitHub Actions vasitəsilə və ya Gradle ilə Termux daxilində yığılır. Python layihələri Android 7.0 və ya daha yeni (minimum SDK 24) tələb edir və nəticədəki APK Python iş mühitini (Chaquopy) və onun standart kitabxanasını əhatə etdiyi üçün daha böyük olur.
+
+Terminal
+Əsas ekrandakı Terminal menyusu bu tətbiqin içində terminal açır. ls kimi əmrlər layihə qovluğunun məzmununu görmək üçün, cd əmri qovluqlar arasında keçmək üçün, git əmri isə kodu idarə etmək üçün istifadə oluna bilər. Əmr çıxışı ekran oxuyucusunun oxuya bildiyi mətn kimi göstərilir və son nəticəni dinləmək üçün Bacakan hasil düyməsi var. Bu terminal telefonun sistem shell-indən istifadə edir, ona görə nano və vim kimi interaktiv proqramlar hələlik burada istifadə oluna bilmir.
+
+Lisensi (ödənişli versiya)
+Tətbiqləri satmaq üçün layihə yaradılarkən "Aktifkan Lisensi" xanasını işarələyin, sonra WhatsApp nömrənizi daxil edin. Yığılmış tətbiq ilk dəfə açılanda lisenziya kodu istəyəcək: istifadəçi öz cihazının ID-sini görür, ID Perangkat-i göndərmək üçün Kirim ID Perangkat düyməsini basıb həmin ID-ni sizin WhatsApp-ınıza göndərir, sonra siz onun lisenziya kodunu cavab olaraq göndərirsiniz. Lisenziya kodu cihaz ID-sindən və layihə parolundan (layihə məlumatları faylındakı lisensi_seed) hesablanır — bu parolu yaxşı saxlayın və onu paylaşmayın. Düzgün kod daxil edildikdən sonra tətbiq açılır və kodu yenidən istəmir.
+
+Pembuat Ikon Otomatis
+Yeni layihə ikonası hələ şəffafdır, ona görə əsas menyuda Pembuat Ikon mövcuddur. Qaydası: Pembuat Ikon düyməsini basın, bir və ya iki hərf yazın (məsələn, tətbiq adının baş hərfləri), fon rəngi və mətn rəngi seçin, önizləməyə baxın, sonra ikonayı seçilmiş layihədə istifadə etmək üçün Simpan ke Proyek düyməsini və ya onun PNG faylını başqa yerdə istifadə etmək üçün Simpan ke Download düyməsini basın. Layihə yaradılandan sonra tətbiq ikona yaratmağı da təklif edir. Layihənin köhnə ikonasını Kelola Project daxilindəki layihə menyusundan istənilən vaxt dəyişmək olar (layihə adını uzun basın, sonra Ganti Ikon seçin).
+
+Template Proyek Siap Pakai
+Boş layihədən başlamaq istəmirsinizsə, layihə yaradılarkən şablon seçin: Kalkulator (Java), Catatan (Java), Daftar Tugas (Kotlin), Kalkulator Web (HTML), Situs Profil (Situs Web) və ya Penghitung (Compose). Şablonu seçmək layihə növünü avtomatik olaraq həmin şablona uyğun dəyişir və layihə hazır başlanğıc kodla yaradılır — onu işə salmaq və ya dəyişmək qalır. Şablonu seçdikdən sonra layihə növünü əl ilə yenidən dəyişsəniz, şablon ləğv olunur və layihə yenidən boş olur. HTML və Situs Web şablonları üçün şablon index.html-in məzmununu, o cümlədən formada yazılmış HTML skriptini əvəz edir.
+
+Cadangan dan Pulihkan Proyek
+Layihələr itməsin deyə ehtiyat nüsxə xüsusiyyəti mövcuddur. Qaydası: Kelola Project daxilində layihə adını uzun basın, sonra Cadangkan seçin. Ehtiyat nüsxə Download/backup qovluğunda layihə adı və tarix göstərilən ZIP kimi saxlanılır, məsələn: GarudaDecode-2026-11-14-123045.zip. Onun məzmunu Ekspor ZIP kimidir (layihənin bütün məzmunu, bin qovluğu olmadan). Bərpa etmək üçün: Kelola Project daxilində menyunu açın, Pulihkan cadangan seçin, sonra onun ehtiyat faylını seçin. Layihə adı artıq mövcuddursa, tətbiq soruşacaq: köhnə layihəni üzərinə yazmaq, və ya yeni adla saxlamaq.
+
+Bagikan dan Impor Proyek
+Layihəni dostunuzla paylaşmaq üçün: Kelola Project daxilində layihə adını uzun basın, sonra Bagikan seçin. Layihə paylaşma tətbiqləri (WhatsApp, Telegram və digərləri) vasitəsilə ZIP kimi göndərilir. Dostunuzdan layihə almaq üçün: Kelola Project daxilində menyunu açın, Impor proyek seçin, sonra onun ZIP faylını seçin. Bu ZIP faylı layihə məlumatları faylını əhatə etməlidir — olmazsa, fayl aydın mesajla rədd edilir, çünki bu fayl Create Aplikasi layihəsi deyil. Layihə adı artıq mövcuddursa, tətbiq soruşacaq: köhnə layihəni üzərinə yazmaq, və ya yeni adla saxlamaq.
+
+Pencarian dan Filter Proyek
+Layihələr çoxalıbsa, Kelola Project daxilində axtarış xanası və növ filtri var. Axtarış xanasına layihə adını yazın, siyahı dərhal filtrlənir (böyük və kiçik hərflər fərqləndirilmir). Növ filtri siyahını yalnız bir növ ilə məhdudlaşdırır: Semua, HTML, Situs Web, Java, Kotlin, Compose və ya Python. Hər bir layihənin menyusunu filtrlənmiş siyahıdan da adəti üzrə açmaq olar.
+
+Bangun Aplikasi dengan Suara

@@ -58,6 +58,11 @@ jobs:
     # 600 detik ("Timeout waiting for emulator to boot", adb tidak menemukan
     # emulator-5554). Log menyarankan macOS (HAXM). Job ini pindah ke
     # macos-latest; boot timeout dinaikkan ke 900 detik.
+    # Perbaikan 2026-11-24 (dari LOG run 45349637906): runner macos-latest
+    # adalah aarch64 (Apple Silicon) — image x86_64 DITOLAK emulator dengan
+    # "Avd's CPU Architecture 'x86_64' is not supported by the QEMU2
+    # emulator on aarch64 host. System image must match the host
+    # architecture." Jadi arsitektur diganti ke arm64-v8a (cocok host).
     needs: build
     runs-on: macos-latest
     continue-on-error: true
@@ -76,7 +81,7 @@ jobs:
         with:
           api-level: 29
           target: default
-          arch: x86_64
+          arch: arm64-v8a
           profile: pixel_4
           emulator-boot-timeout: 900
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim

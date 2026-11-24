@@ -82,7 +82,7 @@ public class RiwayatKodeActivity extends Activity {
 
         label(r, TeksUI.t("Label titik waktu (boleh kosong):"), false);
         eLabel = new EditText(this);
-        eLabel.setHint("Contoh: sebelum ubah tombol");
+        eLabel.setHint(TeksUI.t("Contoh: sebelum ubah tombol"));
         eLabel.setSingleLine(true);
         GayaStudio.edit(eLabel);
         r.addView(eLabel, new LinearLayout.LayoutParams(
@@ -135,7 +135,7 @@ public class RiwayatKodeActivity extends Activity {
 
         label(r, TeksUI.t("Nama salinan eksperimen:"), false);
         eNamaEksperimen = new EditText(this);
-        eNamaEksperimen.setHint("Contoh: coba-tombol-baru");
+        eNamaEksperimen.setHint(TeksUI.t("Contoh: coba-tombol-baru"));
         eNamaEksperimen.setSingleLine(true);
         GayaStudio.edit(eNamaEksperimen);
         r.addView(eNamaEksperimen, new LinearLayout.LayoutParams(
@@ -181,7 +181,7 @@ public class RiwayatKodeActivity extends Activity {
 
     private File proyekTerpilih() {
         if (spProyek == null || spProyek.getSelectedItem() == null) {
-            toast("Pilih dulu proyeknya.");
+            toast(TeksUI.t("Pilih dulu proyeknya."));
             return null;
         }
         return new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
@@ -258,12 +258,12 @@ public class RiwayatKodeActivity extends Activity {
         RiwayatKode.Titik a = titikTerpilih(spA);
         RiwayatKode.Titik b = titikTerpilih(spB);
         if (a == null || b == null) {
-            toast("Pilih dulu dua titik waktu.");
+            toast(TeksUI.t("Pilih dulu dua titik waktu."));
             announce(TeksUI.t("Pilih dulu dua titik waktu."));
             return;
         }
         if (a.dir.equals(b.dir)) {
-            toast("Pilih dua titik waktu yang berbeda.");
+            toast(TeksUI.t("Pilih dua titik waktu yang berbeda."));
             announce(TeksUI.t("Pilih dua titik waktu yang berbeda."));
             return;
         }
@@ -290,7 +290,7 @@ public class RiwayatKodeActivity extends Activity {
         if (dir == null) return;
         final RiwayatKode.Titik t = titikTerpilih(spB);
         if (t == null) {
-            toast("Pilih dulu titik waktu yang mau dipulihkan (titik kedua).");
+            toast(TeksUI.t("Pilih dulu titik waktu yang mau dipulihkan (titik kedua)."));
             announce(TeksUI.t("Pilih dulu titik waktu yang mau dipulihkan."));
             return;
         }
@@ -344,7 +344,7 @@ public class RiwayatKodeActivity extends Activity {
         if (dir == null) return;
         final String nama = eNamaEksperimen.getText().toString().trim();
         if (nama.length() == 0) {
-            toast("Isi dulu nama salinan eksperimen.");
+            toast(TeksUI.t("Isi dulu nama salinan eksperimen."));
             announce(TeksUI.t("Isi dulu nama salinan eksperimen."));
             return;
         }

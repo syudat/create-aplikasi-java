@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "mn"
- * (2680 kunci, urutan sama dengan
+ * (2683 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2680 string (batas constant
+ * 50 bahasa x 2683 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_mn {
@@ -2692,5 +2692,8 @@ class TeksBahasa_mn {
             " хувилбар ",
             "Эхлээд модулийн файл (.zip) сонгоно уу.",
             "APK шинжилгээ",
+            "Жишээ: товчийг өөрчлөхээс өмнө",
+            "Жишээ нь: coba-tombol-baru",
+            "Эхлээд сэргээхийг хүссэн цаг хугацааны цэгээ сонгоно уу (хоёр дахь цэг).",
     };
 }

@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "ne"
- * (2680 kunci, urutan sama dengan
+ * (2683 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2680 string (batas constant
+ * 50 bahasa x 2683 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_ne {
@@ -2692,5 +2692,8 @@ class TeksBahasa_ne {
             " संस्करण ",
             "पहिले मोड्युल फाइल (.zip) छान्नुहोस्।",
             "APK विश्लेषण",
+            "उदाहरण: बटन परिवर्तन गर्नुअघि",
+            "उदाहरण: coba-tombol-baru",
+            "पहिले पुनर्स्थापना गर्न चाहेको समय-बिन्दु छान्नुहोस् (दोस्रो बिन्दु)।",
     };
 }

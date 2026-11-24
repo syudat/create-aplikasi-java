@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "th"
- * (2680 kunci, urutan sama dengan
+ * (2683 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2680 string (batas constant
+ * 50 bahasa x 2683 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_th {
@@ -2692,5 +2692,8 @@ class TeksBahasa_th {
             " เวอร์ชัน ",
             "เลือกไฟล์โมดูล (.zip) ก่อน",
             "วิเคราะห์ APK",
+            "ตัวอย่าง: ก่อนเปลี่ยนปุ่ม",
+            "ตัวอย่าง: coba-tombol-baru",
+            "โปรดเลือกจุดเวลาที่ต้องการกู้คืนก่อน (จุดที่สอง)",
     };
 }

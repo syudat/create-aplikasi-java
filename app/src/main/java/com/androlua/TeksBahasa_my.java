@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "my"
- * (2680 kunci, urutan sama dengan
+ * (2683 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2680 string (batas constant
+ * 50 bahasa x 2683 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_my {
@@ -2692,5 +2692,8 @@ class TeksBahasa_my {
             " ဗားရှင်း ",
             "မော်ဂျူး ဖိုင် (.zip) ကို အရင်ရွေးပါ။",
             "APK ခွဲခြမ်းစိတ်ဖြာခြင်း",
+            "ဥပမာ - ခလုတ်ကို မပြောင်းမီ",
+            "ဥပမာ- coba-tombol-baru",
+            "ပြန်ယူလိုသော အချိန်အမှတ်ကို အရင်ရွေးပါ (ဒုတိယအမှတ်)။",
     };
 }

@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "id"
- * (2680 kunci, urutan sama dengan
+ * (2683 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2680 string (batas constant
+ * 50 bahasa x 2683 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_id {
@@ -2692,5 +2692,8 @@ class TeksBahasa_id {
             " versi ",
             "Pilih dulu berkas modul (.zip).",
             "Analisis APK",
+            "Contoh: sebelum ubah tombol",
+            "Contoh: coba-tombol-baru",
+            "Pilih dulu titik waktu yang mau dipulihkan (titik kedua).",
     };
 }

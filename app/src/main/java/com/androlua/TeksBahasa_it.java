@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "it"
- * (2680 kunci, urutan sama dengan
+ * (2683 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2680 string (batas constant
+ * 50 bahasa x 2683 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_it {
@@ -2692,5 +2692,8 @@ class TeksBahasa_it {
             " versione ",
             "Scegli prima il file del modulo (.zip).",
             "Analizza APK",
+            "Esempio: prima di modificare il pulsante",
+            "Esempio: coba-tombol-baru",
+            "Seleziona prima il punto temporale da ripristinare (il secondo punto).",
     };
 }

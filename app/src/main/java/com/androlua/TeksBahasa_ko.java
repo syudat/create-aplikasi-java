@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "ko"
- * (2680 kunci, urutan sama dengan
+ * (2683 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2680 string (batas constant
+ * 50 bahasa x 2683 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_ko {
@@ -2692,5 +2692,8 @@ class TeksBahasa_ko {
             " 버전 ",
             "먼저 모듈 파일(.zip)을 선택하세요.",
             "APK 분석",
+            "예: 버튼을 변경하기 전",
+            "예: coba-tombol-baru",
+            "먼저 복원할 시점을 선택하세요(두 번째 지점).",
     };
 }

@@ -2,11 +2,11 @@ package com.androlua;
 
 /**
  * Data terjemahan TeksUI untuk bahasa "vi"
- * (2680 kunci, urutan sama dengan
+ * (2683 kunci, urutan sama dengan
  * TeksUI.KUNCI). DIBANGKITKAN oleh gen_teksui.py —
  * JANGAN sunting dengan tangan. Kelas terpisah per
  * bahasa karena satu kelas tidak muat menampung
- * 50 bahasa x 2680 string (batas constant
+ * 50 bahasa x 2683 string (batas constant
  * pool dan <clinit> JVM).
  */
 class TeksBahasa_vi {
@@ -2692,5 +2692,8 @@ class TeksBahasa_vi {
             " phiên bản ",
             "Hãy chọn tệp mô-đun (.zip) trước.",
             "Phân tích APK",
+            "Ví dụ: trước khi thay đổi nút",
+            "Ví dụ: coba-tombol-baru",
+            "Trước tiên hãy chọn điểm thời gian bạn muốn khôi phục (điểm thứ hai).",
     };
 }

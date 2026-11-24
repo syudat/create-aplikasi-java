@@ -446,6 +446,84 @@ public class AboutActivity extends Activity {
     + "\n" +
     ""
     + "\n" +
+    TeksUI.t("Audit Aksesibilitas")
+    + "\n" +
+    "Untuk memeriksa apakah layout proyek ramah pembaca layar (TalkBack/Jieshuo) sebelum dirilis: buka Audit Aksesibilitas di menu utama, pilih proyek, lalu tekan Muat Daftar Layout dan pilih berkas layout. IDE membaca berkas XML itu dan melaporkan tombol tanpa label beserta nomor barisnya, label yang dipakai berulang, dan elemen yang saling menutupi, lalu menyusun transkrip urutan fokus seperti yang dibacakan Jieshuo. Bila ada tombol tanpa label, isi labelnya lalu tekan Sisipkan Label Otomatis — label ditulis ke berkas layout sebagai contentDescription. Pemeriksaan ini membaca layout XML saja; tampilan Compose dan APK jadi belum dipindai."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Autopsi Crash")
+    + "\n" +
+    "Untuk mencari tahu penyebab aplikasi menutup sendiri dari log crash ber-ID unik: buka Autopsi Crash di menu utama, pilih ID crash dari daftar log, lalu tekan Periksa. IDE mencocokkan kelas dan nomor baris pada log dengan sumber proyek dan menjelaskan penyebabnya dalam bahasa Indonesia (misalnya referensi kosong, izin belum diminta, atau galat JSON), beserta saran tambalan kode. Tekan Terapkan Tambalan hanya bila baris sumbernya masih sama persis dengan saat crash terjadi; bila sudah berubah, tambalan ditolak dan IDE memintamu memeriksanya sendiri. Yang dibaca adalah log crash IDE sendiri, bukan log aplikasi hasil build."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Transpiler Lintas-Paradigma")
+    + "\n" +
+    "Untuk mengubah kode Java sederhana menjadi Kotlin, atau layout XML sederhana menjadi kode Compose: buka Transpiler Lintas-Paradigma di menu utama, pilih proyek dan berkas, lalu tekan Pratinjau. IDE menampilkan hasil konversi sebagai teks — periksa dulu, karena baris yang tidak dikenali dibiarkan apa adanya dan kata static pada Java dihilangkan pada Kotlin (periksa maknanya sebelum dipakai). Konversi XML ke Compose hanya mengubah teks, hint, dan orientasi — ukuran, warna, dan atribut lain belum ikut. Bila hasilnya sudah benar, tekan Terapkan ke Berkas untuk menulis berkas tujuan; berkas sumber tidak diubah. Hanya pola umum yang aman yang dikonversi."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Server Mikro Lokal")
+    + "\n" +
+    "Untuk menguji aplikasi yang butuh peladen tanpa internet: buka Server Mikro Lokal di menu utama, tulis definisi rute (misalnya GET /halo lalu jawaban JSON-nya), lalu tekan Mulai Server. IDE menjalankan peladen HTTP kecil di HP yang sama (hanya HTTP, tanpa TLS, untuk jaringan Wi-Fi yang sama) dan mencatat setiap permintaan dan jawaban di layar. Rute bisa memakai parameter seperti {nama} dan kunci API sederhana. Peladen ini hanya untuk pengujian di HP; APK hasil build belum bisa menjadi peladen, dan peladen berhenti bila layarnya ditutup."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Auditor Keamanan")
+    + "\n" +
+    "Untuk memeriksa celah keamanan pada kode proyek sebelum dirilis: buka Auditor Keamanan di menu utama, pilih proyek, lalu tekan Mulai Pemindaian. IDE memindai kode, manifest, dan konfigurasi proyek dan melaporkan temuan dari risiko tinggi ke rendah — kunci API yang terbuka di kode, komponen yang terekspos tanpa izin, WebView yang mengaktifkan JavaScript beserta antarmuka JavaScript, kripto lemah (MD5, SHA1, DES), alamat http tanpa TLS, dan kata sandi yang ditulis langsung di kode — beserta berkas dan nomor barisnya. Untuk temuan yang perbaikannya aman (misalnya ganti MD5 ke SHA-256 atau http ke https), tekan Terapkan Perbaikan; untuk kunci API dan kata sandi, IDE hanya menampilkan saran perbaikannya karena penggantinya harus diputuskan sendiri oleh pengembang. Pemindaian ini membaca pola teks pada kode, bukan bytecode, jadi mungkin ada temuan yang sebenarnya aman, dan celah yang tidak berpola bisa lolos dari pemindaian — periksa sebelum menerapkan."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Robot Penguji Antarmuka")
+    + "\n" +
+    "Untuk menguji tampilan aplikasi secara otomatis lewat skenario teks: buka Robot Penguji Antarmuka di menu utama, pilih proyek, lalu tekan Buat Skenario Otomatis. IDE membaca manifest dan layout proyek lalu menulis skenario berupa langkah-langkah teks (ketuk tombol, isi kolom, tunggu, kembali). Tekan Jalankan Dry Run untuk melihat log jalannya skenario beserta cap waktunya. Pada tahap ini robot hanya menjalankan simulasi (dry run) — penekanan tombol sungguhan di HP dan penangkapan crash nyata adalah tahap berikut, jadi laporan crash di sini masih berupa format contoh."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Perjalanan Waktu Kode")
+    + "\n" +
+    "Untuk kembali ke keadaan kode proyek sebelumnya tanpa mengetik perintah Git: buka Perjalanan Waktu Kode di menu utama, pilih proyek, isi label titik waktu (boleh kosong), lalu tekan Rekam Titik Waktu. IDE menyimpan salinan berkas sumber proyek beserta hash-nya di folder .riwayat di dalam proyek. Daftar titik waktu menampilkan semuanya; pilih dua titik lalu tekan Bandingkan untuk melihat berkas dan fungsi yang ditambah, diubah, atau dihapus. Tekan Pulihkan untuk mengembalikan keadaan lama — sebelum memulihkan, IDE selalu membuat cadangan keadaan saat ini dulu, jadi tidak ada yang hilang. Tekan Buat Salinan Eksperimen untuk menyalin proyek ke folder baru dan mencoba perubahan tanpa mengganggu proyek asli. Hanya berkas sumber yang direkam."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Pabrik Modul")
+    + "\n" +
+    "Untuk mengemas bagian proyek menjadi modul yang bisa dipakai proyek lain: buka Pabrik Modul di menu utama, pilih proyek sumber, centang berkas layar, kelas, string, dan izin yang mau dikemas, lalu tekan Kemas sebagai Modul. IDE menulis arsip ZIP beserta metadata JSON (nama modul, versi, string, dan izin yang dipakai). Untuk memasang modul ke proyek lain, buka Pabrik Modul, pilih proyek tujuan, lalu tekan Pasang Modul dan pilih berkas .zip modulnya — penggabung menambahkan string dan izin tanpa menimpa kode yang sudah ada, dan tidak menggabungkan berkas bila namanya sudah dipakai di proyek tujuan. Modul tidak membawa pustaka atau pengaturan build."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Dikte Struktur Kode")
+    + "\n" +
+    "Untuk menulis kode dengan suara di dalam editor: buka proyek di Editor, lalu tekan tombol Dikte Struktur Kode. Ucapkan perintah dalam bahasa Indonesia, misalnya buat fungsi tambah dengan parameter a angka dan b angka, buat kelas Mobil, atau buat variabel teks nama sama dengan Budi — IDE mengubah ucapan menjadi blok kode Java, Kotlin, Python, atau Compose yang sah sintaksis dan menyisipkannya di posisi kursor, lalu membacakan ringkasannya lewat Jieshuo. Dikte memakai layanan input suara bawaan sistem, tanpa izin mikrofon tambahan, dan hanya mengenali pola perintah yang sudah terdaftar; ucapan di luar pola tidak diubah menjadi kode. Angka yang diucapkan dengan kata (misalnya 'lima') belum diubah menjadi digit."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Ruang Kolaborasi Lokal (tanpa internet)")
+    + "\n" +
+    "Untuk bekerja bersama dalam satu ruangan tanpa internet: buka Kolaborasi di menu utama, lalu buka bagian Ruang Kolaborasi Lokal. Satu HP membuka sesi (IDE menampilkan alamat IP lokal dan PIN 6 digit), HP lain bergabung dengan alamat dan PIN itu. Perubahan teks dikirim sebagai selisih baris, APK hasil build bisa dikirim ke HP penguji, dan laporan crash dari HP penguji diterima kembali. Satu sesi hanya untuk satu teman; bila dua orang mengubah baris yang sama persis di saat yang sama, perubahan terakhir yang dipakai. PIN dikirim sebagai teks biasa di jaringan lokal. Ruang ini belum diuji di HP nyata."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Pengaturan AI")
+    + "\n" +
+    "Untuk mengatur penyedia AI dan kunci API untuk pembuatan aplikasi: di menu utama, pada kelompok Pengaturan, tekan Pengaturan AI (di samping tombol Konektor). Pilih penyedia yang dipakai dari daftar yang tersedia, dan centang Beralih model saat provider error supaya bila satu model gagal, IDE otomatis mencoba model berikutnya dari penyedia yang sama. Tekan Kelola Kunci API untuk menambah kunci cadangan (isi nama dan kuncinya, lalu tekan Simpan; kunci ditampilkan tersamar, hanya 4 karakter terakhir yang terlihat). Kunci disimpan di HP dan tidak pernah dikirim ke mana pun kecuali ke penyedia yang dipilih saat membuat aplikasi. Catatan: saat ini pemilihan penyedia dan kunci baru dicatat dan ditampilkan di layar AI Pembuat Aplikasi — pembuatan aplikasi masih memakai AI lokal di HP (tanpa internet); pemakaian penyedia online menyusul."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Konektor")
+    + "\n" +
+    "Untuk menganalisis APK lalu mengirimnya: di menu utama, pada kelompok Pengaturan, tekan Konektor (di samping tombol Pengaturan AI). Pilih berkas APK dari HP, IDE membaca isinya (nama paket, versi, daftar aktivitas), lalu tekan Kirim APK untuk mengirimnya lewat berbagi sistem (misalnya WhatsApp atau Drive)."
+    + "\n" +
+    ""
+    + "\n" +
+    TeksUI.t("Bahasa dan Suara")
+    + "\n" +
+    "Untuk mengganti bahasa aplikasi: buka Pengaturan, lalu Bahasa Aplikasi, lalu pilih bahasa atau Ikuti Sistem. Tampilan utama dan sebagian besar layar langsung berubah ke bahasa yang dipilih tanpa perlu menutup atau memulai ulang aplikasi; beberapa layar (misalnya Terminal, Kolaborasi, Pengaturan AI, dan Kelola Kunci) masih memakai bahasa lama sampai dibuka ulang. Bila memilih Ikuti Sistem, bahasa mengikuti bahasa sistem HP."
+    + "\n" +
+    ""
+    + "\n" +
     TeksUI.t("Tanda Tangan Bawaan per Proyek dan Anti Tamper")
     + "\n" +
     "Sejak versi 5.7, proyek yang tidak memakai tanda tangan pribadi ditandatangani dengan kunci bawaan KHUSUS proyek itu sendiri (dibuat sekali di folder tanda-tangan-bawaan di dalam proyek, lalu dipakai seterusnya), jadi tanda tangan bawaan berbeda-beda antarproyek — tidak lagi satu kunci bersama untuk semua aplikasi. Jangan hapus folder tanda-tangan-bawaan: tanpa kunci itu, APK baru tidak bisa menimpa APK lama proyek yang sama. Setelan tiap proyek (arsitektur terpisah, tanda tangan pribadi, anti tamper, keystore terpilih, SDK) kini tersimpan di berkas settings.gradle di dalam proyek dan terbaca lagi setiap proyek dibangun. Di Pengaturan kategori Tanda Tangan ada centang Anti tamper aplikasi hasil build: bila aktif, aplikasi hasil build di perangkat memeriksa tanda tangan dan isi dex-nya setiap dibuka; bila ditandatangani ulang atau diubah orang lain, aplikasi menolak berjalan. Debugger dan alat injeksi seperti Frida/Xposed juga dideteksi, dan jendela aplikasi dikunci dari rekaman layar."
@@ -586,6 +664,8 @@ public class AboutActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Ganti bahasa langsung tanpa restart (Fitur 11).
+        if (SegarBahasa.periksa(this)) return;
         // Sama seperti onResume() di Lua: lanjutkan pemasangan APK yang
         // tertunda izinnya bila pengguna baru kembali dari Pengaturan.
         PasangHelper.lanjutkanPasangTertunda(this);

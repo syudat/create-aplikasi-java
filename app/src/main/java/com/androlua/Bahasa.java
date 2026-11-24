@@ -103,6 +103,9 @@ public class Bahasa {
     public static Entri dariKode(String kode) {
         if (kode == null) return null;
         String k = kode.trim().toLowerCase();
+        // Android memakai kode lama "in" untuk bahasa Indonesia
+        // (bukan "id"); samakan supaya label "Ikuti Sistem" benar.
+        if ("in".equals(k)) k = "id";
         int strip = k.indexOf('-');
         if (strip > 0) k = k.substring(0, strip);
         int garis = k.indexOf('_');

@@ -432,6 +432,8 @@ public class CreateProjectActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Ganti bahasa langsung tanpa restart (Fitur 11).
+        if (SegarBahasa.periksa(this)) return;
         // Sama seperti onResume() di Lua: lanjutkan pemasangan APK yang
         // tertunda izinnya bila pengguna baru kembali dari Pengaturan.
         PasangHelper.lanjutkanPasangTertunda(this);

@@ -2,9 +2,11 @@ package com.androlua;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
@@ -46,6 +48,9 @@ import java.util.List;
  */
 public class EditorActivity extends Activity {
     public static final String EXTRA_DIR = "dir";
+
+    // Dikte Struktur Kode (fitur 2, 5.7): kode permintaan ke RecognizerIntent.
+    private static final int MINTA_DIKTE_KODE = 9001;
 
     // Berkas pertama bila daftar berkas kosong — sama persis dengan LEGACY
     // di showEditor() (compose tidak punya entri, jadi tidak ada fallback).
@@ -137,6 +142,8 @@ public class EditorActivity extends Activity {
         tambahAksi(bottom, TeksUI.t("Simpan"));
         tambahAksi(bottom, TeksUI.t("Jalankan"));
         tambahAksi(bottom, TeksUI.t("Bangun"));
+        // Fitur 2 (5.7): Dikte Struktur Kode — ucapkan perintah, sisip blok kode.
+        tambahAksi(bottom, TeksUI.t("Dikte Struktur Kode"));
         r.addView(bottom, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -160,6 +167,93 @@ public class EditorActivity extends Activity {
         // Sama seperti onKeyDown Lua (editor): simpan lalu kembali ke daftar.
         simpanSaatIni();
         finish();
+    }
+
+    // ------------------------------------------------------- dikte struktur kode (fitur 2, 5.7)
+
+    /**
+     * Memanggil layanan input suara bawaan sistem Android
+     * (RecognizerIntent) sehingga tidak memerlukan izin mikrofon
+     * tambahan. Hasil ucapan diurai DikteKode menjadi blok kode dan
+     * disisipkan di posisi kursor.
+     */
+    private void dikteKode() {
+        Intent it = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        it.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        it.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "id-ID");
+        it.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
+        it.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                TeksUI.t("Ucapkan perintah kode, contoh: buat fungsi publik hitungDiskon dengan parameter harga integer dan persen double"));
+        try {
+            startActivityForResult(it, MINTA_DIKTE_KODE);
+        } catch (ActivityNotFoundException e) {
+            toast(TeksUI.t("Tidak ada aplikasi pengenal suara di HP ini. Tulis kodenya di editor."));
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != MINTA_DIKTE_KODE) return;
+        if (resultCode != RESULT_OK || data == null) return;
+        ArrayList<String> hasil = data.getStringArrayListExtra(
+                RecognizerIntent.EXTRA_RESULTS);
+        if (hasil == null || hasil.isEmpty()) return;
+        String ucapan = hasil.get(0);
+        if (ucapan == null) return;
+        DikteKode.Hasil h = DikteKode.uraiHasil(ucapan, bahasaTargetEditor());
+        if (h == null || h.kode.length() == 0) {
+            toast(TeksUI.t("Perintah tidak dikenali"));
+            announce(TeksUI.t("Perintah tidak dikenali"));
+            return;
+        }
+        sisipDikte(h.kode);
+        String awalan;
+        if ("kelas".equals(h.jenis)) awalan = TeksUI.t("Kelas ");
+        else if ("variabel".equals(h.jenis)) awalan = TeksUI.t("Variabel ");
+        else if ("jika".equals(h.jenis)) awalan = TeksUI.t("Perintah jika ");
+        else if ("cetak".equals(h.jenis)) awalan = TeksUI.t("Perintah cetak ");
+        else if ("perulangan".equals(h.jenis)) awalan = TeksUI.t("Perulangan ");
+        else if ("kembalikan".equals(h.jenis)) awalan = TeksUI.t("Perintah kembalikan ");
+        else if ("fungsi".equals(h.jenis)) awalan = TeksUI.t("Fungsi ");
+        else awalan = TeksUI.t("Kode ");
+        announce(awalan + h.nama + TeksUI.t(" dibuat, kursor di baris ") + barisKursor());
+    }
+
+    /** Bahasa target dikte dari jenis proyek, lalu dari ekstensi berkas aktif. */
+    private String bahasaTargetEditor() {
+        if ("compose".equals(tipeProyek)) return "compose";
+        if ("kotlin".equals(tipeProyek)) return "kotlin";
+        if ("python".equals(tipeProyek)) return "python";
+        if (curFile != null && curFile.endsWith(".kt")) return "kotlin";
+        if (curFile != null && curFile.endsWith(".py")) return "python";
+        return "java";
+    }
+
+    /**
+     * Menyisipkan blok hasil dikte di posisi kursor; bila blok punya
+     * kurung kurawal dengan baris kosong di dalamnya, kursor diletakkan
+     * di baris kosong itu supaya pengguna langsung mengetik isinya.
+     */
+    private void sisipDikte(String kode) {
+        int dalam = kode.indexOf("{\n    \n}");
+        int back = 0;
+        if (dalam >= 0) back = kode.length() - (dalam + "{\n    ".length());
+        sisipTeks(kode, back);
+    }
+
+    /** Nomor baris (mulai 1) posisi kursor saat ini di editor. */
+    private int barisKursor() {
+        if (editBox == null) return 1;
+        int pos = editBox.getSelectionStart();
+        if (pos < 0) pos = editBox.length();
+        int baris = 1;
+        String teks = editBox.getText().toString();
+        for (int i = 0; i < pos && i < teks.length(); i++) {
+            if (teks.charAt(i) == '\n') baris++;
+        }
+        return baris;
     }
 
     // ------------------------------------------------------------------ UI
@@ -344,6 +438,8 @@ public class EditorActivity extends Activity {
                     jalankan();
                 } else if (TeksUI.t("Bangun").equals(teksTombol)) {
                     bangun();
+                } else if (TeksUI.t("Dikte Struktur Kode").equals(teksTombol)) {
+                    dikteKode();
                 }
             }
         });
@@ -411,6 +507,8 @@ public class EditorActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Ganti bahasa langsung tanpa restart (Fitur 11).
+        if (SegarBahasa.periksa(this)) return;
         // Sama seperti onResume() di Lua: lanjutkan pemasangan APK yang
         // tertunda izinnya bila pengguna baru kembali dari Pengaturan.
         PasangHelper.lanjutkanPasangTertunda(this);

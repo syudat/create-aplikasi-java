@@ -341,6 +341,70 @@ public class JavaHomeActivity extends Activity {
                 bukaVideoDemo();
             }
         });
+        // Fitur baru Gemini (2026-11-24): audit, autopsi, transpiler,
+        // server mikro, keamanan, robot uji, perjalanan waktu, pabrik modul.
+        button(r, t("Audit Aksesibilitas"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaAuditAkses();
+            }
+        });
+        button(r, t("Autopsi Crash"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaAutopsiCrash();
+            }
+        });
+        button(r, t("Transpiler Lintas-Paradigma"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaTranspiler();
+            }
+        });
+        button(r, t("Server Mikro Lokal"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaServerMikro();
+            }
+        });
+        button(r, t("Auditor Keamanan"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaAuditKeamanan();
+            }
+        });
+        button(r, t("Robot Penguji Antarmuka"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaRobotUji();
+            }
+        });
+        button(r, t("Perjalanan Waktu Kode"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaRiwayatKode();
+            }
+        });
+        button(r, t("Pabrik Modul"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaPabrikModul();
+            }
+        });
+        // Kelompok Pengaturan (koreksi 2026-11-24): Pengaturan AI dan
+        // Konektor berdampingan di sini, bukan sesudah Pemantau Kinerja.
+        heading(r, t("Pengaturan"), 16);
+        barisDuaTombol(r, t("Pengaturan AI"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaPengaturanAi();
+            }
+        }, t("Konektor"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaKonektor();
+            }
+        });
         // Tahap 3J: kelompok visual menu utama (urutan tombol tidak berubah).
         heading(r, t("Alat"), 16);
         button(r, t("Terminal"), new View.OnClickListener() {
@@ -381,6 +445,18 @@ public class JavaHomeActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Perbaikan 2026-11-24 (laporan al kautsar: ganti bahasa tidak
+        // langsung terasa): bila bahasa efektif berubah sejak layar ini
+        // dibangun (mis. dipilih dari Pengaturan), bangun ulang layar
+        // supaya semua teks memakai bahasa baru.
+        String bahasaBaru = Bahasa.kodeEfektif(
+                PengaturanActivity.baca(this).getString(
+                        PengaturanActivity.KUNCI_BAHASA, Bahasa.SISTEM),
+                java.util.Locale.getDefault().getLanguage());
+        if (!bahasaBaru.equals(kodeBahasa)) {
+            recreate();
+            return;
+        }
         // Pengguna mungkin baru memberi izin di Pengaturan lalu kembali ke sini:
         // perbarui pemberitahuan seperti onResume() di Lua yang memanggil ulang
         // showHome() saat screen == "home".
@@ -524,6 +600,33 @@ public class JavaHomeActivity extends Activity {
         lp.topMargin = dp(8);
         parent.addView(b, lp);
         return b;
+    }
+
+    /** Baris dua tombol berdampingan (koreksi 2026-11-24: Pengaturan AI + Konektor). */
+    private void barisDuaTombol(LinearLayout parent, String teks1,
+            View.OnClickListener klik1, String teks2, View.OnClickListener klik2) {
+        LinearLayout baris = new LinearLayout(this);
+        baris.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams lpBaris = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lpBaris.topMargin = dp(8);
+        parent.addView(baris, lpBaris);
+        Button b1 = new Button(this);
+        b1.setText(teks1);
+        b1.setOnClickListener(klik1);
+        GayaStudio.tombol(b1);
+        LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        lp1.rightMargin = dp(4);
+        baris.addView(b1, lp1);
+        Button b2 = new Button(this);
+        b2.setText(teks2);
+        b2.setOnClickListener(klik2);
+        GayaStudio.tombol(b2);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        lp2.leftMargin = dp(4);
+        baris.addView(b2, lp2);
     }
 
     private int dp(float v) {
@@ -702,6 +805,116 @@ public class JavaHomeActivity extends Activity {
             announce(TeksUI.t("Penganalisis APK dibuka."));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal membuka Penganalisis APK: ") + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Pengaturan AI + Konektor (2026-11-24): analisis dan kirim APK.
+    private void bukaKonektor() {
+        try {
+            startActivity(new Intent(this, KonektorActivity.class));
+            announce(t("Konektor"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal membuka Konektor: ") + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Pengaturan AI dari menu utama (koreksi 2026-11-24: di samping Konektor).
+    private void bukaPengaturanAi() {
+        try {
+            startActivity(new Intent(this, PengaturanAiActivity.class));
+            announce(t("Pengaturan AI"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal membuka Pengaturan AI: ") + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-24): Audit Aksesibilitas.
+    private void bukaAuditAkses() {
+        try {
+            startActivity(new Intent(this, AuditAksesActivity.class));
+            announce(t("Audit Aksesibilitas"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Audit Aksesibilitas"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-24): Autopsi Crash.
+    private void bukaAutopsiCrash() {
+        try {
+            startActivity(new Intent(this, AutopsiCrashActivity.class));
+            announce(t("Autopsi Crash"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Autopsi Crash"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-24): Transpiler Lintas-Paradigma.
+    private void bukaTranspiler() {
+        try {
+            startActivity(new Intent(this, TranspilerActivity.class));
+            announce(t("Transpiler Lintas-Paradigma"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Transpiler Lintas-Paradigma"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-24): Server Mikro Lokal.
+    private void bukaServerMikro() {
+        try {
+            startActivity(new Intent(this, ServerMikroActivity.class));
+            announce(t("Server Mikro Lokal"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Server Mikro Lokal"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-24): Auditor Keamanan.
+    private void bukaAuditKeamanan() {
+        try {
+            startActivity(new Intent(this, AuditKeamananActivity.class));
+            announce(t("Auditor Keamanan"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Auditor Keamanan"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-24): Robot Penguji Antarmuka.
+    private void bukaRobotUji() {
+        try {
+            startActivity(new Intent(this, RobotUjiActivity.class));
+            announce(t("Robot Penguji Antarmuka"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Robot Penguji Antarmuka"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-24): Perjalanan Waktu Kode.
+    private void bukaRiwayatKode() {
+        try {
+            startActivity(new Intent(this, RiwayatKodeActivity.class));
+            announce(t("Perjalanan Waktu Kode"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Perjalanan Waktu Kode"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-24): Pabrik Modul.
+    private void bukaPabrikModul() {
+        try {
+            startActivity(new Intent(this, PabrikModulActivity.class));
+            announce(t("Pabrik Modul"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Pabrik Modul"),
                     Toast.LENGTH_SHORT).show();
         }
     }

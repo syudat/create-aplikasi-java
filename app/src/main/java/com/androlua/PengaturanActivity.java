@@ -291,6 +291,10 @@ public class PengaturanActivity extends Activity {
                 + t("\"Kembali ke Sebelumnya\" untuk kembali ke menu ini."));
         tombolKategori(t("Pengaturan GitHub"), "github",
                 t("Keamanan, tanda tangan pribadi, history, dan token GitHub."));
+        // Pengaturan AI di SAMPING Pengaturan GitHub (perintah al kautsar
+        // 2026-11-24): provider AI, model cadangan, dan kunci API.
+        tombolKategori(t("Pengaturan AI"), "ai",
+                t("Penyedia AI untuk pembuatan aplikasi (online menyusul; saat ini masih AI lokal)"));
         tombolKategori(t("Pengaturan Bangun APK Perangkat"), "bangun",
                 t("Simpan kata sandi keystore dan history build di perangkat."));
         tombolKategori(t("Tema"), "tema",
@@ -356,6 +360,17 @@ public class PengaturanActivity extends Activity {
 
     /** Buka satu kategori (isinya + tombol Kembali ke Sebelumnya). */
     private void tampilkanKategori(String id) {
+        // Pengaturan AI adalah layar sendiri, bukan bagian di sini:
+        // buka aktivitasnya dan biarkan menu kategori tetap seperti semula.
+        if ("ai".equals(id)) {
+            try {
+                startActivity(new Intent(this, PengaturanAiActivity.class));
+            } catch (Throwable e) {
+                Toast.makeText(this, t("Gagal membuka Pengaturan AI: ") + e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         kategoriAktif = id;
         resetFieldTampilan();
         ScrollView sv = new ScrollView(this);
@@ -397,6 +412,7 @@ public class PengaturanActivity extends Activity {
     }
 
     private String judulKategori(String id) {
+        if ("ai".equals(id)) return t("Pengaturan AI");
         if ("github".equals(id)) return t("Pengaturan GitHub");
         if ("bangun".equals(id)) return t("Pengaturan Bangun APK Perangkat");
         if ("tema".equals(id)) return t("Tema");
@@ -425,6 +441,8 @@ public class PengaturanActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Ganti bahasa langsung tanpa restart (Fitur 11).
+        if (SegarBahasa.periksa(this)) return;
         PasangHelper.lanjutkanPasangTertunda(this);
         muatUlangNilai();
     }

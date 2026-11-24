@@ -1,6 +1,7 @@
 package com.androlua;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -151,12 +152,15 @@ public class BahasaActivity extends Activity {
         SharedPreferences.Editor ed = PengaturanActivity.baca(this).edit();
         ed.putString(PengaturanActivity.KUNCI_BAHASA, kode);
         ed.apply();
-        TeksUI.kodeAktif = Bahasa.kodeEfektif(kode,
-                Locale.getDefault().getLanguage());
         String label = Bahasa.labelPilihan(kode, Locale.getDefault().getLanguage());
         Toast.makeText(this, t("Bahasa dipilih:") + " " + label, Toast.LENGTH_SHORT).show();
         announce(t("Bahasa dipilih:") + " " + label + t(". Bahasa dipakai di Tentang Alat dan menjadi bahasa aplikasi."));
         perbaruiLabelSaatIni();
+        // Ganti bahasa langsung tanpa restart (Fitur 11, 2026-11-24):
+        // layar ini hanya menyimpan pilihan lalu kembali; layar pemanggil
+        // (Pengaturan) memeriksa perubahan bahasa di onResume lewat
+        // SegarBahasa dan membangun ulang dirinya sendiri. TeksUI.kodeAktif
+        // sengaja TIDAK diubah di sini supaya perubahan terdeteksi.
         finish();
     }
 

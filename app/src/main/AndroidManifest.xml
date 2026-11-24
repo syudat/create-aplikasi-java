@@ -336,6 +336,72 @@
             android:label="Pembuat Video Demo"
             android:theme="@style/app_theme"
             android:exported="false" />
+        <activity
+            android:name="com.androlua.AuditAksesActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Audit Aksesibilitas"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.AutopsiCrashActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Autopsi Crash"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.TranspilerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Transpiler Lintas-Paradigma"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.ServerMikroActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Server Mikro Lokal"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.AuditKeamananActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Auditor Keamanan"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.RobotUjiActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Robot Penguji Antarmuka"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.RiwayatKodeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Perjalanan Waktu Kode"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.PabrikModulActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Pabrik Modul"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.PengaturanAiActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Pengaturan AI"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.KelolaKunciActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Kelola Kunci API"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.KonektorActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Konektor"
+            android:theme="@style/app_theme"
+            android:exported="false" />
         <service
             android:name="com.androlua.TerminalService"
             android:enabled="true"
@@ -349,6 +415,16 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/androlua_filepaths" />
+        </provider>
+
+        <provider
+            android:name="android.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
         </provider>
 
     </application>

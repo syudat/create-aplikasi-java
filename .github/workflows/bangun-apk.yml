@@ -48,3 +48,104 @@ jobs:
           name: garuda-decode-apk
           path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/**/*.apk
           if-no-files-found: error
+
+  uji-emulator:
+    name: Uji Emulator
+    # Job ini TIDAK menggagalkan rilis bila emulator bermasalah:
+    # build yang sukses tetap dirilis; hasil emulator dilaporkan apa adanya.
+    needs: build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unduh APK hasil build
+        uses: actions/download-artifact@v4
+        with:
+          name: garuda-decode-apk
+          path: apk
+
+      - name: Buka layar satu per satu di emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86_64
+          profile: pixel_4
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            set +e
+            APK=$(find apk -name '*.apk' | head -n1)
+            echo "APK: $APK"
+            : > hasil-emulator.txt
+            adb root
+            adb wait-for-device
+            adb install -r "$APK"
+            echo "install exit=$?" | tee -a hasil-emulator.txt
+            sleep 5
+            buka() {
+              local nama="$1" kelas="$2"
+              adb logcat -c
+              adb shell am start -W -n "com.pembuataplikasi/com.androlua.$kelas" > /tmp/buka-$kelas.log 2>&1
+              sleep 4
+              if adb shell dumpsys window windows | grep -q "mCurrentFocus.*$kelas"; then
+                echo "LULUS $nama ($kelas) tampil di depan" | tee -a hasil-emulator.txt
+              elif adb shell dumpsys activity activities | grep -q "$kelas"; then
+                echo "LULUS $nama ($kelas) ada di tumpukan" | tee -a hasil-emulator.txt
+              else
+                echo "GAGAL $nama ($kelas) tidak tampil" | tee -a hasil-emulator.txt
+                tail -5 "/tmp/buka-$kelas.log" | tee -a hasil-emulator.txt
+              fi
+              if adb shell logcat -d | grep -qi "FATAL EXCEPTION"; then
+                echo "  PERINGATAN: ada FATAL EXCEPTION di logcat sesudah $nama" | tee -a hasil-emulator.txt
+              fi
+            }
+            buka "Menu utama" JavaHomeActivity
+            buka "Pengaturan AI" PengaturanAiActivity
+            buka "Kelola Kunci API" KelolaKunciActivity
+            buka "Konektor" KonektorActivity
+            buka "Audit Aksesibilitas" AuditAksesActivity
+            buka "Robot Uji" RobotUjiActivity
+            buka "Server Mikro" ServerMikroActivity
+            buka "Riwayat Kode" RiwayatKodeActivity
+            buka "Transpiler" TranspilerActivity
+            buka "Audit Keamanan" AuditKeamananActivity
+            buka "Kolaborasi" KolaborasiActivity
+            buka "Autopsi Crash" AutopsiCrashActivity
+            buka "Pabrik Modul" PabrikModulActivity
+            buka "Bahasa (ganti bahasa)" BahasaActivity
+            buka "Pengaturan" PengaturanActivity
+            # Dikte Kode: tombolnya ada di Editor; buka Editor lalu periksa
+            # hierarki UI-nya memuat tombol Dikte.
+            adb logcat -c
+            adb shell am start -W -n com.pembuataplikasi/com.androlua.EditorActivity > /tmp/buka-EditorActivity.log 2>&1
+            sleep 5
+            if adb shell dumpsys window windows | grep -q "mCurrentFocus.*EditorActivity"; then
+              echo "LULUS Editor (EditorActivity) tampil di depan" | tee -a hasil-emulator.txt
+            else
+              echo "GAGAL Editor (EditorActivity) tidak tampil" | tee -a hasil-emulator.txt
+            fi
+            adb shell uiautomator dump /sdcard/window_dump.xml > /dev/null 2>&1
+            adb pull /sdcard/window_dump.xml /tmp/window_dump.xml > /dev/null 2>&1
+            if grep -qi "Dikte" /tmp/window_dump.xml 2>/dev/null; then
+              echo "LULUS Dikte Kode: tombol Dikte ada di hierarki Editor" | tee -a hasil-emulator.txt
+            else
+              echo "GAGAL Dikte Kode: tombol Dikte tidak ditemukan di hierarki Editor" | tee -a hasil-emulator.txt
+            fi
+            adb shell logcat -d > logcat-emulator.txt
+            echo "== RINGKASAN ==" | tee -a hasil-emulator.txt
+            grep -c "^LULUS" hasil-emulator.txt | xargs echo "LULUS:" | tee -a hasil-emulator.txt
+            grep -c "^GAGAL" hasil-emulator.txt | xargs echo "GAGAL:" | tee -a hasil-emulator.txt
+            cat hasil-emulator.txt
+
+      - name: Unggah hasil uji emulator
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uji-emulator-hasil
+          path: |
+            hasil-emulator.txt
+            logcat-emulator.txt
+          if-no-files-found: warn

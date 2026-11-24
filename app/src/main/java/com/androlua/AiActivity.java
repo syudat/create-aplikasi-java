@@ -74,6 +74,34 @@ public class AiActivity extends Activity {
             }
         });
 
+        // Pengaturan AI (2026-11-24): provider yang dipakai pembuatan
+        // aplikasi berbasis AI online + status kunci API-nya. Pembuatan
+        // proyeknya sendiri masih memakai AiPembuat lokal (tanpa
+        // internet); sambungan online penuh menyusul bertahap.
+        final String kodeProviderAi = PengaturanAiActivity.providerTerpilih(this);
+        final PenyediaAi.Provider provAi = PenyediaAi.dariKode(kodeProviderAi);
+        label(r, TeksUI.t("Provider AI aktif: ")
+                + (provAi == null ? kodeProviderAi : provAi.nama)
+                + " (" + PengaturanAiActivity.modelUtamaAktif(this) + ")", false);
+        if (PengaturanAiActivity.kunciTersedia(this, kodeProviderAi)) {
+            label(r, TeksUI.t("Kunci API untuk provider ini tersimpan"), true);
+        } else {
+            label(r, TeksUI.t("Kunci API untuk provider ini belum ada"), true);
+        }
+        button(r, TeksUI.t("Buka Pengaturan AI"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivity(new Intent(AiActivity.this,
+                            PengaturanAiActivity.class));
+                } catch (Throwable e) {
+                    Toast.makeText(AiActivity.this,
+                            TeksUI.t("Gagal membuka Pengaturan AI: ") + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setText("Belum ada deskripsi.");

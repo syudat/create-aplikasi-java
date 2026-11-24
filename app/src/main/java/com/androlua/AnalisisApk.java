@@ -30,6 +30,8 @@ public class AnalisisApk {
         public int minSdk = -1;
         public int targetSdk = -1;
         public List<String> izin = new ArrayList<String>();
+        /** Nama-nama aktivitas (activity + activity-alias) dari manifest. */
+        public List<String> aktivitas = new ArrayList<String>();
         public int jumlahDex = 0;
         public long ukuranBerkas = 0;
         /** Kategori -> total ukuran terkompresi (bita). */
@@ -142,6 +144,12 @@ public class AnalisisApk {
         } else {
             for (String z : h.izin) b.append("- ").append(z).append('\n');
         }
+        b.append('\n').append(TeksUI.t("Aktivitas (")).append(h.aktivitas.size()).append("):\n");
+        if (h.aktivitas.isEmpty()) {
+            b.append("- (tidak ada aktivitas terbaca)\n");
+        } else {
+            for (String a : h.aktivitas) b.append("- ").append(a).append('\n');
+        }
         b.append('\n').append("Entri terbesar:\n");
         for (String[] t : h.terbesar) {
             b.append("- ").append(t[0]).append(": ").append(formatUkuran(Long.parseLong(t[1]))).append('\n');
@@ -239,7 +247,8 @@ public class AnalisisApk {
         boolean manifest = nama.equals("manifest");
         boolean usesSdk = nama.equals("uses-sdk");
         boolean izin = nama.equals("uses-permission") || nama.equals("uses-permission-sdk-23");
-        if (!manifest && !usesSdk && !izin) return;
+        boolean aktivitas = nama.equals("activity") || nama.equals("activity-alias");
+        if (!manifest && !usesSdk && !izin && !aktivitas) return;
         for (int i = 0; i < jumlahAttr; i++, p += 20) {
             if (p + 20 > d.length) break;
             String namaAttr = poolStr(pool, u32(d, p + 4));
@@ -258,6 +267,11 @@ public class AnalisisApk {
                 if (namaAttr.equals("name") && nilaiStr != null && nilaiStr.length() > 0
                         && !h.izin.contains(nilaiStr)) {
                     h.izin.add(nilaiStr);
+                }
+            } else if (aktivitas) {
+                if (namaAttr.equals("name") && nilaiStr != null && nilaiStr.length() > 0
+                        && !h.aktivitas.contains(nilaiStr)) {
+                    h.aktivitas.add(nilaiStr);
                 }
             }
         }

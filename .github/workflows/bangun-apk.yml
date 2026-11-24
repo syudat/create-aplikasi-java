@@ -53,8 +53,13 @@ jobs:
     name: Uji Emulator
     # Job ini TIDAK menggagalkan rilis bila emulator bermasalah:
     # build yang sukses tetap dirilis; hasil emulator dilaporkan apa adanya.
+    # Perbaikan 2026-11-24 (dari LOG run 45347491281): runner Linux tanpa
+    # akselerasi perangkat keras — emulator x86_64 tidak selesai boot dalam
+    # 600 detik ("Timeout waiting for emulator to boot", adb tidak menemukan
+    # emulator-5554). Log menyarankan macOS (HAXM). Job ini pindah ke
+    # macos-latest; boot timeout dinaikkan ke 900 detik.
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     continue-on-error: true
     timeout-minutes: 45
     steps:
@@ -73,6 +78,7 @@ jobs:
           target: default
           arch: x86_64
           profile: pixel_4
+          emulator-boot-timeout: 900
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: |

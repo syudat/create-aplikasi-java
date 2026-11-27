@@ -226,14 +226,23 @@ public class CreateProjectActivity extends Activity {
         setContentView(sv);
 
         // Batch pasca-v2: nilai awal Build dari Pengaturan (bila ada).
+        // Perbaikan 5.8: tiap kunci dibaca dalam try sendiri — satu nilai
+        // preferensi yang rusak (tipe salah di perangkat tertentu) tidak
+        // boleh menggagalkan bacaan kunci lainnya.
+        android.content.SharedPreferences prefPengaturan =
+                getSharedPreferences(PengaturanActivity.NAMA_PREF, MODE_PRIVATE);
         try {
-            android.content.SharedPreferences prefPengaturan =
-                    getSharedPreferences(PengaturanActivity.NAMA_PREF, MODE_PRIVATE);
             int targetSimpan = prefPengaturan.getInt(
                     PengaturanActivity.KUNCI_BUILD_TARGET, DEFAULT_TARGET);
             if (targetSimpan >= 21 && targetSimpan <= 36) defaultTarget = targetSimpan;
+        } catch (Throwable ignored) {
+        }
+        try {
             defaultPisah = prefPengaturan.getBoolean(
                     PengaturanActivity.KUNCI_BUILD_PISAH, false);
+        } catch (Throwable ignored) {
+        }
+        try {
             // Reorganisasi pengaturan 2026-11-17: bawaan tanda tangan
             // pribadi dari Pengaturan GitHub.
             defaultTandaTangan = prefPengaturan.getBoolean(
@@ -325,6 +334,12 @@ public class CreateProjectActivity extends Activity {
         cbSplit = new CheckBox(this);
         cbSplit.setText(t("Gunakan arsitektur terpisah 64 bit dan 32 bit"));
         cbSplit.setChecked(defaultPisah);
+        // Perbaikan 5.8: centang yang sudah diubah pengguna dipertahankan
+        // saat layar dibuat ulang (misalnya ganti bahasa), bukan kembali
+        // ke bawaan.
+        if (savedInstanceState != null && savedInstanceState.containsKey("cbSplit")) {
+            cbSplit.setChecked(savedInstanceState.getBoolean("cbSplit", defaultPisah));
+        }
         r.addView(cbSplit);
         label(r, t("Tidak dicentang: satu APK yang berjalan di perangkat 64 bit maupun 32 bit. ")
                 + t("Dicentang: dua APK terpisah yang lebih kecil."), true);
@@ -463,6 +478,13 @@ public class CreateProjectActivity extends Activity {
             if (TIPE_IDS[i].equals(id)) return t(TIPE_LABELS[i]);
         }
         return t(TIPE_LABELS[0]);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Perbaikan 5.8: centang arsitektur dipertahankan saat layar dibuat ulang.
+        if (cbSplit != null) outState.putBoolean("cbSplit", cbSplit.isChecked());
     }
 
     private void perbaruiLabelJenis() {

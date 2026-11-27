@@ -539,11 +539,9 @@ public class BangunProyek {
             if (baris.isEmpty()) continue;
             if (sb.length() > 0) sb.append('\n');
             sb.append(baris);
-            if (baris.endsWith("-64bit.apk")) {
-                sb.append(TeksUI.t("  (64 bit, arm64-v8a)"));
-            } else if (baris.endsWith("-32bit.apk")) {
-                sb.append(TeksUI.t("  (32 bit, armeabi-v7a)"));
-            }
+            // Perbaikan 5.8: label terpusat di PisahAbi (satu sumber).
+            String lbl = PisahAbi.label(baris);
+            if (lbl.length() > 0) sb.append(TeksUI.t(lbl));
         }
         return sb.toString();
     }

@@ -62,6 +62,18 @@ public class SetelanProyek {
         return b.toString();
     }
 
+    /**
+     * True bila nilai teks berarti "ya": true/1/ya, tanpa peduli huruf
+     * besar-kecil dan spasi. Perbaikan fase 3: sebelumnya hanya "true"
+     * persis yang diterima — berkas setelan yang ditulis tangan atau
+     * versi lama dengan "True"/"1" diam-diam dibaca sebagai mati.
+     */
+    public static boolean benar(String nilai) {
+        if (nilai == null) return false;
+        String n = nilai.trim().toLowerCase();
+        return "true".equals(n) || "1".equals(n) || "ya".equals(n);
+    }
+
     /** Urai teks berkas menjadi Setelan. Baris rusak dilewati, tidak meledak. */
     public static Setelan urai(String teks) {
         Setelan s = new Setelan();
@@ -76,13 +88,13 @@ public class SetelanProyek {
             String kunci = b.substring(0, eq).trim();
             String nilai = b.substring(eq + 1).trim();
             if (kunci.equals("arsitekturTerpisah")) {
-                s.arsitekturTerpisah = nilai.equals("true");
+                s.arsitekturTerpisah = benar(nilai);
                 s.adaArsitekturTerpisah = true;
             } else if (kunci.equals("tandaTanganPribadi")) {
-                s.tandaTanganPribadi = nilai.equals("true");
+                s.tandaTanganPribadi = benar(nilai);
                 s.adaTandaTanganPribadi = true;
             } else if (kunci.equals("antiTamper")) {
-                s.antiTamper = nilai.equals("true");
+                s.antiTamper = benar(nilai);
                 s.adaAntiTamper = true;
             } else if (kunci.equals("namaKeystore")) {
                 s.namaKeystore = nilai;

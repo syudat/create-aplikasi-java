@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.androlua"
-    android:versionCode="5700"
-    android:versionName="5.7">
+    android:versionCode="5800"
+    android:versionName="5.8">
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
@@ -400,6 +400,96 @@
             android:name="com.androlua.KonektorActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="Konektor"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.PerisaiPolimorfikActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Perisai Polimorfik dan Brankas Aset"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.RantaiKepercayaanActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Rantai Kepercayaan dan Penjaga Lingkungan"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.ArsitekTataLetakActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Arsitek Tata Letak"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.StudioDesainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Studio Sistem Desain"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.RefaktorSemantikActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Refactoring Semantik dan Navigasi AST"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.DebuggerLangkahActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Debugger Langkah-Demi-Langkah"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.ManajerDependensiActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Manajer Dependensi Maven Luring"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.InspekturBasisDataActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Inspektur Basis Data"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.PabrikUjiActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Pabrik Pengujian Unit Otomatis"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.SimulatorEkstremActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Simulator Kondisi Ekstrem"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.ArsitekCetakBiruActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Arsitek Cetak Biru Proyek"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.NaratorLogikaActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Narator Alur Logika Kode"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.PabrikAABActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Pabrik Android App Bundle"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.MesinOTAActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Mesin Pembaruan Over-The-Air"
+            android:theme="@style/app_theme"
+            android:exported="false" />
+        <activity
+            android:name="com.androlua.StudioTinjauanActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Studio Tinjauan Kode Tim"
             android:theme="@style/app_theme"
             android:exported="false" />
         <service

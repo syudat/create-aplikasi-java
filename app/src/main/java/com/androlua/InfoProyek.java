@@ -149,9 +149,9 @@ public class InfoProyek {
         return baris;
     }
 
-    /** True bila nilai kunci init.lua adalah true (setelah komentar dibuang). */
+    /** True bila nilai kunci init.lua adalah true (toleran: True/1/ya ikut true). */
     public static boolean kunciTrue(File dirProyek, String kunci) {
-        return "true".equals(bacaKunci(dirProyek, kunci, "false"));
+        return SetelanProyek.benar(bacaKunci(dirProyek, kunci, "false"));
     }
 
     static String bacaBerkas(File f) {

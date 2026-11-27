@@ -391,6 +391,104 @@ public class JavaHomeActivity extends Activity {
                 bukaPabrikModul();
             }
         });
+        // Fitur baru Gemini (2026-11-27, fase 1 dari 15): perisai
+        // polimorfik, rantai kepercayaan, arsitek tata letak,
+        // studio desain, refactoring semantik.
+        button(r, t("Perisai Polimorfik dan Brankas Aset"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaPerisaiPolimorfik();
+            }
+        });
+        button(r, t("Rantai Kepercayaan dan Penjaga Lingkungan"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaRantaiKepercayaan();
+            }
+        });
+        button(r, t("Arsitek Tata Letak Pohon Teks"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaArsitekTataLetak();
+            }
+        });
+        button(r, t("Studio Sistem Desain"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaStudioDesain();
+            }
+        });
+        button(r, t("Refactoring Semantik dan Navigasi AST"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaRefaktorSemantik();
+            }
+        });
+        // Fitur baru Gemini (2026-11-27, fase 2 dari 15): debugger
+        // langkah, manajer dependensi, inspektur basis data,
+        // pabrik uji dan fuzzing, simulator kondisi ekstrem.
+        button(r, t("Debugger Langkah dan Inspektur Memori"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaDebuggerLangkah();
+            }
+        });
+        button(r, t("Manajer Dependensi Luring"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaManajerDependensi();
+            }
+        });
+        button(r, t("Inspektur Basis Data dan Penyimpanan"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaInspekturBasisData();
+            }
+        });
+        button(r, t("Pabrik Pengujian Unit dan Fuzzing"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaPabrikUji();
+            }
+        });
+        button(r, t("Simulator Kondisi Ekstrem dan Kebocoran Memori"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaSimulatorEkstrem();
+            }
+        });
+        // Fitur baru Gemini (2026-11-27, fase 3 dari 15): arsitek cetak
+        // biru, narator logika, pabrik AAB, mesin OTA, studio tinjauan.
+        button(r, t("Arsitek Cetak Biru Proyek"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaArsitekCetakBiru();
+            }
+        });
+        button(r, t("Narator Alur Logika Kode"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaNaratorLogika();
+            }
+        });
+        button(r, t("Pabrik App Bundle dan Kesiapan Play Store"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaPabrikAAB();
+            }
+        });
+        button(r, t("Mesin Pembaruan OTA dan Rilis Bertahap"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaMesinOTA();
+            }
+        });
+        button(r, t("Studio Tinjauan Kode Tim"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaStudioTinjauan();
+            }
+        });
         // Kelompok Pengaturan (koreksi 2026-11-24): Pengaturan AI dan
         // Konektor berdampingan di sini, bukan sesudah Pemantau Kinerja.
         heading(r, t("Pengaturan"), 16);
@@ -915,6 +1013,171 @@ public class JavaHomeActivity extends Activity {
             announce(t("Pabrik Modul"));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal: ") + t("Pabrik Modul"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 1 dari 15): Perisai Polimorfik.
+    private void bukaPerisaiPolimorfik() {
+        try {
+            startActivity(new Intent(this, PerisaiPolimorfikActivity.class));
+            announce(t("Perisai Polimorfik dan Brankas Aset"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Perisai Polimorfik dan Brankas Aset"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 1 dari 15): Rantai Kepercayaan.
+    private void bukaRantaiKepercayaan() {
+        try {
+            startActivity(new Intent(this, RantaiKepercayaanActivity.class));
+            announce(t("Rantai Kepercayaan dan Penjaga Lingkungan"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Rantai Kepercayaan dan Penjaga Lingkungan"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 1 dari 15): Arsitek Tata Letak.
+    private void bukaArsitekTataLetak() {
+        try {
+            startActivity(new Intent(this, ArsitekTataLetakActivity.class));
+            announce(t("Arsitek Tata Letak Pohon Teks"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Arsitek Tata Letak Pohon Teks"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 1 dari 15): Studio Sistem Desain.
+    private void bukaStudioDesain() {
+        try {
+            startActivity(new Intent(this, StudioDesainActivity.class));
+            announce(t("Studio Sistem Desain"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Studio Sistem Desain"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 1 dari 15): Refactoring Semantik.
+    private void bukaRefaktorSemantik() {
+        try {
+            startActivity(new Intent(this, RefaktorSemantikActivity.class));
+            announce(t("Refactoring Semantik dan Navigasi AST"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Refactoring Semantik dan Navigasi AST"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 2 dari 15): Debugger Langkah.
+    private void bukaDebuggerLangkah() {
+        try {
+            startActivity(new Intent(this, DebuggerLangkahActivity.class));
+            announce(t("Debugger Langkah dan Inspektur Memori"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Debugger Langkah dan Inspektur Memori"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 2 dari 15): Manajer Dependensi.
+    private void bukaManajerDependensi() {
+        try {
+            startActivity(new Intent(this, ManajerDependensiActivity.class));
+            announce(t("Manajer Dependensi Luring"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Manajer Dependensi Luring"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 2 dari 15): Inspektur Basis Data.
+    private void bukaInspekturBasisData() {
+        try {
+            startActivity(new Intent(this, InspekturBasisDataActivity.class));
+            announce(t("Inspektur Basis Data dan Penyimpanan"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Inspektur Basis Data dan Penyimpanan"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 2 dari 15): Pabrik Uji dan Fuzzing.
+    private void bukaPabrikUji() {
+        try {
+            startActivity(new Intent(this, PabrikUjiActivity.class));
+            announce(t("Pabrik Pengujian Unit dan Fuzzing"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Pabrik Pengujian Unit dan Fuzzing"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 2 dari 15): Simulator Ekstrem.
+    private void bukaSimulatorEkstrem() {
+        try {
+            startActivity(new Intent(this, SimulatorEkstremActivity.class));
+            announce(t("Simulator Kondisi Ekstrem dan Kebocoran Memori"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Simulator Kondisi Ekstrem dan Kebocoran Memori"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 3 dari 15): Arsitek Cetak Biru.
+    private void bukaArsitekCetakBiru() {
+        try {
+            startActivity(new Intent(this, ArsitekCetakBiruActivity.class));
+            announce(t("Arsitek Cetak Biru Proyek"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Arsitek Cetak Biru Proyek"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 3 dari 15): Narator Logika.
+    private void bukaNaratorLogika() {
+        try {
+            startActivity(new Intent(this, NaratorLogikaActivity.class));
+            announce(t("Narator Alur Logika Kode"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Narator Alur Logika Kode"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 3 dari 15): Pabrik AAB.
+    private void bukaPabrikAAB() {
+        try {
+            startActivity(new Intent(this, PabrikAABActivity.class));
+            announce(t("Pabrik App Bundle dan Kesiapan Play Store"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Pabrik App Bundle dan Kesiapan Play Store"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 3 dari 15): Mesin OTA.
+    private void bukaMesinOTA() {
+        try {
+            startActivity(new Intent(this, MesinOTAActivity.class));
+            announce(t("Mesin Pembaruan OTA dan Rilis Bertahap"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Mesin Pembaruan OTA dan Rilis Bertahap"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Fitur baru Gemini (2026-11-27, fase 3 dari 15): Studio Tinjauan.
+    private void bukaStudioTinjauan() {
+        try {
+            startActivity(new Intent(this, StudioTinjauanActivity.class));
+            announce(t("Studio Tinjauan Kode Tim"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Studio Tinjauan Kode Tim"),
                     Toast.LENGTH_SHORT).show();
         }
     }

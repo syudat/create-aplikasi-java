@@ -1009,14 +1009,31 @@ public class PengaturanActivity extends Activity {
         eTarget.setTextSize(14);
         eTarget.setSingleLine(true);
         eTarget.setInputType(InputType.TYPE_CLASS_NUMBER);
-        eTarget.setText(String.valueOf(pref.getInt(KUNCI_BUILD_TARGET, 33)));
+        // Perbaikan fase 3: bacaan preferensi dijaga satu per satu —
+        // bila nilai tersimpan bertipe salah di perangkat tertentu
+        // (misalnya String dari versi lama), getInt/getBoolean melempar
+        // ClassCastException dan seluruh bagian Build gagal dibuka,
+        // sehingga centang "Pisah arsitektur sebagai bawaan" tidak
+        // pernah bisa dicentang di perangkat itu. Kini memakai bawaan
+        // aman (33 / mati) bila bacaannya rusak.
+        int targetBawaan = 33;
+        try {
+            targetBawaan = pref.getInt(KUNCI_BUILD_TARGET, 33);
+        } catch (Throwable ignored) {
+        }
+        eTarget.setText(String.valueOf(targetBawaan));
         root.addView(eTarget, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         labelKecil(t("Dipakai sebagai nilai awal kolom SDK target di layar ")
                 + t("Buat Proyek (masih bisa diubah tiap kali membuat proyek)."));
         final CheckBox cbPisah = new CheckBox(this);
         cbPisah.setText(t("Pisah arsitektur sebagai bawaan"));
-        cbPisah.setChecked(pref.getBoolean(KUNCI_BUILD_PISAH, false));
+        boolean pisahBawaan = false;
+        try {
+            pisahBawaan = pref.getBoolean(KUNCI_BUILD_PISAH, false);
+        } catch (Throwable ignored) {
+        }
+        cbPisah.setChecked(pisahBawaan);
         root.addView(cbPisah);
         labelKecil(t("Dicentang: centang \"arsitektur terpisah\" di layar Buat ")
                 + t("Proyek sudah aktif sejak awal (dua APK: 64 bit dan 32 bit)."));

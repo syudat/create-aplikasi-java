@@ -314,12 +314,49 @@ public class Penandatangan {
                     if (!in.isFile()) throw new IOException(TeksUI.t("APK mentah tidak ditemukan: ") + mentah);
                     File out = new File(outDir);
                     out.mkdirs();
+                    // Perbaikan fase 3: pra-validasi pisah SEBELUM satu pun
+                    // APK ditulis atau ditandatangani — bila satu varian
+                    // kehilangan pustaka native-nya, build gagal cepat
+                    // dengan pesan jelas dan tidak ada APK setengah jadi
+                    // yang tertinggal di folder bin. Pemeriksaan di dalam
+                    // satu() tetap ada sebagai jaring pengaman.
+                    if (pisah) {
+                        java.util.List<String> entriMentah =
+                                new java.util.ArrayList<String>();
+                        ZipFile zfAwal = new ZipFile(in);
+                        try {
+                            Enumeration<? extends ZipEntry> enAwal = zfAwal.entries();
+                            while (enAwal.hasMoreElements()) {
+                                ZipEntry eAwal = enAwal.nextElement();
+                                if (!eAwal.isDirectory()) entriMentah.add(eAwal.getName());
+                            }
+                        } finally {
+                            zfAwal.close();
+                        }
+                        String masalah64 = PisahAbi.periksaHasil(entriMentah,
+                                PisahAbi.entriSetelahBuang(entriMentah,
+                                        PisahAbi.abiYangDibuang(
+                                                PisahAbi.namaBerkas(slug, PisahAbi.ABI_64))),
+                                PisahAbi.ABI_64);
+                        if (masalah64.length() > 0) throw new IOException(masalah64);
+                        String masalah32 = PisahAbi.periksaHasil(entriMentah,
+                                PisahAbi.entriSetelahBuang(entriMentah,
+                                        PisahAbi.abiYangDibuang(
+                                                PisahAbi.namaBerkas(slug, PisahAbi.ABI_32))),
+                                PisahAbi.ABI_32);
+                        if (masalah32.length() > 0) throw new IOException(masalah32);
+                    }
                     List<String> hasil = new ArrayList<String>();
                     if (pisah) {
+                        // Pemetaan ABI terpusat di PisahAbi (perbaikan 5.8):
+                        // -64bit menyimpan arm64-v8a (membuang armeabi-v7a),
+                        // -32bit menyimpan armeabi-v7a (membuang arm64-v8a).
+                        String berkas64 = PisahAbi.namaBerkas(slug, PisahAbi.ABI_64);
+                        String berkas32 = PisahAbi.namaBerkas(slug, PisahAbi.ABI_32);
                         p.kirim(BangunLokal.PROGRESS, "Menyusun APK 64 bit...");
-                        hasil.add(p.satu(in, new File(out, slug + "-64bit.apk"), "armeabi-v7a", key, cert, minSdk, antiTamper));
+                        hasil.add(p.satu(in, new File(out, berkas64), PisahAbi.abiYangDibuang(berkas64), key, cert, minSdk, antiTamper));
                         p.kirim(BangunLokal.PROGRESS, "Menyusun APK 32 bit...");
-                        hasil.add(p.satu(in, new File(out, slug + "-32bit.apk"), "arm64-v8a", key, cert, minSdk, antiTamper));
+                        hasil.add(p.satu(in, new File(out, berkas32), PisahAbi.abiYangDibuang(berkas32), key, cert, minSdk, antiTamper));
                     } else {
                         p.kirim(BangunLokal.PROGRESS, "Menandatangani APK...");
                         hasil.add(p.satu(in, new File(out, slug + ".apk"), null, key, cert, minSdk, antiTamper));
@@ -353,15 +390,21 @@ public class Penandatangan {
         BangunLokal.Count cnt = new BangunLokal.Count(new java.io.BufferedOutputStream(new FileOutputStream(tmp), 65536));
         ZipOutputStream zos = new ZipOutputStream(cnt);
         Map<String, Long> crcDex = antiTamper ? new LinkedHashMap<String, Long>() : null;
+        // Perbaikan 5.8: catat entri lib/ mentah dan hasil, supaya APK
+        // pisah yang kehilangan semua pustaka native bisa ditolak
+        // dengan pesan jelas (bukan diam-diam menjadi APK yang crash).
+        java.util.List<String> entriMentah = new java.util.ArrayList<String>();
+        java.util.List<String> entriHasil = new java.util.ArrayList<String>();
         try {
             Enumeration<? extends ZipEntry> en = zf.entries();
             while (en.hasMoreElements()) {
                 ZipEntry e = en.nextElement();
                 String n = e.getName();
                 if (e.isDirectory()) continue;
+                entriMentah.add(n);
                 if (isTandaTangan(n)) continue;
                 if (antiTamper && n.equals(Perisai.NAMA_ASET)) continue; // ditulis ulang di bawah
-                if (buangAbi != null && n.startsWith("lib/" + buangAbi + "/")) continue;
+                if (PisahAbi.buangEntri(n, buangAbi)) continue;
                 InputStream is = zf.getInputStream(e);
                 byte[] data = BangunLokal.bacaStream(is);
                 is.close();
@@ -371,6 +414,7 @@ public class Penandatangan {
                     crcDex.put(n, c.getValue());
                 }
                 BangunLokal.tambah(zos, cnt, n, data, e.getMethod() != ZipEntry.STORED);
+                entriHasil.add(n);
             }
             if (antiTamper) {
                 // Catatan perisai: hash sertifikat penandatangan + CRC dex.
@@ -382,6 +426,15 @@ public class Penandatangan {
         } finally {
             zos.close();
             zf.close();
+        }
+        // Perbaikan 5.8: tolak APK pisah yang kehilangan pustaka native
+        // ABI-nya (misalnya proyek hanya membawa .so arm64-v8a, lalu
+        // APK -32bit dibuat tanpa pustaka apa pun dan crash saat dibuka).
+        String masalahPisah = PisahAbi.periksaHasil(entriMentah, entriHasil,
+                PisahAbi.abiYangDisimpan(out.getName()));
+        if (masalahPisah.length() > 0) {
+            tmp.delete();
+            throw new IOException(masalahPisah);
         }
         if (out.exists()) out.delete();
         ApkSigner.SignerConfig sc = new ApkSigner.SignerConfig.Builder("pembuat", key,

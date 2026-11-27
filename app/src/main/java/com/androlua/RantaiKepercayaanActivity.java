@@ -26,11 +26,11 @@ import java.util.Locale;
  * Pilih proyek, tekan "Periksa Rantai dan Lingkungan" — IDE membangun
  * rantai kunci 5 generasi dari nama paket proyek, memeriksa keutuhannya,
  * lalu memindai peta memori proses sendiri dan properti perangkat untuk
- * jejak Frida, Xposed, atau emulator. Logika ada di RantaiKepercayaan
- * (murni Java, sudah diuji di komputer).
- *
- * BATAS: pemindaian membaca pola teks, bukan integritas memori asli
- * dan bukan chip keamanan perangkat keras (lihat RantaiKepercayaan).
+ * jejak Frida, Xposed, atau emulator, serta membandingkan isi memori
+ * dengan berkas di disk. Tombol "Putar Kunci Penandatanganan v3"
+ * membuat kunci baru, membangun silsilah rotasi dari kunci proyek yang
+ * lama, dan menandatangani APK belum-ditandatangani dengan skema v3.
+ * Logika ada di RantaiKepercayaan (murni Java, sudah diuji di komputer).
  */
 public class RantaiKepercayaanActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -41,6 +41,7 @@ public class RantaiKepercayaanActivity extends Activity {
     private final List<String> daftarProyek = new ArrayList<String>();
     private TextView tvHasil;
     private Button bJalankan;
+    private Button bRotasi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class RantaiKepercayaanActivity extends Activity {
         setContentView(sv);
 
         heading(r, TeksUI.t("Rantai Kepercayaan dan Penjaga Lingkungan"), 20);
-        label(r, TeksUI.t("Periksa rantai kunci penandatanganan dan deteksi Frida, Xposed, atau emulator dari jejak proses. Pemeriksaan ini membaca pola teks, bukan memori asli."), false);
+        label(r, TeksUI.t("Periksa rantai kunci penandatanganan, bandingkan isi memori dengan berkas di disk, dan deteksi Frida, Xposed, atau emulator dari jejak proses."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -76,6 +77,14 @@ public class RantaiKepercayaanActivity extends Activity {
                 mulai();
             }
         });
+
+        bRotasi = button(r, TeksUI.t("Putar Kunci Penandatanganan v3"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mulaiRotasi();
+            }
+        });
+        label(r, TeksUI.t("Rotasi v3 memakai kunci bawaan proyek di folder tanda-tangan-bawaan. Kunci lama disimpan sebagai kunci-lama.p12, kunci baru menjadi kunci proyek, dan silsilah rotasi disimpan sebagai silsilah-v3.bin. APK hasil berakhiran -rotasi-v3.apk."), true);
 
         label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
@@ -135,6 +144,139 @@ public class RantaiKepercayaanActivity extends Activity {
         }, "RantaiKepercayaan").start();
     }
 
+    private void mulaiRotasi() {
+        if (spProyek == null || spProyek.getSelectedItem() == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final File dir = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+        tvHasil.setText(TeksUI.t("Putar Kunci Penandatanganan v3") + "...");
+        bRotasi.setEnabled(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = jalankanRotasi(dir);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bRotasi.setEnabled(true);
+                        tvHasil.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "RantaiRotasi").start();
+    }
+
+    private String jalankanRotasi(File dir) {
+        try {
+            File folderKunci = new File(dir, "tanda-tangan-bawaan");
+            File p12Lama = new File(folderKunci, "kunci.p12");
+            File sandiLama = new File(folderKunci, "sandi.txt");
+            if (!p12Lama.isFile() || !sandiLama.isFile()) {
+                return TeksUI.t("Kunci bawaan proyek belum ada. Bangun dan tandatangani dulu proyek ini sekali, supaya kunci proyek dibuat.");
+            }
+            String sandiProyek = bacaTeks(sandiLama);
+            if (sandiProyek == null) sandiProyek = "";
+            sandiProyek = sandiProyek.trim();
+            RantaiKepercayaan.KunciMasuk lama =
+                    RantaiKepercayaan.muatKunciP12(p12Lama, sandiProyek);
+            if (lama == null) {
+                return TeksUI.t("Kunci bawaan proyek tidak bisa dibaca.");
+            }
+            File bin = new File(dir, "bin");
+            File mentah = null;
+            if (bin.isDirectory()) {
+                File[] daftar = bin.listFiles();
+                if (daftar != null) {
+                    for (int i = 0; i < daftar.length; i++) {
+                        if (daftar[i].getName().endsWith("-belum-ditandatangani.apk")) {
+                            mentah = daftar[i];
+                            break;
+                        }
+                    }
+                }
+            }
+            if (mentah == null) {
+                return TeksUI.t("APK belum-ditandatangani tidak ditemukan di folder bin. Bangun dulu proyeknya.");
+            }
+            String sandiBaru = sandiAcak();
+            byte[] p12Baru = Penandatangan.buatP12("bawaan", sandiBaru,
+                    TeksUI.t("Create Aplikasi"), "", "", "", "", "", 25);
+            RantaiKepercayaan.KunciMasuk baru =
+                    RantaiKepercayaan.muatKunciP12(p12Baru, sandiBaru);
+            if (baru == null) {
+                return TeksUI.t("Kunci baru gagal dibuat.");
+            }
+            String paket = InfoProyek.namaPaket(dir);
+            if (paket == null || paket.length() == 0) paket = dir.getName();
+            int minSdk = 21;
+            com.android.apksig.SigningCertificateLineage silsilah =
+                    RantaiKepercayaan.buatSilsilahRotasi(
+                            lama.kunci, lama.sertifikat, baru.kunci, baru.sertifikat, minSdk);
+            if (silsilah == null) {
+                return TeksUI.t("Silsilah rotasi gagal dibuat.");
+            }
+            String namaKeluar = mentah.getName().replace("-belum-ditandatangani.apk", "-rotasi-v3.apk");
+            File keluar = new File(bin, namaKeluar);
+            String galat = RantaiKepercayaan.tandatanganiDenganRotasi(
+                    mentah, keluar, lama.kunci, lama.sertifikat,
+                    baru.kunci, baru.sertifikat, silsilah, minSdk);
+            if (galat != null) return galat;
+            // Simpan kunci lama, ganti kunci proyek dengan kunci baru, simpan silsilah.
+            salinBerkas(p12Lama, new File(folderKunci, "kunci-lama.p12"));
+            tulisBerkas(new File(folderKunci, "kunci.p12"), p12Baru);
+            tulisBerkas(new File(folderKunci, "sandi.txt"), sandiBaru.getBytes("UTF-8"));
+            try {
+                silsilah.writeToFile(new File(folderKunci, "silsilah-v3.bin"));
+            } catch (Throwable ignored) {
+            }
+            StringBuilder b = new StringBuilder();
+            b.append(TeksUI.t("Rotasi v3 selesai. APK:")).append(" ").append(keluar.getName()).append(".\n");
+            b.append(RantaiKepercayaan.periksaRotasi(keluar)).append("\n");
+            b.append(TeksUI.t("Kunci lama disimpan sebagai kunci-lama.p12; kunci baru menjadi kunci proyek."));
+            return b.toString();
+        } catch (Throwable t) {
+            return TeksUI.t("Rotasi gagal:") + " " + String.valueOf(t.getMessage());
+        }
+    }
+
+    private String sandiAcak() {
+        String abjad = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        java.security.SecureRandom r = new java.security.SecureRandom();
+        StringBuilder b = new StringBuilder(16);
+        for (int i = 0; i < 16; i++) b.append(abjad.charAt(r.nextInt(abjad.length())));
+        return b.toString();
+    }
+
+    private void salinBerkas(File dari, File ke) {
+        try {
+            java.io.FileInputStream in = new java.io.FileInputStream(dari);
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            try {
+                byte[] b = new byte[8192];
+                int n;
+                while ((n = in.read(b)) > 0) buf.write(b, 0, n);
+            } finally {
+                in.close();
+            }
+            tulisBerkas(ke, buf.toByteArray());
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private void tulisBerkas(File f, byte[] data) {
+        try {
+            java.io.FileOutputStream out = new java.io.FileOutputStream(f);
+            try {
+                out.write(data);
+            } finally {
+                out.close();
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
     private String jalankan(File dir) {
         String paket = InfoProyek.namaPaket(dir);
         if (paket == null || paket.length() == 0) paket = dir.getName();
@@ -149,10 +291,15 @@ public class RantaiKepercayaanActivity extends Activity {
         prop.append(android.os.Build.FINGERPRINT).append("\n");
         List<RantaiKepercayaan.Temuan> temuan =
                 RantaiKepercayaan.deteksiLingkungan(isiMaps, prop.toString());
+        RantaiKepercayaan.HasilMemori memori = RantaiKepercayaan.periksaMemoriAsli();
+        temuan.addAll(memori.temuan);
+        String chip = RantaiKepercayaan.statusKunciChip();
         StringBuilder b = new StringBuilder();
         b.append(TeksUI.t("Rantai kunci:")).append(" ").append(rantai.size()).append(" generasi, ")
                 .append(RantaiKepercayaan.periksaRantai(rantai) ? "utuh" : "rusak").append(".\n");
-        b.append(RantaiKepercayaan.ringkasan(rantai, temuan));
+        b.append(RantaiKepercayaan.ringkasan(rantai, temuan)).append("\n");
+        b.append(memori.toString()).append("\n");
+        b.append(TeksUI.t("Kunci chip:")).append(" ").append(chip).append(".");
         for (int i = 0; i < temuan.size(); i++) {
             b.append("\n- ").append(temuan.get(i).toString());
         }

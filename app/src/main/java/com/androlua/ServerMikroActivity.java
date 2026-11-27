@@ -5,13 +5,16 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
@@ -35,11 +38,20 @@ import java.util.Map;
  * dan menyalin alamat IP lokal. Definisi rute dan data JSON disimpan
  * di penyimpanan privat aplikasi.
  *
- * Pembundelan peladen ke dalam APK hasil build BELUM ada di putaran ini
- * (tahap berikut) — APK hasil build belum bisa bertindak sebagai peladen.
+ * Pembundelan ke APK hasil build: "Bundel Server ke Proyek"
+ * menyuntikkan PeladenMikroActivity + aset definisi rute ke proyek
+ * dan mendaftarkannya di manifest proyek (ikon "Server Mikro") plus
+ * izin INTERNET. Build APK seperti biasa — server itu berjalan dari
+ * dalam aplikasi hasil build saat ikonnya dibuka.
  */
 public class ServerMikroActivity extends Activity {
 
+    private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
+            + "/Download/project";
+
+    private Spinner spProyek;
+    private ArrayAdapter<String> adapterProyek;
+    private final List<String> daftarProyek = new ArrayList<String>();
     private EditText eDefinisi;
     private EditText ePort;
     private EditText eKunci;
@@ -124,6 +136,27 @@ public class ServerMikroActivity extends Activity {
             }
         });
 
+        label(r, TeksUI.t("Bundel server ke APK hasil build (pilih proyek):"), false);
+        spProyek = new Spinner(this);
+        adapterProyek = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, daftarProyek);
+        adapterProyek.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spProyek.setAdapter(adapterProyek);
+        r.addView(spProyek, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        button(r, TeksUI.t("Bundel Server ke Proyek"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bundelKeProyek();
+            }
+        });
+        button(r, TeksUI.t("Lepas Bundel Server"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lepasBundel();
+            }
+        });
+
         label(r, TeksUI.t("Alamat server:"), false);
         tvAlamat = new TextView(this);
         tvAlamat.setTextSize(14);
@@ -146,6 +179,7 @@ public class ServerMikroActivity extends Activity {
         });
 
         muatPenyimpanan();
+        muatDaftarProyek();
         announce(TeksUI.t("Server Mikro Lokal. Tulis definisi rute, lalu tekan Mulai Server."));
     }
 
@@ -154,6 +188,68 @@ public class ServerMikroActivity extends Activity {
         super.onResume();
         // Ganti bahasa langsung tanpa restart (Fitur 11).
         if (SegarBahasa.periksa(this)) return;
+        muatDaftarProyek();
+    }
+
+    private void muatDaftarProyek() {
+        daftarProyek.clear();
+        daftarProyek.addAll(InfoProyek.daftarNama(new File(ROOT)));
+        if (adapterProyek != null) adapterProyek.notifyDataSetChanged();
+    }
+
+    private File proyekTerpilih() {
+        if (spProyek == null || spProyek.getSelectedItem() == null) {
+            toast("Pilih dulu proyeknya.");
+            return null;
+        }
+        return new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+    }
+
+    private void bundelKeProyek() {
+        final File dir = proyekTerpilih();
+        if (dir == null) return;
+        final String definisi = eDefinisi.getText().toString();
+        final String kunci = eKunci.getText().toString();
+        int port;
+        try {
+            port = Integer.parseInt(ePort.getText().toString().trim());
+        } catch (NumberFormatException e) {
+            toast(TeksUI.t("Port tidak valid. Tulis angka 1024 sampai 65535."));
+            return;
+        }
+        final int portAkhir = port;
+        tvLog.setText(TeksUI.t("Membundel server ke proyek..."));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = ServerMikro.bundelKeProyek(dir, definisi, portAkhir, kunci);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvLog.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "ServerMikro-Bundel").start();
+    }
+
+    private void lepasBundel() {
+        final File dir = proyekTerpilih();
+        if (dir == null) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = ServerMikro.lepasBundel(dir);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvLog.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "ServerMikro-Lepas").start();
     }
 
     @Override

@@ -29,15 +29,21 @@ import java.util.Locale;
  * Inspektur Basis Data SQLite, Room, dan Penyimpanan Lokal Langsung
  * (Fitur 8, daftar Gemini 2026-11-27).
  *
- * Pilih proyek dan berkas basis data, tekan "Buka Basis Data" — IDE
- * membaca skema dan isi tabel pertama (maksimal 20 baris) sebagai
- * tabel teks. Tulis kueri SELECT lalu tekan "Jalankan Kueri".
- * Logika model tabel dan kueri ada di InspekturBasisData (murni Java,
- * sudah diuji di komputer).
+ * Pilih proyek dan berkas basis data atau penyimpanan, tekan
+ * "Buka Basis Data" — IDE membaca SEMUA tabel (bukan hanya tabel
+ * pertama) beserta isinya sebagai tabel teks, maksimal 20 baris per
+ * tabel. Tulis kueri SELECT lalu tekan "Jalankan Kueri": kueri
+ * dijalankan lewat mesin SQLite Android, jadi JOIN, GROUP BY,
+ * ORDER BY, dan LIKE benar-benar berjalan. Berkas SharedPreferences
+ * (.xml) dan DataStore (.preferences_pb) juga bisa dibuka dan
+ * dibaca entri kuncinya. Logika model tabel, parser halaman SQLite,
+ * dan mesin kueri ada di InspekturBasisData (murni Java, sudah
+ * diuji di komputer).
  *
- * BATAS: pembacaan skema memakai pemindaian teks bila berkas tidak
- * bisa dibuka sebagai SQLite; pengeditan nilai di HP menulis balik
- * lewat SQLiteDatabase.
+ * BATAS: bila SQLiteDatabase tidak bisa membuka berkas .db, isi
+ * baris dibaca lewat parser halaman berkas; tabel tanpa rowid
+ * menampilkan skema saja. DataStore Proto bertipe khusus hanya
+ * ditampilkan sebagai tampilan medan generik.
  */
 public class InspekturBasisDataActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -49,6 +55,9 @@ public class InspekturBasisDataActivity extends Activity {
     private Spinner spDb;
     private ArrayAdapter<String> adapterDb;
     private final List<String> daftarDb = new ArrayList<String>();
+    private Spinner spTabel;
+    private ArrayAdapter<String> adapterTabel;
+    private final List<String> daftarTabel = new ArrayList<String>();
     private EditText eKueri;
     private EditText eBaris;
     private EditText eKolom;
@@ -60,6 +69,16 @@ public class InspekturBasisDataActivity extends Activity {
     private File berkasDb;
     private InspekturBasisData.Tabel tabelAktif;
     private int barisDiubah = 0;
+    private List<InspekturBasisData.InfoTabel> infoTabelAktif =
+            new ArrayList<InspekturBasisData.InfoTabel>();
+    private List<InspekturBasisData.Tabel> tabelModelAktif =
+            new ArrayList<InspekturBasisData.Tabel>();
+    private List<InspekturBasisData.EntriPref> entriAktif =
+            new ArrayList<InspekturBasisData.EntriPref>();
+    private String jenisBerkasAktif = "";
+    private byte[] dataBerkasAktif = null;
+    private boolean pakaiParser = false;
+    private boolean sedangMuatTabel = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +97,7 @@ public class InspekturBasisDataActivity extends Activity {
         setContentView(sv);
 
         heading(r, TeksUI.t("Inspektur Basis Data dan Penyimpanan"), 20);
-        label(r, TeksUI.t("Baca tabel SQLite dan Room sebagai tabel teks, ubah nilai sel untuk menguji skenario, jalankan kueri SQL, dan simpan cadangan keadaan basis data."), false);
+        label(r, TeksUI.t("Baca semua tabel SQLite dan Room sebagai tabel teks, ubah nilai sel untuk menguji skenario, jalankan kueri SQL termasuk JOIN, GROUP BY, ORDER BY, dan LIKE, serta baca SharedPreferences dan DataStore."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -99,13 +118,34 @@ public class InspekturBasisDataActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, TeksUI.t("Pilih berkas basis data:"), false);
+        label(r, TeksUI.t("Pilih berkas basis data atau penyimpanan:"), false);
         spDb = new Spinner(this);
         adapterDb = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarDb);
         adapterDb.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDb.setAdapter(adapterDb);
         r.addView(spDb, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        label(r, TeksUI.t("Pilih tabel:"), false);
+        spTabel = new Spinner(this);
+        adapterTabel = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, daftarTabel);
+        adapterTabel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spTabel.setAdapter(adapterTabel);
+        spTabel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                if (sedangMuatTabel) return;
+                if (berkasDb == null || spTabel.getSelectedItem() == null) return;
+                muatTabelTerpilih();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> p) {
+            }
+        });
+        r.addView(spTabel, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         bJalankan = button(r, TeksUI.t("Buka Basis Data"), new View.OnClickListener() {
@@ -224,9 +264,14 @@ public class InspekturBasisDataActivity extends Activity {
             File f = daftar[i];
             if (f.isDirectory()) {
                 if (!f.getName().startsWith(".")) cariDb(akar, f);
-            } else if (f.getName().endsWith(".db") || f.getName().endsWith(".sqlite")
-                    || f.getName().endsWith(".sqlite3")) {
-                daftarDb.add(f.getAbsolutePath().substring(akar.getAbsolutePath().length() + 1));
+            } else {
+                String nama = f.getName().toLowerCase();
+                if (nama.endsWith(".db") || nama.endsWith(".sqlite")
+                        || nama.endsWith(".sqlite3") || nama.endsWith(".preferences_pb")
+                        || nama.endsWith(".pb")
+                        || (nama.endsWith(".xml") && kini.getName().equals("shared_prefs"))) {
+                    daftarDb.add(f.getAbsolutePath().substring(akar.getAbsolutePath().length() + 1));
+                }
             }
         }
     }
@@ -239,6 +284,9 @@ public class InspekturBasisDataActivity extends Activity {
         final File berkas = new File(dirAktif, String.valueOf(spDb.getSelectedItem()));
         berkasDb = berkas;
         barisDiubah = 0;
+        jenisBerkasAktif = "";
+        daftarTabel.clear();
+        if (adapterTabel != null) adapterTabel.notifyDataSetChanged();
         tvHasil.setText(TeksUI.t("Buka Basis Data") + "...");
         bJalankan.setEnabled(false);
         new Thread(new Runnable() {
@@ -251,6 +299,12 @@ public class InspekturBasisDataActivity extends Activity {
                         bJalankan.setEnabled(true);
                         tvHasil.setText(hasil);
                         announce(hasil);
+                        if (adapterTabel != null) adapterTabel.notifyDataSetChanged();
+                        if (spTabel != null && !daftarTabel.isEmpty()) {
+                            sedangMuatTabel = true;
+                            spTabel.setSelection(0);
+                            sedangMuatTabel = false;
+                        }
                     }
                 });
             }
@@ -260,18 +314,98 @@ public class InspekturBasisDataActivity extends Activity {
     private String jalankan(File berkas) {
         byte[] data = bacaBerkas(berkas);
         if (data == null) return TeksUI.t("Berkas basis data tidak bisa dibaca.");
-        List<String> skema = InspekturBasisData.bacaSkema(data);
+        dataBerkasAktif = data;
+        jenisBerkasAktif = InspekturBasisData.jenisBerkasPenyimpanan(berkas.getName());
+        infoTabelAktif.clear();
+        tabelModelAktif.clear();
+        entriAktif.clear();
+        tabelAktif = null;
+        pakaiParser = false;
+        if ("db".equals(jenisBerkasAktif)) {
+            return bukaDb(berkas, data);
+        }
+        if ("shared_prefs".equals(jenisBerkasAktif)) {
+            String xml = null;
+            try {
+                xml = new String(data, "UTF-8");
+            } catch (Throwable t) {
+                xml = new String(data);
+            }
+            entriAktif = InspekturBasisData.bacaSharedPrefs(xml);
+            return tampilkanEntri();
+        }
+        if ("datastore".equals(jenisBerkasAktif)) {
+            entriAktif = InspekturBasisData.bacaDataStore(data);
+            if (entriAktif.isEmpty()) {
+                List<String> dump = InspekturBasisData.dumpProto(data);
+                StringBuilder b = new StringBuilder();
+                b.append(TeksUI.t("DataStore proto (skema khusus):")).append("\n");
+                for (int i = 0; i < dump.size(); i++) b.append(dump.get(i)).append("\n");
+                return b.toString();
+            }
+            return tampilkanEntri();
+        }
+        if ("proto".equals(jenisBerkasAktif)) {
+            List<String> dump = InspekturBasisData.dumpProto(data);
+            StringBuilder b = new StringBuilder();
+            b.append(TeksUI.t("DataStore proto (skema khusus):")).append("\n");
+            for (int i = 0; i < dump.size(); i++) b.append(dump.get(i)).append("\n");
+            return b.toString();
+        }
+        return TeksUI.t("Nama berkas tidak dikenal sebagai basis data atau penyimpanan.");
+    }
+
+    /** Buka berkas .db: baca SEMUA tabel lewat parser halaman, lalu muat tabel pertama. */
+    private String bukaDb(File berkas, byte[] data) {
+        infoTabelAktif = InspekturBasisData.bacaSkemaPenuh(data);
+        if (infoTabelAktif.isEmpty()) {
+            List<String> skema = InspekturBasisData.bacaSkema(data);
+            for (int i = 0; i < skema.size(); i++) {
+                InspekturBasisData.InfoTabel info = new InspekturBasisData.InfoTabel();
+                info.jenis = "table";
+                info.nama = InspekturBasisData.namaTabelDariSkema(skema.get(i));
+                info.sql = skema.get(i);
+                info.rootpage = 0;
+                if (info.nama.length() > 0) infoTabelAktif.add(info);
+            }
+        }
         StringBuilder b = new StringBuilder();
-        b.append(TeksUI.t("Tabel ditemukan:")).append(" ").append(skema.size()).append(".");
-        if (skema.size() == 0) return b.toString();
-        InspekturBasisData.Tabel tabel = InspekturBasisData.tabelDariSkema(skema.get(0));
-        b.append("\n").append(TeksUI.t("Tabel:")).append(" ").append(tabel.nama);
+        b.append(TeksUI.t("Tabel ditemukan:")).append(" ").append(infoTabelAktif.size()).append(".");
+        if (infoTabelAktif.isEmpty()) return b.toString();
+        for (int i = 0; i < infoTabelAktif.size(); i++) {
+            b.append("\n- ").append(infoTabelAktif.get(i).nama);
+        }
+        sedangMuatTabel = false;
+        daftarTabel.clear();
+        for (int i = 0; i < infoTabelAktif.size(); i++) daftarTabel.add(infoTabelAktif.get(i).nama);
+        String isi = muatTabel(infoTabelAktif.get(0).nama);
+        b.append("\n").append(isi);
+        return b.toString();
+    }
+
+    /** Muat isi satu tabel (maksimal 20 baris) lewat SQLiteDatabase, cadangan parser halaman. */
+    private String muatTabel(String namaTabel) {
+        if (berkasDb == null || dataBerkasAktif == null) return "";
+        InspekturBasisData.Tabel dariSkema = null;
+        for (int i = 0; i < infoTabelAktif.size(); i++) {
+            if (infoTabelAktif.get(i).nama.equalsIgnoreCase(namaTabel)) {
+                dariSkema = InspekturBasisData.tabelDariSkema(infoTabelAktif.get(i).sql);
+                if (dariSkema.nama.length() == 0) dariSkema.nama = infoTabelAktif.get(i).nama;
+            }
+        }
+        if (dariSkema == null) return "";
+        pakaiParser = false;
+        InspekturBasisData.Tabel tabel = dariSkema;
         try {
-            SQLiteDatabase db = SQLiteDatabase.openDatabase(berkas.getAbsolutePath(),
+            SQLiteDatabase db = SQLiteDatabase.openDatabase(berkasDb.getAbsolutePath(),
                     null, SQLiteDatabase.OPEN_READONLY);
             try {
-                Cursor c = db.rawQuery("SELECT * FROM \"" + tabel.nama + "\" LIMIT 20", null);
+                Cursor c = db.rawQuery("SELECT * FROM \"" + namaTabel + "\" LIMIT 20", null);
                 try {
+                    for (int i = 0; i < c.getColumnCount(); i++) {
+                        if (i < tabel.kolom.size()) continue;
+                        tabel.kolom.add(c.getColumnName(i));
+                    }
                     while (c.moveToNext()) {
                         List<String> baris = new ArrayList<String>();
                         for (int i = 0; i < tabel.kolom.size() && i < c.getColumnCount(); i++) {
@@ -286,10 +420,33 @@ public class InspekturBasisDataActivity extends Activity {
                 db.close();
             }
         } catch (Throwable t) {
-            b.append("\n").append(TeksUI.t("Isi baris tidak bisa dibaca:")).append(" ").append(t.getMessage());
+            InspekturBasisData.Tabel hasilParser =
+                    InspekturBasisData.bacaBaris(dataBerkasAktif, namaTabel, 20);
+            if (hasilParser == null) {
+                return TeksUI.t("Isi baris tidak bisa dibaca:") + " "
+                        + (t.getMessage() == null ? "" : t.getMessage());
+            }
+            tabel = hasilParser;
+            pakaiParser = true;
         }
         tabelAktif = tabel;
-        b.append("\n").append(TeksUI.t("Baris dibaca:")).append(" ").append(tabel.baris.size()).append(".");
+        boolean ganti = false;
+        for (int i = 0; i < tabelModelAktif.size(); i++) {
+            if (tabelModelAktif.get(i).nama.equalsIgnoreCase(tabel.nama)) {
+                tabelModelAktif.set(i, tabel);
+                ganti = true;
+            }
+        }
+        if (!ganti) tabelModelAktif.add(tabel);
+        StringBuilder b = new StringBuilder();
+        if (pakaiParser) {
+            b.append(TeksUI.t("Isi baris tidak bisa dibaca lewat SQLite, memakai parser berkas.")).append("\n");
+        }
+        b.append(TeksUI.t("Tabel:")).append(" ").append(tabel.nama).append(". ");
+        b.append(TeksUI.t("Baris dibaca:")).append(" ").append(tabel.baris.size()).append(".");
+        if (tabel.catatan != null && tabel.catatan.length() > 0) {
+            b.append("\n").append(tabel.catatan);
+        }
         for (int i = 0; i < tabel.baris.size(); i++) {
             b.append("\n").append(i + 1).append(". ");
             List<String> baris = tabel.baris.get(i);
@@ -301,18 +458,112 @@ public class InspekturBasisDataActivity extends Activity {
         return b.toString();
     }
 
+    /** Muat ulang tabel yang dipilih di spinner (dipanggil dari utas UI). */
+    private void muatTabelTerpilih() {
+        if (spTabel == null || spTabel.getSelectedItem() == null) return;
+        final String nama = String.valueOf(spTabel.getSelectedItem());
+        tvHasil.setText(TeksUI.t("Buka Basis Data") + "...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = muatTabel(nama);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvHasil.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "InspekturBasisData").start();
+    }
+
+    /** Tampilkan entri SharedPreferences / DataStore sebagai teks bernomor. */
+    private String tampilkanEntri() {
+        StringBuilder b = new StringBuilder();
+        b.append(TeksUI.t("Entri ditemukan:")).append(" ").append(entriAktif.size()).append(".");
+        for (int i = 0; i < entriAktif.size(); i++) {
+            b.append("\n").append(i + 1).append(". ").append(entriAktif.get(i).toString());
+        }
+        return b.toString();
+    }
+
     private void jalankanKueri() {
-        if (tabelAktif == null) {
+        if (!"db".equals(jenisBerkasAktif) || berkasDb == null) {
             toast(TeksUI.t("Belum ada hasil. Pilih proyek, lalu tekan") + " "
                     + TeksUI.t("Buka Basis Data") + ".");
             return;
         }
         String sql = eKueri.getText().toString().trim();
-        List<List<String>> hasil = InspekturBasisData.jalankanKueri(tabelAktif, sql);
+        if (sql.length() == 0) {
+            toast(TeksUI.t("Kueri tidak dikenali. Contoh: SELECT nama FROM pengguna WHERE kota = 'Makassar'"));
+            return;
+        }
+        String hasil = kueriSqlite(sql);
+        if (hasil == null) hasil = kueriModel(sql);
         if (hasil == null) {
             tvHasil.setText(TeksUI.t("Kueri tidak dikenali. Contoh: SELECT nama FROM pengguna WHERE kota = 'Makassar'"));
             return;
         }
+        tvHasil.setText(hasil);
+        announce(hasil);
+    }
+
+    /**
+     * Jalankan kueri lewat mesin SQLite Android (JOIN, GROUP BY,
+     * ORDER BY, LIKE, dan semua SQL lain benar-benar berjalan).
+     * Null bila gagal (pemanggil memakai mesin model sebagai cadangan).
+     */
+    private String kueriSqlite(String sql) {
+        if (pakaiParser) return null;
+        Cursor c = null;
+        SQLiteDatabase db = null;
+        try {
+            db = SQLiteDatabase.openDatabase(berkasDb.getAbsolutePath(),
+                    null, SQLiteDatabase.OPEN_READONLY);
+            c = db.rawQuery(sql, null);
+            StringBuilder b = new StringBuilder();
+            b.append(TeksUI.t("Hasil kueri:")).append(" ").append(c.getCount()).append(" baris.");
+            int tampil = 0;
+            while (c.moveToNext() && tampil < 50) {
+                b.append("\n").append(tampil + 1).append(". ");
+                for (int i = 0; i < c.getColumnCount(); i++) {
+                    if (i > 0) b.append(" | ");
+                    b.append(c.isNull(i) ? "" : c.getString(i));
+                }
+                tampil++;
+            }
+            if (c.getCount() > 50) {
+                b.append("\n").append(TeksUI.t("Baris kueri dibatasi 50 baris pertama."));
+            }
+            return b.toString();
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            try {
+                if (c != null) c.close();
+            } catch (Throwable ignored) {
+            }
+            try {
+                if (db != null) db.close();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    /** Cadangan: jalankan kueri lewat mesin model di memori. */
+    private String kueriModel(String sql) {
+        for (int i = 0; i < infoTabelAktif.size(); i++) {
+            String nama = infoTabelAktif.get(i).nama;
+            boolean ada = false;
+            for (int j = 0; j < tabelModelAktif.size(); j++) {
+                if (tabelModelAktif.get(j).nama.equalsIgnoreCase(nama)) ada = true;
+            }
+            if (!ada) muatTabel(nama);
+        }
+        if (tabelModelAktif.isEmpty() && tabelAktif != null) tabelModelAktif.add(tabelAktif);
+        List<List<String>> hasil = InspekturBasisData.jalankanKueri(tabelModelAktif, sql);
+        if (hasil == null) return null;
         StringBuilder b = new StringBuilder();
         b.append(TeksUI.t("Hasil kueri:")).append(" ").append(hasil.size()).append(" baris.");
         for (int i = 0; i < hasil.size(); i++) {
@@ -323,13 +574,15 @@ public class InspekturBasisDataActivity extends Activity {
                 b.append(baris.get(j));
             }
         }
-        String teks = b.toString();
-        tvHasil.setText(teks);
-        announce(teks);
+        return b.toString();
     }
 
     /** Ubah satu sel: tulis balik ke berkas .db, lalu perbarui tampilan. */
     private void ubahNilaiSel() {
+        if (!"db".equals(jenisBerkasAktif)) {
+            toast(TeksUI.t("Berkas ini hanya dibaca. Nilai tidak bisa diubah dari sini."));
+            return;
+        }
         if (tabelAktif == null || berkasDb == null) {
             toast(TeksUI.t("Berkas basis data belum dibuka."));
             return;
@@ -378,14 +631,30 @@ public class InspekturBasisDataActivity extends Activity {
         announce(TeksUI.t("Nilai sel diubah.") + " " + hasil);
     }
 
-    /** Simpan cadangan teks tabel aktif ke <nama-db>.cadangan.txt di proyek. */
+    /** Simpan cadangan teks tabel aktif (atau entri penyimpanan) ke proyek. */
     private void simpanCadangan() {
-        if (tabelAktif == null || dirAktif == null || berkasDb == null) {
+        if (dirAktif == null || berkasDb == null) {
             toast(TeksUI.t("Berkas basis data belum dibuka."));
             return;
         }
         File keluar = new File(dirAktif, berkasDb.getName() + ".cadangan.txt");
-        if (tulisTeks(keluar, InspekturBasisData.cadangan(tabelAktif))) {
+        if ("db".equals(jenisBerkasAktif)) {
+            if (tabelAktif == null) {
+                toast(TeksUI.t("Berkas basis data belum dibuka."));
+                return;
+            }
+            if (tulisTeks(keluar, InspekturBasisData.cadangan(tabelAktif))) {
+                toast(TeksUI.t("Cadangan disimpan:") + " " + keluar.getName());
+            } else {
+                toast(TeksUI.t("Berkas basis data tidak bisa dibaca."));
+            }
+            return;
+        }
+        StringBuilder isi = new StringBuilder();
+        for (int i = 0; i < entriAktif.size(); i++) {
+            isi.append(entriAktif.get(i).toString()).append("\n");
+        }
+        if (tulisTeks(keluar, isi.toString())) {
             toast(TeksUI.t("Cadangan disimpan:") + " " + keluar.getName());
         } else {
             toast(TeksUI.t("Berkas basis data tidak bisa dibaca."));

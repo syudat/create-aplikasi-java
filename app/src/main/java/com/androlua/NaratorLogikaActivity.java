@@ -1,6 +1,8 @@
 package com.androlua;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -24,14 +26,17 @@ import java.util.Locale;
  * Narator Alur Logika Kode dan Peninjau Semantik Berbasis AI
  * (Fitur 12, daftar Gemini 2026-11-27).
  *
- * Pilih proyek dan berkas kode, tekan "Narasi Kode" — IDE mengubah
- * kode menjadi narasi alur berbahasa Indonesia, menampilkan peta
- * panggilan antar-metode, dan menandai potensi bug halus beserta
- * nomor barisnya. Logika ada di NaratorLogika (murni Java, sudah
- * diuji di komputer).
+ * Pilih proyek dan berkas kode, tekan "Narasi Kode" — IDE meminta
+ * ringkasan alur ke penyedia AI AKTIF di Pengaturan AI, lalu
+ * menampilkan narasi alur luring berbahasa Indonesia, aliran data
+ * antar-metode (nilai variabel yang diteruskan antar-metode dan
+ * nilai kembalian), peta panggilan antar-metode, dan peringatan
+ * bug halus beserta nomor barisnya. Logika ada di NaratorLogika
+ * (murni Java, sudah diuji di komputer).
  *
- * BATAS: narasi memakai pola teks luring, bukan model AI online
- * (lihat NaratorLogika).
+ * Bila tidak ada kunci API untuk provider aktif, atau AI tidak
+ * dapat dihubungi, ringkasan AI dilewati dan layar MENYATAKAN
+ * batas itu — narasi luring dan aliran data tetap ditampilkan.
  */
 public class NaratorLogikaActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -190,11 +195,14 @@ public class NaratorLogikaActivity extends Activity {
         List<NaratorLogika.Langkah> langkah = NaratorLogika.narasi(kode);
         List<String> peta = NaratorLogika.petaPanggilan(kode);
         List<NaratorLogika.Peringatan> peringatan = NaratorLogika.periksaBug(kode);
+        NaratorLogika.AliranData aliran = NaratorLogika.aliranData(kode);
         StringBuilder b = new StringBuilder();
+        b.append(ringkasanAi(kode)).append("\n");
         b.append(NaratorLogika.tujuanUtama(kode)).append("\n");
         b.append(TeksUI.t("Langkah alur:")).append(" ").append(langkah.size()).append(". ");
         b.append(TeksUI.t("Peringatan ditemukan:")).append(" ").append(peringatan.size()).append(".");
         for (int i = 0; i < langkah.size(); i++) b.append("\n- ").append(langkah.get(i).toString());
+        b.append("\n").append(NaratorLogika.narasiAliran(aliran));
         if (peta.size() > 0) {
             b.append("\n").append(TeksUI.t("Peta panggilan:"));
             for (int i = 0; i < peta.size(); i++) b.append("\n- ").append(peta.get(i));
@@ -203,6 +211,59 @@ public class NaratorLogikaActivity extends Activity {
             b.append("\n! ").append(peringatan.get(i).toString());
         }
         return b.toString();
+    }
+
+    /**
+     * Ringkasan alur dari AI aktif; bila tidak ada kunci atau AI
+     * tidak dapat dihubungi, kembalikan catatan batas yang jelas
+     * (bukan diam-diam). Berjalan di utas latar; nilai kunci API
+     * tidak pernah ditulis ke layar atau log.
+     */
+    private String ringkasanAi(String kode) {
+        String kodeProvider = PengaturanAiActivity.providerTerpilih(this);
+        PenyediaAi.Provider p = PenyediaAi.dariKode(kodeProvider);
+        String namaProvider = p == null ? kodeProvider : p.nama;
+        if (!PengaturanAiActivity.kunciTersedia(this, kodeProvider)) {
+            return TeksUI.t("Ringkasan AI tidak tersedia: tidak ada kunci API untuk")
+                    + " " + namaProvider + ". "
+                    + TeksUI.t("Narasi di bawah ini disusun luring dari pola teks di perangkat. Tambahkan kunci di Pengaturan AI, menu Kelola Kunci API, untuk memakai AI.");
+        }
+        ArsitekCetakBiru.JawabanAi jawaban = ArsitekCetakBiru.tanyaDenganCadangan(
+                penyimpananKunci(), kodeProvider,
+                PengaturanAiActivity.beralihModelAktif(this),
+                NaratorLogika.perintahRingkas(kode),
+                new ArsitekCetakBiru.PabrikPemanggil() {
+                    @Override
+                    public ArsitekCetakBiru.PemanggilAi buat(
+                            String kodeProvider, String model, String kunci) {
+                        return new ArsitekCetakBiru.PemanggilAiHttp(
+                                kodeProvider, model, kunci);
+                    }
+                });
+        String teks = NaratorLogika.ringkasDenganAi(jawaban);
+        if (teks != null) {
+            return TeksUI.t("Ringkasan AI") + " (" + jawaban.penyedia
+                    + " " + jawaban.model + "):\n" + teks;
+        }
+        return TeksUI.t("Ringkasan AI tidak tersedia") + " (" + jawaban.galat + "). "
+                + TeksUI.t("Narasi di bawah ini disusun luring dari pola teks di perangkat. Periksa internet dan kunci API di Pengaturan AI.");
+    }
+
+    /** Penyimpanan kunci (SharedPreferences privat "kunci_api", sama seperti PengaturanAiActivity). */
+    private KunciApi.Penyimpanan penyimpananKunci() {
+        final SharedPreferences pref = getSharedPreferences(
+                "kunci_api", Context.MODE_PRIVATE);
+        return new KunciApi.Penyimpanan() {
+            @Override
+            public String baca(String kunci, String bawaan) {
+                return pref.getString(kunci, bawaan);
+            }
+
+            @Override
+            public void tulis(String kunci, String nilai) {
+                pref.edit().putString(kunci, nilai).apply();
+            }
+        };
     }
 
     private String bacaTeks(File f) {

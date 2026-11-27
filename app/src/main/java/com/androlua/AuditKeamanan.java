@@ -478,6 +478,560 @@ public class AuditKeamanan {
                 + rendah + TeksUI.t(" rendah).");
     }
 
+    public static final String AT_DEX_API_BERBAHAYA = "DEX_API_BERBAHAYA";
+    public static final String AT_DEX_RAHASIA = "DEX_RAHASIA_TERTANAM";
+    public static final String AT_DEX_IZIN_BERLEBIH = "DEX_IZIN_BERLEBIH";
+
+    // ------------------------------------------------------- analisis DEX
+
+    /**
+     * Memindai classes.dex di dalam sebuah APK hasil build (bukan pola
+     * teks kode sumber): API berbahaya yang benar-benar dipanggil,
+     * string rahasia yang benar-benar tertanam sebagai konstanta, dan
+     * — bila manifest proyek (teks) diberikan — izin yang dideklarasikan
+     * tetapi tidak dipakai satu pun API di DEX.
+     * APK null/hilang/rusak menghasilkan daftar kosong, tidak pernah
+     * melempar. Manifest null berarti aturan izin berlebih dilewati.
+     */
+    public static List<Temuan> pindaiDex(File apk) {
+        return pindaiDex(apk, null);
+    }
+
+    public static List<Temuan> pindaiDex(File apk, String manifestXml) {
+        List<Temuan> hasil = new ArrayList<Temuan>();
+        if (apk == null || !apk.isFile()) return hasil;
+        synchronized (IZIN_DIPAKAI_DEX) {
+            IZIN_DIPAKAI_DEX.clear();
+        }
+        try {
+            java.util.zip.ZipFile zf = new java.util.zip.ZipFile(apk);
+            try {
+                java.util.Enumeration<? extends java.util.zip.ZipEntry> en = zf.entries();
+                List<String> namaDex = new ArrayList<String>();
+                while (en.hasMoreElements()) {
+                    String n = en.nextElement().getName();
+                    if (n.equals("classes.dex") || (n.startsWith("classes") && n.endsWith(".dex"))) {
+                        namaDex.add(n);
+                    }
+                }
+                Collections.sort(namaDex);
+                for (int i = 0; i < namaDex.size(); i++) {
+                    String nama = namaDex.get(i);
+                    java.util.zip.ZipEntry entri = zf.getEntry(nama);
+                    if (entri == null) continue;
+                    java.io.InputStream masuk = zf.getInputStream(entri);
+                    byte[] dex = bacaSemua(masuk);
+                    masuk.close();
+                    if (dex == null) continue;
+                    String berkas = apk.getName() + "!" + nama;
+                    pindaiSatuDex(dex, berkas, hasil);
+                }
+            } finally {
+                zf.close();
+            }
+        } catch (Throwable ignored) {
+            return hasil;
+        }
+        if (manifestXml != null) {
+            pindaiIzinBerlebih(apk.getName(), manifestXml, hasil);
+        }
+        Collections.sort(hasil, new Comparator<Temuan>() {
+            @Override
+            public int compare(Temuan a, Temuan b) {
+                int t = tingkatUrutan(a.tingkat) - tingkatUrutan(b.tingkat);
+                if (t != 0) return t;
+                int f = a.berkas.compareTo(b.berkas);
+                if (f != 0) return f;
+                return a.baris - b.baris;
+            }
+        });
+        return hasil;
+    }
+
+    /** Peta API berbahaya: "kelasDescriptor|namaMetode" -> "IZIN|penjelasan". */
+    private static String apiBerbahaya(String kelas, String metode) {
+        if ("Ljava/lang/Runtime;".equals(kelas) && "exec".equals(metode)) {
+            return "TINGGI|Menjalankan perintah sistem (Runtime.exec). Perintah dari luar bisa disisipkan di sini.";
+        }
+        if ("Ljava/lang/ProcessBuilder;".equals(kelas) && "start".equals(metode)) {
+            return "TINGGI|Menjalankan proses sistem (ProcessBuilder.start).";
+        }
+        if (("Ldalvik/system/DexClassLoader;".equals(kelas)
+                || "Ldalvik/system/PathClassLoader;".equals(kelas))
+                && "<init>".equals(metode)) {
+            return "TINGGI|Memuat kode dari luar APK (DexClassLoader/PathClassLoader). Kode itu bisa diganti pihak lain.";
+        }
+        if ("Landroid/webkit/WebView;".equals(kelas) && "addJavascriptInterface".equals(metode)) {
+            return "TINGGI|Membuka antarmuka Java ke halaman web (addJavascriptInterface). Halaman berbahaya bisa memanggil kode Java.";
+        }
+        if ("Landroid/webkit/WebView;".equals(kelas) && "setJavaScriptEnabled".equals(metode)) {
+            return "SEDANG|Mengaktifkan JavaScript di WebView (setJavaScriptEnabled).";
+        }
+        if ("Landroid/telephony/TelephonyManager;".equals(kelas)
+                && ("getDeviceId".equals(metode) || "getSubscriberId".equals(metode)
+                || "getImei".equals(metode) || "getMeid".equals(metode))) {
+            return "TINGGI|Membaca identitas perangkat yang tidak bisa diubah (IMEI/IMSI).";
+        }
+        if ("Landroid/telephony/SmsManager;".equals(kelas)
+                && ("sendTextMessage".equals(metode) || "sendMultipartTextMessage".equals(metode))) {
+            return "TINGGI|Mengirim SMS (SmsManager). SMS bisa menghabiskan pulsa tanpa sepengetahuan pengguna.";
+        }
+        if ("Landroid/location/LocationManager;".equals(kelas)
+                && ("getLastKnownLocation".equals(metode)
+                || "requestLocationUpdates".equals(metode)
+                || "requestSingleUpdate".equals(metode))) {
+            return "SEDANG|Membaca lokasi perangkat (LocationManager).";
+        }
+        if ("Landroid/hardware/Camera;".equals(kelas) && "open".equals(metode)) {
+            return "SEDANG|Membuka kamera (Camera.open).";
+        }
+        if ("Landroid/hardware/camera2/CameraManager;".equals(kelas) && "openCamera".equals(metode)) {
+            return "SEDANG|Membuka kamera (CameraManager.openCamera).";
+        }
+        if ("Landroid/media/AudioRecord;".equals(kelas) && "<init>".equals(metode)) {
+            return "SEDANG|Merekam suara (AudioRecord).";
+        }
+        if ("Landroid/accounts/AccountManager;".equals(kelas) && "getAccounts".equals(metode)) {
+            return "SEDANG|Membaca daftar akun di HP (AccountManager.getAccounts).";
+        }
+        if ("Ljava/lang/System;".equals(kelas)
+                && ("load".equals(metode) || "loadLibrary".equals(metode))) {
+            return "SEDANG|Memuat pustaka native (System.load/loadLibrary).";
+        }
+        return null;
+    }
+
+    /** Izin Android yang dibutuhkan satu API berbahaya ("" bila tidak ada izin khusus). */
+    private static String izinUntukApi(String kelas, String metode) {
+        if ("Landroid/telephony/SmsManager;".equals(kelas)) return "SEND_SMS";
+        if ("Landroid/location/LocationManager;".equals(kelas)) return "ACCESS_FINE_LOCATION";
+        if ("Landroid/hardware/Camera;".equals(kelas)
+                || "Landroid/hardware/camera2/CameraManager;".equals(kelas)) return "CAMERA";
+        if ("Landroid/media/AudioRecord;".equals(kelas)) return "RECORD_AUDIO";
+        if ("Landroid/telephony/TelephonyManager;".equals(kelas)) return "READ_PHONE_STATE";
+        if ("Landroid/accounts/AccountManager;".equals(kelas)) return "GET_ACCOUNTS";
+        if ("Ljava/net/Socket;".equals(kelas) || "Ljava/net/URL;".equals(kelas)) return "INTERNET";
+        return "";
+    }
+
+    /** Memindai satu berkas classes.dex; temuan ditambahkan ke `keluar`. */
+    private static void pindaiSatuDex(byte[] dex, String berkas, List<Temuan> keluar) {
+        ParserDex p = new ParserDex(dex);
+        if (!p.sah()) return;
+        // Agregasi API berbahaya per target: kunci -> jumlah pemanggil + contoh pemanggil.
+        java.util.Map<String, Integer> hitungApi = new java.util.LinkedHashMap<String, Integer>();
+        java.util.Map<String, String> contohApi = new java.util.LinkedHashMap<String, String>();
+        java.util.Map<String, String> tingkatApi = new java.util.LinkedHashMap<String, String>();
+        java.util.Map<String, String> jelasApi = new java.util.LinkedHashMap<String, String>();
+        java.util.Set<String> izinDipakai = new java.util.HashSet<String>();
+        java.util.Set<String> rahasiaDilihat = new java.util.HashSet<String>();
+        for (int i = 0; i < p.metodeKode.size(); i++) {
+            ParserDex.MetodeKode mk = p.metodeKode.get(i);
+            String pemanggil = mk.kelas + "." + mk.nama;
+            for (int j = 0; j < mk.panggilan.size(); j++) {
+                ParserDex.RefMetode r = mk.panggilan.get(j);
+                String info = apiBerbahaya(r.kelas, r.nama);
+                if (info != null) {
+                    String kunci = r.kelas + "|" + r.nama;
+                    Integer n = hitungApi.get(kunci);
+                    hitungApi.put(kunci, n == null ? 1 : n.intValue() + 1);
+                    if (!contohApi.containsKey(kunci)) contohApi.put(kunci, pemanggil);
+                    int pisah = info.indexOf('|');
+                    tingkatApi.put(kunci, info.substring(0, pisah));
+                    jelasApi.put(kunci, info.substring(pisah + 1));
+                }
+                String izin = izinUntukApi(r.kelas, r.nama);
+                if (izin.length() > 0) izinDipakai.add(izin);
+                if ("Ljava/net/Socket;".equals(r.kelas) || "Ljava/net/URL;".equals(r.kelas)) {
+                    izinDipakai.add("INTERNET");
+                }
+            }
+            // Rahasia + kripto lemah dari konstanta string di metode ini.
+            for (int j = 0; j < mk.stringKonstan.size(); j++) {
+                String s = mk.stringKonstan.get(j);
+                String jenisRahasia = jenisRahasiaDex(s);
+                if (jenisRahasia != null) {
+                    String kunci = jenisRahasia + "|" + pemanggil;
+                    if (rahasiaDilihat.add(kunci)) {
+                        keluar.add(new Temuan(TINGGI, berkas, 0, AT_DEX_RAHASIA,
+                                TeksUI.t("String rahasia tertanam di bytecode (")
+                                + jenisRahasia + TeksUI.t("), dipakai di ")
+                                + pemanggil + TeksUI.t(". Nilainya tidak ditampilkan di sini supaya tidak bocor. ")
+                                + TeksUI.t("Siapa pun yang membongkar APK bisa membaca nilai itu."),
+                                TeksUI.t("Pindahkan rahasia dari kode ke penyimpanan aman di HP atau ke server. ")
+                                + TeksUI.t("Jangan menulis kunci atau kata sandi langsung di kode.")));
+                    }
+                }
+                if (s.contains("MD5") || s.contains("SHA1") || s.contains("SHA-1")
+                        || s.contains("DES") || s.contains("ECB")) {
+                    boolean pakaiKripto = false;
+                    for (int k = 0; k < mk.panggilan.size(); k++) {
+                        ParserDex.RefMetode r = mk.panggilan.get(k);
+                        if (("Ljava/security/MessageDigest;".equals(r.kelas)
+                                || "Ljavax/crypto/Cipher;".equals(r.kelas))
+                                && "getInstance".equals(r.nama)) pakaiKripto = true;
+                    }
+                    if (pakaiKripto) {
+                        String algo = s.contains("MD5") ? "MD5" : s.contains("DES") ? "DES" : "ECB";
+                        String kunci = "KRIPTO|" + pemanggil + "|" + algo;
+                        if (rahasiaDilihat.add(kunci)) {
+                            keluar.add(new Temuan(TINGGI, berkas, 0, AT_KRIPTO_LEMAH,
+                                    TeksUI.t("Kriptografi lemah di bytecode: ") + algo
+                                    + TeksUI.t(" dipakai di ") + pemanggil + ".",
+                                    perbaikan(AT_KRIPTO_LEMAH, "\"" + algo + "\"")));
+                        }
+                    }
+                }
+            }
+            // WebView: JavaScript aktif + antarmuka JS di kelas yang sama.
+            boolean jsAktif = false, jsInterface = false;
+            for (int j = 0; j < mk.panggilan.size(); j++) {
+                ParserDex.RefMetode r = mk.panggilan.get(j);
+                if ("Landroid/webkit/WebView;".equals(r.kelas)
+                        && "setJavaScriptEnabled".equals(r.nama)) jsAktif = true;
+                if ("Landroid/webkit/WebView;".equals(r.kelas)
+                        && "addJavascriptInterface".equals(r.nama)) jsInterface = true;
+            }
+            if (jsAktif && jsInterface) {
+                String kunci = "WEBVIEW|" + mk.kelas;
+                if (rahasiaDilihat.add(kunci)) {
+                    keluar.add(new Temuan(TINGGI, berkas, 0, AT_WEBVIEW,
+                            TeksUI.t("WebView di bytecode kelas ") + mk.kelas
+                            + TeksUI.t(" mengaktifkan JavaScript dan membuka antarmuka Java ke halaman web."),
+                            perbaikan(AT_WEBVIEW, "")));
+                }
+            }
+        }
+        for (java.util.Map.Entry<String, Integer> e : hitungApi.entrySet()) {
+            String kunci = e.getKey();
+            int pisah = kunci.indexOf('|');
+            String target = kunci.substring(0, pisah) + "." + kunci.substring(pisah + 1);
+            String tingkat = tingkatApi.get(kunci);
+            keluar.add(new Temuan(tingkat, berkas, 0, AT_DEX_API_BERBAHAYA,
+                    jelasApi.get(kunci) + " " + TeksUI.t("Dipanggil dari ")
+                    + e.getValue() + TeksUI.t(" tempat di DEX, contoh: ")
+                    + contohApi.get(kunci) + ".",
+                    TeksUI.t("Pastikan pemanggilan ") + target
+                    + TeksUI.t(" memang dibutuhkan aplikasi ini, dan minta izinnya dulu bila perlu.")));
+        }
+        p.izinDipakaiDex = izinDipakai;
+        // Simpan gabungan izin dari semua dex di daftar statis sementara.
+        synchronized (IZIN_DIPAKAI_DEX) {
+            IZIN_DIPAKAI_DEX.addAll(izinDipakai);
+        }
+    }
+
+    /** Izin yang terbukti dipakai di DEX selama satu kali pindaiDex (dipakai aturan izin berlebih). */
+    private static final java.util.Set<String> IZIN_DIPAKAI_DEX =
+            new java.util.HashSet<String>();
+
+    /** Jenis rahasia dari satu string konstanta DEX; null bila bukan rahasia. */
+    private static String jenisRahasiaDex(String s) {
+        if (s == null) return null;
+        if (POLA_KUNCI_SK.matcher(s).find()) return "kunci sk-...";
+        if (POLA_KUNCI_AKIA.matcher(s).find()) return "kunci AKIA...";
+        if (POLA_KUNCI_AIZA.matcher(s).find()) return "kunci AIza...";
+        if (POLA_KUNCI_API_KEY.matcher(s).find()) return "api_key";
+        if (POLA_KATA_SANDI.matcher(s).find()) return "password";
+        return null;
+    }
+
+    /** Aturan izin berlebih: izin di manifest proyek yang tak dipakai satu pun API di DEX. */
+    private static void pindaiIzinBerlebih(String namaApk, String manifestXml, List<Temuan> keluar) {
+        if (manifestXml == null) return;
+        java.util.Set<String> dipakai;
+        synchronized (IZIN_DIPAKAI_DEX) {
+            dipakai = new java.util.HashSet<String>(IZIN_DIPAKAI_DEX);
+            IZIN_DIPAKAI_DEX.clear();
+        }
+        Matcher m = Pattern.compile("<uses-permission[^>]*android:name=\"([^\"]+)\"").matcher(manifestXml);
+        java.util.Set<String> sudah = new java.util.HashSet<String>();
+        while (m.find()) {
+            String nama = m.group(1);
+            if (nama.startsWith("android.permission.")) {
+                nama = nama.substring("android.permission.".length());
+            }
+            if (!sudah.add(nama)) continue;
+            if ("INTERNET".equals(nama) || "ACCESS_NETWORK_STATE".equals(nama)) continue;
+            if (dipakai.contains(nama)) continue;
+            // Hanya laporkan izin yang punya pemetaan API yang dikenal.
+            boolean dikenal = "SEND_SMS".equals(nama) || "ACCESS_FINE_LOCATION".equals(nama)
+                    || "ACCESS_COARSE_LOCATION".equals(nama) || "CAMERA".equals(nama)
+                    || "RECORD_AUDIO".equals(nama) || "READ_PHONE_STATE".equals(nama)
+                    || "GET_ACCOUNTS".equals(nama) || "READ_EXTERNAL_STORAGE".equals(nama)
+                    || "WRITE_EXTERNAL_STORAGE".equals(nama) || "READ_CONTACTS".equals(nama);
+            if (!dikenal) continue;
+            if ("ACCESS_COARSE_LOCATION".equals(nama) && dipakai.contains("ACCESS_FINE_LOCATION")) continue;
+            keluar.add(new Temuan(SEDANG, "AndroidManifest.xml", 0, AT_DEX_IZIN_BERLEBIH,
+                    TeksUI.t("Izin ") + nama + TeksUI.t(" dideklarasikan di manifest, tetapi tidak ada pemanggilan API di classes.dex yang membutuhkannya. ")
+                    + TeksUI.t("Izin berlebih membuat pengguna curiga dan memperluas permukaan serangan."),
+                    TeksUI.t("Hapus <uses-permission android:name=\"android.permission.") + nama
+                    + TeksUI.t("\" /> dari manifest bila aplikasi ini memang tidak memakai izin itu.")));
+        }
+    }
+
+    /** Membaca seluruh aliran menjadi byte[]; null bila gagal. */
+    private static byte[] bacaSemua(java.io.InputStream masuk) {
+        try {
+            java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = masuk.read(buf)) >= 0) b.write(buf, 0, n);
+            return b.toByteArray();
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /**
+     * Parser DEX minimal (murni Java): header, string/type/method id,
+     * class def, class data, dan instruksi tiap metode (invoke +
+     * const-string). Tidak memeriksa checksum/signature; dex rusak
+     * menghasilkan sah()==false dan daftar metode kosong.
+     */
+    static class ParserDex {
+        static class RefMetode {
+            final String kelas;
+            final String nama;
+            RefMetode(String k, String n) { kelas = k; nama = n; }
+        }
+
+        static class MetodeKode {
+            String kelas = "";
+            String nama = "";
+            final List<RefMetode> panggilan = new ArrayList<RefMetode>();
+            final List<String> stringKonstan = new ArrayList<String>();
+        }
+
+        final List<MetodeKode> metodeKode = new ArrayList<MetodeKode>();
+        java.util.Set<String> izinDipakaiDex = new java.util.HashSet<String>();
+
+        private final byte[] d;
+        private boolean sah = false;
+
+        ParserDex(byte[] dex) {
+            d = dex;
+            try {
+                urai();
+            } catch (Throwable t) {
+                metodeKode.clear();
+                sah = false;
+            }
+        }
+
+        boolean sah() {
+            return sah;
+        }
+
+        private int u8(int p) {
+            return d[p] & 0xFF;
+        }
+
+        private int u16(int p) {
+            return (d[p] & 0xFF) | ((d[p + 1] & 0xFF) << 8);
+        }
+
+        private int u32(int p) {
+            return (d[p] & 0xFF) | ((d[p + 1] & 0xFF) << 8)
+                    | ((d[p + 2] & 0xFF) << 16) | ((d[p + 3] & 0xFF) << 24);
+        }
+
+        /** Membaca uleb128 di posisi p; nilai di [0], posisi lanjut di [1]. */
+        private int[] uleb(int p) {
+            int hasil = 0, geser = 0;
+            while (p < d.length && geser < 32) {
+                int b = u8(p++);
+                hasil |= (b & 0x7F) << geser;
+                if ((b & 0x80) == 0) break;
+                geser += 7;
+            }
+            return new int[]{hasil, p};
+        }
+
+        private void urai() {
+            if (d == null || d.length < 112) return;
+            if (d[0] != 'd' || d[1] != 'e' || d[2] != 'x' || d[3] != '\n') return;
+            int stringIdsSize = u32(56);
+            int stringIdsOff = u32(60);
+            int typeIdsSize = u32(64);
+            int typeIdsOff = u32(68);
+            int methodIdsSize = u32(88);
+            int methodIdsOff = u32(92);
+            int classDefsSize = u32(96);
+            int classDefsOff = u32(100);
+            if (stringIdsOff < 0 || typeIdsOff < 0 || methodIdsOff < 0 || classDefsOff < 0) return;
+            // String.
+            String[] strings = new String[stringIdsSize];
+            for (int i = 0; i < stringIdsSize; i++) {
+                int off = u32(stringIdsOff + i * 4);
+                if (off < 0 || off >= d.length) { strings[i] = ""; continue; }
+                int[] r = uleb(off);
+                int p = r[1];
+                int akhir = p;
+                while (akhir < d.length && d[akhir] != 0) akhir++;
+                try {
+                    strings[i] = new String(d, p, akhir - p, "UTF-8");
+                } catch (Throwable t) {
+                    strings[i] = "";
+                }
+            }
+            tabelString = strings;
+            // Type -> descriptor string.
+            String[] types = new String[typeIdsSize];
+            for (int i = 0; i < typeIdsSize; i++) {
+                int idx = u32(typeIdsOff + i * 4);
+                types[i] = (idx >= 0 && idx < strings.length) ? strings[idx] : "";
+            }
+            // Method id: class_idx u16, proto_idx u16, name_idx u32.
+            String[] methodKelas = new String[methodIdsSize];
+            String[] methodNama = new String[methodIdsSize];
+            for (int i = 0; i < methodIdsSize; i++) {
+                int p = methodIdsOff + i * 8;
+                int classIdx = u16(p);
+                int nameIdx = u32(p + 4);
+                methodKelas[i] = (classIdx >= 0 && classIdx < types.length) ? types[classIdx] : "";
+                methodNama[i] = (nameIdx >= 0 && nameIdx < strings.length) ? strings[nameIdx] : "";
+            }
+            // Class def: class_idx u32, ..., class_data_off u32 di +24.
+            for (int i = 0; i < classDefsSize; i++) {
+                int p = classDefsOff + i * 32;
+                int classIdx = u32(p);
+                int classDataOff = u32(p + 24);
+                String namaKelas = (classIdx >= 0 && classIdx < types.length) ? types[classIdx] : "";
+                if (classDataOff == 0) continue;
+                uraiClassData(classDataOff, namaKelas, methodKelas, methodNama);
+            }
+            sah = true;
+        }
+
+        private void uraiClassData(int off, String namaKelas,
+                                   String[] methodKelas, String[] methodNama) {
+            int p = off;
+            int[] r = uleb(p); int staticFields = r[0]; p = r[1];
+            r = uleb(p); int instanceFields = r[0]; p = r[1];
+            r = uleb(p); int directMethods = r[0]; p = r[1];
+            r = uleb(p); int virtualMethods = r[0]; p = r[1];
+            for (int i = 0; i < staticFields + instanceFields; i++) {
+                r = uleb(p); p = r[1];
+                r = uleb(p); p = r[1];
+            }
+            int idxMetode = 0;
+            for (int i = 0; i < directMethods + virtualMethods; i++) {
+                r = uleb(p); idxMetode += r[0]; p = r[1];
+                r = uleb(p); p = r[1];
+                r = uleb(p); int codeOff = r[0]; p = r[1];
+                if (codeOff != 0 && idxMetode >= 0 && idxMetode < methodKelas.length) {
+                    MetodeKode mk = new MetodeKode();
+                    mk.kelas = namaKelas;
+                    mk.nama = methodNama[idxMetode];
+                    uraiCode(codeOff, mk, methodKelas, methodNama);
+                    metodeKode.add(mk);
+                }
+            }
+        }
+
+        private void uraiCode(int off, MetodeKode mk,
+                              String[] methodKelas, String[] methodNama) {
+            if (off + 16 > d.length) return;
+            int insnsSize = u32(off + 12);
+            int p = off + 16;
+            int akhir = Math.min(d.length, p + insnsSize * 2);
+            int pc = p;
+            while (pc + 1 < akhir) {
+                int unit = u16(pc);
+                int op = unit & 0xFF;
+                if ((op >= 0x6e && op <= 0x72) || (op >= 0x74 && op <= 0x78)) {
+                    if (pc + 3 < akhir) {
+                        int midx = u16(pc + 2);
+                        if (midx >= 0 && midx < methodKelas.length) {
+                            mk.panggilan.add(new RefMetode(methodKelas[midx], methodNama[midx]));
+                        }
+                    }
+                } else if (op == 0xfa) {
+                    if (pc + 3 < akhir) {
+                        int midx = u16(pc + 2);
+                        if (midx >= 0 && midx < methodKelas.length) {
+                            mk.panggilan.add(new RefMetode(methodKelas[midx], methodNama[midx]));
+                        }
+                    }
+                } else if (op == 0x1a) {
+                    if (pc + 3 < akhir) {
+                        // const-string: string idx ada di unit kedua; string
+                        // aslinya diambil dari tabel string lewat methodNama?
+                        // Tidak: string idx merujuk tabel string, bukan metode.
+                        // Disimpan sebagai indeks mentah di daftar terpisah.
+                        mk.stringKonstan.add("\u0001IDX:" + u16(pc + 2));
+                    }
+                } else if (op == 0x1b) {
+                    if (pc + 5 < akhir) {
+                        mk.stringKonstan.add("\u0001IDX:" + u32(pc + 2));
+                    }
+                }
+                int len = panjangInstruksi(op);
+                if (len <= 0) len = 1;
+                pc += len * 2;
+            }
+            // Ganti penanda indeks string mentah dengan string aslinya.
+            for (int i = 0; i < mk.stringKonstan.size(); i++) {
+                String s = mk.stringKonstan.get(i);
+                if (s.startsWith("\u0001IDX:")) {
+                    try {
+                        int idx = Integer.parseInt(s.substring(5));
+                        mk.stringKonstan.set(i, stringKe(idx));
+                    } catch (Throwable t) {
+                        mk.stringKonstan.set(i, "");
+                    }
+                }
+            }
+        }
+
+        /** String ke-idx dari tabel string; butuh tabel — diisi saat urai(). */
+        private String[] tabelString = new String[0];
+
+        private String stringKe(int idx) {
+            if (idx >= 0 && idx < tabelString.length) return tabelString[idx];
+            return "";
+        }
+
+        /** Panjang instruksi Dalvik dalam unit 16-bit (1 bila tak dikenal). */
+        static int panjangInstruksi(int op) {
+            switch (op) {
+                case 0x02: case 0x03: case 0x05: case 0x06: case 0x08: case 0x09:
+                case 0x13: case 0x15: case 0x16: case 0x19: case 0x1a: case 0x1c:
+                case 0x1f: case 0x20: case 0x22: case 0x23: case 0x29: case 0x2d:
+                case 0x2e: case 0x2f: case 0x30: case 0x31: case 0x32: case 0x33:
+                case 0x34: case 0x35: case 0x36: case 0x37: case 0x38: case 0x39:
+                case 0x3a: case 0x3b: case 0x3c: case 0x3d: case 0x44: case 0x45:
+                case 0x46: case 0x47: case 0x48: case 0x49: case 0x4a: case 0x4b:
+                case 0x4c: case 0x4d: case 0x4e: case 0x4f: case 0x50: case 0x51:
+                case 0x52: case 0x53: case 0x54: case 0x55: case 0x56: case 0x57:
+                case 0x58: case 0x59: case 0x5a: case 0x5b: case 0x5c: case 0x5d:
+                case 0x5e: case 0x5f: case 0x60: case 0x61: case 0x62: case 0x63:
+                case 0x64: case 0x65: case 0x66: case 0x67: case 0x68: case 0x69:
+                case 0x6a: case 0x6b: case 0x6c: case 0x6d: case 0x90: case 0x91:
+                case 0x92: case 0x93: case 0x94: case 0x95: case 0x96: case 0x97:
+                case 0x98: case 0x99: case 0x9a: case 0x9b: case 0x9c: case 0x9d:
+                case 0x9e: case 0x9f: case 0xa0: case 0xa1: case 0xa2: case 0xa3:
+                case 0xa4: case 0xa5: case 0xa6: case 0xa7: case 0xa8: case 0xa9:
+                case 0xaa: case 0xab: case 0xac: case 0xad: case 0xae: case 0xaf:
+                case 0xd0: case 0xd1: case 0xd2: case 0xd3: case 0xd4: case 0xd5:
+                case 0xd6: case 0xd7: case 0xd8: case 0xd9: case 0xda: case 0xdb:
+                case 0xdc: case 0xdd: case 0xde: case 0xdf: case 0xe0: case 0xe1:
+                case 0xe2: case 0xfd: case 0xfe:
+                    return 2;
+                case 0x14: case 0x17: case 0x18: case 0x1b: case 0x24: case 0x25:
+                case 0x26: case 0x2a: case 0x2b: case 0x2c: case 0x6e: case 0x6f:
+                case 0x70: case 0x71: case 0x72: case 0x74: case 0x75: case 0x76:
+                case 0x77: case 0x78: case 0xfb: case 0xfc:
+                    return 3;
+                case 0xfa:
+                    return 4;
+                default:
+                    return 1;
+            }
+        }
+    }
+
     // ------------------------------------------------------------- pembantu
 
     private static int nomorBaris(String isi, int posisi) {

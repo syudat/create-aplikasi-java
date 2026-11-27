@@ -29,9 +29,11 @@ import java.util.Locale;
  * kebijakan Play Store. Logika ada di PabrikAAB (murni Java, sudah
  * diuji di komputer).
  *
- * BATAS: bundel adalah arsip berstruktur AAB standar; verifikasi
- * akhir bundletool dan penandatanganan bundel tetap memakai jalur
- * build yang sama dengan APK. Ukuran pecahan adalah perkiraan.
+ * BATAS: bundletool sungguhan tidak bisa dijalankan di HP (butuh JVM
+ * — lihat PabrikAAB.penilaianBundletool()). Yang dilakukan di sini
+ * adalah jalur terdekat yang nyata: validasi struktur bundel,
+ * pemecahan nyata menjadi APK varian dengan ukuran terukur, dan
+ * tanda tangan JAR v1 (seperti jarsigner) memakai ApkSigner.
  */
 public class PabrikAABActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -42,6 +44,8 @@ public class PabrikAABActivity extends Activity {
     private final List<String> daftarProyek = new ArrayList<String>();
     private TextView tvHasil;
     private Button bJalankan;
+    private File aabAktif;
+    private File dirAktif;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,20 @@ public class PabrikAABActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mulai();
+            }
+        });
+
+        button(r, TeksUI.t("Bangun AAB dari APK Jadi"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mulaiDariApk();
+            }
+        });
+
+        button(r, TeksUI.t("Tandatangani Bundel"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mulaiTandaTangan();
             }
         });
 
@@ -137,6 +155,7 @@ public class PabrikAABActivity extends Activity {
     }
 
     private String jalankan(File dir) {
+        dirAktif = dir;
         File modul = new File(dir, "app/src/main");
         if (!modul.isDirectory()) modul = dir;
         String nama = InfoProyek.namaAplikasi(dir).replaceAll("\\s+", "");
@@ -144,12 +163,44 @@ public class PabrikAABActivity extends Activity {
         File keluar = new File(new File(dir, "bin"), nama + ".aab");
         File aab = PabrikAAB.bangunAAB(modul, keluar);
         if (aab == null) return TeksUI.t("Bundel AAB tidak bisa dibuat.");
-        long ukuranBersama = PabrikAAB.ukuranFolder(new File(modul, "res"))
-                + PabrikAAB.ukuranFolder(new File(modul, "assets"));
-        long ukuranLib = PabrikAAB.ukuranFolder(new File(modul, "jniLibs"));
-        List<PabrikAAB.Varian> varian = PabrikAAB.simulasiPecahan(ukuranBersama,
-                ukuranLib / 2, ukuranBersama / 10, PabrikAAB.ABI,
-                new String[]{"id", "en"});
+        aabAktif = aab;
+        return ringkasHasil(dir, aab);
+    }
+
+    private String jalankanDariApk(File dir) {
+        dirAktif = dir;
+        String nama = InfoProyek.namaAplikasi(dir).replaceAll("\\s+", "");
+        if (nama.length() == 0) nama = dir.getName();
+        File apk = new File(new File(dir, "bin"), nama + ".apk");
+        if (!apk.isFile()) {
+            File bin = new File(dir, "bin");
+            File[] daftar = bin.listFiles();
+            if (daftar != null) {
+                for (int i = 0; i < daftar.length; i++) {
+                    if (daftar[i].getName().endsWith(".apk")) {
+                        apk = daftar[i];
+                        break;
+                    }
+                }
+            }
+        }
+        if (!apk.isFile()) {
+            return TeksUI.t("APK jadi tidak ditemukan di folder bin. Bangun dulu APK proyeknya.");
+        }
+        File keluar = new File(new File(dir, "bin"), nama + ".aab");
+        File aab = PabrikAAB.bangunAABDariApk(apk, keluar);
+        if (aab == null) return TeksUI.t("Bundel AAB tidak bisa dibuat dari APK.");
+        aabAktif = aab;
+        return ringkasHasil(dir, aab);
+    }
+
+    /** Validasi bundel + pecahan nyata + audit Play, dirangkai jadi teks hasil. */
+    private String ringkasHasil(File dir, File aab) {
+        File modul = new File(dir, "app/src/main");
+        if (!modul.isDirectory()) modul = dir;
+        List<PabrikAAB.Temuan> validasi = PabrikAAB.validasiBundel(aab);
+        List<PabrikAAB.Varian> varian = PabrikAAB.bangunPecahan(aab,
+                new File(new File(dir, "bin"), "pecahan"));
         String manifest = bacaTeks(new File(modul, "AndroidManifest.xml"));
         int target = 34;
         try {
@@ -162,16 +213,88 @@ public class PabrikAABActivity extends Activity {
                 || new File(dir, "lib/armeabi-v7a").isDirectory();
         List<PabrikAAB.Temuan> temuan = PabrikAAB.auditPlay(manifest, target, ada64, ada32);
         StringBuilder b = new StringBuilder();
-        b.append(TeksUI.t("Ukuran unduhan diperkirakan:")).append(" ");
-        long terkecil = -1;
-        for (int i = 0; i < varian.size(); i++) {
-            if (terkecil < 0 || varian.get(i).ukuran < terkecil) terkecil = varian.get(i).ukuran;
+        b.append(TeksUI.t("Bundel dibuat:")).append(" ").append(aab.getPath())
+                .append(" (").append(aab.length()).append(" ").append(TeksUI.t("bita")).append(").");
+        b.append("\n").append(TeksUI.t("Pemeriksaan bundel:")).append(" ");
+        if (validasi.isEmpty()) {
+            b.append(TeksUI.t("Tidak ada temuan."));
+        } else {
+            b.append(validasi.size()).append(" ").append(TeksUI.t("temuan."));
+            for (int i = 0; i < validasi.size(); i++) b.append("\n! ").append(validasi.get(i).toString());
         }
-        b.append(terkecil < 0 ? "-" : terkecil + " " + TeksUI.t("bita")).append(". ");
-        b.append(TeksUI.t("Pemeriksaan Play:")).append(" ").append(temuan.size()).append(" temuan.");
-        b.append("\n").append(PabrikAAB.ringkasan(aab.length(), varian, temuan));
-        for (int i = 0; i < varian.size(); i++) b.append("\n- ").append(varian.get(i).toString());
+        b.append("\n").append(PabrikAAB.ringkasanPecahan(varian));
+        b.append("\n").append(TeksUI.t("bundletool tidak bisa dijalankan di HP ini (butuh JVM). Ukuran pecahan di atas adalah hasil pemecahan nyata menjadi APK varian, bukan perkiraan."));
+        b.append("\n").append(TeksUI.t("Pemeriksaan Play:")).append(" ").append(temuan.size()).append(" temuan.");
         for (int i = 0; i < temuan.size(); i++) b.append("\n! ").append(temuan.get(i).toString());
+        return b.toString();
+    }
+
+    private void mulaiDariApk() {
+        if (spProyek == null || spProyek.getSelectedItem() == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final File dir = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+        tvHasil.setText(TeksUI.t("Bangun AAB dari APK Jadi") + "...");
+        bJalankan.setEnabled(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = jalankanDariApk(dir);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bJalankan.setEnabled(true);
+                        tvHasil.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "PabrikAABApk").start();
+    }
+
+    private void mulaiTandaTangan() {
+        if (aabAktif == null || !aabAktif.isFile()) {
+            toast(TeksUI.t("Bundel belum dibuat. Tekan dulu Bangun Bundel AAB atau Bangun AAB dari APK Jadi."));
+            return;
+        }
+        if (dirAktif == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        tvHasil.setText(TeksUI.t("Menandatangani bundel") + "...");
+        bJalankan.setEnabled(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = jalankanTandaTangan();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bJalankan.setEnabled(true);
+                        tvHasil.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "PabrikAABTanda").start();
+    }
+
+    private String jalankanTandaTangan() {
+        PabrikAAB.KunciProyek kunci = PabrikAAB.muatKunciProyek(dirAktif);
+        if (kunci == null) kunci = PabrikAAB.buatKunciProyek(dirAktif);
+        if (kunci == null) return TeksUI.t("Kunci proyek tidak bisa dibuat atau dibaca.");
+        String nama = aabAktif.getName();
+        if (nama.endsWith(".aab")) nama = nama.substring(0, nama.length() - 4);
+        File keluar = new File(aabAktif.getParentFile(), nama + "-ditandatangani.aab");
+        File hasil = PabrikAAB.tandatanganiBundel(aabAktif, kunci.kunci, kunci.sertifikat, keluar);
+        if (hasil == null) return TeksUI.t("Tanda tangan bundel tidak bisa dibuat.");
+        PabrikAAB.HasilVerifikasi verifikasi = PabrikAAB.verifikasiTandaTanganBundel(hasil);
+        StringBuilder b = new StringBuilder();
+        b.append(TeksUI.t("Bundel ditandatangani:")).append(" ").append(hasil.getPath())
+                .append(" (").append(hasil.length()).append(" ").append(TeksUI.t("bita")).append(").");
+        b.append("\n").append(verifikasi.toString());
+        b.append("\n").append(TeksUI.t("Kunci yang dipakai sama dengan kunci APK proyek ini, jadi tanda tangan bundel cocok dengan tanda tangan APK."));
         return b.toString();
     }
 

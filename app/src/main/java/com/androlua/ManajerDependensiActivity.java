@@ -27,17 +27,24 @@ import java.util.Locale;
  * (Fitur 7, daftar Gemini 2026-11-27).
  *
  * Pilih proyek, tekan "Periksa Dependensi" — IDE membaca dependensi
- * dari berkas Gradle proyek, memeriksa brankas luring, dan
- * menyelesaikan bentrokan versi ke versi tertinggi. Isi koordinat
- * pustaka untuk menambahkannya ke brankas. Logika ada di
- * ManajerDependensi (murni Java, sudah diuji di komputer).
+ * dari berkas Gradle proyek, mengunduh berkas AAR/JAR/WHL yang
+ * belum ada ke brankas bersama saat daring, dan menyelesaikan
+ * grafik dependensi transitif penuh (dependensi turunan ikut
+ * diselesaikan) beserta bentrokan versi ke versi tertinggi. Isi
+ * koordinat pustaka untuk mengunduhnya ke brankas bersama. Logika
+ * ada di ManajerDependensi (murni Java, sudah diuji di komputer).
  *
  * BATAS: pengunduhan butuh internet — saat luring hanya pustaka yang
- * sudah ada di brankas yang bisa dipakai.
+ * sudah ada di brankas bersama yang bisa dipakai, dan grafik
+ * transitif tidak bisa diperluas tanpa POM dari jaringan.
  */
 public class ManajerDependensiActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
             + "/Download/project";
+    private static final String AKAR_DOWNLOAD = Environment.getExternalStorageDirectory().getPath()
+            + "/Download";
+    private static final File DIR_BRANKAS_BERSAMA =
+            ManajerDependensi.dirBrankasBersama(new File(AKAR_DOWNLOAD));
 
     private Spinner spProyek;
     private ArrayAdapter<String> adapterProyek;
@@ -63,7 +70,7 @@ public class ManajerDependensiActivity extends Activity {
         setContentView(sv);
 
         heading(r, TeksUI.t("Manajer Dependensi Luring"), 20);
-        label(r, TeksUI.t("Simpan pustaka AAR, JAR, dan WHL di brankas luring HP, lalu selesaikan bentrokan versi sebelum build tanpa internet."), false);
+        label(r, TeksUI.t("Unduh dan periksa dependensi dari brankas bersama, termasuk dependensi turunan, saat daring. Berkas AAR, JAR, dan WHL yang berhasil diunduh tersimpan di brankas bersama dan dapat dipakai semua proyek tanpa internet."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -74,10 +81,10 @@ public class ManajerDependensiActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, TeksUI.t("Tambah pustaka ke brankas (kosongkan bila hanya memeriksa):"), false);
+        label(r, TeksUI.t("Tambah pustaka ke brankas bersama (kosongkan bila hanya memeriksa):"), false);
         ePustaka = new EditText(this);
         GayaStudio.edit(ePustaka);
-        ePustaka.setHint(TeksUI.t("Contoh: com.google.code.gson:gson:2.10.1"));
+        ePustaka.setHint(TeksUI.t("Contoh: com.google.code.gson:gson:2.10.1 atau pypi:requests:2.31.0"));
         ePustaka.setTextSize(14);
         ePustaka.setSingleLine(true);
         r.addView(ePustaka, new LinearLayout.LayoutParams(
@@ -150,37 +157,69 @@ public class ManajerDependensiActivity extends Activity {
     }
 
     private String jalankan(File dir, String tambah) {
-        File indeks = new File(dir, "brankas-maven.txt");
+        ManajerDependensi.PengambilBerkas pengambil = new ManajerDependensi.PengambilHttp();
+        File indeksBersama = ManajerDependensi.berkasIndeksBersama(new File(AKAR_DOWNLOAD));
+        List<ManajerDependensi.Pustaka> bersama =
+                ManajerDependensi.uraiIndeks(bacaTeks(indeksBersama));
+        List<ManajerDependensi.Pustaka> lama =
+                ManajerDependensi.uraiIndeks(bacaTeks(new File(dir, "brankas-maven.txt")));
         List<ManajerDependensi.Pustaka> brankas =
-                ManajerDependensi.uraiIndeks(bacaTeks(indeks));
+                ManajerDependensi.gabungBrankas(bersama, lama);
         StringBuilder b = new StringBuilder();
+        b.append(TeksUI.t("Brankas bersama:")).append(" ")
+                .append(DIR_BRANKAS_BERSAMA.getPath()).append("\n");
         if (tambah.length() > 0) {
             ManajerDependensi.Pustaka p = ManajerDependensi.uraiKoordinat(tambah);
             if (p == null) {
                 return TeksUI.t("Koordinat pustaka tidak dikenali. Contoh: com.google.code.gson:gson:2.10.1");
             }
-            if (!ManajerDependensi.sudahAda(brankas, p)) {
-                brankas.add(p);
-                StringBuilder isi = new StringBuilder();
+            if (ManajerDependensi.adalahPypi(p)) p.repo = "pypi";
+            ManajerDependensi.HasilUnduh h =
+                    ManajerDependensi.unduh(p, DIR_BRANKAS_BERSAMA, pengambil);
+            if (h.berhasil) {
+                boolean ada = false;
                 for (int i = 0; i < brankas.size(); i++) {
-                    isi.append(ManajerDependensi.keBarisIndeks(brankas.get(i))).append("\n");
+                    if (brankas.get(i).koordinat().equals(p.koordinat())) {
+                        brankas.set(i, p);
+                        ada = true;
+                    }
                 }
-                tulisTeks(indeks, isi.toString());
+                if (!ada) brankas.add(p);
+                b.append(TeksUI.t("Diunduh:")).append(" ").append(p.koordinat())
+                        .append(" (").append(p.ukuran).append(" bita, ")
+                        .append(p.namaBerkas).append(").\n");
+            } else {
+                b.append(TeksUI.t("Gagal mengunduh:")).append(" ").append(p.koordinat())
+                        .append(". ").append(TeksUI.t("Periksa internet atau koordinatnya."))
+                        .append("\n");
             }
-            b.append(TeksUI.t("Ditambahkan:")).append(" ").append(p.koordinat()).append(".\n");
         }
         List<ManajerDependensi.Pustaka> diminta = new ArrayList<ManajerDependensi.Pustaka>();
         cariGradle(dir, diminta);
         List<ManajerDependensi.Bentrokan> bentrokan = new ArrayList<ManajerDependensi.Bentrokan>();
-        List<ManajerDependensi.Pustaka> selesai =
-                ManajerDependensi.selesaikan(diminta, bentrokan);
+        List<String> masalah = new ArrayList<String>();
+        List<ManajerDependensi.Pustaka> selesai = ManajerDependensi.selesaikanTransitif(
+                diminta, new ManajerDependensi.SumberJaringan(pengambil), bentrokan, masalah);
+        tulisTeks(indeksBersama, ManajerDependensi.keTeksIndeks(brankas));
+        int tanpaBerkas = 0;
+        for (int i = 0; i < brankas.size(); i++) {
+            if (!ManajerDependensi.berkasAda(DIR_BRANKAS_BERSAMA, brankas.get(i))) tanpaBerkas++;
+        }
         b.append(TeksUI.t("Pustaka di brankas:")).append(" ").append(brankas.size()).append(". ");
+        b.append(TeksUI.t("Pustaka terselesaikan:")).append(" ").append(selesai.size()).append(". ");
         b.append(TeksUI.t("Bentrokan ditemukan:")).append(" ").append(bentrokan.size()).append(".");
+        if (tanpaBerkas > 0) {
+            b.append("\n").append(TeksUI.t("Hanya koordinat, berkas belum diunduh:")).append(" ")
+                    .append(tanpaBerkas).append(".");
+        }
         for (int i = 0; i < selesai.size(); i++) {
             b.append("\n- ").append(selesai.get(i).koordinat());
         }
         for (int i = 0; i < bentrokan.size(); i++) {
             b.append("\n! ").append(bentrokan.get(i).toString());
+        }
+        for (int i = 0; i < masalah.size(); i++) {
+            b.append("\n? ").append(masalah.get(i));
         }
         return b.toString();
     }

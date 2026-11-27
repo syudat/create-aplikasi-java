@@ -1,6 +1,8 @@
 package com.androlua;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -24,14 +26,18 @@ import java.util.Locale;
  * Arsitek Cetak Biru Proyek dan Pengurai Tugas Bertahap Berbasis AI
  * (Fitur 11, daftar Gemini 2026-11-27).
  *
- * Tulis gagasan aplikasi, tekan "Buat Cetak Biru" — IDE menyusun
- * modul, berkas, dan tonggak kerja, lalu menyimpannya sebagai
- * cetak-biru.txt di folder proyek. Tekan "Tonggak Berikutnya
- * Selesai" untuk menandai tonggak yang sedang dikerjakan. Logika ada
- * di ArsitekCetakBiru (murni Java, sudah diuji di komputer).
+ * Tulis gagasan aplikasi, tekan "Buat Cetak Biru" — IDE meminta
+ * cetak biru ke penyedia AI AKTIF di Pengaturan AI (DeepSeek, Grok,
+ * Gemini, OpenRouter, Mistral) memakai kunci tersimpan di
+ * KelolaKunciActivity, lalu menyimpannya sebagai cetak-biru.txt di
+ * folder proyek. Tekan "Tonggak Berikutnya Selesai" untuk menandai
+ * tonggak yang sedang dikerjakan. Logika ada di ArsitekCetakBiru
+ * (murni Java, sudah diuji di komputer).
  *
- * BATAS: cetak biru disusun dari pola kata kunci di perangkat, bukan
- * dari model AI online (lihat ArsitekCetakBiru).
+ * Bila tidak ada kunci API untuk provider aktif, atau AI tidak
+ * dapat dihubungi (tidak ada internet, kunci ditolak, model error),
+ * layar jatuh kembali ke pola kata kunci luring dan MENYATAKAN
+ * batas itu di layar — tidak diam-diam.
  */
 public class ArsitekCetakBiruActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -65,6 +71,7 @@ public class ArsitekCetakBiruActivity extends Activity {
 
         heading(r, TeksUI.t("Arsitek Cetak Biru Proyek"), 20);
         label(r, TeksUI.t("Ubah gagasan aplikasi menjadi cetak biru multi-berkas — pohon folder, model data, dan tonggak kerja — lalu bangun satu tonggak demi satu tonggak."), false);
+        label(r, TeksUI.t("Bila ada kunci API di Pengaturan AI, cetak biru disusun oleh penyedia AI aktif; bila tidak ada, dipakai pola luring di perangkat."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -144,21 +151,98 @@ public class ArsitekCetakBiruActivity extends Activity {
             toast(TeksUI.t("Pilih dulu proyeknya."));
             return;
         }
-        String gagasan = eGagasan.getText().toString().trim();
+        final String gagasan = eGagasan.getText().toString().trim();
         if (gagasan.length() == 0) {
             toast(TeksUI.t("Belum ada cetak biru. Tulis gagasan aplikasi, lalu tekan") + " "
                     + TeksUI.t("Buat Cetak Biru") + ".");
             return;
         }
         dirAktif = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
-        biruAktif = ArsitekCetakBiru.buat(gagasan);
+        tvHasil.setText(TeksUI.t("Meminta cetak biru ke AI") + "...");
+        bJalankan.setEnabled(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = jalankanAi(gagasan);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bJalankan.setEnabled(true);
+                        tvHasil.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "ArsitekCetakBiru").start();
+    }
+
+    /**
+     * Susun cetak biru: AI aktif dulu (kunci + model cadangan),
+     * jatuh kembali ke pola luring dengan catatan batas yang jelas.
+     * Berjalan di utas latar; nilai kunci API tidak pernah ditulis
+     * ke layar atau log.
+     */
+    private String jalankanAi(String gagasan) {
+        String kode = PengaturanAiActivity.providerTerpilih(this);
+        PenyediaAi.Provider p = PenyediaAi.dariKode(kode);
+        String namaProvider = p == null ? kode : p.nama;
+        String catatan;
+        if (!PengaturanAiActivity.kunciTersedia(this, kode)) {
+            biruAktif = ArsitekCetakBiru.buat(gagasan);
+            catatan = TeksUI.t("Tidak ada kunci API untuk") + " " + namaProvider + ". "
+                    + TeksUI.t("Cetak biru disusun luring dari pola kata kunci di perangkat. Tambahkan kunci di Pengaturan AI, menu Kelola Kunci API, untuk memakai AI.");
+        } else {
+            ArsitekCetakBiru.JawabanAi jawaban = ArsitekCetakBiru.tanyaDenganCadangan(
+                    penyimpananKunci(), kode,
+                    PengaturanAiActivity.beralihModelAktif(this),
+                    ArsitekCetakBiru.perintahCetakBiru(gagasan),
+                    new ArsitekCetakBiru.PabrikPemanggil() {
+                        @Override
+                        public ArsitekCetakBiru.PemanggilAi buat(
+                                String kodeProvider, String model, String kunci) {
+                            return new ArsitekCetakBiru.PemanggilAiHttp(
+                                    kodeProvider, model, kunci);
+                        }
+                    });
+            if (jawaban.dariAi) {
+                ArsitekCetakBiru.CetakBiru ai =
+                        ArsitekCetakBiru.buatDenganAi(gagasan, jawaban);
+                if (ai != null) {
+                    biruAktif = ai;
+                    catatan = TeksUI.t("Cetak biru disusun oleh") + " " + jawaban.penyedia
+                            + " (" + jawaban.model + ").";
+                } else {
+                    biruAktif = ArsitekCetakBiru.buat(gagasan);
+                    catatan = TeksUI.t("Jawaban AI tidak dapat dipakai sebagai cetak biru, jadi dipakai pola luring.");
+                }
+            } else {
+                biruAktif = ArsitekCetakBiru.buat(gagasan);
+                catatan = TeksUI.t("AI tidak dapat dihubungi") + " (" + jawaban.galat + "). "
+                        + TeksUI.t("Cetak biru disusun luring dari pola kata kunci di perangkat. Periksa internet dan kunci API di Pengaturan AI.");
+            }
+        }
         tulisTeks(new File(dirAktif, "cetak-biru.txt"),
                 ArsitekCetakBiru.eksporTeks(biruAktif));
-        String hasil = TeksUI.t("Tonggak dibuat:") + " " + biruAktif.tonggak.size() + ". "
+        return catatan + "\n" + TeksUI.t("Tonggak dibuat:") + " " + biruAktif.tonggak.size() + ". "
                 + ArsitekCetakBiru.ringkasan(biruAktif)
                 + "\n" + ArsitekCetakBiru.eksporTeks(biruAktif);
-        tvHasil.setText(hasil);
-        announce(hasil);
+    }
+
+    /** Penyimpanan kunci (SharedPreferences privat "kunci_api", sama seperti PengaturanAiActivity). */
+    private KunciApi.Penyimpanan penyimpananKunci() {
+        final SharedPreferences pref = getSharedPreferences(
+                "kunci_api", Context.MODE_PRIVATE);
+        return new KunciApi.Penyimpanan() {
+            @Override
+            public String baca(String kunci, String bawaan) {
+                return pref.getString(kunci, bawaan);
+            }
+
+            @Override
+            public void tulis(String kunci, String nilai) {
+                pref.edit().putString(kunci, nilai).apply();
+            }
+        };
     }
 
     private void selesaiTonggak() {

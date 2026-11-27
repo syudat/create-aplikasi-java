@@ -25,13 +25,20 @@ import java.util.Locale;
  * (Fitur 5, daftar Gemini 2026-11-27).
  *
  * Pilih proyek, tekan "Pindai Simbol Proyek" — IDE memindai definisi
- * kelas dan metode di semua berkas kode. Isi nama simbol untuk mencari
- * semua pemanggilnya beserta berkas dan barisnya. Logika ada di
- * RefaktorSemantik (murni Java, sudah diuji di komputer).
+ * kelas dan metode di semua berkas kode dengan parser AST (bukan pola
+ * teks). Isi nama simbol untuk mencari semua pemanggilnya beserta
+ * berkas dan barisnya. Ganti nama metode memakai resolusi AST sehingga
+ * berlaku di SEMUA berkas pemanggil yang penerimanya terbukti merujuk
+ * ke kelas pemilik; metode bernama sama di kelas lain tidak disentuh.
+ * Bila satu nama metode ada di beberapa kelas, tulis sebagai
+ * "Kelas.metode". Blok kode bisa diekstrak menjadi fungsi baru lewat
+ * tombol "Ekstrak Blok Menjadi Fungsi". Logika ada di RefaktorSemantik
+ * (murni Java, sudah diuji di komputer).
  *
- * BATAS: pengindeks memakai pola teks, bukan parser AST penuh — ganti
- * nama hanya menyentuh kata utuh di berkas pemilik (lihat
- * RefaktorSemantik). Selalu periksa pratinjau sebelum menerapkan.
+ * BATAS: parser AST minimal memahami struktur kelas/metode/pemanggilan;
+ * refleksi dan pemanggilan lewat antarmuka yang tipenya hanya diketahui
+ * saat jalan tidak dapat diresolusi — selalu periksa pratinjau sebelum
+ * menerapkan.
  */
 public class RefaktorSemantikActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -42,10 +49,15 @@ public class RefaktorSemantikActivity extends Activity {
     private final List<String> daftarProyek = new ArrayList<String>();
     private EditText eSimbol;
     private EditText eBaru;
+    private EditText eBerkas;
+    private EditText eAwal;
+    private EditText eAkhir;
+    private EditText eFungsiBaru;
     private TextView tvHasil;
     private Button bJalankan;
     private Button bPratinjau;
     private Button bTerapkan;
+    private Button bEkstrak;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +126,50 @@ public class RefaktorSemantikActivity extends Activity {
             }
         });
 
+        label(r, TeksUI.t("Ekstrak blok menjadi fungsi:"), false);
+        label(r, TeksUI.t("Berkas (jalur relatif dari proyek):"), false);
+        eBerkas = new EditText(this);
+        GayaStudio.edit(eBerkas);
+        eBerkas.setHint(TeksUI.t("Contoh: Pembayaran.java"));
+        eBerkas.setTextSize(14);
+        eBerkas.setSingleLine(true);
+        r.addView(eBerkas, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        label(r, TeksUI.t("Baris awal blok:"), false);
+        eAwal = new EditText(this);
+        GayaStudio.edit(eAwal);
+        eAwal.setHint(TeksUI.t("Contoh: 3"));
+        eAwal.setTextSize(14);
+        eAwal.setSingleLine(true);
+        r.addView(eAwal, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        label(r, TeksUI.t("Baris akhir blok:"), false);
+        eAkhir = new EditText(this);
+        GayaStudio.edit(eAkhir);
+        eAkhir.setHint(TeksUI.t("Contoh: 5"));
+        eAkhir.setTextSize(14);
+        eAkhir.setSingleLine(true);
+        r.addView(eAkhir, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        label(r, TeksUI.t("Nama fungsi baru:"), false);
+        eFungsiBaru = new EditText(this);
+        GayaStudio.edit(eFungsiBaru);
+        eFungsiBaru.setHint(TeksUI.t("Contoh: hitungTotal"));
+        eFungsiBaru.setTextSize(14);
+        eFungsiBaru.setSingleLine(true);
+        r.addView(eFungsiBaru, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        bEkstrak = button(r, TeksUI.t("Ekstrak Blok Menjadi Fungsi"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ekstrakBlok();
+            }
+        });
+
         label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(14);
@@ -174,6 +230,7 @@ public class RefaktorSemantikActivity extends Activity {
     }
 
     private String jalankan(File dir, String simbol) {
+        List<RefaktorSemantik.AstUnit> units = RefaktorSemantik.kumpulkanAstProyek(dir);
         List<RefaktorSemantik.Simbol> semua = RefaktorSemantik.pindaiProyek(dir);
         StringBuilder b = new StringBuilder();
         if (simbol.length() == 0) {
@@ -183,24 +240,41 @@ public class RefaktorSemantikActivity extends Activity {
             if (semua.size() > tampil) b.append("\n... ").append(semua.size() - tampil).append(" lagi.");
             return b.toString();
         }
-        RefaktorSemantik.Simbol target = RefaktorSemantik.cariDefinisi(semua, simbol);
-        if (target == null) {
+        List<RefaktorSemantik.Simbol> cocok =
+                RefaktorSemantik.cariDefinisiSemuaAst(units, simbol);
+        if (cocok.isEmpty()) {
             return TeksUI.t("Simbol ditemukan:") + " 0. " + simbol + " tidak ditemukan di proyek ini.";
         }
-        List<String[]> isi = new ArrayList<String[]>();
-        kumpulIsi(dir, dir, isi);
+        if (cocok.size() > 1) {
+            b.append(TeksUI.t("Nama simbol ada di beberapa kelas:"));
+            for (int i = 0; i < cocok.size(); i++) {
+                b.append("\n- ").append(cocok.get(i).toString());
+            }
+            b.append("\n").append(TeksUI.t("Tulis sebagai Kelas.metode untuk memilih salah satunya."));
+            return b.toString();
+        }
+        RefaktorSemantik.Simbol target = cocok.get(0);
         List<RefaktorSemantik.Pemanggil> pemanggil =
-                RefaktorSemantik.cariPemanggil(isi, target);
+                RefaktorSemantik.cariPemanggilAst(units, target);
         b.append(TeksUI.t("Simbol ditemukan:")).append(" 1. ").append(target.toString());
         b.append("\n").append(TeksUI.t("Pemanggil ditemukan:")).append(" ").append(pemanggil.size()).append(".");
         for (int i = 0; i < pemanggil.size(); i++) b.append("\n- ").append(pemanggil.get(i).toString());
         return b.toString();
     }
 
+    /** Pisah "Kelas.metode" menjadi [kelas, nama]; nama polos -> ["", nama]. */
+    private String[] pisahSimbol(String simbol) {
+        int titik = simbol.lastIndexOf('.');
+        if (titik > 0) {
+            return new String[]{simbol.substring(0, titik), simbol.substring(titik + 1)};
+        }
+        return new String[]{"", simbol};
+    }
+
     /**
-     * Pratinjau ganti nama: hitung kemunculan kata utuh di tiap berkas
-     * kode, tanpa menulis apa pun. Ganti nama kelas berlaku di semua
-     * berkas; ganti nama metode/fungsi hanya di berkas pemiliknya.
+     * Pratinjau ganti nama AST: hitung kemunculan yang benar-benar akan
+     * diubah di tiap berkas (definisi + pemanggil lintas berkas yang
+     * teresolusi), tanpa menulis apa pun.
      */
     private void pratinjauGantiNama() {
         if (spProyek == null || spProyek.getSelectedItem() == null) {
@@ -235,29 +309,38 @@ public class RefaktorSemantikActivity extends Activity {
     }
 
     private String pratinjau(File dir, String lama, String baru) {
-        List<RefaktorSemantik.Simbol> semua = RefaktorSemantik.pindaiProyek(dir);
-        RefaktorSemantik.Simbol target = RefaktorSemantik.cariDefinisi(semua, lama);
-        if (target == null) return TeksUI.t("Nama simbol tidak ditemukan di proyek ini.");
-        List<String[]> isi = new ArrayList<String[]>();
-        kumpulIsi(dir, dir, isi);
+        String[] pisah = pisahSimbol(lama);
+        String nama = pisah[1];
+        List<RefaktorSemantik.AstUnit> units = RefaktorSemantik.kumpulkanAstProyek(dir);
+        List<RefaktorSemantik.Simbol> definisi =
+                RefaktorSemantik.cariDefinisiSemuaAst(units, lama);
+        if (definisi.isEmpty()) return TeksUI.t("Nama simbol tidak ditemukan di proyek ini.");
+        if (definisi.size() > 1 && pisah[0].length() == 0) {
+            StringBuilder amb = new StringBuilder();
+            amb.append(TeksUI.t("Nama simbol ada di beberapa kelas:"));
+            for (int i = 0; i < definisi.size(); i++) {
+                amb.append("\n- ").append(definisi.get(i).toString());
+            }
+            amb.append("\n").append(TeksUI.t("Tulis sebagai Kelas.metode untuk memilih salah satunya."));
+            return amb.toString();
+        }
+        RefaktorSemantik.HasilGantiNama h =
+                RefaktorSemantik.pratinjauGantiNamaAst(dir, pisah[0], nama, baru);
         StringBuilder b = new StringBuilder();
         b.append(TeksUI.t("Pratinjau ganti nama:")).append(" ").append(lama)
                 .append(" -> ").append(baru).append(".");
-        int total = 0;
-        for (int i = 0; i < isi.size(); i++) {
-            if (!"kelas".equals(target.jenis) && !isi.get(i)[0].equals(target.berkas)) continue;
-            int n = RefaktorSemantik.hitungKemunculan(isi.get(i)[1], lama);
-            if (n > 0) {
-                total += n;
-                b.append("\n- ").append(n).append(" ").append(TeksUI.t("kemunculan di"))
-                        .append(" ").append(isi.get(i)[0]);
-            }
+        if (h.jumlah == 0) {
+            b.append("\n").append(TeksUI.t("Tidak ada kemunculan di proyek ini."));
+            return b.toString();
         }
-        if (total == 0) b.append("\n").append(TeksUI.t("Tidak ada kemunculan di proyek ini."));
+        for (int i = 0; i < h.perBerkas.size(); i++) {
+            b.append("\n- ").append(h.perBerkas.get(i));
+        }
+        b.append("\n").append(TeksUI.t("Ganti nama metode berlaku di semua berkas pemanggil."));
         return b.toString();
     }
 
-    /** Terapkan ganti nama ke berkas dalam cakupan (lihat pratinjau). */
+    /** Terapkan ganti nama AST ke semua berkas pemanggil yang teresolusi. */
     private void terapkanGantiNama() {
         if (spProyek == null || spProyek.getSelectedItem() == null) {
             toast(TeksUI.t("Pilih dulu proyeknya."));
@@ -291,32 +374,87 @@ public class RefaktorSemantikActivity extends Activity {
     }
 
     private String terapkan(File dir, String lama, String baru) {
-        List<RefaktorSemantik.Simbol> semua = RefaktorSemantik.pindaiProyek(dir);
-        RefaktorSemantik.Simbol target = RefaktorSemantik.cariDefinisi(semua, lama);
-        if (target == null) return TeksUI.t("Nama simbol tidak ditemukan di proyek ini.");
-        List<String[]> isi = new ArrayList<String[]>();
-        kumpulIsi(dir, dir, isi);
+        String[] pisah = pisahSimbol(lama);
+        String nama = pisah[1];
+        List<RefaktorSemantik.AstUnit> units = RefaktorSemantik.kumpulkanAstProyek(dir);
+        List<RefaktorSemantik.Simbol> definisi =
+                RefaktorSemantik.cariDefinisiSemuaAst(units, lama);
+        if (definisi.isEmpty()) return TeksUI.t("Nama simbol tidak ditemukan di proyek ini.");
+        if (definisi.size() > 1 && pisah[0].length() == 0) {
+            StringBuilder amb = new StringBuilder();
+            amb.append(TeksUI.t("Nama simbol ada di beberapa kelas:"));
+            for (int i = 0; i < definisi.size(); i++) {
+                amb.append("\n- ").append(definisi.get(i).toString());
+            }
+            amb.append("\n").append(TeksUI.t("Tulis sebagai Kelas.metode untuk memilih salah satunya."));
+            return amb.toString();
+        }
+        RefaktorSemantik.HasilGantiNama h =
+                RefaktorSemantik.terapkanGantiNamaAst(dir, pisah[0], nama, baru);
         StringBuilder b = new StringBuilder();
         b.append(TeksUI.t("Ganti nama diterapkan di")).append(":");
-        int jumlahBerkas = 0;
-        int total = 0;
-        for (int i = 0; i < isi.size(); i++) {
-            if (!"kelas".equals(target.jenis) && !isi.get(i)[0].equals(target.berkas)) continue;
-            int n = RefaktorSemantik.hitungKemunculan(isi.get(i)[1], lama);
-            if (n == 0) continue;
-            String ganti = RefaktorSemantik.gantiNama(isi.get(i)[1], lama, baru);
-            File f = new File(dir, isi.get(i)[0]);
-            if (!tulisTeks(f, ganti)) continue;
-            jumlahBerkas++;
-            total += n;
-            b.append("\n- ").append(n).append(" ").append(TeksUI.t("kemunculan di"))
-                    .append(" ").append(isi.get(i)[0]);
+        if (h.jumlah == 0) {
+            b.append("\n").append(TeksUI.t("Tidak ada kemunculan di proyek ini."));
+            return b.toString();
         }
-        if (total == 0) b.append("\n").append(TeksUI.t("Tidak ada kemunculan di proyek ini."));
-        else if (!"kelas".equals(target.jenis)) {
-            b.append("\n").append(TeksUI.t("Pemanggil di berkas lain tidak ikut diubah."));
+        for (int i = 0; i < h.perBerkas.size(); i++) {
+            b.append("\n- ").append(h.perBerkas.get(i));
         }
+        b.append("\n").append(TeksUI.t("Ganti nama metode berlaku di semua berkas pemanggil."));
         return b.toString();
+    }
+
+    /** Ekstrak blok baris dari berkas proyek menjadi fungsi baru. */
+    private void ekstrakBlok() {
+        if (spProyek == null || spProyek.getSelectedItem() == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final String berkas = eBerkas.getText().toString().trim();
+        final String awalTeks = eAwal.getText().toString().trim();
+        final String akhirTeks = eAkhir.getText().toString().trim();
+        final String fungsiBaru = eFungsiBaru.getText().toString().trim();
+        if (berkas.length() == 0 || awalTeks.length() == 0 || akhirTeks.length() == 0
+                || fungsiBaru.length() == 0) {
+            toast(TeksUI.t("Isi dulu berkas, baris awal, baris akhir, dan nama fungsi barunya."));
+            return;
+        }
+        final int awal;
+        final int akhir;
+        try {
+            awal = Integer.parseInt(awalTeks);
+            akhir = Integer.parseInt(akhirTeks);
+        } catch (Throwable t) {
+            toast(TeksUI.t("Ekstraksi gagal. Periksa nomor barisnya."));
+            return;
+        }
+        final File dir = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+        tvHasil.setText(TeksUI.t("Ekstrak Blok Menjadi Fungsi") + "...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = ekstrak(dir, berkas, awal, akhir, fungsiBaru);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvHasil.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "RefaktorEkstrak").start();
+    }
+
+    private String ekstrak(File dir, String berkas, int awal, int akhir, String fungsiBaru) {
+        File f = new File(dir, berkas);
+        if (!f.isFile()) return TeksUI.t("Berkas tidak ditemukan di proyek ini.");
+        String isi = bacaTeks(f);
+        if (isi == null) return TeksUI.t("Berkas tidak ditemukan di proyek ini.");
+        String hasil = RefaktorSemantik.ekstrakFungsi(isi, awal, akhir, fungsiBaru);
+        if (hasil == null) return TeksUI.t("Ekstraksi gagal. Periksa nomor barisnya.");
+        if (!tulisTeks(f, hasil)) return TeksUI.t("Ekstraksi gagal. Periksa nomor barisnya.");
+        return TeksUI.t("Blok diekstrak menjadi fungsi") + " " + fungsiBaru + " "
+                + TeksUI.t("di berkas") + " " + berkas + ".";
     }
 
     private boolean tulisTeks(File f, String isi) {
@@ -330,22 +468,6 @@ public class RefaktorSemantikActivity extends Activity {
             return true;
         } catch (Throwable t) {
             return false;
-        }
-    }
-
-    private void kumpulIsi(File akar, File kini, List<String[]> keluar) {
-        File[] daftar = kini.listFiles();
-        if (daftar == null) return;
-        for (int i = 0; i < daftar.length; i++) {
-            File f = daftar[i];
-            if (f.isDirectory()) {
-                if (!f.getName().startsWith(".")) kumpulIsi(akar, f, keluar);
-            } else if (RefaktorSemantik.akhirKode(f.getName())) {
-                String isi = bacaTeks(f);
-                if (isi == null) continue;
-                String relatif = f.getAbsolutePath().substring(akar.getAbsolutePath().length() + 1);
-                keluar.add(new String[]{relatif, isi});
-            }
         }
     }
 

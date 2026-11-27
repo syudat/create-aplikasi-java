@@ -77,7 +77,7 @@ public class ProjectsActivity extends Activity {
     private static final String[] MENU_PROYEK = {
         "Buka", "Jalankan", "Bangun proyek", "Ekspor ZIP", "Ganti Ikon",
         "Cadangkan", "Bagikan", "Pratinjau ke HP Teman", "Uji Otomatis", "Hapus",
-        "Bangun di Terminal"
+        "Bangun di Terminal", "Ubah Arsitektur"
     };
     private static final String[] FILTER_LABELS = {
         "Semua", "HTML", "Situs Web", "Java", "Kotlin", "Compose", "Python"
@@ -472,7 +472,7 @@ public class ProjectsActivity extends Activity {
 
     private void tampilkanMenuProyek(final String name) {
         announce(TeksUI.t("Menu proyek ") + name
-                + TeksUI.t(". Pilihan: Buka, Jalankan, Bangun proyek, Ekspor ZIP, Ganti Ikon, Cadangkan, Bagikan, Pratinjau ke HP Teman, Uji Otomatis, Hapus, Bangun di Terminal."));
+                + TeksUI.t(". Pilihan: Buka, Jalankan, Bangun proyek, Ekspor ZIP, Ganti Ikon, Cadangkan, Bagikan, Pratinjau ke HP Teman, Uji Otomatis, Hapus, Bangun di Terminal, Ubah Arsitektur."));
         new AlertDialog.Builder(this)
                 .setTitle(name)
                 .setItems(menuProyekTampil(), new DialogInterface.OnClickListener() {
@@ -505,6 +505,8 @@ public class ProjectsActivity extends Activity {
                             konfirmasiHapus(name);
                         } else if (which == 10) {
                             bangunDiTerminal(dir);
+                        } else if (which == 11) {
+                            ubahArsitektur(name);
                         }
                     }
                 })
@@ -521,6 +523,19 @@ public class ProjectsActivity extends Activity {
             startActivity(it);
         } catch (Throwable t) {
             toast("Gagal membuka Pembuat Ikon: " + t.getMessage());
+        }
+    }
+
+    // Penyelesaian 5.8 (butir 16, W10): buka layar Ubah Arsitektur
+    // Proyek untuk proyek ini (extra EXTRA_PROYEK berisi nama folder
+    // proyek, supaya layar langsung membuka proyek tersebut).
+    private void ubahArsitektur(String name) {
+        try {
+            Intent it = new Intent(this, ArsitekturProyekActivity.class);
+            it.putExtra(ArsitekturProyekActivity.EXTRA_PROYEK, name);
+            startActivity(it);
+        } catch (Throwable t) {
+            toast("Gagal membuka Ubah Arsitektur: " + t.getMessage());
         }
     }
 

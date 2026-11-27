@@ -25,10 +25,12 @@ import java.util.List;
  * "Jalankan Dry Run" menjalankan skenario itu sebagai simulasi urutan
  * dan menyimpan log teksnya; "Baca Laporan Uji" membuka log terakhir.
  *
- * JUJUR: yang berjalan di sini adalah dry run simulasi — penyuntikan
- * agen penguji ke dalam APK (agen menekan tombol sungguhan di
- * perangkat) adalah tahap berikut dan BELUM aktif. Tidak ada tombol
- * sungguhan yang ditekan dari layar ini.
+ * Pengujian SUNGGUHAN: "Suntikkan Agen Uji ke Proyek" menyuntikkan
+ * AgenUjiRunnerActivity + aset skenario ke proyek. Build APK seperti
+ * biasa, pasang, lalu buka ikon "Uji ..." — agen itu berjalan di
+ * dalam aplikasi hasil build dan menekan tombol sungguhan,
+ * mengisi kolom sungguhan, dan menggulir, lalu menampilkan laporannya
+ * di layar. "Lepas Agen Uji dari Proyek" menghapus agen itu lagi.
  *
  * Logika skenarionya ada di AgenUji (murni Java, sudah diuji di komputer).
  */
@@ -62,8 +64,8 @@ public class RobotUjiActivity extends Activity {
         setContentView(sv);
 
         heading(r, TeksUI.t("Robot Penguji Antarmuka"), 20);
-        label(r, TeksUI.t("Robot penguji menulis skenario teks dari proyekmu berupa langkah-langkah simulasi: menekan setiap tombol, mengisi kolom input dengan data ekstrem, dan mencatat urutannya dalam laporan teks. Pilih proyek, buat skenarionya, lalu jalankan dry run untuk melihat lognya."), false);
-        label(r, TeksUI.t("Catatan jujur: eksekusi langsung di perangkat (penyuntikan agen penguji ke dalam APK) adalah tahap berikut dan belum aktif. Yang berjalan di sini adalah dry run simulasi urutan langkah, tanpa menekan tombol sungguhan."), false);
+        label(r, TeksUI.t("Robot penguji menulis skenario teks dari proyekmu berupa langkah-langkah: menekan setiap tombol, mengisi kolom input dengan data ekstrem, dan menggulir layar. Pilih proyek, buat skenarionya, lalu jalankan dry run untuk melihat lognya."), false);
+        label(r, TeksUI.t("Untuk pengujian sungguhan, tekan Suntikkan Agen Uji ke Proyek, lalu build APK seperti biasa dan buka ikon Uji di HP. Agen itu berjalan di dalam aplikasi hasil build dan menekan tombol sungguhan, mengisi kolom sungguhan, dan menggulir layar, lalu menampilkan laporannya."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -84,6 +86,18 @@ public class RobotUjiActivity extends Activity {
             @Override
             public void onClick(View v) {
                 jalankanDryRun();
+            }
+        });
+        button(r, TeksUI.t("Suntikkan Agen Uji ke Proyek"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                suntikkanAgen();
+            }
+        });
+        button(r, TeksUI.t("Lepas Agen Uji dari Proyek"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lepasAgen();
             }
         });
         button(r, TeksUI.t("Baca Laporan Uji"), new View.OnClickListener() {
@@ -219,6 +233,50 @@ public class RobotUjiActivity extends Activity {
             announce(TeksUI.t("Dry run selesai: ") + skenario.size()
                     + TeksUI.t(" langkah, tetapi log gagal disimpan."));
         }
+    }
+
+    private void suntikkanAgen() {
+        if (skenario == null || skenario.isEmpty()) {
+            toast("Belum ada skenario. Tekan Buat Skenario Otomatis dulu.");
+            announce(TeksUI.t("Belum ada skenario. Tekan Buat Skenario Otomatis dulu."));
+            return;
+        }
+        final File dir = dirProyekAktif != null ? dirProyekAktif : proyekTerpilih();
+        if (dir == null) return;
+        dirProyekAktif = dir;
+        final List<AgenUji.Langkah> salinan = new ArrayList<AgenUji.Langkah>(skenario);
+        tvLog.setText(TeksUI.t("Menyuntikkan agen uji ke proyek..."));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = AgenUji.suntikkanAgen(dir, salinan);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvLog.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "RobotUji-Suntik").start();
+    }
+
+    private void lepasAgen() {
+        final File dir = dirProyekAktif != null ? dirProyekAktif : proyekTerpilih();
+        if (dir == null) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = AgenUji.lepasAgen(dir);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvLog.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "RobotUji-Lepas").start();
     }
 
     private void bacaLaporan() {

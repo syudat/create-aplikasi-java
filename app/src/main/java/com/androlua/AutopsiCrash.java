@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -347,5 +351,246 @@ public class AutopsiCrash {
         b.append(TeksUI.t("Tambalan kode:")).append('\n');
         b.append(teksTambalan);
         return b.toString();
+    }
+
+    // ------------------------------------------- crash aplikasi hasil build
+
+    /** Nama kelas penangkap crash yang disuntikkan ke proyek. */
+    public static final String NAMA_KELAS_PENANGKAP = "PenangkapCrashApp";
+    /** Folder di proyek tempat log crash aplikasi hasil build dikumpulkan. */
+    public static final String DIR_LOG_HASIL_BUILD = "crash-aplikasi";
+    /** Folder publik di Download tempat log crash hasil build bisa ditaruh. */
+    public static final String DIR_LOG_UNDUHAN = "/sdcard/Download/crash-aplikasi-hasil-build";
+
+    /**
+     * Kode sumber penangkap crash (PenangkapCrashApp, subclass
+     * Application) untuk paket tertentu. Mandiri: hanya memakai API
+     * Android + java.*. Saat aplikasi hasil build crash, handler ini
+     * menulis log berformat sama seperti CrashHandler Create Aplikasi
+     * (baris pertama "ID Crash: CR-...") ke folder crash di
+     * penyimpanan eksternal aplikasi DAN mencoba salinan ke folder
+     * Download publik — lalu meneruskan ke handler bawaan supaya
+     * dialog crash Android tetap muncul. Catatan jujur: di Android
+     * 11+ salinan publik bisa gagal tanpa izin semua-berkas; salinan
+     * di penyimpanan eksternal aplikasi selalu ditulis, dan berkasnya
+     * bisa dibagikan ke folder crash-aplikasi proyek lewat aplikasi
+     * Berkas.
+     */
+    public static String hasilkanKodePenangkap(String paket) {
+        StringBuilder b = new StringBuilder();
+        b.append("package ").append(paket).append(";\n\n");
+        b.append("import android.app.Application;\n");
+        b.append("import android.content.Context;\n");
+        b.append("import android.os.Environment;\n");
+        b.append("import java.io.File;\n");
+        b.append("import java.io.FileOutputStream;\n");
+        b.append("import java.io.OutputStreamWriter;\n");
+        b.append("import java.io.PrintWriter;\n");
+        b.append("import java.io.StringWriter;\n");
+        b.append("import java.text.SimpleDateFormat;\n");
+        b.append("import java.util.Date;\n");
+        b.append("import java.util.Locale;\n");
+        b.append("import java.util.Random;\n\n");
+        b.append("/** Penangkap crash yang disuntikkan Create Aplikasi ke proyek.\n");
+        b.append(" * Menulis log crash aplikasi hasil build (format ID Crash CR-...)\n");
+        b.append(" * supaya Autopsi Crash di IDE bisa membaca dan menambalnya.\n");
+        b.append(" * Dibangkitkan oleh AutopsiCrash.suntikkanPenangkap; jangan diubah\n");
+        b.append(" * dengan tangan. */\n");
+        b.append("public class PenangkapCrashApp extends Application {\n");
+        b.append("    @Override public void onCreate() {\n");
+        b.append("        super.onCreate();\n");
+        b.append("        pasang(this);\n");
+        b.append("    }\n\n");
+        b.append("    /** Pasang penangkap crash secara manual (bila Application proyek sudah ada). */\n");
+        b.append("    public static void pasang(final Context ctx) {\n");
+        b.append("        final Thread.UncaughtExceptionHandler lama =\n");
+        b.append("                Thread.getDefaultUncaughtExceptionHandler();\n");
+        b.append("        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {\n");
+        b.append("            @Override public void uncaughtException(Thread t, Throwable e) {\n");
+        b.append("                try { tulisLog(ctx, e); } catch (Throwable ignored) {}\n");
+        b.append("                if (lama != null) lama.uncaughtException(t, e);\n");
+        b.append("            }\n");
+        b.append("        });\n");
+        b.append("    }\n\n");
+        b.append("    private static void tulisLog(Context ctx, Throwable e) {\n");
+        b.append("        String id = \"CR-\" + new SimpleDateFormat(\"yyyyMMdd-HHmmss\", Locale.US).format(new Date())\n");
+        b.append("                + \"-\" + String.format(Locale.US, \"%06X\", new Random().nextInt(0xFFFFFF));\n");
+        b.append("        StringWriter sw = new StringWriter();\n");
+        b.append("        e.printStackTrace(new PrintWriter(sw));\n");
+        b.append("        StringBuilder isi = new StringBuilder();\n");
+        b.append("        isi.append(\"ID Crash: \").append(id).append('\\n');\n");
+        b.append("        isi.append(\"package=\").append(ctx.getPackageName()).append('\\n');\n");
+        b.append("        isi.append(sw.toString());\n");
+        b.append("        String nama = \"crash-\" + id + \".log\";\n");
+        b.append("        try {\n");
+        b.append("            File dir = new File(ctx.getExternalFilesDir(null), \"crash\");\n");
+        b.append("            dir.mkdirs();\n");
+        b.append("            OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(new File(dir, nama)), \"UTF-8\");\n");
+        b.append("            w.write(isi.toString()); w.close();\n");
+        b.append("        } catch (Throwable ignored) {}\n");
+        b.append("        try {\n");
+        b.append("            File publik = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), \"crash-\" + ctx.getPackageName());\n");
+        b.append("            publik.mkdirs();\n");
+        b.append("            OutputStreamWriter w2 = new OutputStreamWriter(new FileOutputStream(new File(publik, nama)), \"UTF-8\");\n");
+        b.append("            w2.write(isi.toString()); w2.close();\n");
+        b.append("        } catch (Throwable ignored) {}\n");
+        b.append("    }\n");
+        b.append("}\n");
+        return b.toString();
+    }
+
+    /**
+     * Menyuntikkan penangkap crash ke proyek: menulis sumber
+     * PenangkapCrashApp dan mendaftarkannya sebagai android:name di
+     * tag &lt;application&gt; manifest proyek (bila tag itu belum punya
+     * android:name). Bila proyek sudah punya Application sendiri,
+     * sumber tetap ditulis tetapi manifest TIDAK diubah — pesan
+     * hasilnya memberi satu baris yang harus ditambahkan di
+     * onCreate Application itu. Build berikutnya mengompilasi
+     * penangkap itu ke APK hasil. Mengembalikan pesan hasil.
+     */
+    public static String suntikkanPenangkap(File dirProyek) {
+        if (dirProyek == null || !dirProyek.isDirectory()) {
+            return "GAGAL: folder proyek tidak ditemukan.";
+        }
+        File manifest = AgenUji.cariManifest(dirProyek);
+        if (manifest == null) {
+            return "GAGAL: AndroidManifest.xml proyek tidak ditemukan.";
+        }
+        String xml = AgenUji.bacaTeks(manifest);
+        if (xml == null) return "GAGAL: manifest proyek tidak bisa dibaca.";
+        String paket = AgenUji.paketDariManifest(xml);
+        if (paket.length() == 0) return "GAGAL: package di manifest tidak terbaca.";
+        File dirJava = new File(dirProyek, "app/src/main/java/" + paket.replace('.', '/'));
+        dirJava.mkdirs();
+        if (!AgenUji.tulisTeks(new File(dirJava, NAMA_KELAS_PENANGKAP + ".java"),
+                hasilkanKodePenangkap(paket))) {
+            return "GAGAL: tidak bisa menulis sumber penangkap crash.";
+        }
+        Matcher mApp = Pattern.compile("<application\\b[^>]*>").matcher(xml);
+        if (!mApp.find()) {
+            return "GAGAL: tag <application> tidak ditemukan di manifest proyek.";
+        }
+        String tag = mApp.group();
+        Matcher mNama = Pattern.compile("android:name=\"([^\"]+)\"").matcher(tag);
+        if (mNama.find()) {
+            String nama = mNama.group(1);
+            if (nama.equals("." + NAMA_KELAS_PENANGKAP)
+                    || nama.equals(paket + "." + NAMA_KELAS_PENANGKAP)) {
+                return "OK: penangkap crash sudah terpasang di proyek ini.";
+            }
+            return "OK (SEBAGIAN): sumber penangkap ditulis, tetapi proyek sudah punya Application sendiri ("
+                    + nama + "). Tambahkan satu baris ini di onCreate Application itu: "
+                    + NAMA_KELAS_PENANGKAP + ".pasang(this);";
+        }
+        String tagBaru = tag.substring(0, tag.length() - 1)
+                + " android:name=\"." + NAMA_KELAS_PENANGKAP + "\">";
+        String baru = xml.substring(0, mApp.start()) + tagBaru + xml.substring(mApp.end());
+        baru = ServerMikro.tambahIzin(baru, "WRITE_EXTERNAL_STORAGE");
+        if (!AgenUji.tulisTeks(manifest, baru)) {
+            return "GAGAL: tidak bisa menulis manifest proyek.";
+        }
+        return "OK: penangkap crash dipasang. Build APK proyek ini — bila aplikasi hasil build crash, "
+                + "log-nya ditulis ke folder crash aplikasi dan (bila diizinkan HP) ke Download/crash-"
+                + paket + ", lalu bisa dibaca di Autopsi Crash.";
+    }
+
+    /** Melepas penangkap crash dari proyek (sumber + android:name bila itu milik kita). */
+    public static String lepasPenangkap(File dirProyek) {
+        if (dirProyek == null || !dirProyek.isDirectory()) {
+            return "GAGAL: folder proyek tidak ditemukan.";
+        }
+        File manifest = AgenUji.cariManifest(dirProyek);
+        if (manifest == null) return "GAGAL: AndroidManifest.xml proyek tidak ditemukan.";
+        String xml = AgenUji.bacaTeks(manifest);
+        if (xml == null) return "GAGAL: manifest proyek tidak bisa dibaca.";
+        String paket = AgenUji.paketDariManifest(xml);
+        File sumber = null;
+        if (paket.length() > 0) {
+            sumber = new File(dirProyek, "app/src/main/java/" + paket.replace('.', '/')
+                    + "/" + NAMA_KELAS_PENANGKAP + ".java");
+        }
+        boolean hapusSumber = sumber != null && sumber.isFile() && sumber.delete();
+        boolean hapusManifest = false;
+        Matcher mApp = Pattern.compile("<application\\b[^>]*>").matcher(xml);
+        if (mApp.find()) {
+            String tag = mApp.group();
+            String tagBaru = tag.replace(" android:name=\"." + NAMA_KELAS_PENANGKAP + "\"", "")
+                    .replace(" android:name=\"" + paket + "." + NAMA_KELAS_PENANGKAP + "\"", "");
+            if (!tagBaru.equals(tag)) {
+                String baru = xml.substring(0, mApp.start()) + tagBaru + xml.substring(mApp.end());
+                hapusManifest = AgenUji.tulisTeks(manifest, baru);
+            }
+        }
+        if (!hapusSumber && !hapusManifest) {
+            return "GAGAL: penangkap crash tidak ditemukan di proyek ini.";
+        }
+        return "OK: penangkap crash dilepas dari proyek.";
+    }
+
+    /**
+     * Daftar berkas log crash aplikasi hasil build: semua .log di
+     * &lt;proyek&gt;/crash-aplikasi/ dan di
+     * /sdcard/Download/crash-aplikasi-hasil-build/. Urut terbaru dulu.
+     */
+    public static List<File> daftarLogHasilBuild(File dirProyek) {
+        List<File> hasil = new ArrayList<File>();
+        File[] folder = new File[2];
+        folder[0] = dirProyek == null ? null : new File(dirProyek, DIR_LOG_HASIL_BUILD);
+        folder[1] = new File(DIR_LOG_UNDUHAN);
+        for (int i = 0; i < folder.length; i++) {
+            File d = folder[i];
+            if (d == null) continue;
+            File[] isi = d.listFiles();
+            if (isi == null) continue;
+            for (int j = 0; j < isi.length; j++) {
+                if (isi[j].isFile() && isi[j].getName().endsWith(".log")) hasil.add(isi[j]);
+            }
+        }
+        Collections.sort(hasil, new Comparator<File>() {
+            @Override
+            public int compare(File a, File b) {
+                return Long.compare(b.lastModified(), a.lastModified());
+            }
+        });
+        return hasil;
+    }
+
+    /**
+     * Mengurai semua log crash aplikasi hasil build menjadi daftar
+     * HasilUrai (yang tidak bisa diurai dilewati). Log dibaca dengan
+     * CrashHandler.bacaTeks bila tersedia, bila tidak dengan pembaca
+     * UTF-8 sendiri.
+     */
+    public static List<HasilUrai> bacaLogHasilBuild(File dirProyek) {
+        List<HasilUrai> hasil = new ArrayList<HasilUrai>();
+        List<File> berkas = daftarLogHasilBuild(dirProyek);
+        for (int i = 0; i < berkas.size(); i++) {
+            String isi = bacaTeksLog(berkas.get(i));
+            if (isi == null) continue;
+            HasilUrai h = uraiLogCrash(isi);
+            if (h != null) hasil.add(h);
+        }
+        return hasil;
+    }
+
+    /** Membaca berkas log (UTF-8, maks. 64 KB seperti CrashHandler.bacaTeks). */
+    static String bacaTeksLog(File f) {
+        try {
+            String s = CrashHandler.bacaTeks(f);
+            if (s != null) return s;
+        } catch (Throwable ignored) {
+        }
+        try {
+            if (f == null || !f.isFile()) return null;
+            FileInputStream in = new FileInputStream(f);
+            byte[] data = new byte[(int) Math.min(f.length(), 65536)];
+            int n = in.read(data);
+            in.close();
+            if (n <= 0) return null;
+            return new String(data, 0, n, "UTF-8");
+        } catch (Throwable t) {
+            return null;
+        }
     }
 }

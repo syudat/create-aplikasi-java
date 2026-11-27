@@ -70,6 +70,7 @@ public class AutopsiCrashActivity extends Activity {
 
         heading(r, TeksUI.t("Autopsi Crash"), 20);
         label(r, TeksUI.t("Pilih ID crash dari log, lalu lihat diagnosis dan tambalan kodenya. Baris sumber dicocokkan ke berkas proyek bila kelasnya ada di proyek."), false);
+        label(r, TeksUI.t("Untuk crash aplikasi HASIL BUILD: tekan Suntikkan Penangkap Crash ke Proyek, lalu build APK seperti biasa. Bila aplikasi hasil build itu crash, log-nya ditulis ke HP dan bisa dicari dengan tombol Cari Log Aplikasi Hasil Build di bawah."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -93,6 +94,20 @@ public class AutopsiCrashActivity extends Activity {
             @Override
             public void onClick(View v) {
                 tampilkan();
+            }
+        });
+
+        button(r, TeksUI.t("Suntikkan Penangkap Crash ke Proyek"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                suntikkanPenangkap();
+            }
+        });
+
+        button(r, TeksUI.t("Cari Log Aplikasi Hasil Build"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                muatLogHasilBuild();
             }
         });
 
@@ -173,6 +188,57 @@ public class AutopsiCrashActivity extends Activity {
         if (adapterCrash != null) adapterCrash.notifyDataSetChanged();
         if (daftarCrash.isEmpty()) {
             tvHasil.setText(TeksUI.t("Belum ada log crash di HP ini."));
+        }
+    }
+
+    private void suntikkanPenangkap() {
+        if (spProyek == null || spProyek.getSelectedItem() == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final File dir = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+        tvHasil.setText(TeksUI.t("Menyuntikkan penangkap crash ke proyek..."));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String hasil = AutopsiCrash.suntikkanPenangkap(dir);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvHasil.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "AutopsiCrash-Suntik").start();
+    }
+
+    /** Menambahkan log crash aplikasi hasil build ke daftar pilihan (berawalan "[hasil build]"). */
+    private void muatLogHasilBuild() {
+        File dirProyek = null;
+        if (spProyek != null && spProyek.getSelectedItem() != null) {
+            dirProyek = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+        }
+        List<File> tambahan = AutopsiCrash.daftarLogHasilBuild(dirProyek);
+        int baru = 0;
+        for (int i = 0; i < tambahan.size(); i++) {
+            File f = tambahan.get(i);
+            if (berkasCrash.contains(f)) continue;
+            String isi = AutopsiCrash.bacaTeksLog(f);
+            AutopsiCrash.HasilUrai h = isi == null ? null : AutopsiCrash.uraiLogCrash(isi);
+            String id = h == null ? null : h.idCrash;
+            if (id == null) id = f.getName();
+            daftarCrash.add(TeksUI.t("[hasil build] ") + id);
+            berkasCrash.add(f);
+            baru++;
+        }
+        if (adapterCrash != null) adapterCrash.notifyDataSetChanged();
+        if (baru == 0) {
+            tvHasil.setText(TeksUI.t("Tidak ada log crash aplikasi hasil build. Pastikan penangkap crash sudah disuntikkan dan aplikasi hasil build pernah crash."));
+            announce(TeksUI.t("Tidak ada log crash aplikasi hasil build."));
+        } else {
+            tvHasil.setText(TeksUI.t("Ditemukan ") + baru + TeksUI.t(" log crash aplikasi hasil build. Pilih ID-nya, lalu tekan Tampilkan Diagnosis."));
+            announce(TeksUI.t("Ditemukan ") + baru + TeksUI.t(" log crash aplikasi hasil build."));
         }
     }
 

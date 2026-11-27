@@ -64,6 +64,9 @@ public class AuditKeamananActivity extends Activity {
                 + TeksUI.t("komponen yang diekspor tanpa izin, celah injeksi WebView, ")
                 + TeksUI.t("kriptografi lemah, alamat http tanpa enkripsi, dan kata sandi ")
                 + TeksUI.t("yang tertulis di kode. Semua berjalan di dalam HP (tanpa internet)."), false);
+        label(r, TeksUI.t("Pindai DEX memeriksa APK hasil build yang sebenarnya: API berbahaya ")
+                + TeksUI.t("yang benar-benar dipanggil di bytecode, rahasia yang tertanam di ")
+                + TeksUI.t("classes.dex, dan izin di manifest yang tidak dipakai satu pun API di DEX."), false);
 
         label(r, TeksUI.t("Pilih proyek:"), false);
         spProyek = new Spinner(this);
@@ -78,6 +81,12 @@ public class AuditKeamananActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mulaiPindai();
+            }
+        });
+        button(r, TeksUI.t("Pindai DEX APK Hasil Build"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mulaiPindaiDex();
             }
         });
 
@@ -141,6 +150,39 @@ public class AuditKeamananActivity extends Activity {
                 });
             }
         }, "AuditKeamanan").start();
+    }
+
+    private void mulaiPindaiDex() {
+        if (spProyek == null || spProyek.getSelectedItem() == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final File dir = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+        dirAktif = dir;
+        final File apk = AnalisisApkActivity.apkTerbaru(dir);
+        if (apk == null) {
+            tvRingkasan.setText(TeksUI.t("Belum ada APK hasil build di proyek ini. Build dulu, lalu pindai DEX."));
+            announce(TeksUI.t("Belum ada APK hasil build di proyek ini."));
+            return;
+        }
+        tvRingkasan.setText(TeksUI.t("Memindai DEX ") + apk.getName() + "...");
+        bPindai.setEnabled(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String manifest = SumberDaya.teks(
+                        new File(dir, "app/src/main/AndroidManifest.xml"));
+                final List<AuditKeamanan.Temuan> hasil =
+                        AuditKeamanan.pindaiDex(apk, manifest);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bPindai.setEnabled(true);
+                        tampilkan(hasil);
+                    }
+                });
+            }
+        }, "AuditKeamanan-Dex").start();
     }
 
     private void tampilkan(List<AuditKeamanan.Temuan> hasil) {

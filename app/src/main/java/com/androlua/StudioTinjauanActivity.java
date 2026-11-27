@@ -32,9 +32,10 @@ import java.util.Locale;
  * Papan tugas di bawahnya menyimpan tugas proyek sebagai teks.
  * Logika ada di StudioTinjauan (murni Java, sudah diuji di komputer).
  *
- * BATAS: penggabungan memakai pencocokan baris, bukan sintaks;
- * sinkronisasi papan tugas adalah penyalinan berkas teksnya bersama
- * riwayat Git.
+ * BATAS: penggabungan memakai pencocokan baris untuk teks biasa,
+ * dan satuan sintaks Java (pernyataan/blok) untuk kode Java; papan
+ * tugas disinkronkan lewat Git di dalam aplikasi — berkas papan
+ * di-commit sehingga ikut riwayat Git proyek.
  */
 public class StudioTinjauanActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -49,6 +50,8 @@ public class StudioTinjauanActivity extends Activity {
     private EditText eTugas;
     private TextView tvHasil;
     private TextView tvPapan;
+    private TextView tvGit;
+    private Spinner spMode;
     private LinearLayout daftarKonflik;
     private Button bJalankan;
     private StudioTinjauan.HasilGabung gabungAktif;
@@ -119,6 +122,17 @@ public class StudioTinjauanActivity extends Activity {
             }
         });
 
+        label(r, TeksUI.t("Mode gabung:"), false);
+        spMode = new Spinner(this);
+        ArrayAdapter<String> adapterMode = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,
+                new String[]{TeksUI.t("Otomatis"), TeksUI.t("Java (sintaks)"),
+                        TeksUI.t("Teks (baris)")});
+        adapterMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spMode.setAdapter(adapterMode);
+        r.addView(spMode, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(14);
@@ -152,6 +166,28 @@ public class StudioTinjauanActivity extends Activity {
             @Override
             public void onClick(View v) {
                 tambahTugas();
+            }
+        });
+
+        label(r, TeksUI.t("Papan tugas di Git:"), false);
+        tvGit = new TextView(this);
+        tvGit.setTextSize(14);
+        tvGit.setTextIsSelectable(true);
+        tvGit.setPadding(0, dp(4), 0, dp(4));
+        tvGit.setText(TeksUI.t("Papan tugas belum disinkronkan ke Git."));
+        r.addView(tvGit);
+
+        button(r, TeksUI.t("Simpan Papan ke Git"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                simpanPapanGit();
+            }
+        });
+
+        button(r, TeksUI.t("Lihat Riwayat Papan"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lihatRiwayat();
             }
         });
 
@@ -220,12 +256,19 @@ public class StudioTinjauanActivity extends Activity {
         final String dasar = eDasar.getText().toString();
         final String lokal = eLokal.getText().toString();
         final String rekan = eRekan.getText().toString();
+        final int mode = spMode == null ? 0 : spMode.getSelectedItemPosition();
         tvHasil.setText(TeksUI.t("Buka Tinjauan Tim") + "...");
         bJalankan.setEnabled(false);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                gabungAktif = StudioTinjauan.gabungTigaArah(dasar, lokal, rekan);
+                if (mode == 1) {
+                    gabungAktif = StudioTinjauan.gabungTigaArahSintaks(dasar, lokal, rekan);
+                } else if (mode == 2) {
+                    gabungAktif = StudioTinjauan.gabungTigaArah(dasar, lokal, rekan);
+                } else {
+                    gabungAktif = StudioTinjauan.gabungOtomatis(dasar, lokal, rekan);
+                }
                 final String hasil = tampilkanGabung();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -238,6 +281,70 @@ public class StudioTinjauanActivity extends Activity {
                 });
             }
         }, "StudioTinjauan").start();
+    }
+
+    private void simpanPapanGit() {
+        File f = berkasPapan();
+        if (f == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final File dir = dirAktif;
+        final List<StudioTinjauan.Tugas> papan = StudioTinjauan.uraiPapan(bacaTeks(f));
+        tvGit.setText(TeksUI.t("Simpan Papan ke Git") + "...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final StudioTinjauan.HasilSinkron h =
+                        StudioTinjauan.sinkronPapanGit(dir, papan, "Perbarui papan tugas");
+                final String hasil = h.toString();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvGit.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "StudioTinjauanGit").start();
+    }
+
+    private void lihatRiwayat() {
+        File f = berkasPapan();
+        if (f == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final File dir = dirAktif;
+        tvGit.setText(TeksUI.t("Lihat Riwayat Papan") + "...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<GitLokal.Commit> riwayat = StudioTinjauan.riwayatPapan(dir);
+                final StringBuilder b = new StringBuilder();
+                if (riwayat.isEmpty()) {
+                    b.append(TeksUI.t("Belum ada commit Git di proyek ini."));
+                } else {
+                    b.append(TeksUI.t("Riwayat commit (terbaru dulu):"));
+                    int tampil = Math.min(5, riwayat.size());
+                    for (int i = 0; i < tampil; i++) {
+                        GitLokal.Commit c = riwayat.get(i);
+                        b.append("\n- ").append(c.idPendek()).append(" ").append(c.tanggal())
+                                .append(" ").append(c.pesan);
+                    }
+                    b.append("\n").append(TeksUI.t("Jumlah commit:")).append(" ")
+                            .append(riwayat.size()).append(".");
+                }
+                final String hasil = b.toString();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvGit.setText(hasil);
+                        announce(hasil);
+                    }
+                });
+            }
+        }, "StudioTinjauanRiwayat").start();
     }
 
     private String tampilkanGabung() {

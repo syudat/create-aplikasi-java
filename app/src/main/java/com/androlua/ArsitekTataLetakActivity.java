@@ -27,11 +27,15 @@ import java.util.Locale;
  * Pilih proyek dan berkas layout, tekan "Periksa Tata Letak" — IDE
  * membaca XML sebagai pohon teks, membacakan narasi posisi tiap
  * elemen, dan melaporkan tabrakan serta elemen yang keluar layar
- * pada lebar 360 dp. Logika ada di ArsitekTataLetak (murni Java,
- * sudah diuji di komputer).
+ * pada lebar 360 dp. Berkas Kotlin Compose (.kt) juga bisa dipilih:
+ * Column/Row/Box beserta Modifier ukurannya diurai ke pohon yang
+ * sama, jadi narasi dan pemeriksaan berlaku untuk Compose juga.
+ * Logika ada di ArsitekTataLetak (murni Java, sudah diuji di komputer).
  *
- * BATAS: yang dihitung adalah LinearLayout dan atribut dp sederhana;
- * ConstraintLayout dan Compose dilaporkan "posisi tidak tentu".
+ * BATAS: perhitungan adalah simulasi matematis dari teks (bukan
+ * mesin ukur Android); wrap_content diperkirakan dari teks, dan
+ * ConstraintSet/MotionLayout yang diubah saat berjalan dilaporkan
+ * "posisi tidak tentu".
  */
 public class ArsitekTataLetakActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -85,7 +89,7 @@ public class ArsitekTataLetakActivity extends Activity {
         r.addView(spProyek, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        label(r, TeksUI.t("Pilih berkas layout:"), false);
+        label(r, TeksUI.t("Pilih berkas layout atau Compose:"), false);
         spLayout = new Spinner(this);
         adapterLayout = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, daftarLayout);
@@ -149,12 +153,40 @@ public class ArsitekTataLetakActivity extends Activity {
                 if (daftar == null) continue;
                 for (int j = 0; j < daftar.length; j++) {
                     if (daftar[j].getName().endsWith(".xml")) {
-                        daftarLayout.add(lokasi[i].getName() + "/" + daftar[j].getName());
+                        daftarLayout.add(relatif(dirAktif, daftar[j]));
                     }
                 }
             }
+            // Berkas Kotlin Compose: Column/Row/Box beserta Modifier.
+            File[] lokasiKt = {new File(dirAktif, "app/src/main/java"),
+                    new File(dirAktif, "java")};
+            for (int i = 0; i < lokasiKt.length; i++) {
+                kumpulKt(lokasiKt[i]);
+            }
         }
         if (adapterLayout != null) adapterLayout.notifyDataSetChanged();
+    }
+
+    /** Jalur berkas relatif terhadap folder proyek (untuk spinner). */
+    private String relatif(File akar, File berkas) {
+        String a = akar.getAbsolutePath();
+        String b = berkas.getAbsolutePath();
+        if (b.startsWith(a)) return b.substring(a.length() + 1);
+        return berkas.getName();
+    }
+
+    /** Kumpulkan semua berkas .kt di bawah folder (rekursif). */
+    private void kumpulKt(File dir) {
+        if (dir == null || !dir.isDirectory()) return;
+        File[] daftar = dir.listFiles();
+        if (daftar == null) return;
+        for (int i = 0; i < daftar.length; i++) {
+            if (daftar[i].isDirectory()) {
+                kumpulKt(daftar[i]);
+            } else if (daftar[i].getName().endsWith(".kt")) {
+                daftarLayout.add(relatif(dirAktif, daftar[i]));
+            }
+        }
     }
 
     private void mulai() {
@@ -162,16 +194,14 @@ public class ArsitekTataLetakActivity extends Activity {
             toast(TeksUI.t("Pilih dulu proyeknya."));
             return;
         }
-        final File berkas = new File(dirAktif, "app/src/main/res/layout/"
-                + String.valueOf(spLayout.getSelectedItem()).replace("layout/", ""));
-        final File berkas2 = new File(dirAktif, "res/layout/"
-                + String.valueOf(spLayout.getSelectedItem()).replace("layout/", ""));
+        final File berkas = new File(dirAktif,
+                String.valueOf(spLayout.getSelectedItem()));
         tvHasil.setText(TeksUI.t("Periksa Tata Letak") + "...");
         bJalankan.setEnabled(false);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                File pakai = berkas.isFile() ? berkas : berkas2;
+                File pakai = berkas;
                 final String hasil = jalankan(pakai);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -186,14 +216,17 @@ public class ArsitekTataLetakActivity extends Activity {
     }
 
     private String jalankan(File berkas) {
-        String xml = bacaTeks(berkas);
-        if (xml == null) return TeksUI.t("Berkas layout tidak bisa dibaca.");
-        ArsitekTataLetak.Simpul akar = ArsitekTataLetak.urai(xml);
+        String isi = bacaTeks(berkas);
+        if (isi == null) return TeksUI.t("Berkas layout tidak bisa dibaca.");
+        boolean compose = berkas.getName().endsWith(".kt");
+        ArsitekTataLetak.Simpul akar = compose
+                ? ArsitekTataLetak.uraiCompose(isi) : ArsitekTataLetak.urai(isi);
         if (akar == null) return TeksUI.t("Berkas layout tidak bisa dibaca.");
         ArsitekTataLetak.hitungKotak(akar, 360);
         List<ArsitekTataLetak.Temuan> temuan = ArsitekTataLetak.periksa(akar, 360);
         List<String> narasi = ArsitekTataLetak.narasi(akar, 360);
         StringBuilder b = new StringBuilder();
+        b.append(compose ? TeksUI.t("Sumber: Compose") : TeksUI.t("Sumber: XML")).append(". ");
         b.append(TeksUI.t("Elemen diperiksa:")).append(" ")
                 .append(ArsitekTataLetak.hitungSimpul(akar)).append(". ")
                 .append(ArsitekTataLetak.ringkasan(ArsitekTataLetak.hitungSimpul(akar), temuan));

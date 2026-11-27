@@ -26,11 +26,17 @@ import java.util.Locale;
  *
  * Tulis token desain, pilih komponen, tekan "Hasilkan Komponen" —
  * IDE memvalidasi token, menghasilkan komponen XML siap pakai beserta
- * tema XML dan Compose, lalu menyimpannya di folder proyek. Logika
- * ada di StudioDesain (murni Java, sudah diuji di komputer).
+ * tema XML dan Compose, lalu menyimpannya di folder proyek. Token
+ * juga dicatat di token-studio.txt proyek; beri nama set, tekan
+ * "Simpan ke Pustaka Bersama", dan set itu tersimpan di folder
+ * bersama .pustaka-token di bawah akar proyek sehingga semua proyek
+ * dapat memakainya. "Sinkronkan ke Proyek yang Memakai" menerapkan
+ * token pustaka terbaru ke semua proyek yang memakai set itu.
+ * Logika ada di StudioDesain (murni Java, sudah diuji di komputer).
  *
  * BATAS: komponen dihasilkan sebagai teks; tempelkan ke layout lalu
- * periksa dengan Arsitek Tata Letak.
+ * periksa dengan Arsitek Tata Letak. Sinkronisasi bekerja lewat
+ * berkas bersama di penyimpanan yang sama (luring, tanpa server).
  */
 public class StudioDesainActivity extends Activity {
     private static final String ROOT = Environment.getExternalStorageDirectory().getPath()
@@ -41,6 +47,10 @@ public class StudioDesainActivity extends Activity {
     private final List<String> daftarProyek = new ArrayList<String>();
     private EditText eToken;
     private Spinner spKomponen;
+    private EditText eNamaSet;
+    private Spinner spPustaka;
+    private ArrayAdapter<String> adapterPustaka;
+    private final List<String> daftarPustaka = new ArrayList<String>();
     private TextView tvHasil;
     private Button bJalankan;
 
@@ -98,6 +108,46 @@ public class StudioDesainActivity extends Activity {
             }
         });
 
+        label(r, TeksUI.t("Nama set token:"), false);
+        eNamaSet = new EditText(this);
+        GayaStudio.edit(eNamaSet);
+        eNamaSet.setHint(TeksUI.t("Contoh: Utama"));
+        eNamaSet.setText("Utama");
+        eNamaSet.setTextSize(14);
+        eNamaSet.setSingleLine(true);
+        r.addView(eNamaSet, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        label(r, TeksUI.t("Pustaka token bersama:"), false);
+        spPustaka = new Spinner(this);
+        adapterPustaka = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, daftarPustaka);
+        adapterPustaka.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spPustaka.setAdapter(adapterPustaka);
+        r.addView(spPustaka, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        button(r, TeksUI.t("Simpan ke Pustaka Bersama"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                simpanPustaka();
+            }
+        });
+
+        button(r, TeksUI.t("Muat dari Pustaka"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                muatPustaka();
+            }
+        });
+
+        button(r, TeksUI.t("Sinkronkan ke Proyek yang Memakai"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sinkronPustaka();
+            }
+        });
+
         label(r, TeksUI.t("Hasil:"), false);
         tvHasil = new TextView(this);
         tvHasil.setTextSize(14);
@@ -130,6 +180,129 @@ public class StudioDesainActivity extends Activity {
         daftarProyek.clear();
         daftarProyek.addAll(InfoProyek.daftarNama(new File(ROOT)));
         if (adapterProyek != null) adapterProyek.notifyDataSetChanged();
+        daftarPustaka.clear();
+        daftarPustaka.addAll(StudioDesain.daftarPustaka(dirPustaka()));
+        if (adapterPustaka != null) adapterPustaka.notifyDataSetChanged();
+    }
+
+    private File dirPustaka() {
+        return new File(ROOT + "/" + StudioDesain.DIR_PUSTAKA);
+    }
+
+    /** Nama set dari kotak isi (kosong = "Utama"). */
+    private String namaSet() {
+        String nama = eNamaSet == null ? "" : eNamaSet.getText().toString().trim();
+        return nama.length() == 0 ? "Utama" : nama;
+    }
+
+    /** Nama set yang dipilih di spinner pustaka ("" bila belum ada). */
+    private String setTerpilih() {
+        if (spPustaka == null || spPustaka.getSelectedItem() == null) return "";
+        return String.valueOf(spPustaka.getSelectedItem());
+    }
+
+    private void simpanPustaka() {
+        if (spProyek == null || spProyek.getSelectedItem() == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final File dir = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+        final String tokenTeks = eToken.getText().toString();
+        final String nama = namaSet();
+        tvHasil.setText(TeksUI.t("Simpan ke Pustaka Bersama") + "...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StudioDesain.Token token = StudioDesain.uraiToken(tokenTeks);
+                token.nama = nama;
+                List<String> masalah = StudioDesain.validasi(token);
+                String hasil;
+                if (masalah.size() > 0) {
+                    StringBuilder b = new StringBuilder();
+                    b.append(TeksUI.t("Token tidak valid:"));
+                    for (int i = 0; i < masalah.size(); i++) b.append("\n- ").append(masalah.get(i));
+                    hasil = b.toString();
+                } else if (StudioDesain.simpanKePustaka(dirPustaka(), token)
+                        && StudioDesain.terapkanKeProyek(dir, token)) {
+                    hasil = TeksUI.t("Set token disimpan ke pustaka bersama:") + " " + nama + ".";
+                } else {
+                    hasil = TeksUI.t("Set token tidak bisa disimpan.");
+                }
+                final String tampil = hasil;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvHasil.setText(tampil);
+                        announce(tampil);
+                        muatDaftar();
+                    }
+                });
+            }
+        }, "StudioDesainPustaka").start();
+    }
+
+    private void muatPustaka() {
+        if (spProyek == null || spProyek.getSelectedItem() == null) {
+            toast(TeksUI.t("Pilih dulu proyeknya."));
+            return;
+        }
+        final String nama = setTerpilih();
+        if (nama.length() == 0) {
+            toast(TeksUI.t("Pilih dulu set tokennya."));
+            return;
+        }
+        final File dir = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
+        tvHasil.setText(TeksUI.t("Muat dari Pustaka") + "...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final StudioDesain.Token token = StudioDesain.muatDariPustaka(dirPustaka(), nama);
+                final String hasil;
+                if (token == null) {
+                    hasil = TeksUI.t("Set token tidak ditemukan di pustaka bersama.");
+                } else if (StudioDesain.terapkanKeProyek(dir, token)) {
+                    hasil = TeksUI.t("Set token diterapkan ke proyek ini:") + " " + nama + ".";
+                } else {
+                    hasil = TeksUI.t("Set token tidak bisa diterapkan.");
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvHasil.setText(hasil);
+                        announce(hasil);
+                        if (token != null) {
+                            eToken.setText(StudioDesain.tokenKeTeks(token));
+                            eNamaSet.setText(token.nama);
+                        }
+                    }
+                });
+            }
+        }, "StudioDesainPustaka").start();
+    }
+
+    private void sinkronPustaka() {
+        final String nama = setTerpilih();
+        if (nama.length() == 0) {
+            toast(TeksUI.t("Pilih dulu set tokennya."));
+            return;
+        }
+        tvHasil.setText(TeksUI.t("Sinkronkan ke Proyek yang Memakai") + "...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StudioDesain.HasilSinkron hasil = StudioDesain.sinkronkanKeProyekMemakai(
+                        new File(ROOT), dirPustaka(), nama);
+                final String tampil = TeksUI.t("Token disinkronkan ke proyek yang memakai:")
+                        + " " + nama + ".\n" + hasil.toString();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvHasil.setText(tampil);
+                        announce(tampil);
+                    }
+                });
+            }
+        }, "StudioDesainSinkron").start();
     }
 
     private void mulai() {
@@ -140,12 +313,13 @@ public class StudioDesainActivity extends Activity {
         final File dir = new File(ROOT + "/" + String.valueOf(spProyek.getSelectedItem()));
         final String tokenTeks = eToken.getText().toString();
         final String jenis = String.valueOf(spKomponen.getSelectedItem());
+        final String nama = namaSet();
         tvHasil.setText(TeksUI.t("Hasilkan Komponen") + "...");
         bJalankan.setEnabled(false);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final String hasil = jalankan(dir, tokenTeks, jenis);
+                final String hasil = jalankan(dir, tokenTeks, jenis, nama);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -158,7 +332,7 @@ public class StudioDesainActivity extends Activity {
         }, "StudioDesain").start();
     }
 
-    private String jalankan(File dir, String tokenTeks, String jenis) {
+    private String jalankan(File dir, String tokenTeks, String jenis, String namaSet) {
         StudioDesain.Token token = StudioDesain.uraiToken(tokenTeks);
         List<String> masalah = StudioDesain.validasi(token);
         StringBuilder b = new StringBuilder();
@@ -168,6 +342,11 @@ public class StudioDesainActivity extends Activity {
             for (int i = 0; i < masalah.size(); i++) b.append("\n- ").append(masalah.get(i));
             return b.toString();
         }
+        // Catat token di proyek ini (dengan nama setnya) supaya proyek
+        // ini ikut tersinkron bila set itu diubah di pustaka bersama.
+        token.nama = namaSet;
+        token.sumber = "pustaka:" + namaSet;
+        StudioDesain.simpanTokenProyek(dir, token);
         String komponen = StudioDesain.komponen(jenis, token);
         tulisTeks(new File(dir, "komponen-studio.xml"), komponen);
         tulisTeks(new File(dir, "tema-studio.xml"), StudioDesain.eksporTemaXml(token));

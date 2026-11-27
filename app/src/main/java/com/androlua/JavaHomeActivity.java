@@ -489,6 +489,14 @@ public class JavaHomeActivity extends Activity {
                 bukaStudioTinjauan();
             }
         });
+        // Penyelesaian 5.8 (butir 16, W10): ubah arsitektur 64/32 bit
+        // proyek yang sudah ada (layar ArsitekturProyekActivity dari W8).
+        button(r, t("Ubah Arsitektur Proyek"), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bukaArsitekturProyek();
+            }
+        });
         // Kelompok Pengaturan (koreksi 2026-11-24): Pengaturan AI dan
         // Konektor berdampingan di sini, bukan sesudah Pemantau Kinerja.
         heading(r, t("Pengaturan"), 16);
@@ -1178,6 +1186,17 @@ public class JavaHomeActivity extends Activity {
             announce(t("Studio Tinjauan Kode Tim"));
         } catch (Throwable t) {
             Toast.makeText(this, t("Gagal: ") + t("Studio Tinjauan Kode Tim"),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Penyelesaian 5.8 (butir 16, W10): Ubah Arsitektur Proyek.
+    private void bukaArsitekturProyek() {
+        try {
+            startActivity(new Intent(this, ArsitekturProyekActivity.class));
+            announce(t("Ubah Arsitektur Proyek"));
+        } catch (Throwable t) {
+            Toast.makeText(this, t("Gagal: ") + t("Ubah Arsitektur Proyek"),
                     Toast.LENGTH_SHORT).show();
         }
     }

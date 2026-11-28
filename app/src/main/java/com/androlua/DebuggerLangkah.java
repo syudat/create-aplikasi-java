@@ -39,21 +39,18 @@ import java.util.regex.Pattern;
  *    lewat mode dengar (agen JDWP target yang diluncurkan dengan
  *    --attach-agent menelepon balik ke IDE).
  *
- * BATAS JUJUR — JEDA PROSES SUNGGUHAN TIDAK MUNGKIN PENUH dari dalam
- * aplikasi biasa tanpa adb/root: di Android, soket JDWP sebuah proses
- * hanya diekspos lewat adbd; aplikasi biasa tidak bisa menjangkau
- * proses aplikasi lain dan tidak bisa menjalankan adb. Satu-satunya
- * jalur yang terbukti di perangkat (dipakai Code on the Go, 2026)
- * membutuhkan (a) pengguna mengaktifkan debugging nirkabel dan
- * memasangkan (pairing) lewat dialog Opsi Pengembang — jembatan adb
- * TLS ala Shizuku — lalu (b) target diluncurkan lewat shell dengan
- * "am --attach-agent libjdwp.so" supaya agennya menelepon balik ke
- * IDE. Kedua langkah itu berada di luar yang bisa dilakukan aplikasi
- * ini sendiri. Yang dibangun di sini adalah bagian yang nyata dan
- * bisa diuji: klien JDWP lengkap + mode dengar + pemeriksaan
- * debuggable target di layar; menjeda aplikasi sungguhan tetap
- * menunggu jembatan adb/pairing itu, dan layar menjelaskannya apa
- * adanya alih-alih berpura-pura sudah bisa.
+ * BATAS YANG SUDAH TERATASI — JEMBATAN ADB DI DALAM APLIKASI:
+ * Sejak 5.8 (debugger sungguhan), aplikasi ini MEMBAWA jembatan adb
+ * sendiri (AdbKlien + AdbKunci + AdbPasangan + Spake2, murni-Java):
+ * lewat debugging nirkabel (TLS + pairing SPAKE2 lewat Opsi
+ * Pengembang) atau adb TCP, aplikasi tersambung ke adbd di perangkat
+ * yang sama, membuka "jdwp:<pid>" untuk proses target yang
+ * debuggable, lalu JdwpKlien di bawah berbicara JDWP langsung dengan
+ * VM target: tahan, titik henti, langkah, bingkai, dan nilai variabel.
+ * Yang tetap butuh perangkat sungguhan: pairing dan sambungan adb
+ * (tidak bisa diuji penuh di komputer — loopback VM ini dicegat
+ * proksi sandbox); logika protokolnya diuji di JVM melawan adbd
+ * palsu dan agen JDWP palsu di atas pipa.
  */
 public class DebuggerLangkah {
 
@@ -282,21 +279,18 @@ public class DebuggerLangkah {
     }
 
     /**
-     * Penjelasan jujur mengapa jeda proses sungguhan belum bisa dari
-     * dalam aplikasi ini, dan apa yang harus disiapkan pengguna.
+     * Penjelasan bila sambungan adb/JDWP gagal: apa yang harus
+     * disiapkan pengguna (tetap jujur soal batasnya).
      */
     public static String diagnosisTanpaAdb() {
-        return "Jeda proses sungguhan belum bisa dari aplikasi ini saja. "
-                + "Soket JDWP aplikasi target hanya dibuka lewat adbd, dan "
-                + "aplikasi biasa tidak bisa menjalankan adb atau menjangkau "
-                + "proses aplikasi lain. Yang dibutuhkan: (1) aplikasi target "
-                + "dibangun debuggable, (2) debugging nirkabel diaktifkan dan "
-                + "dipasangkan lewat Opsi Pengembang, (3) target diluncurkan "
-                + "lewat shell dengan am --attach-agent libjdwp.so supaya "
-                + "agennya menelepon balik ke IDE. Klien JDWP di aplikasi ini "
-                + "sudah bisa jabat tangan, memasang titik henti, dan melangkah "
-                + "begitu sambungan itu ada; tanpa jembatan adb, sambungan "
-                + "tidak bisa dibuat.";
+        return "Sambungan ke proses sungguhan butuh jembatan adb di "
+                + "perangkat ini. Yang dibutuhkan: (1) aplikasi target "
+                + "dibangun debuggable, (2) debugging nirkabel diaktifkan "
+                + "di Opsi Pengembang lalu dipasangkan dengan kode pairing "
+                + "di layar ini (atau debugging USB + adb TCP), (3) proses "
+                + "target sedang berjalan saat tombol daftar proses ditekan. "
+                + "Bila adbd menolak kunci, hapus pairing lama di Opsi "
+                + "Pengembang lalu pasangkan ulang dari layar ini.";
     }
 
     // ============================ KLIEN JDWP ============================
@@ -328,12 +322,56 @@ public class DebuggerLangkah {
         public String tanda = "";
     }
 
+    /** Satu variabel lokal dari jawaban Method.VariableTable. */
+    public static class VariabelJdwp {
+        public long indeksKode = 0;
+        public String nama = "";
+        public String tanda = "";
+        public int panjang = 0;
+        public int slot = 0;
+        /** Penanda tipe JDWP dari huruf pertama tanda. */
+        public byte penanda() {
+            if (tanda == null || tanda.length() == 0) return (byte) 'I';
+            char c = tanda.charAt(0);
+            if (c == 'L' || c == '[') return (byte) (c == '[' ? 'a' : 'L');
+            return (byte) c;
+        }
+    }
+
+    /** Satu bingkai tumpukan (ThreadReference.Frames). */
+    public static class BingkaiJdwp {
+        public long idBingkai = 0;
+        public long classId = 0;
+        public long methodId = 0;
+        public long indeksKode = 0;
+        public String namaKelas = "";
+        public String namaMetode = "";
+        public int baris = -1;
+    }
+
+    /** Satu nilai variabel dari StackFrame.GetValues. */
+    public static class NilaiJdwp {
+        /** Slot lokal JDWP. */
+        public int slot = 0;
+        /** Penanda tipe JDWP ('I', 'J', 'Z', 's', 'L', ...). */
+        public byte penanda = 0;
+        /** Nilai sebagai teks yang bisa dibacakan. */
+        public String teks = "";
+        /** ID objek bila nilainya objek (0 bila bukan objek). */
+        public long idObjek = 0;
+    }
+
     /** Kursor baca big-endian di atas jawaban JDWP. */
     static class Kursor {
         final byte[] d;
         int p = 0;
         Kursor(byte[] data) { d = data; }
         int u8() { return d[p++] & 0xFF; }
+        int u16() {
+            int v = 0;
+            for (int i = 0; i < 2; i++) v = (v << 8) | (d[p++] & 0xFF);
+            return v;
+        }
         int u32() {
             int v = 0;
             for (int i = 0; i < 4; i++) v = (v << 8) | (d[p++] & 0xFF);
@@ -344,6 +382,8 @@ public class DebuggerLangkah {
             for (int i = 0; i < 8; i++) v = (v << 8) | (d[p++] & 0xFF);
             return v;
         }
+        float f32() { return Float.intBitsToFloat(u32()); }
+        double f64() { return Double.longBitsToDouble(u64()); }
         String str() throws IOException {
             int n = u32();
             if (n < 0 || p + n > d.length) throw new IOException("String JDWP rusak.");
@@ -654,9 +694,9 @@ public class DebuggerLangkah {
             return hasil;
         }
 
-        /** Method.LineTable: peta nomor baris -> indeks kode (entri pertama tiap baris). */
+        /** Method.LineTable (set 6, perintah 1): peta nomor baris -> indeks kode. */
         public Map<Integer, Long> tabelBaris(long classId, long methodId) throws IOException {
-            byte[] balas = kirim(6, 6, gabung(tulisU64(classId), tulisU64(methodId)));
+            byte[] balas = kirim(6, 1, gabung(tulisU64(classId), tulisU64(methodId)));
             Kursor k = new Kursor(balas);
             k.u64();
             k.u64();
@@ -712,6 +752,190 @@ public class DebuggerLangkah {
         /** VirtualMachine.Resume: lanjutkan seluruh VM target. */
         public void lanjutkan() throws IOException {
             kirim(1, 9, new byte[0]);
+        }
+
+        /** VirtualMachine.AllThreads: daftar ID semua thread target. */
+        public List<Long> daftarThread() throws IOException {
+            byte[] balas = kirim(1, 4, new byte[0]);
+            Kursor k = new Kursor(balas);
+            int jumlah = k.u32();
+            List<Long> hasil = new ArrayList<Long>();
+            for (int i = 0; i < jumlah; i++) hasil.add(Long.valueOf(k.u64()));
+            return hasil;
+        }
+
+        /** ThreadReference.Name: nama satu thread. */
+        public String namaThread(long threadId) throws IOException {
+            byte[] balas = kirim(11, 1, tulisU64(threadId));
+            return new Kursor(balas).str();
+        }
+
+        /** ThreadReference.FrameCount: jumlah bingkai satu thread. */
+        public int jumlahBingkai(long threadId) throws IOException {
+            byte[] balas = kirim(11, 7, tulisU64(threadId));
+            return new Kursor(balas).u32();
+        }
+
+        /**
+         * ThreadReference.Frames: bingkai tumpukan satu thread (thread
+         * harus ditahan dulu). Mengisi nama kelas/metode + nomor baris
+         * bila tabel baris tersedia.
+         */
+        public List<BingkaiJdwp> bingkai(long threadId, int mulai, int jumlah)
+                throws IOException {
+            byte[] balas = kirim(11, 6, gabung(tulisU64(threadId),
+                    tulisU32(mulai), tulisU32(jumlah)));
+            Kursor k = new Kursor(balas);
+            int n = k.u32();
+            List<BingkaiJdwp> hasil = new ArrayList<BingkaiJdwp>();
+            for (int i = 0; i < n; i++) {
+                BingkaiJdwp b = new BingkaiJdwp();
+                b.idBingkai = k.u64();
+                k.u8(); // penanda tipe lokasi (1 = classID)
+                b.classId = k.u64();
+                b.methodId = k.u64();
+                b.indeksKode = k.u64();
+                hasil.add(b);
+            }
+            for (int i = 0; i < hasil.size(); i++) {
+                BingkaiJdwp b = hasil.get(i);
+                try { b.namaKelas = namaKelas(b.classId); } catch (Throwable ignored) {
+                }
+                try {
+                    List<MetodeJdwp> ms = metodeKelas(b.classId);
+                    for (int j = 0; j < ms.size(); j++) {
+                        if (ms.get(j).id == b.methodId) {
+                            b.namaMetode = ms.get(j).nama;
+                            break;
+                        }
+                    }
+                } catch (Throwable ignored) {
+                }
+                try {
+                    Map<Integer, Long> tb = tabelBaris(b.classId, b.methodId);
+                    long terbaik = -1;
+                    int barisTerbaik = -1;
+                    for (Map.Entry<Integer, Long> e : tb.entrySet()) {
+                        long idx = e.getValue().longValue();
+                        if (idx <= b.indeksKode && idx >= terbaik) {
+                            terbaik = idx;
+                            barisTerbaik = e.getKey().intValue();
+                        }
+                    }
+                    b.baris = barisTerbaik;
+                } catch (Throwable ignored) {
+                }
+            }
+            return hasil;
+        }
+
+        /** ReferenceType.Signature: tanda kelas ("Lcom/x/Y;") -> "com.x.Y". */
+        public String namaKelas(long classId) throws IOException {
+            byte[] balas = kirim(2, 1, tulisU64(classId));
+            String tanda = new Kursor(balas).str();
+            if (tanda.startsWith("L") && tanda.endsWith(";")) {
+                return tanda.substring(1, tanda.length() - 1).replace('/', '.');
+            }
+            return tanda;
+        }
+
+        /**
+         * StackFrame.GetValues: nilai variabel lokal pada satu bingkai.
+         * slot[i] = nomor slot, penanda[i] = penanda tipe JDWP slot itu
+         * (dari Method.VariableTable; bila tidak ada, pakai 'I' untuk
+         * int, 'J' long, 'Z' boolean, 's' String, 'L' objek).
+         * Nilai String dibaca isinya; objek lain ditampilkan sebagai
+         * "objek#<id>".
+         */
+        public List<NilaiJdwp> nilaiBingkai(long frameId, int[] slot, byte[] penanda)
+                throws IOException {
+            if (slot == null || penanda == null || slot.length != penanda.length) {
+                throw new IOException("Daftar slot dan penanda tidak cocok.");
+            }
+            java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
+            DataOutputStream o = new DataOutputStream(b);
+            o.writeLong(frameId);
+            o.writeInt(slot.length);
+            for (int i = 0; i < slot.length; i++) {
+                o.writeInt(slot[i]);
+                o.writeByte(penanda[i]);
+            }
+            o.flush();
+            byte[] balas = kirim(16, 1, b.toByteArray());
+            Kursor k = new Kursor(balas);
+            int jumlah = k.u32();
+            List<NilaiJdwp> hasil = new ArrayList<NilaiJdwp>();
+            for (int i = 0; i < jumlah; i++) {
+                NilaiJdwp v = new NilaiJdwp();
+                v.penanda = (byte) k.u8();
+                v.teks = bacaNilai(k, v.penanda, v);
+                hasil.add(v);
+            }
+            for (int i = 0; i < hasil.size() && i < slot.length; i++) {
+                hasil.get(i).slot = slot[i];
+            }
+            return hasil;
+        }
+
+        /** Baca satu nilai bertanda dari kursor; isi v.idObjek bila objek. */
+        private String bacaNilai(Kursor k, byte tag, NilaiJdwp v) throws IOException {
+            switch (tag) {
+                case 'Z': return k.u8() != 0 ? "true" : "false";
+                case 'B': return String.valueOf((byte) k.u8());
+                case 'C': return String.valueOf((char) k.u16());
+                case 'S': return String.valueOf((short) k.u16());
+                case 'I': return String.valueOf(k.u32());
+                case 'J': return String.valueOf(k.u64());
+                case 'F': return String.valueOf(k.f32());
+                case 'D': return String.valueOf(k.f64());
+                case 's': {
+                    long id = k.u64();
+                    v.idObjek = id;
+                    if (id == 0) return "null";
+                    try { return "\"" + nilaiString(id) + "\""; } catch (Throwable t) {
+                        return "String#" + id;
+                    }
+                }
+                case 'L':
+                case 't':
+                case 'g':
+                case 'e':
+                case 'c':
+                case 'a': {
+                    long id = k.u64();
+                    v.idObjek = id;
+                    if (id == 0) return "null";
+                    return (tag == 'a' ? "larik#" : "objek#") + id;
+                }
+                case 'V': return "void";
+                default: return "?";
+            }
+        }
+
+        /** Method.VariableTable: variabel lokal sebuah metode. */
+        public List<VariabelJdwp> tabelVariabel(long classId, long methodId)
+                throws IOException {
+            byte[] balas = kirim(6, 2, gabung(tulisU64(classId), tulisU64(methodId)));
+            Kursor k = new Kursor(balas);
+            int argCount = k.u32();
+            int jumlah = k.u32();
+            List<VariabelJdwp> hasil = new ArrayList<VariabelJdwp>();
+            for (int i = 0; i < jumlah; i++) {
+                VariabelJdwp v = new VariabelJdwp();
+                v.indeksKode = k.u64();
+                v.nama = k.str();
+                v.tanda = k.str();
+                v.panjang = k.u32();
+                v.slot = k.u32();
+                hasil.add(v);
+            }
+            return hasil;
+        }
+
+        /** StringReference.Value: isi sebuah objek String target. */
+        public String nilaiString(long stringId) throws IOException {
+            byte[] balas = kirim(10, 1, tulisU64(stringId));
+            return new Kursor(balas).str();
         }
 
         /**
